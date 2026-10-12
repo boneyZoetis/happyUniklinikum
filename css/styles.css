@@ -1,0 +1,443 @@
+/* Modern Custom Styling for UMF Expertenstandards Application */
+:root {
+  --umf-navy: #004767;
+  --umf-navy-dark: #003049;
+  --primary-color: #004767;
+  --dekubitus-color: #be185d;
+  --dekubitus-gradient: linear-gradient(135deg, #831843 0%, #be185d 100%);
+  --sturz-color: #556b2f;
+  --sturz-gradient: linear-gradient(135deg, #365314 0%, #65a30d 100%);
+  --schmerz-color: #d97706;
+  --schmerz-gradient: linear-gradient(135deg, #78350f 0%, #d97706 100%);
+  --ernaehrung-color: #0284c7;
+  --ernaehrung-gradient: linear-gradient(135deg, #0c4a6e 0%, #0284c7 100%);
+  --zvk-color: #e11d48;
+  --zvk-gradient: linear-gradient(135deg, #881337 0%, #e11d48 100%);
+  --isolation-color: #0284c7;
+  --isolation-gradient: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+  
+  --surface-bg: #ffffff;
+  --body-bg: #f4f6f8;
+  --card-border: rgba(203, 213, 225, 0.8);
+  --card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: var(--body-bg);
+  color: #1e293b;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Glassmorphism Navbar */
+.navbar-custom {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 2px solid #e2e8f0;
+  z-index: 1020;
+}
+
+.brand-title {
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--umf-navy);
+}
+
+/* Hospital Sub-header */
+.hospital-banner {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.65rem 0;
+}
+
+/* =========================================================
+   POCKETCARD SLIDE REPLICA STYLING (EXACTLY LIKE USER PDF)
+   ========================================================= */
+.pdf-slide-card {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 62, 100, 0.08);
+}
+
+/* Slide Header Bar */
+.pdf-slide-header {
+  background-color: var(--umf-navy);
+  color: #ffffff;
+  padding: 0.9rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 3px solid rgba(0, 0, 0, 0.1);
+}
+
+.pdf-slide-header-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+}
+
+/* Slide Frame Boxes */
+.pdf-bordered-box {
+  border: 2px solid #94a3b8;
+  border-radius: 0.85rem;
+  padding: 1.5rem;
+  background: #ffffff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Standard Pill Label */
+.pdf-standard-pill {
+  padding: 0.85rem 1.25rem;
+  border-radius: 0.85rem;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-align: center;
+  margin: 1.25rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.pdf-standard-pill.dekubitus { background-color: var(--dekubitus-color); }
+.pdf-standard-pill.sturz { background-color: var(--sturz-color); }
+.pdf-standard-pill.schmerz { background-color: var(--schmerz-color); }
+.pdf-standard-pill.ernaehrung { background-color: var(--ernaehrung-color); }
+.pdf-standard-pill.zvk { background-color: var(--zvk-color); }
+.pdf-standard-pill.isolation { background-color: var(--isolation-color); }
+
+/* The Middle Arrow */
+.pdf-slide-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.pdf-arrow-shape {
+  width: 50px;
+  height: 38px;
+  display: inline-block;
+  clip-path: polygon(0% 25%, 55% 25%, 55% 0%, 100% 50%, 55% 100%, 55% 75%, 0% 75%);
+}
+
+.pdf-arrow-shape.dekubitus { background-color: var(--dekubitus-color); }
+.pdf-arrow-shape.sturz { background-color: var(--sturz-color); }
+.pdf-arrow-shape.schmerz { background-color: var(--schmerz-color); }
+.pdf-arrow-shape.ernaehrung { background-color: var(--ernaehrung-color); }
+.pdf-arrow-shape.zvk { background-color: var(--zvk-color); }
+.pdf-arrow-shape.isolation { background-color: var(--isolation-color); }
+
+/* Double-Bordered Cartoon Illustration */
+.pdf-illustration-frame {
+  border: 4px solid #94a3b8;
+  outline: 2px solid #cbd5e1;
+  outline-offset: 2px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.pdf-illustration-img {
+  width: 100%;
+  height: 170px;
+  object-fit: contain;
+  display: block;
+  background: #fafafa;
+}
+
+/* =========================================================
+   MINIMAL BEAUTIFIED POCKETCARD PDF & PRINT FORMAT
+   ========================================================= */
+.pocketcard-printable-view {
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 62, 100, 0.08);
+  margin-bottom: 2rem;
+  page-break-inside: avoid;
+}
+
+.pocketcard-print-header {
+  background: var(--umf-navy);
+  color: #ffffff;
+  padding: 0.9rem 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.pocketcard-badge-pill {
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.45rem 1.1rem;
+  border-radius: 50rem;
+  color: #ffffff;
+  display: inline-block;
+  letter-spacing: 0.2px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.pocketcard-badge-pill.dekubitus { background: var(--dekubitus-color) !important; }
+.pocketcard-badge-pill.sturz { background: var(--sturz-color) !important; }
+.pocketcard-badge-pill.schmerz { background: var(--schmerz-color) !important; }
+.pocketcard-badge-pill.ernaehrung { background: var(--ernaehrung-color) !important; }
+.pocketcard-badge-pill.zvk { background: var(--zvk-color) !important; }
+.pocketcard-badge-pill.isolation { background: var(--isolation-color) !important; }
+
+.clinical-picture-card {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 0.85rem;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.clinical-picture-img {
+  width: 100%;
+  height: 190px;
+  object-fit: contain;
+  display: block;
+  background-color: #ffffff;
+}
+
+.keypoint-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.88rem;
+  color: #334155;
+  margin-bottom: 0.45rem;
+  line-height: 1.45;
+}
+
+/* QR Container - Single image display without repetition! */
+.qr-display-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 auto !important;
+  background: #ffffff !important;
+}
+
+.qr-display-container img,
+.qr-display-container .qr-clean-img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  margin: 0 auto !important;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.standard-tile {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.standard-tile:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 71, 103, 0.12);
+  border-color: #cbd5e1;
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15) !important;
+}
+
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tile-top-bar {
+  height: 7px;
+  width: 100%;
+}
+.tile-top-bar.dekubitus { background: var(--dekubitus-color); }
+.tile-top-bar.sturz { background: var(--sturz-color); }
+.tile-top-bar.schmerz { background: var(--schmerz-color); }
+.tile-top-bar.ernaehrung { background: var(--ernaehrung-color); }
+.tile-top-bar.zvk { background: var(--zvk-color); }
+.tile-top-bar.isolation { background: var(--isolation-color); }
+
+.tile-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 0.4rem 0.85rem;
+  border-radius: 50rem;
+  display: inline-block;
+}
+
+.tile-badge.dekubitus { background: rgba(190, 24, 93, 0.12); color: var(--dekubitus-color); }
+.tile-badge.sturz { background: rgba(85, 107, 47, 0.12); color: var(--sturz-color); }
+.tile-badge.schmerz { background: rgba(217, 119, 6, 0.12); color: var(--schmerz-color); }
+.tile-badge.ernaehrung { background: rgba(2, 132, 199, 0.12); color: var(--ernaehrung-color); }
+.tile-badge.zvk { background: rgba(225, 29, 72, 0.12); color: var(--zvk-color); }
+.tile-badge.isolation { background: rgba(2, 132, 199, 0.12); color: var(--isolation-color); }
+
+/* roXtra Badges */
+.roxtra-badge {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.65rem;
+  padding: 0.45rem 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.roxtra-badge:hover {
+  background: #e2e8f0;
+  transform: translateY(-1px);
+}
+
+/* 16:9 Video Player */
+.video-responsive-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.15);
+  background: #000000;
+}
+
+.video-responsive-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Navigation Links */
+.nav-standard-link {
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 50rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.nav-standard-link.active {
+  color: #ffffff !important;
+}
+
+.nav-standard-link.dekubitus.active { background: var(--dekubitus-color); }
+.nav-standard-link.sturz.active { background: var(--sturz-color); }
+.nav-standard-link.schmerz.active { background: var(--schmerz-color); }
+.nav-standard-link.ernaehrung.active { background: var(--ernaehrung-color); }
+.nav-standard-link.zvk.active { background: var(--zvk-color); }
+.nav-standard-link.isolation.active { background: var(--isolation-color); }
+
+.nav-standard-link.dekubitus:not(.active) { color: var(--dekubitus-color); }
+.nav-standard-link.sturz:not(.active) { color: var(--sturz-color); }
+.nav-standard-link.schmerz:not(.active) { color: var(--schmerz-color); }
+.nav-standard-link.ernaehrung:not(.active) { color: var(--ernaehrung-color); }
+.nav-standard-link.zvk:not(.active) { color: var(--zvk-color); }
+.nav-standard-link.isolation:not(.active) { color: var(--isolation-color); }
+
+.nav-standard-link:not(.active):hover {
+  background: #f1f5f9;
+}
+
+/* Toast */
+.copy-feedback-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 2000;
+  animation: slideInUp 0.3s ease;
+}
+
+@keyframes slideInUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* =========================================================
+   PERFECT PRINT / PDF EXPORT STYLING (A4 / A5 POCKETCARD)
+   ========================================================= */
+@media print {
+  @page {
+    size: portrait;
+    margin: 8mm;
+  }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .navbar-custom, .hospital-banner, button, .no-print, .no-print-area, footer {
+    display: none !important;
+  }
+  iframe {
+    display: none !important;
+  }
+  .print-only-preview {
+    display: block !important;
+  }
+  .pocketcard-printable-view {
+    border: 2px solid #004767 !important;
+    border-radius: 0.75rem !important;
+    box-shadow: none !important;
+    margin: 0 0 15mm 0 !important;
+    page-break-after: always;
+    page-break-inside: avoid;
+  }
+  .page-break {
+    page-break-after: always;
+  }
+}
+
+.print-only-preview {
+  display: none !important;
+}
+
+.backdrop-blur {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+

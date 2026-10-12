@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# OS / Temporary files
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.txt
+*.ps1
+find_images.js
+decode_all.js
+decode_zxing.js
+extract_qrs.js
+run_decode.js
+test_require.js
+to_bmp.ps1
+crop_qr.ps1
+decode_isolation.js
+test_p.js
+dom*.txt
