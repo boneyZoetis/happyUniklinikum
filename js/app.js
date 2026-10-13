@@ -329,7 +329,7 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="d-flex flex-column min-vh-100">
       {/* Toast Feedback */}
       {toast && (
         <div className="copy-feedback-toast">
@@ -348,7 +348,7 @@ function App() {
         showToast={showToast}
       />
 
-      {/* Modern Hospital Top Banner */}
+      {/* Modern Hospital Top Banner - Hidden on quick-hub */}
       {currentRoute !== 'quick-hub' && (
         <div className="hospital-banner shadow-sm">
           <div className="container d-flex align-items-center justify-content-between py-1">
@@ -387,71 +387,69 @@ function App() {
         </div>
       )}
 
-      {/* Main Menu Bar with Clinical Category Colors */}
-      {currentRoute !== 'quick-hub' && (
-        <nav className="navbar navbar-expand-lg navbar-custom sticky-top shadow-sm">
-          <div className="container py-1">
-            <a className="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="#/">
-              <span className="brand-dot"></span>
-              <span className="brand-title fs-5">UMF Expertenstandards</span>
+      {/* Main Menu Bar with Clinical Category Colors - Always visible on quick-hub */}
+      <nav className="navbar navbar-expand-lg navbar-custom sticky-top shadow-sm">
+        <div className="container py-1">
+          <a className="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="#/">
+            <span className="brand-dot"></span>
+            <span className="brand-title fs-5">UMF Expertenstandards</span>
+          </a>
+
+          {/* Direct Menu Links with Icons & Category Badges */}
+          <div className="d-flex flex-wrap gap-1 align-items-center">
+            <a
+              href="#/dekubitus"
+              className={`nav-standard-link dekubitus ${currentRoute === 'dekubitus' ? 'active' : ''}`}
+            >
+              <i className="bi bi-bandaid-fill"></i>
+              <span>Dekubitus</span>
             </a>
 
-            {/* Direct Menu Links with Icons & Category Badges */}
-            <div className="d-flex flex-wrap gap-1 align-items-center">
-              <a
-                href="#/dekubitus"
-                className={`nav-standard-link dekubitus ${currentRoute === 'dekubitus' ? 'active' : ''}`}
-              >
-                <i className="bi bi-bandaid-fill"></i>
-                <span>Dekubitus</span>
-              </a>
+            <a
+              href="#/sturz"
+              className={`nav-standard-link sturz ${currentRoute === 'sturz' ? 'active' : ''}`}
+            >
+              <i className="bi bi-shield-exclamation"></i>
+              <span>Sturz</span>
+            </a>
 
-              <a
-                href="#/sturz"
-                className={`nav-standard-link sturz ${currentRoute === 'sturz' ? 'active' : ''}`}
-              >
-                <i className="bi bi-shield-exclamation"></i>
-                <span>Sturz</span>
-              </a>
+            <a
+              href="#/schmerz"
+              className={`nav-standard-link schmerz ${currentRoute === 'schmerz' ? 'active' : ''}`}
+            >
+              <i className="bi bi-heart-pulse-fill"></i>
+              <span>Schmerz</span>
+            </a>
 
-              <a
-                href="#/schmerz"
-                className={`nav-standard-link schmerz ${currentRoute === 'schmerz' ? 'active' : ''}`}
-              >
-                <i className="bi bi-heart-pulse-fill"></i>
-                <span>Schmerz</span>
-              </a>
+            <a
+              href="#/ernaehrung"
+              className={`nav-standard-link ernaehrung ${currentRoute === 'ernaehrung' ? 'active' : ''}`}
+            >
+              <i className="bi bi-egg-fried"></i>
+              <span>Ernährung</span>
+            </a>
 
-              <a
-                href="#/ernaehrung"
-                className={`nav-standard-link ernaehrung ${currentRoute === 'ernaehrung' ? 'active' : ''}`}
-              >
-                <i className="bi bi-egg-fried"></i>
-                <span>Ernährung</span>
-              </a>
+            <a
+              href="#/isolation"
+              className={`nav-standard-link isolation ${currentRoute === 'isolation' ? 'active' : ''}`}
+            >
+              <i className="bi bi-shield-check"></i>
+              <span>Hygiene</span>
+            </a>
 
-              <a
-                href="#/isolation"
-                className={`nav-standard-link isolation ${currentRoute === 'isolation' ? 'active' : ''}`}
-              >
-                <i className="bi bi-shield-check"></i>
-                <span>Hygiene</span>
-              </a>
-
-              <a
-                href="#/zvk"
-                className={`nav-standard-link zvk ${currentRoute === 'zvk' ? 'active' : ''}`}
-              >
-                <i className="bi bi-droplet-half"></i>
-                <span>ZVK SOP</span>
-              </a>
-            </div>
+            <a
+              href="#/zvk"
+              className={`nav-standard-link zvk ${currentRoute === 'zvk' ? 'active' : ''}`}
+            >
+              <i className="bi bi-droplet-half"></i>
+              <span>ZVK SOP</span>
+            </a>
           </div>
-        </nav>
-      )}
+        </div>
+      </nav>
 
       {/* Main Container */}
-      <main className={currentRoute === 'quick-hub' ? "container py-3" : "container py-4"}>
+      <main className={currentRoute === 'quick-hub' ? "container flex-grow-1 d-flex flex-column justify-content-center py-4" : "container py-4"}>
         {/* VIEW: The 5 Main Tiles */}
         {currentRoute === 'home' && (
           <TilesOverview
@@ -542,8 +540,17 @@ function App() {
         )}
       </main>
 
-      {/* Beautified Modern Colorful Footer */}
-      {currentRoute !== 'quick-hub' && (
+      {/* Footer: on quick-hub show ONLY the colorful accent line; on other pages show full footer */}
+      {currentRoute === 'quick-hub' ? (
+        <div className="footer-accent-bar d-flex mt-auto" style={{ height: '6px' }}>
+          <div style={{ flex: 1, backgroundColor: 'var(--dekubitus-color)' }} title="Dekubitusprophylaxe"></div>
+          <div style={{ flex: 1, backgroundColor: 'var(--sturz-color)' }} title="Sturzprophylaxe"></div>
+          <div style={{ flex: 1, backgroundColor: 'var(--schmerz-color)' }} title="Schmerzmanagement"></div>
+          <div style={{ flex: 1, backgroundColor: 'var(--ernaehrung-color)' }} title="Ernährungsmanagement"></div>
+          <div style={{ flex: 1, backgroundColor: 'var(--isolation-color)' }} title="Isolation & Hygiene"></div>
+          <div style={{ flex: 1, backgroundColor: 'var(--zvk-color)' }} title="ZVK Intensivpflege"></div>
+        </div>
+      ) : (
         <footer className="modern-footer mt-auto text-white">
           {/* Color accent spectrum bar matching all clinical categories */}
           <div className="footer-accent-bar d-flex" style={{ height: '5px' }}>
@@ -2121,9 +2128,9 @@ function QuickHubView({ standards, onSelectStandard }) {
   const list = Object.values(standards);
 
   return (
-    <div className="py-2 py-md-3">
-      {/* 6 Clean, Clickable Tiles showing Standards with Icons & Colors */}
-      <div className="row g-3 g-md-4">
+    <div className="py-2 py-md-3 w-100">
+      {/* 6 Clean, Clickable Tiles aligned in center */}
+      <div className="row g-3 g-md-4 justify-content-center">
         {list.map((std) => (
           <div key={std.id} className="col-12 col-md-6 col-lg-4">
             <div
