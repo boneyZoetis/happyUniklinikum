@@ -342,30 +342,27 @@ function App() {
         showToast={showToast}
       />
 
-      {/* Hospital Top Banner */}
-      <div className="hospital-banner">
-        <div className="container d-flex align-items-center justify-content-between">
+      {/* Modern Hospital Top Banner */}
+      <div className="hospital-banner shadow-sm">
+        <div className="container d-flex align-items-center justify-content-between py-1">
           <div className="d-flex align-items-center gap-3">
-            <a href="#/" className="text-decoration-none">
-              <img src="assets/umf-logo.jpg" alt="Universitätsmedizin Frankfurt" height="42" />
+            <a href="#/" className="text-decoration-none d-flex align-items-center bg-white rounded-3 p-1 shadow-sm border border-light">
+              <img src="assets/umf-logo.jpg" alt="Universitätsmedizin Frankfurt" height="42" className="rounded" />
             </a>
-            <div className="border-start ps-3 d-none d-md-block">
-              <div className="fw-bold small text-dark">UNIVERSITÄTSMEDIZIN FRANKFURT</div>
-              <div className="text-muted" style={{ fontSize: '0.72rem' }}>Digitale Pocketcards &bull; Expertenstandards in der Pflege</div>
+            <div className="border-start border-2 ps-3 d-none d-md-block" style={{ borderColor: 'var(--umf-navy)' }}>
+              <div className="fw-bolder text-dark" style={{ letterSpacing: '0.6px', fontSize: '0.92rem' }}>
+                UNIVERSITÄTSMEDIZIN FRANKFURT
+              </div>
+              <div className="text-muted fw-semibold" style={{ fontSize: '0.74rem' }}>
+                <i className="bi bi-shield-check text-primary me-1"></i>
+                Digitale Pocketcards &bull; Expertenstandards in der Pflege
+              </div>
             </div>
           </div>
 
           <div className="d-flex align-items-center gap-2">
             <button
-              className="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-sm d-flex align-items-center gap-1"
-              onClick={() => setIsScanModalOpen(true)}
-              title="QR-Code scannen oder Poster-Foto hochladen"
-            >
-              <i className="bi bi-qr-code-scan"></i>
-              <span className="fw-semibold">QR scannen / Foto prüfen</span>
-            </button>
-            <button
-              className={`btn btn-sm ${currentRoute === 'qrcodes' ? 'btn-dark' : 'btn-outline-dark'} rounded-pill px-3 shadow-sm`}
+              className={`btn btn-sm ${currentRoute === 'qrcodes' ? 'btn-primary text-white' : 'btn-outline-primary'} rounded-pill px-3 shadow-sm fw-semibold`}
               onClick={() => navigateTo('qrcodes')}
             >
               <i className="bi bi-collection me-1"></i> Alle Pocketcards
@@ -374,21 +371,22 @@ function App() {
         </div>
       </div>
 
-      {/* Main Menu Bar with the 5 Standards */}
-      <nav className="navbar navbar-expand-lg navbar-custom sticky-top">
+      {/* Main Menu Bar with Clinical Category Colors */}
+      <nav className="navbar navbar-expand-lg navbar-custom sticky-top shadow-sm">
         <div className="container py-1">
           <a className="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="#/">
-            <span className="brand-title fs-5 text-dark">UMF Expertenstandards</span>
+            <span className="brand-dot"></span>
+            <span className="brand-title fs-5">UMF Expertenstandards</span>
           </a>
 
-          {/* Direct Menu Links for the 5 Standards */}
+          {/* Direct Menu Links with Icons & Category Badges */}
           <div className="d-flex flex-wrap gap-1 align-items-center">
             <a
               href="#/dekubitus"
               className={`nav-standard-link dekubitus ${currentRoute === 'dekubitus' ? 'active' : ''}`}
             >
               <i className="bi bi-bandaid-fill"></i>
-              <span>Dekubitusprophylaxe</span>
+              <span>Dekubitus</span>
             </a>
 
             <a
@@ -396,7 +394,7 @@ function App() {
               className={`nav-standard-link sturz ${currentRoute === 'sturz' ? 'active' : ''}`}
             >
               <i className="bi bi-shield-exclamation"></i>
-              <span>Sturzprophylaxe</span>
+              <span>Sturz</span>
             </a>
 
             <a
@@ -404,7 +402,7 @@ function App() {
               className={`nav-standard-link schmerz ${currentRoute === 'schmerz' ? 'active' : ''}`}
             >
               <i className="bi bi-heart-pulse-fill"></i>
-              <span>Schmerzmanagement</span>
+              <span>Schmerz</span>
             </a>
 
             <a
@@ -412,7 +410,7 @@ function App() {
               className={`nav-standard-link ernaehrung ${currentRoute === 'ernaehrung' ? 'active' : ''}`}
             >
               <i className="bi bi-egg-fried"></i>
-              <span>Ernährungsmanagement</span>
+              <span>Ernährung</span>
             </a>
 
             <a
@@ -420,7 +418,15 @@ function App() {
               className={`nav-standard-link isolation ${currentRoute === 'isolation' ? 'active' : ''}`}
             >
               <i className="bi bi-shield-check"></i>
-              <span>Isolation &amp; Hygiene</span>
+              <span>Hygiene</span>
+            </a>
+
+            <a
+              href="#/zvk"
+              className={`nav-standard-link zvk ${currentRoute === 'zvk' ? 'active' : ''}`}
+            >
+              <i className="bi bi-droplet-half"></i>
+              <span>ZVK SOP</span>
             </a>
           </div>
         </div>
@@ -501,12 +507,99 @@ function App() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="mt-auto py-3 text-center text-muted border-top bg-white">
-        <div className="container">
-          <small className="text-secondary">
-            Universitätsmedizin Frankfurt (UMF) &bull; Umsetzung von Expertenstandards im Pflegeprozess &bull; Digitale Pocketcards
-          </small>
+      {/* Beautified Modern Colorful Footer */}
+      <footer className="modern-footer mt-auto text-white">
+        {/* Color accent spectrum bar matching all clinical categories */}
+        <div className="footer-accent-bar d-flex" style={{ height: '5px' }}>
+          <div style={{ flex: 1, backgroundColor: 'var(--dekubitus-color)' }} title="Dekubitusprophylaxe"></div>
+          <div style={{ flex: 1, backgroundColor: 'var(--sturz-color)' }} title="Sturzprophylaxe"></div>
+          <div style={{ flex: 1, backgroundColor: 'var(--schmerz-color)' }} title="Schmerzmanagement"></div>
+          <div style={{ flex: 1, backgroundColor: 'var(--ernaehrung-color)' }} title="Ernährungsmanagement"></div>
+          <div style={{ flex: 1, backgroundColor: 'var(--isolation-color)' }} title="Isolation & Hygiene"></div>
+          <div style={{ flex: 1, backgroundColor: 'var(--zvk-color)' }} title="ZVK Intensivpflege"></div>
+        </div>
+
+        <div className="container py-4 py-md-5">
+          <div className="row g-4 align-items-center">
+            {/* Hospital branding & description */}
+            <div className="col-lg-5 col-md-6">
+              <div className="d-flex align-items-center gap-3 mb-3">
+                <div className="bg-white rounded-3 p-1 shadow-sm d-inline-flex">
+                  <img src="assets/umf-logo.jpg" alt="UMF Logo" height="38" className="rounded" />
+                </div>
+                <div>
+                  <h6 className="fw-bold mb-0 text-white" style={{ letterSpacing: '0.5px' }}>
+                    UNIVERSITÄTSMEDIZIN FRANKFURT
+                  </h6>
+                  <small className="text-white-50" style={{ fontSize: '0.78rem' }}>
+                    Klinikum der Goethe-Universität &bull; Pflegedirektion
+                  </small>
+                </div>
+              </div>
+              <p className="small text-white-50 mb-0" style={{ lineHeight: '1.6', maxWidth: '420px' }}>
+                Evidenzbasierte klinische Expertenstandards und interdisziplinäre Verfahrensanweisungen (SOPs) zur Qualitätssicherung und Patientensicherheit im stationären Versorgungsalltag.
+              </p>
+            </div>
+
+            {/* Quick Navigation Pills with Category Colors */}
+            <div className="col-lg-4 col-md-6">
+              <div className="small fw-bold text-uppercase text-white-50 mb-3" style={{ letterSpacing: '0.8px', fontSize: '0.72rem' }}>
+                <i className="bi bi-compass me-1 text-info"></i> Direkte Schnellnavigation
+              </div>
+              <div className="d-flex flex-wrap gap-2">
+                <a href="#/dekubitus" className="footer-category-pill pill-dekubitus">
+                  <i className="bi bi-bandaid-fill"></i> Dekubitus
+                </a>
+                <a href="#/sturz" className="footer-category-pill pill-sturz">
+                  <i className="bi bi-shield-exclamation"></i> Sturz
+                </a>
+                <a href="#/schmerz" className="footer-category-pill pill-schmerz">
+                  <i className="bi bi-heart-pulse-fill"></i> Schmerz
+                </a>
+                <a href="#/ernaehrung" className="footer-category-pill pill-ernaehrung">
+                  <i className="bi bi-egg-fried"></i> Ernährung
+                </a>
+                <a href="#/isolation" className="footer-category-pill pill-isolation">
+                  <i className="bi bi-shield-check"></i> Hygiene
+                </a>
+                <a href="#/zvk" className="footer-category-pill pill-zvk">
+                  <i className="bi bi-droplet-half"></i> ZVK SOP
+                </a>
+                <a href="#/qrcodes" className="footer-category-pill pill-hub">
+                  <i className="bi bi-collection"></i> Alle Pocketcards
+                </a>
+              </div>
+            </div>
+
+            {/* System Info & Status Badge */}
+            <div className="col-lg-3 col-md-12 text-lg-end">
+              <div className="footer-status-card p-3 rounded-3 text-start text-lg-end d-inline-block">
+                <div className="d-flex align-items-center gap-2 justify-content-lg-end mb-1">
+                  <span className="live-status-dot"></span>
+                  <span className="small fw-bold text-white">roXtra QM-System</span>
+                </div>
+                <div className="small text-white-50" style={{ fontSize: '0.75rem' }}>
+                  Gültige klinische Versionen 2024–2026
+                </div>
+                <div className="mt-2 pt-2 border-top border-secondary border-opacity-25 small text-white-50" style={{ fontSize: '0.72rem' }}>
+                  Offline &amp; Mobile Ready &bull; Standalone PWA
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-top border-white border-opacity-10 mt-4 pt-3 d-flex flex-wrap justify-content-between align-items-center gap-2 text-white-50 small">
+            <div>
+              &copy; {new Date().getFullYear()} Universitätsmedizin Frankfurt &bull; Digitale Pflege-Pocketcards
+            </div>
+            <div className="d-flex gap-3">
+              <a href="#/" className="text-white-50 text-decoration-none hover-white">Startseite</a>
+              <span>&bull;</span>
+              <a href="#/qrcodes" className="text-white-50 text-decoration-none hover-white">Übersicht</a>
+              <span>&bull;</span>
+              <span className="text-white-50">Evidenzbasierte Pflegepraxis</span>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
@@ -530,31 +623,21 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
         }}
       >
         <div className="position-relative d-flex flex-wrap justify-content-between align-items-center gap-4" style={{ zIndex: 2 }}>
-          <div style={{ maxWidth: '780px' }}>
+          <div style={{ maxWidth: '820px' }}>
             <div className="d-flex align-items-center gap-2 mb-2">
               <span className="badge bg-white text-dark fw-bold text-uppercase px-3 py-1 rounded-pill shadow-sm" style={{ fontSize: '0.74rem', letterSpacing: '0.6px' }}>
                 Universitätsmedizin Frankfurt
               </span>
-              <span className="text-white-50 small">&bull; Pflegedirektion</span>
+              <span className="badge bg-white bg-opacity-25 text-white fw-medium px-3 py-1 rounded-pill shadow-sm" style={{ fontSize: '0.74rem' }}>
+                <i className="bi bi-hospital me-1"></i> Pflegedirektion &bull; Evidenzbasierte Pflege
+              </span>
             </div>
             <h1 className="fw-bold mb-2 text-white" style={{ letterSpacing: '-0.5px' }}>
               Klinische Standards &amp; Pflege-Leitfäden
             </h1>
             <p className="text-white text-opacity-80 mb-0 fs-6" style={{ lineHeight: '1.6' }}>
-              Evidenzbasierte Expertenstandards, Intensiv-SOPs und Hygieneleitfäden für den Stations- und Intensivalltag. Wählen Sie eine Kategorie oder nutzen Sie den integrierten Scanner zum Einlesen von QR-Codes und Stationspostern.
+              Evidenzbasierte Expertenstandards, Intensiv-SOPs und Hygieneleitfäden für den Stations- und Intensivalltag. Wählen Sie eine Kategorie, um die Leitlinie, klinischen Handlungsschritte und Dokumentationen direkt einzusehen.
             </p>
-          </div>
-
-          {/* Scanner QR Code Button in Hero Header */}
-          <div className="flex-shrink-0">
-            <button
-              className="btn btn-light rounded-pill px-4 py-2 shadow-sm d-flex align-items-center gap-2 text-primary fw-bold hover-lift"
-              onClick={onOpenScanner}
-              style={{ fontSize: '0.95rem' }}
-            >
-              <i className="bi bi-qr-code-scan fs-5 text-primary"></i>
-              <span>QR-Code / Foto scannen</span>
-            </button>
           </div>
         </div>
 
