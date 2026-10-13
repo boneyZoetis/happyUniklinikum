@@ -304,6 +304,12 @@ function App() {
       } else if (hash.includes('isolation') || hash.includes('hygiene') || hash.includes('mre') || hash.includes('mrsa') || hash.includes('mrgn') || hash.includes('vre') || hash.includes('diff')) {
         setCurrentRoute('isolation');
         document.title = 'Isolation & Hygiene • UMF Leitfaden';
+      } else if (hash.includes('magic') || hash.includes('card')) {
+        setCurrentRoute('magic-card');
+        document.title = 'Magic Card • UMF Pocketcards';
+      } else if (hash.includes('hub') || hash.includes('menu') || hash.includes('quick')) {
+        setCurrentRoute('quick-hub');
+        document.title = 'UMF Schnellzugriff • Alle 6 Standards';
       } else if (hash.includes('qrcodes')) {
         setCurrentRoute('qrcodes');
         document.title = 'Alle Pocketcards • UMF Standards';
@@ -361,6 +367,14 @@ function App() {
           </div>
 
           <div className="d-flex align-items-center gap-2">
+            <button
+              className={`btn btn-sm ${currentRoute === 'magic-card' ? 'btn-warning text-dark fw-bold' : 'btn-outline-warning text-dark fw-bold'} rounded-pill px-3 shadow-sm d-flex align-items-center gap-1 magic-btn-glow`}
+              onClick={() => navigateTo('magic-card')}
+              title="Kompakte ATM-Pocketcard mit allen 6 Standards und QR-Code"
+            >
+              <i className="bi bi-stars text-warning"></i>
+              <span>Magic Card</span>
+            </button>
             <button
               className={`btn btn-sm ${currentRoute === 'qrcodes' ? 'btn-primary text-white' : 'btn-outline-primary'} rounded-pill px-3 shadow-sm fw-semibold`}
               onClick={() => navigateTo('qrcodes')}
@@ -505,6 +519,23 @@ function App() {
             showToast={showToast}
           />
         )}
+
+        {/* VIEW: Magic Card (ATM-sized Universal Pocketcard) */}
+        {currentRoute === 'magic-card' && (
+          <MagicCardView
+            standards={UMF_STANDARDS}
+            onSelectStandard={(id) => navigateTo(id)}
+            showToast={showToast}
+          />
+        )}
+
+        {/* VIEW: Quick Hub (Target of Magic Card QR Code Scan) */}
+        {currentRoute === 'quick-hub' && (
+          <QuickHubView
+            standards={UMF_STANDARDS}
+            onSelectStandard={(id) => navigateTo(id)}
+          />
+        )}
       </main>
 
       {/* Beautified Modern Colorful Footer */}
@@ -564,6 +595,9 @@ function App() {
                 </a>
                 <a href="#/zvk" className="footer-category-pill pill-zvk">
                   <i className="bi bi-droplet-half"></i> ZVK SOP
+                </a>
+                <a href="#/magic-card" className="footer-category-pill pill-magic">
+                  <i className="bi bi-stars text-warning"></i> Magic Card (ATM)
                 </a>
                 <a href="#/qrcodes" className="footer-category-pill pill-hub">
                   <i className="bi bi-collection"></i> Alle Pocketcards
@@ -773,7 +807,9 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
   const [isModalMaximized, setIsModalMaximized] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const isPdfPopupStandard = standard.id === 'zvk' || standard.id === 'isolation';
-  const pdfUrl = standard.pdfUrl || (standard.id === 'zvk' ? 'assets/zvk-sop-verfahrensanweisung.pdf' : (standard.id === 'isolation' ? 'assets/isolation-sop-verfahrensanweisung.pdf' : 'assets/umf-expertenstandards-folien.pdf'));
+  const rawPdfUrl = standard.pdfUrl || (standard.id === 'zvk' ? 'assets/zvk-sop-verfahrensanweisung.pdf' : (standard.id === 'isolation' ? 'assets/isolation-sop-verfahrensanweisung.pdf' : 'assets/umf-expertenstandards-folien.pdf'));
+  const pdfBaseUrl = rawPdfUrl.split('#')[0];
+  const pdfUrl = rawPdfUrl;
 
   return (
     <div className="mb-4">
@@ -822,91 +858,63 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
 
           {/* 3. The Pictures Section */}
           <div className="row g-3 mb-3">
-            {isPdfPopupStandard ? (
-              <>
-                {/* Last 2 Standards (ZVK & Isolation): Dual View with PDF Viewer & Pop-up */}
-                <div className="col-md-6">
-                  <div className="clinical-picture-card h-100 d-flex flex-column">
-                    <div className="d-flex justify-content-between align-items-center px-3 py-1 bg-light border-bottom">
-                      <span className="small fw-bold text-secondary d-flex align-items-center gap-1">
-                        <i className="bi bi-file-earmark-pdf-fill text-danger"></i>
-                        <span>Schulungsillustration (PDF)</span>
+            {standard.id === 'zvk' || standard.id === 'isolation' ? (
+              /* ZVK & Isolation: Full-width dedicated Interactive PDF Viewer */
+              <div className="col-12">
+                <div className="clinical-picture-card h-100 d-flex flex-column shadow-sm rounded-4 overflow-hidden border">
+                  <div className="d-flex justify-content-between align-items-center px-3 py-2 bg-light border-bottom">
+                    <span className="fw-bold text-dark d-flex align-items-center gap-2" style={{ fontSize: '0.95rem' }}>
+                      <i className="bi bi-file-earmark-pdf-fill text-danger fs-5"></i>
+                      <span>Schulungsillustration &amp; SOP (PDF Viewer) &bull; {standard.shortTitle}</span>
+                    </span>
+                    <div className="d-flex align-items-center gap-2">
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-primary rounded-pill py-1 px-3 d-flex align-items-center gap-1 shadow-sm fw-semibold"
+                        style={{ fontSize: '0.8rem' }}
+                        onClick={() => setIsPdfModalOpen(true)}
+                        title="PDF im vergrößerten Pop-up mit Vollbild / allen Seiten öffnen"
+                      >
+                        <i className="bi bi-arrows-fullscreen"></i>
+                        <span>Im Pop-up vergrößern</span>
+                      </button>
+                      <span className="badge bg-white text-secondary border px-2 py-1 small">
+                        Interaktives Dokument
                       </span>
-                      <div className="d-flex align-items-center gap-1">
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-outline-primary rounded-pill py-0 px-2"
-                          style={{ fontSize: '0.74rem' }}
-                          onClick={() => setIsPdfModalOpen(true)}
-                          title="PDF im Pop-up mit Vollbild / Scrollen öffnen"
-                        >
-                          <i className="bi bi-arrows-fullscreen me-1"></i> Pop-up
-                        </button>
-                        <span className="badge bg-white text-muted border small">PDF</span>
-                      </div>
-                    </div>
-
-                    <div className="position-relative bg-white flex-grow-1 overflow-hidden" style={{ minHeight: '190px', height: '190px' }}>
-                      {/* Interactive Scrollable PDF Embed */}
-                      <iframe
-                        src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
-                        title={`PDF Schulungsillustration ${standard.shortTitle}`}
-                        className="w-100 h-100 border-0 d-block"
-                        style={{ minHeight: '190px', overflowY: 'auto' }}
-                      />
-
-                      {/* Floating Action Button to Expand into Pop-up */}
-                      <div className="position-absolute bottom-0 end-0 m-2 no-print" data-html2canvas-ignore="true">
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-dark bg-opacity-75 backdrop-blur text-white shadow-sm rounded-pill py-1 px-3 d-flex align-items-center gap-1"
-                          style={{ fontSize: '0.74rem' }}
-                          onClick={() => setIsPdfModalOpen(true)}
-                        >
-                          <i className="bi bi-arrows-fullscreen"></i>
-                          <span>Pop-up / Maximieren</span>
-                        </button>
-                      </div>
-
-                      {/* Fallback image for html2pdf and print export */}
-                      <img
-                        src={standard.image}
-                        alt={`Illustration ${standard.shortTitle}`}
-                        className="clinical-picture-img print-only-preview d-none"
-                      />
                     </div>
                   </div>
-                </div>
 
-                <div className="col-md-6">
-                  <div className="clinical-picture-card h-100 d-flex flex-column">
-                    <div className="d-flex justify-content-between align-items-center px-3 py-1 bg-light border-bottom">
-                      <span className="small fw-bold text-secondary">
-                        <i className="bi bi-heart-pulse me-1 text-danger"></i> Klinische Praxis &amp; Durchführung
-                      </span>
-                      <span className="badge bg-white text-muted border small">Leitlinie</span>
+                  <div className="position-relative bg-white flex-grow-1 overflow-hidden" style={{ minHeight: '520px', height: '520px' }}>
+                    {/* Interactive Scrollable PDF Embed - Beautiful full-width viewing area */}
+                    <iframe
+                      src={`${pdfBaseUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
+                      title={`PDF Schulungsillustration ${standard.shortTitle}`}
+                      className="w-100 h-100 border-0 d-block"
+                      style={{ minHeight: '520px', overflowY: 'auto' }}
+                    />
+
+                    {/* Floating Action Button to Expand into Pop-up */}
+                    <div className="position-absolute bottom-0 end-0 m-3 no-print" data-html2canvas-ignore="true">
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-dark bg-opacity-90 backdrop-blur text-white shadow rounded-pill py-1 px-3 d-flex align-items-center gap-1 hover-lift"
+                        style={{ fontSize: '0.78rem' }}
+                        onClick={() => setIsPdfModalOpen(true)}
+                      >
+                        <i className="bi bi-arrows-fullscreen"></i>
+                        <span>Pop-up / Vollbild öffnen</span>
+                      </button>
                     </div>
 
-                    <div
-                      className="p-2 text-center bg-white flex-grow-1 d-flex align-items-center justify-content-center position-relative"
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => setPreviewImage({ src: standard.graphicImage, title: standard.topic, subtitle: 'Klinische Praxis & Durchführung (Infografik)' })}
-                      title="Klicken für vergrößerte Pop-up-Ansicht"
-                    >
-                      <img
-                        src={standard.graphicImage}
-                        alt={`Klinische Grafik ${standard.shortTitle}`}
-                        className="clinical-picture-img"
-                      />
-                      <div className="position-absolute bottom-0 end-0 m-2 no-print">
-                        <span className="badge bg-dark bg-opacity-75 text-white rounded-pill px-2 py-1" style={{ fontSize: '0.7rem' }}>
-                          <i className="bi bi-zoom-in me-1"></i>Vergrößern
-                        </span>
-                      </div>
-                    </div>
+                    {/* Fallback image for html2pdf and print export */}
+                    <img
+                      src={standard.image}
+                      alt={`Illustration ${standard.shortTitle}`}
+                      className="clinical-picture-img print-only-preview d-none"
+                    />
                   </div>
                 </div>
-              </>
+              </div>
             ) : (
               /* First 4 Standards (Dekubitus, Sturz, Schmerz, Ernährung): Single clean clinical graphic with clear header & click-to-popup */
               <div className="col-12">
@@ -998,27 +1006,75 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
               </div>
             </div>
 
-            {/* The Scanner Code: Crisp Scannable Single QR Code */}
+            {/* The Scanner Code / Right Picture Container */}
             <div className="col-lg-5 col-md-6">
-              <div className="p-3 rounded-3 border bg-white h-100 text-center d-flex flex-column align-items-center justify-content-center">
-                <div className="small fw-bold text-uppercase text-secondary mb-1">
-                  <i className="bi bi-qr-code me-1 text-dark"></i> {standard.id === 'zvk' ? 'SOP & Checkliste scannen' : 'Schulungsvideo scannen'}
-                </div>
+              {standard.id === 'zvk' || standard.id === 'isolation' ? (
+                /* ZVK & Isolation: Display the official 'Klinische Praxis & Durchführung' infographic here with click-to-zoom */
+                <div className="p-3 rounded-4 border bg-white h-100 text-center d-flex flex-column align-items-center justify-content-between shadow-sm">
+                  <div className="d-flex justify-content-between align-items-center w-100 mb-2 border-bottom pb-2">
+                    <span className="fw-bold text-dark d-flex align-items-center gap-2" style={{ fontSize: '0.86rem' }}>
+                      <i className={`bi ${standard.id === 'isolation' ? 'bi-shield-check text-primary' : 'bi-heart-pulse-fill text-danger'} fs-5`}></i>
+                      <span>{standard.id === 'isolation' ? 'Klinische Hygiene-Praxis & Vorgehen' : 'Klinische Praxis & Durchführung'}</span>
+                    </span>
+                    <span className="badge bg-light text-secondary border px-2 py-1 small">
+                      <i className="bi bi-zoom-in me-1"></i>Vergrößern
+                    </span>
+                  </div>
 
-                {/* Single Scannable QR Code */}
-                <div className="p-2 bg-light rounded-3 border shadow-sm my-1">
-                  <QrCodeCanvas
-                    value={standard.videoUrl}
-                    size={135}
-                    color={standard.accentColor}
-                    className={`pocket-qr-${standard.id}`}
-                  />
-                </div>
+                  <div
+                    className="position-relative w-100 flex-grow-1 d-flex align-items-center justify-content-center bg-white rounded-3 p-2"
+                    style={{ cursor: 'pointer', minHeight: '260px' }}
+                    onClick={() => setPreviewImage({
+                      src: standard.graphicImage,
+                      title: standard.topic,
+                      subtitle: standard.id === 'isolation'
+                        ? 'Klinische Hygiene-Praxis & Vorgehen (Infografik)'
+                        : 'Klinische Praxis & Durchführung (Infografik)'
+                    })}
+                    title="Klicken für vergrößerte Pop-up-Ansicht"
+                  >
+                    <img
+                      src={standard.graphicImage}
+                      alt={standard.id === 'isolation' ? 'Klinische Hygiene-Praxis' : 'Klinische Praxis & Durchführung'}
+                      className="img-fluid rounded shadow-sm"
+                      style={{ maxHeight: '250px', width: 'auto', objectFit: 'contain' }}
+                    />
+                    <div className="position-absolute bottom-0 end-0 m-2 no-print">
+                      <span className="badge bg-dark bg-opacity-75 text-white rounded-pill px-3 py-1 shadow-sm" style={{ fontSize: '0.72rem' }}>
+                        <i className="bi bi-zoom-in me-1"></i>Bild vergrößern
+                      </span>
+                    </div>
+                  </div>
 
-                <div className="small text-muted font-monospace mt-1" style={{ fontSize: '0.72rem' }}>
-                  {standard.id === 'zvk' ? 'Kamera auf QR-Code richten • SOP & Leitfaden' : 'Kamera auf QR-Code richten • YouTube Video'}
+                  <div className="small text-muted mt-2 border-top pt-2 w-100" style={{ fontSize: '0.74rem' }}>
+                    <i className="bi bi-shield-check text-success me-1"></i>
+                    {standard.id === 'isolation'
+                      ? 'Hygienemaßnahmen • Vorgehen bei MRE, VRE, MRGN, MRSA & C. diff.'
+                      : 'Aseptische Durchführung • Checkliste Verbandswechsel & Spülen'}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                /* Other standards: Crisp Scannable Single QR Code */
+                <div className="p-3 rounded-3 border bg-white h-100 text-center d-flex flex-column align-items-center justify-content-center">
+                  <div className="small fw-bold text-uppercase text-secondary mb-1">
+                    <i className="bi bi-qr-code me-1 text-dark"></i> Schulungsvideo scannen
+                  </div>
+
+                  {/* Single Scannable QR Code */}
+                  <div className="p-2 bg-light rounded-3 border shadow-sm my-1">
+                    <QrCodeCanvas
+                      value={standard.videoUrl}
+                      size={135}
+                      color={standard.accentColor}
+                      className={`pocket-qr-${standard.id}`}
+                    />
+                  </div>
+
+                  <div className="small text-muted font-monospace mt-1" style={{ fontSize: '0.72rem' }}>
+                    Kamera auf QR-Code richten • YouTube Video
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -1029,49 +1085,59 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
           </div>
 
           {/* 6. Action Toolbar (Only on screen, ignored when exporting PDF / printing) */}
-          <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3 pt-3 border-top no-print" data-html2canvas-ignore="true">
-            <div className="d-flex flex-wrap gap-2">
-              <button
-                className="btn btn-primary btn-sm rounded-pill px-3 shadow-sm"
-                onClick={() => onDownloadPdf(standard, false)}
-                title="Pocketcard als PDF-Datei herunterladen"
-              >
-                <i className="bi bi-file-earmark-pdf-fill me-1"></i> Pocketcard als PDF herunterladen
-              </button>
+          <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mt-3 pt-3 border-top no-print" data-html2canvas-ignore="true">
+            {/* Primary Document Actions: Download PDF & Print grouped together */}
+            <div className="d-flex align-items-center gap-2">
+              <div className="btn-group shadow-sm rounded-pill overflow-hidden" role="group">
+                <button
+                  className="btn btn-primary btn-sm px-3 fw-semibold d-flex align-items-center gap-1"
+                  onClick={() => onDownloadPdf(standard, false)}
+                  title="Pocketcard als PDF-Datei herunterladen"
+                >
+                  <i className="bi bi-file-earmark-arrow-down-fill fs-6"></i>
+                  <span>PDF herunterladen</span>
+                </button>
+                <button
+                  className="btn btn-dark btn-sm px-3 fw-semibold d-flex align-items-center gap-1 border-start border-white border-opacity-25"
+                  onClick={() => window.print()}
+                  title="Drucken / Als PDF drucken"
+                >
+                  <i className="bi bi-printer-fill fs-6"></i>
+                  <span>Drucken</span>
+                </button>
+              </div>
+
               {standard.sopPdfUrl && (
                 <a
                   href={standard.sopPdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm"
+                  className="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center gap-1"
                   title="Vollständige 10-seitige Verfahrensanweisung (SOP) als Original-PDF öffnen"
                 >
-                  <i className="bi bi-file-earmark-pdf-fill me-1"></i> Original SOP PDF (10 Seiten)
+                  <i className="bi bi-file-pdf"></i>
+                  <span>Original SOP (10 S.)</span>
                 </a>
               )}
-              <button
-                className="btn btn-outline-dark btn-sm rounded-pill px-3"
-                onClick={() => window.print()}
-                title="Drucken / Als PDF drucken"
-              >
-                <i className="bi bi-printer me-1"></i> Drucken
-              </button>
             </div>
 
-            <div className="d-flex gap-2">
+            {/* Secondary Utilities: QR PNG & Link */}
+            <div className="d-flex align-items-center gap-2">
               <button
-                className="btn btn-outline-secondary btn-sm rounded-pill px-3"
+                className="btn btn-outline-secondary btn-sm rounded-pill px-3 d-flex align-items-center gap-1"
                 onClick={() => onDownloadQr(standard)}
                 title="QR-Code als Bilddatei speichern"
               >
-                <i className="bi bi-download me-1"></i> QR PNG
+                <i className="bi bi-qr-code"></i>
+                <span>QR PNG</span>
               </button>
               <button
-                className="btn btn-outline-secondary btn-sm rounded-pill px-3"
+                className="btn btn-outline-secondary btn-sm rounded-pill px-3 d-flex align-items-center gap-1"
                 onClick={() => onCopy(standard.videoUrl, 'Video Link')}
-                title="YouTube URL kopieren"
+                title="Link kopieren"
               >
-                <i className="bi bi-link-45deg me-1"></i> Link
+                <i className="bi bi-link-45deg"></i>
+                <span>Link</span>
               </button>
             </div>
           </div>
@@ -1163,7 +1229,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
               {/* Modal Body with Scrolling PDF Viewport */}
               <div className="modal-body p-0 flex-grow-1 bg-secondary bg-opacity-10 position-relative d-flex flex-column overflow-hidden">
                 <iframe
-                  src={`${pdfUrl}#toolbar=1&navpanes=1&scrollbar=1&view=FitH`}
+                  src={`${pdfBaseUrl}#page=${standard.pdfPage || 1}&toolbar=1&navpanes=1&scrollbar=1&view=FitH`}
                   title={`PDF Dokument ${standard.shortTitle}`}
                   className="w-100 h-100 border-0 flex-grow-1"
                   style={{ minHeight: '100%', overflowY: 'auto' }}
@@ -1444,34 +1510,46 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
     <div>
       {/* Top Breadcrumb & Switcher */}
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 no-print">
-        <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-3">
-          <i className="bi bi-grid me-1"></i> Alle 4 Kacheln
+        <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center gap-1">
+          <i className="bi bi-grid-fill"></i>
+          <span>Alle 6 Kacheln</span>
         </a>
 
-        {/* Quick Switch to the other 3 standards */}
+        {/* Quick Switch to the other standards & Grouped Actions */}
         <div className="d-flex flex-wrap gap-2 align-items-center">
-          {otherStandards.map(s => (
+          <div className="d-none d-lg-flex flex-wrap gap-1 align-items-center me-2">
+            {otherStandards.map(s => (
+              <button
+                key={s.id}
+                className="btn btn-light btn-sm rounded-pill border px-2 py-1"
+                style={{ fontSize: '0.78rem' }}
+                onClick={() => onNavigate(s.id)}
+              >
+                <i className={`bi ${s.icon} me-1`} style={{ color: s.accentColor }}></i>
+                {s.shortTitle}
+              </button>
+            ))}
+          </div>
+
+          {/* Grouped PDF & Print Button Pill */}
+          <div className="btn-group shadow-sm rounded-pill overflow-hidden" role="group">
             <button
-              key={s.id}
-              className="btn btn-light btn-sm rounded-pill border"
-              onClick={() => onNavigate(s.id)}
+              className="btn btn-primary btn-sm px-3 fw-semibold d-flex align-items-center gap-1"
+              onClick={() => downloadPdf(standard, activeTab === 'slide')}
+              title="Aktuelle Ansicht als PDF-Dokument herunterladen"
             >
-              <i className={`bi ${s.icon} me-1`} style={{ color: s.accentColor }}></i>
-              {s.shortTitle}
+              <i className="bi bi-file-earmark-arrow-down-fill"></i>
+              <span>PDF herunterladen</span>
             </button>
-          ))}
-          <button
-            className="btn btn-primary btn-sm rounded-pill px-3 shadow-sm"
-            onClick={() => downloadPdf(standard, activeTab === 'slide')}
-          >
-            <i className="bi bi-file-earmark-pdf-fill me-1"></i> PDF herunterladen
-          </button>
-          <button
-            className="btn btn-outline-dark btn-sm rounded-pill px-3"
-            onClick={() => window.print()}
-          >
-            <i className="bi bi-printer me-1"></i> Drucken
-          </button>
+            <button
+              className="btn btn-dark btn-sm px-3 fw-semibold d-flex align-items-center gap-1 border-start border-white border-opacity-25"
+              onClick={() => window.print()}
+              title="Drucken / Als PDF drucken"
+            >
+              <i className="bi bi-printer-fill"></i>
+              <span>Drucken</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1835,9 +1913,300 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
   );
 }
 
+// -------------------------------------------------------------
+// Component: Magic Card (ATM-sized Universal Pocketcard)
+// -------------------------------------------------------------
+function MagicCardView({ standards, onSelectStandard, showToast }) {
+  const list = Object.values(standards);
+  const cardUrl = (typeof window !== 'undefined' && window.location)
+    ? `${window.location.origin}${window.location.pathname}#/quick-hub`
+    : 'http://localhost:3000/#/quick-hub';
+
+  const downloadQrImage = () => {
+    const container = document.querySelector('#magic-qr-container');
+    if (!container) return;
+    const img = container.querySelector('img');
+    const canvas = container.querySelector('canvas');
+    let url = null;
+    if (img && img.src && img.src.startsWith('data:')) {
+      url = img.src;
+    } else if (canvas) {
+      url = canvas.toDataURL('image/png');
+    }
+    if (!url) return;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'MagicCard-QR-Code-UMF.png';
+    a.click();
+    showToast('Magic Card QR-Code heruntergeladen!');
+  };
+
+  const downloadPdf = () => {
+    const element = document.getElementById('magic-card-printable');
+    if (!element) {
+      window.print();
+      return;
+    }
+    showToast('Magic Card PDF wird erstellt...');
+    if (window.html2pdf) {
+      const opt = {
+        margin: [10, 10, 10, 10],
+        filename: 'UMF-MagicCard-Pocketcard.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 3, useCORS: true, logging: false },
+        jsPDF: {
+          unit: 'mm',
+          format: 'a4',
+          orientation: 'portrait'
+        }
+      };
+      window.html2pdf()
+        .set(opt)
+        .from(element)
+        .save()
+        .then(() => {
+          showToast('Magic Card PDF erfolgreich heruntergeladen!');
+        })
+        .catch((err) => {
+          console.error('PDF error:', err);
+          window.print();
+        });
+    } else {
+      window.print();
+    }
+  };
+
+  return (
+    <div className="py-2">
+      {/* Action Buttons Toolbar */}
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 no-print">
+        <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center gap-1">
+          <i className="bi bi-arrow-left"></i>
+          <span>Zurück zur Übersicht</span>
+        </a>
+
+        <div className="d-flex flex-wrap align-items-center gap-2">
+          {/* Grouped PDF download & Print actions */}
+          <div className="btn-group shadow-sm rounded-pill overflow-hidden" role="group">
+            <button
+              className="btn btn-primary btn-sm px-3 fw-semibold d-flex align-items-center gap-1"
+              onClick={downloadPdf}
+              title="Magic Card als PDF-Dokument herunterladen"
+            >
+              <i className="bi bi-file-earmark-arrow-down-fill"></i>
+              <span>PDF herunterladen</span>
+            </button>
+            <button
+              className="btn btn-dark btn-sm px-3 fw-semibold d-flex align-items-center gap-1 border-start border-white border-opacity-25"
+              onClick={() => window.print()}
+              title="Magic Card direkt drucken"
+            >
+              <i className="bi bi-printer-fill"></i>
+              <span>Drucken</span>
+            </button>
+          </div>
+
+          <button className="btn btn-outline-secondary rounded-pill px-3 shadow-sm btn-sm d-flex align-items-center gap-1" onClick={downloadQrImage}>
+            <i className="bi bi-qr-code"></i>
+            <span>QR PNG</span>
+          </button>
+          <button
+            className="btn btn-warning text-dark fw-bold rounded-pill px-3 shadow-sm btn-sm d-flex align-items-center gap-1"
+            onClick={() => onSelectStandard('quick-hub')}
+          >
+            <i className="bi bi-box-arrow-up-right"></i>
+            <span>Zielseite testen</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Centered Preview Container */}
+      <div className="d-flex flex-column align-items-center justify-content-center my-3">
+        <div id="magic-card-printable" className="magic-card-wrapper p-3">
+          {/* THE ATM-SIZED MAGIC CARD */}
+          <div className="magic-atm-card shadow-lg rounded-4 overflow-hidden position-relative">
+            {/* Top Spectrum Header Line */}
+            <div className="magic-spectrum-bar d-flex">
+              <div style={{ flex: 1, backgroundColor: 'var(--dekubitus-color)' }}></div>
+              <div style={{ flex: 1, backgroundColor: 'var(--sturz-color)' }}></div>
+              <div style={{ flex: 1, backgroundColor: 'var(--schmerz-color)' }}></div>
+              <div style={{ flex: 1, backgroundColor: 'var(--ernaehrung-color)' }}></div>
+              <div style={{ flex: 1, backgroundColor: 'var(--isolation-color)' }}></div>
+              <div style={{ flex: 1, backgroundColor: 'var(--zvk-color)' }}></div>
+            </div>
+
+            {/* Card Header */}
+            <div className="magic-card-header d-flex align-items-center justify-content-between px-3 py-2">
+              <div className="d-flex align-items-center gap-2">
+                <div className="bg-white rounded px-1 py-0 shadow-sm d-flex align-items-center">
+                  <img src="assets/umf-logo.jpg" alt="UMF" height="24" className="rounded" />
+                </div>
+                <div>
+                  <div className="magic-hospital-title fw-bold text-white lh-1">
+                    UNIVERSITÄTSMEDIZIN FRANKFURT
+                  </div>
+                  <div className="magic-hospital-sub text-white-50">
+                    Digitale Pflege-Pocketcard
+                  </div>
+                </div>
+              </div>
+
+              <div className="badge bg-white bg-opacity-25 text-white fw-bold px-2 py-1 rounded-pill" style={{ fontSize: '0.62rem' }}>
+                <i className="bi bi-stars text-warning me-1"></i> MAGIC CARD
+              </div>
+            </div>
+
+            {/* Card Body: Left Column (6 Standards with Icons) + Right Column (Single QR Code) */}
+            <div className="magic-card-body d-flex p-3 gap-3 align-items-center bg-white">
+              {/* Left Column: 6 Tiles List */}
+              <div className="magic-tiles-list flex-grow-1">
+                <div className="magic-list-heading small fw-bold text-uppercase text-secondary mb-2" style={{ fontSize: '0.66rem', letterSpacing: '0.5px' }}>
+                  6 Klinische Pflegestandards:
+                </div>
+                <div className="d-flex flex-column gap-1">
+                  {list.map((std) => (
+                    <div
+                      key={std.id}
+                      className="magic-tile-item d-flex align-items-center gap-2 px-2 py-1 rounded-2"
+                      style={{
+                        backgroundColor: '#f8fafc',
+                        borderLeft: `3px solid ${std.accentColor}`
+                      }}
+                    >
+                      <i className={`bi ${std.icon}`} style={{ color: std.accentColor, fontSize: '0.85rem' }}></i>
+                      <span className="fw-bold text-dark text-truncate" style={{ fontSize: '0.74rem' }}>
+                        {std.shortTitle}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right Column: Single High-Res Scannable QR Code */}
+              <div className="magic-qr-box d-flex flex-column align-items-center justify-content-center text-center p-2 rounded-3" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <div id="magic-qr-container" className="p-1 bg-white rounded-2 shadow-sm border">
+                  <QrCodeCanvas value={cardUrl} size={118} color="#00273d" />
+                </div>
+                <div className="fw-bolder text-primary mt-1 lh-1" style={{ fontSize: '0.68rem', letterSpacing: '0.3px' }}>
+                  SCAN TO OPEN
+                </div>
+                <div className="text-muted" style={{ fontSize: '0.58rem' }}>
+                  Alle 6 Standards
+                </div>
+              </div>
+            </div>
+
+            {/* Card Footer Bar */}
+            <div className="magic-card-footer px-3 py-1 d-flex justify-content-between align-items-center text-white" style={{ background: '#00273d', fontSize: '0.62rem' }}>
+              <span className="text-white-50">Klinikum der Goethe-Universität</span>
+              <span className="fw-semibold text-white">roXtra QM-System &bull; Pflegedirektion</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
+// Component: Quick Hub (Target Landing Page Opened by Magic Card Scan)
+// -------------------------------------------------------------
+function QuickHubView({ standards, onSelectStandard }) {
+  const list = Object.values(standards);
+
+  return (
+    <div className="py-3">
+      {/* Header Banner */}
+      <div
+        className="card border-0 shadow-lg rounded-4 p-4 p-md-5 mb-4 text-white position-relative overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, #00273d 0%, #004767 45%, #0284c7 100%)',
+          boxShadow: '0 12px 35px rgba(0, 39, 61, 0.25)'
+        }}
+      >
+        <div className="position-relative d-flex flex-wrap justify-content-between align-items-center gap-3" style={{ zIndex: 2 }}>
+          <div>
+            <div className="d-flex align-items-center gap-2 mb-2">
+              <span className="badge bg-warning text-dark fw-bold px-3 py-1 rounded-pill shadow-sm" style={{ fontSize: '0.74rem' }}>
+                <i className="bi bi-stars me-1"></i> Magic Card Scan
+              </span>
+              <span className="badge bg-white bg-opacity-25 text-white fw-medium px-3 py-1 rounded-pill shadow-sm" style={{ fontSize: '0.74rem' }}>
+                Universitätsmedizin Frankfurt
+              </span>
+            </div>
+            <h1 className="fw-bold mb-2 text-white" style={{ letterSpacing: '-0.5px' }}>
+              Klinischer Schnellzugriff
+            </h1>
+            <p className="text-white text-opacity-80 mb-0 fs-6" style={{ maxWidth: '650px', lineHeight: '1.5' }}>
+              Tippen Sie auf einen der 6 Standards, um direkt zur entsprechenden Pocketcard, den Verfahrensanweisungen (SOP) und den Handlungsschritten zu gelangen:
+            </p>
+          </div>
+
+          <a href="#/" className="btn btn-outline-light rounded-pill px-3 py-2 btn-sm fw-semibold">
+            <i className="bi bi-house-door-fill me-1"></i> Zur Hauptseite
+          </a>
+        </div>
+      </div>
+
+      {/* 6 Beautiful, Clickable Labels showing Tile Names with Icons & Colors */}
+      <div className="row g-3 g-md-4">
+        {list.map((std) => (
+          <div key={std.id} className="col-12 col-md-6 col-lg-4">
+            <div
+              className="quick-hub-label-card p-3 p-md-4 rounded-4 shadow-sm border-0 h-100 d-flex align-items-center gap-3"
+              onClick={() => onSelectStandard(std.id)}
+              style={{
+                cursor: 'pointer',
+                background: '#ffffff',
+                borderLeft: `6px solid ${std.accentColor}`,
+                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}
+            >
+              <div
+                className="rounded-3 d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0"
+                style={{
+                  width: '54px',
+                  height: '54px',
+                  background: std.bannerGradient || std.accentColor
+                }}
+              >
+                <i className={`bi ${std.icon} fs-3`}></i>
+              </div>
+
+              <div className="flex-grow-1 overflow-hidden">
+                <span
+                  className="badge px-2 py-1 rounded-pill text-uppercase fw-bold mb-1"
+                  style={{
+                    fontSize: '0.68rem',
+                    backgroundColor: std.badgeBg || 'rgba(0, 71, 103, 0.08)',
+                    color: std.accentColor
+                  }}
+                >
+                  {std.id === 'zvk' || std.id === 'isolation' ? 'SOP & Leitfaden' : 'Expertenstandard'}
+                </span>
+                <h5 className="fw-bold text-dark mb-0 text-truncate" style={{ fontSize: '1.05rem' }}>
+                  {std.shortTitle}
+                </h5>
+                <div className="small text-muted text-truncate mt-1" style={{ fontSize: '0.78rem' }}>
+                  roXtra ID: {std.roXtraIds.join(', ')}
+                </div>
+              </div>
+
+              <div className="text-secondary ps-2">
+                <i className="bi bi-chevron-right fs-5 text-muted"></i>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // Mount into DOM
 const rootElement = document.getElementById('root');
 if (rootElement) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(<App />);
 }
+

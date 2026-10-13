@@ -500,7 +500,128 @@ body {
 .footer-category-pill.pill-ernaehrung:hover { background: var(--ernaehrung-color); border-color: var(--ernaehrung-color); }
 .footer-category-pill.pill-isolation:hover { background: var(--isolation-color); border-color: var(--isolation-color); }
 .footer-category-pill.pill-zvk:hover { background: var(--zvk-color); border-color: var(--zvk-color); }
-.footer-category-pill.pill-hub:hover { background: #0ea5e9; border-color: #0ea5e9; }
+.footer-category-pill.pill-magic:hover {
+  background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+  border-color: #f59e0b;
+  color: #000000 !important;
+}
+
+/* Magic Button Glow in Top Navigation */
+.magic-btn-glow {
+  transition: all 0.25s ease;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px solid #f59e0b;
+}
+
+.magic-btn-glow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4) !important;
+  background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+}
+
+/* =========================================================
+   MAGIC CARD (ATM-SIZED POCKETCARD) SPECIFIC STYLING
+   Standard ID-1 ISO 7810 ATM Card Ratio: 85.6mm x 53.98mm (~1.586 aspect ratio)
+   ========================================================= */
+.magic-card-wrapper {
+  perspective: 1000px;
+}
+
+.magic-atm-card {
+  width: 440px;
+  max-width: 100%;
+  aspect-ratio: 1.586 / 1;
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 20px 40px -15px rgba(0, 39, 61, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 576px) {
+  .magic-atm-card {
+    width: 350px;
+    aspect-ratio: auto;
+  }
+}
+
+.magic-spectrum-bar {
+  height: 4px;
+}
+
+.magic-card-header {
+  background: linear-gradient(135deg, #00273d 0%, #004767 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.magic-hospital-title {
+  font-size: 0.65rem;
+  letter-spacing: 0.4px;
+}
+
+.magic-hospital-sub {
+  font-size: 0.54rem;
+}
+
+.magic-card-body {
+  flex: 1;
+}
+
+.magic-tile-item {
+  transition: transform 0.15s ease;
+}
+
+.magic-tile-item:hover {
+  transform: translateX(2px);
+  background: #f1f5f9 !important;
+}
+
+/* =========================================================
+   QUICK HUB: 6 CLICKABLE LABELS AFTER SCANNING MAGIC CARD
+   ========================================================= */
+.quick-hub-label-card {
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-hub-label-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+}
+
+.quick-hub-label-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px -4px rgba(0, 39, 61, 0.15) !important;
+}
+
+.quick-hub-label-card:hover .bi-chevron-right {
+  color: var(--umf-navy) !important;
+  transform: translateX(4px);
+  transition: transform 0.2s ease;
+}
+
+@media print {
+  .magic-card-wrapper {
+    padding: 0 !important;
+    margin: 0 auto !important;
+  }
+  .magic-atm-card {
+    width: 85.6mm !important;
+    height: 54mm !important;
+    border: 1px solid #000000 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+  }
+}
 
 .footer-status-card {
   background: rgba(255, 255, 255, 0.05);
