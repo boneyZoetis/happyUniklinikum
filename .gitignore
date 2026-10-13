@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+.firebase/
 
 # OS / Temporary files
 .DS_Store
