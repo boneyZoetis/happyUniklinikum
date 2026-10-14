@@ -366,21 +366,48 @@ body {
   border: 0;
 }
 
-/* Navigation Links */
+/* Navigation Links & Touch-Friendly Horizontal Scroll Container */
+.nav-standards-scroll {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  padding: 0.15rem 0.2rem;
+  max-width: 100%;
+}
+.nav-standards-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
 .nav-standard-link {
   font-weight: 600;
-  font-size: 0.88rem;
-  padding: 0.45rem 0.9rem;
+  font-size: 0.86rem;
+  padding: 0.45rem 0.85rem;
+  min-height: 38px;
   border-radius: 50rem;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
   text-decoration: none;
   transition: all 0.15s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.nav-standard-link:active {
+  transform: scale(0.96);
 }
 
 .nav-standard-link.active {
   color: #ffffff !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 }
 
 .nav-standard-link.dekubitus.active { background: var(--dekubitus-color); }
@@ -474,18 +501,25 @@ body {
 }
 
 .footer-category-pill {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  padding: 0.35rem 0.8rem;
+  padding: 0.4rem 0.85rem;
+  min-height: 36px;
   border-radius: 50rem;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   color: #ffffff;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
+  touch-action: manipulation;
+}
+
+.footer-category-pill:active {
+  transform: scale(0.96);
 }
 
 .footer-category-pill:hover {
@@ -647,5 +681,205 @@ body {
 .hover-white:hover {
   color: #ffffff !important;
   text-decoration: underline !important;
+}
+
+/* =========================================================
+   MOBILE ORIENTATION, TOUCH ERGONOMICS & RESPONSIVE TECHNOLOGY
+   ========================================================= */
+
+/* Safe Area Insets for Modern Mobile Phones (Notch, Dynamic Island, Home Indicator) */
+body {
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
+  -webkit-overflow-scrolling: touch;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Touch Friendly Elements & Immediate Tactile Press Feedback */
+button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, .magic-tile-item {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active, button:not(.btn-close):active, a.btn:active, .quick-hub-label-card:active {
+  transform: scale(0.97);
+  transition: transform 0.08s ease-in-out;
+}
+
+/* Touch-optimized button utility */
+.btn-touch {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Full-width Touch Segmented Control for Mobile */
+.mobile-segmented-control {
+  display: flex;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 50rem;
+  padding: 0.25rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.mobile-segmented-control .btn {
+  flex: 1 1 0;
+  border-radius: 50rem !important;
+  min-height: 40px;
+  font-weight: 600;
+  font-size: 0.84rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+/* Portrait Orientation: Optimized for 1-hand mobile phone navigation */
+@media (max-width: 576px) and (orientation: portrait), (orientation: portrait) and (max-width: 768px) {
+  .container {
+    padding-left: 0.85rem !important;
+    padding-right: 0.85rem !important;
+  }
+
+  .navbar-custom {
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.35rem !important;
+  }
+
+  .navbar-custom .brand-title {
+    font-size: 1rem !important;
+    letter-spacing: -0.3px;
+  }
+
+  .nav-standard-link {
+    padding: 0.35rem 0.75rem !important;
+    font-size: 0.8rem !important;
+    min-height: 38px !important;
+  }
+
+  .quick-hub-label-card {
+    padding: 0.85rem 1rem !important;
+    min-height: 72px;
+  }
+
+  .quick-hub-label-card h5 {
+    font-size: 1rem !important;
+  }
+
+  .clinical-picture-img {
+    max-height: 300px !important;
+  }
+
+  /* Card padding on mobile phones */
+  .standard-tile .p-4 {
+    padding: 1rem !important;
+  }
+
+  .pocketcard-printable-view .p-4 {
+    padding: 0.9rem !important;
+  }
+
+  .pocketcard-print-header {
+    padding: 0.75rem 0.9rem !important;
+  }
+
+  /* Fluid ATM Magic Card on Narrow Screens */
+  .magic-atm-card {
+    width: 100% !important;
+    max-width: 360px !important;
+    aspect-ratio: auto !important;
+  }
+
+  /* Action Toolbars Stack Nicely on Mobile */
+  .mobile-action-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .mobile-action-group .btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* Fullscreen Modal on Small Screens */
+  .modal-dialog {
+    margin: 0.5rem !important;
+    max-width: calc(100vw - 1rem) !important;
+  }
+
+  .modal-dialog.modal-fullscreen-mobile {
+    margin: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh !important;
+  }
+
+  .modal-dialog.modal-fullscreen-mobile .modal-content {
+    height: 100vh !important;
+    border-radius: 0 !important;
+  }
+}
+
+/* Landscape Orientation: Maximizes vertical viewing space on phones turned sideways */
+@media (max-height: 520px) and (orientation: landscape) {
+  /* Slim down sticky navbar so it doesn't cover half the screen */
+  .navbar-custom {
+    padding-top: 0.2rem !important;
+    padding-bottom: 0.2rem !important;
+  }
+
+  .navbar-custom .brand-title {
+    font-size: 0.92rem !important;
+  }
+
+  .nav-standard-link {
+    padding: 0.2rem 0.55rem !important;
+    font-size: 0.76rem !important;
+    min-height: 32px !important;
+  }
+
+  .hospital-banner {
+    display: none !important; /* Hide hospital banner in phone landscape to save vertical height */
+  }
+
+  /* Quick Hub in mobile landscape: sleek 2-column cards */
+  .quick-hub-label-card {
+    padding: 0.65rem 0.85rem !important;
+    min-height: 60px;
+  }
+
+  .quick-hub-label-card h5 {
+    font-size: 0.92rem !important;
+  }
+
+  .quick-hub-label-card .rounded-3 {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .quick-hub-label-card .rounded-3 i {
+    font-size: 1.25rem !important;
+  }
+
+  /* Detail picture cards in landscape */
+  .clinical-picture-img {
+    max-height: 55vh !important;
+  }
+
+  .modal-dialog {
+    margin: 0.25rem auto !important;
+  }
+
+  .modal-body img {
+    max-height: 65vh !important;
+  }
 }
 

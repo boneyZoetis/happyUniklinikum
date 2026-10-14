@@ -178,17 +178,17 @@ function ScanModal({ isOpen, onClose, onSelectStandard, showToast }) {
     <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(15, 23, 42, 0.65)', zIndex: 1060 }}>
       <div className="modal-dialog modal-dialog-centered modal-lg">
         <div className="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-          <div className="modal-header bg-dark text-white py-3 px-4">
-            <h5 className="modal-title fw-bold d-flex align-items-center gap-2 mb-0">
+          <div className="modal-header bg-dark text-white py-3 px-3 px-sm-4">
+            <h5 className="modal-title fw-bold d-flex align-items-center gap-2 mb-0" style={{ fontSize: '1.05rem' }}>
               <i className="bi bi-qr-code-scan text-info"></i>
-              QR-Code scannen &bull; Foto / SOP erkennen
+              <span>QR scannen &bull; Foto / SOP erkennen</span>
             </h5>
             <button type="button" className="btn-close btn-close-white" onClick={onClose}></button>
           </div>
-          <div className="modal-body p-4 bg-light">
-            <div className="row g-4">
+          <div className="modal-body p-3 p-sm-4 bg-light">
+            <div className="row g-3 g-sm-4">
               {/* Option 1: Live Camera Scanner */}
-              <div className="col-md-6">
+              <div className="col-12 col-md-6">
                 <div className="p-3 bg-white rounded-3 border h-100 text-center d-flex flex-column justify-content-between">
                   <div className="fw-bold mb-2 text-dark">
                     <i className="bi bi-camera-fill me-1 text-primary"></i> Live Kamera Scanner
@@ -206,12 +206,14 @@ function ScanModal({ isOpen, onClose, onSelectStandard, showToast }) {
                   )}
                   <div>
                     {!cameraActive ? (
-                      <button className="btn btn-outline-primary btn-sm rounded-pill w-100" onClick={handleStartCamera}>
-                        <i className="bi bi-camera-video me-1"></i> Kamera starten
+                      <button className="btn btn-outline-primary btn-sm rounded-pill w-100 d-flex align-items-center justify-content-center gap-1.5 fw-semibold" style={{ minHeight: '44px' }} onClick={handleStartCamera}>
+                        <i className="bi bi-camera-video"></i>
+                        <span>Kamera starten</span>
                       </button>
                     ) : (
-                      <button className="btn btn-outline-danger btn-sm rounded-pill w-100" onClick={() => { if (readerRef.current) readerRef.current.reset(); setCameraActive(false); }}>
-                        <i className="bi bi-stop-circle me-1"></i> Kamera stoppen
+                      <button className="btn btn-outline-danger btn-sm rounded-pill w-100 d-flex align-items-center justify-content-center gap-1.5 fw-semibold" style={{ minHeight: '44px' }} onClick={() => { if (readerRef.current) readerRef.current.reset(); setCameraActive(false); }}>
+                        <i className="bi bi-stop-circle"></i>
+                        <span>Kamera stoppen</span>
                       </button>
                     )}
                   </div>
@@ -219,7 +221,7 @@ function ScanModal({ isOpen, onClose, onSelectStandard, showToast }) {
               </div>
 
               {/* Option 2: Upload Photo / Poster */}
-              <div className="col-md-6">
+              <div className="col-12 col-md-6">
                 <div className="p-3 bg-white rounded-3 border h-100 d-flex flex-column justify-content-between">
                   <div>
                     <div className="fw-bold mb-2 text-dark">
@@ -231,22 +233,24 @@ function ScanModal({ isOpen, onClose, onSelectStandard, showToast }) {
                     <input
                       type="file"
                       accept="image/*"
-                      className="form-control form-control-sm mb-3"
+                      className="form-control mb-3"
+                      style={{ minHeight: '42px' }}
                       onChange={handleFileUpload}
                     />
 
                     {/* Quick roXtra Search */}
                     <div className="border-top pt-2">
                       <div className="fw-bold small mb-2 text-dark">Oder roXtra ID / Suchbegriff eingeben:</div>
-                      <form onSubmit={handleManualSubmit} className="input-group input-group-sm">
+                      <form onSubmit={handleManualSubmit} className="input-group">
                         <input
                           type="text"
                           className="form-control"
+                          style={{ minHeight: '42px' }}
                           placeholder="z. B. 391904, 484866, ZVK"
                           value={manualInput}
                           onChange={(e) => setManualInput(e.target.value)}
                         />
-                        <button type="submit" className="btn btn-dark">
+                        <button type="submit" className="btn btn-dark fw-semibold px-3" style={{ minHeight: '42px' }}>
                           Öffnen
                         </button>
                       </form>
@@ -259,9 +263,9 @@ function ScanModal({ isOpen, onClose, onSelectStandard, showToast }) {
               </div>
             </div>
           </div>
-          <div className="modal-footer bg-white py-2 px-4 justify-content-between">
-            <small className="text-muted">Universitätsmedizin Frankfurt &bull; OmniScan Information System</small>
-            <button type="button" className="btn btn-sm btn-secondary rounded-pill px-3" onClick={onClose}>
+          <div className="modal-footer bg-white py-2 px-3 px-sm-4 justify-content-between">
+            <small className="text-muted d-none d-sm-inline">Universitätsmedizin Frankfurt &bull; OmniScan Information System</small>
+            <button type="button" className="btn btn-sm btn-secondary rounded-pill px-4" style={{ minHeight: '38px' }} onClick={onClose}>
               Schließen
             </button>
           </div>
@@ -324,6 +328,41 @@ function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  // Mobile Device & Orientation Technology: Real-time listener for portrait & landscape
+  const [deviceOrientation, setDeviceOrientation] = useState(
+    typeof window !== 'undefined' && window.innerWidth > window.innerHeight ? 'landscape' : 'portrait'
+  );
+
+  useEffect(() => {
+    const handleOrientation = () => {
+      const isLandscape = window.innerWidth > window.innerHeight;
+      const orient = isLandscape ? 'landscape' : 'portrait';
+      setDeviceOrientation(orient);
+      if (typeof document !== 'undefined' && document.body) {
+        document.body.classList.remove('orientation-portrait', 'orientation-landscape');
+        document.body.classList.add(`orientation-${orient}`);
+      }
+    };
+
+    handleOrientation();
+    window.addEventListener('resize', handleOrientation);
+    window.addEventListener('orientationchange', handleOrientation);
+    if (window.screen && window.screen.orientation) {
+      try {
+        window.screen.orientation.addEventListener('change', handleOrientation);
+      } catch (e) {}
+    }
+    return () => {
+      window.removeEventListener('resize', handleOrientation);
+      window.removeEventListener('orientationchange', handleOrientation);
+      if (window.screen && window.screen.orientation) {
+        try {
+          window.screen.orientation.removeEventListener('change', handleOrientation);
+        } catch (e) {}
+      }
+    };
+  }, []);
+
   const navigateTo = (route) => {
     window.location.hash = `#/${route}`;
   };
@@ -352,11 +391,11 @@ function App() {
       {currentRoute !== 'quick-hub' && (
         <div className="hospital-banner shadow-sm">
           <div className="container d-flex align-items-center justify-content-between py-1">
-            <div className="d-flex align-items-center gap-3">
+            <div className="d-flex align-items-center gap-2 gap-sm-3">
               <a href="#/" className="text-decoration-none d-flex align-items-center bg-white rounded-3 p-1 shadow-sm border border-light">
-                <img src="assets/umf-logo.jpg" alt="Universitätsmedizin Frankfurt" height="42" className="rounded" />
+                <img src="assets/umf-logo.jpg" alt="Universitätsmedizin Frankfurt" height="34" className="rounded" style={{ maxHeight: '38px' }} />
               </a>
-              <div className="border-start border-2 ps-3 d-none d-md-block" style={{ borderColor: 'var(--umf-navy)' }}>
+              <div className="border-start border-2 ps-2 ps-sm-3 d-none d-md-block" style={{ borderColor: 'var(--umf-navy)' }}>
                 <div className="fw-bolder text-dark" style={{ letterSpacing: '0.6px', fontSize: '0.92rem' }}>
                   UNIVERSITÄTSMEDIZIN FRANKFURT
                 </div>
@@ -367,9 +406,10 @@ function App() {
               </div>
             </div>
 
-            <div className="d-flex align-items-center gap-2">
+            <div className="d-flex align-items-center gap-1.5 gap-sm-2">
               <button
-                className={`btn btn-sm ${currentRoute === 'magic-card' ? 'btn-warning text-dark fw-bold' : 'btn-outline-warning text-dark fw-bold'} rounded-pill px-3 shadow-sm d-flex align-items-center gap-1 magic-btn-glow`}
+                className={`btn btn-sm ${currentRoute === 'magic-card' ? 'btn-warning text-dark fw-bold' : 'btn-outline-warning text-dark fw-bold'} rounded-pill px-2.5 px-sm-3 py-1.5 shadow-sm d-flex align-items-center gap-1 magic-btn-glow`}
+                style={{ minHeight: '38px', fontSize: '0.82rem' }}
                 onClick={() => navigateTo('magic-card')}
                 title="Kompakte ATM-Pocketcard mit allen 6 Standards und QR-Code"
               >
@@ -377,10 +417,14 @@ function App() {
                 <span>Magic Card</span>
               </button>
               <button
-                className={`btn btn-sm ${currentRoute === 'qrcodes' ? 'btn-primary text-white' : 'btn-outline-primary'} rounded-pill px-3 shadow-sm fw-semibold`}
+                className={`btn btn-sm ${currentRoute === 'qrcodes' ? 'btn-primary text-white' : 'btn-outline-primary'} rounded-pill px-2.5 px-sm-3 py-1.5 shadow-sm fw-semibold d-flex align-items-center gap-1`}
+                style={{ minHeight: '38px', fontSize: '0.82rem' }}
                 onClick={() => navigateTo('qrcodes')}
+                title="Alle 6 Pocketcards anzeigen"
               >
-                <i className="bi bi-collection me-1"></i> Alle Pocketcards
+                <i className="bi bi-collection"></i>
+                <span className="d-none d-sm-inline">Alle Pocketcards</span>
+                <span className="d-inline d-sm-none">Karten</span>
               </button>
             </div>
           </div>
@@ -388,15 +432,41 @@ function App() {
       )}
 
       {/* Main Menu Bar with Clinical Category Colors - Always visible on quick-hub */}
-      <nav className="navbar navbar-expand-lg navbar-custom sticky-top shadow-sm">
-        <div className="container py-1">
-          <a className="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="#/">
-            <span className="brand-dot"></span>
-            <span className="brand-title fs-5">UMF Expertenstandards</span>
-          </a>
+      <nav className="navbar navbar-expand-lg navbar-custom sticky-top shadow-sm py-1">
+        <div className="container d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center justify-content-between gap-1 gap-lg-2 py-0">
+          {/* Top Row on Mobile: Brand Title on Left, Quick Scanner on Right */}
+          <div className="d-flex align-items-center justify-content-between w-100 w-lg-auto">
+            <a className="navbar-brand d-flex align-items-center gap-2 text-decoration-none py-1 m-0" href="#/">
+              <span className="brand-dot"></span>
+              <span className="brand-title fs-5">UMF Expertenstandards</span>
+            </a>
 
-          {/* Direct Menu Links with Icons & Category Badges */}
-          <div className="d-flex flex-wrap gap-1 align-items-center">
+            {/* Mobile Quick Action Buttons (Scan & Overview) */}
+            <div className="d-flex d-lg-none align-items-center gap-1">
+              <button
+                className="btn btn-sm btn-outline-primary rounded-pill px-2.5 py-1 d-flex align-items-center gap-1 shadow-sm"
+                style={{ minHeight: '34px', fontSize: '0.78rem' }}
+                onClick={() => setIsScanModalOpen(true)}
+                title="QR-Code scannen oder roXtra suchen"
+              >
+                <i className="bi bi-qr-code-scan"></i>
+                <span>Scan</span>
+              </button>
+              {currentRoute !== 'home' && (
+                <a
+                  href="#/"
+                  className="btn btn-sm btn-light border rounded-pill px-2 py-1 text-secondary shadow-sm d-flex align-items-center"
+                  style={{ minHeight: '34px', fontSize: '0.78rem' }}
+                  title="Zur Hauptübersicht"
+                >
+                  <i className="bi bi-house-door-fill"></i>
+                </a>
+              )}
+            </div>
+          </div>
+
+          {/* Horizontally Scrollable Category Ribbon on Mobile, Inline Pills on Desktop */}
+          <div className="nav-standards-scroll w-100 w-lg-auto">
             <a
               href="#/dekubitus"
               className={`nav-standard-link dekubitus ${currentRoute === 'dekubitus' ? 'active' : ''}`}
@@ -663,28 +733,50 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
     <div>
       {/* Hero Header Banner */}
       <div
-        className="card border-0 shadow-lg rounded-4 p-4 p-md-5 mb-4 text-white position-relative overflow-hidden"
+        className="card border-0 shadow-lg rounded-4 p-3 p-sm-4 p-md-5 mb-4 text-white position-relative overflow-hidden"
         style={{
           background: 'linear-gradient(135deg, #00273d 0%, #004767 45%, #0284c7 100%)',
           boxShadow: '0 12px 35px rgba(0, 39, 61, 0.25)'
         }}
       >
-        <div className="position-relative d-flex flex-wrap justify-content-between align-items-center gap-4" style={{ zIndex: 2 }}>
+        <div className="position-relative d-flex flex-wrap justify-content-between align-items-center gap-3 gap-md-4" style={{ zIndex: 2 }}>
           <div style={{ maxWidth: '820px' }}>
-            <div className="d-flex align-items-center gap-2 mb-2">
-              <span className="badge bg-white text-dark fw-bold text-uppercase px-3 py-1 rounded-pill shadow-sm" style={{ fontSize: '0.74rem', letterSpacing: '0.6px' }}>
+            <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
+              <span className="badge bg-white text-dark fw-bold text-uppercase px-2.5 px-sm-3 py-1 rounded-pill shadow-sm" style={{ fontSize: '0.72rem', letterSpacing: '0.5px' }}>
                 Universitätsmedizin Frankfurt
               </span>
-              <span className="badge bg-white bg-opacity-25 text-white fw-medium px-3 py-1 rounded-pill shadow-sm" style={{ fontSize: '0.74rem' }}>
+              <span className="badge bg-white bg-opacity-25 text-white fw-medium px-2.5 px-sm-3 py-1 rounded-pill shadow-sm" style={{ fontSize: '0.72rem' }}>
                 <i className="bi bi-hospital me-1"></i> Pflegedirektion &bull; Evidenzbasierte Pflege
               </span>
             </div>
-            <h1 className="fw-bold mb-2 text-white" style={{ letterSpacing: '-0.5px' }}>
+            <h1 className="fw-bold mb-2 text-white" style={{ letterSpacing: '-0.5px', fontSize: 'clamp(1.35rem, 3.5vw, 2.2rem)' }}>
               Klinische Standards &amp; Pflege-Leitfäden
             </h1>
-            <p className="text-white text-opacity-80 mb-0 fs-6" style={{ lineHeight: '1.6' }}>
+            <p className="text-white text-opacity-80 mb-0" style={{ lineHeight: '1.55', fontSize: '0.86rem' }}>
               Evidenzbasierte Expertenstandards, Intensiv-SOPs und Hygieneleitfäden für den Stations- und Intensivalltag. Wählen Sie eine Kategorie, um die Leitlinie, klinischen Handlungsschritte und Dokumentationen direkt einzusehen.
             </p>
+
+            {/* Quick Action Buttons for Mobile Nurses */}
+            <div className="mt-3 d-flex flex-wrap align-items-center gap-2">
+              <button
+                className="btn btn-light btn-sm rounded-pill px-3 py-2 fw-bold text-dark shadow-sm d-inline-flex align-items-center gap-2"
+                style={{ minHeight: '40px', fontSize: '0.82rem' }}
+                onClick={onOpenScanner}
+                title="QR-Code scannen oder roXtra QM-ID eingeben"
+              >
+                <i className="bi bi-qr-code-scan text-primary"></i>
+                <span>QR scannen / roXtra suchen</span>
+              </button>
+              <a
+                href="#/quick-hub"
+                className="btn btn-outline-light btn-sm rounded-pill px-3 py-2 fw-semibold shadow-sm d-inline-flex align-items-center gap-1.5"
+                style={{ minHeight: '40px', fontSize: '0.82rem' }}
+                title="Schnellzugriff auf alle 6 Kacheln"
+              >
+                <i className="bi bi-grid-3x3-gap-fill text-warning"></i>
+                <span>Schnellzugriff</span>
+              </a>
+            </div>
           </div>
         </div>
 
@@ -698,9 +790,9 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
       </div>
 
       {/* Grid of Clean, Modern Standard Cards (No QR Codes) */}
-      <div className="row g-4">
+      <div className="row g-3 g-md-4">
         {list.map((std) => (
-          <div key={std.id} className="col-lg-6">
+          <div key={std.id} className="col-12 col-lg-6">
             <div
               className="standard-tile h-100 p-0 border-0 shadow-sm rounded-4"
               onClick={() => onSelectStandard(std.id)}
@@ -711,15 +803,15 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
                 borderLeft: `5px solid ${std.accentColor}`
               }}
             >
-              <div className="p-4 d-flex flex-column h-100">
+              <div className="p-3 p-sm-4 d-flex flex-column h-100">
                 {/* Header: Icon, Category Badge & roXtra ID */}
-                <div className="d-flex justify-content-between align-items-start mb-3">
-                  <div className="d-flex align-items-center gap-3">
+                <div className="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
+                  <div className="d-flex align-items-center gap-2.5">
                     <div
                       className="rounded-4 d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0"
                       style={{
-                        width: '48px',
-                        height: '48px',
+                        width: '44px',
+                        height: '44px',
                         background: std.bannerGradient || std.accentColor
                       }}
                     >
@@ -727,7 +819,7 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
                     </div>
                     <div>
                       <span
-                        className="fw-bold px-3 py-1 rounded-pill d-inline-block text-uppercase"
+                        className="fw-bold px-2.5 py-1 rounded-pill d-inline-block text-uppercase"
                         style={{
                           fontSize: '0.72rem',
                           letterSpacing: '0.4px',
@@ -740,18 +832,18 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
                     </div>
                   </div>
 
-                  <span className="badge bg-light text-secondary border font-monospace px-3 py-2 rounded-pill" style={{ fontSize: '0.75rem' }}>
+                  <span className="badge bg-light text-secondary border font-monospace px-2.5 py-1.5 rounded-pill" style={{ fontSize: '0.74rem' }}>
                     roXtra: <strong>{std.roXtraIds.join(' / ')}</strong>
                   </span>
                 </div>
 
                 {/* Title */}
-                <h4 className="fw-bold text-dark mb-2" style={{ lineHeight: '1.3', fontSize: '1.2rem' }}>
+                <h4 className="fw-bold text-dark mb-2" style={{ lineHeight: '1.3', fontSize: '1.15rem' }}>
                   {std.topic}
                 </h4>
 
                 {/* Subtitle / Lead text */}
-                <p className="text-secondary small mb-3" style={{ lineHeight: '1.55', fontSize: '0.88rem' }}>
+                <p className="text-secondary small mb-3" style={{ lineHeight: '1.5', fontSize: '0.86rem' }}>
                   {std.leadText}
                 </p>
 
@@ -779,24 +871,25 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
                 </div>
 
                 {/* Card Footer: Action button */}
-                <div className="d-flex justify-content-between align-items-center pt-3 border-top">
+                <div className="d-flex flex-wrap justify-content-between align-items-center pt-3 border-top gap-2 mt-auto">
                   <div className="d-flex align-items-center gap-2">
                     <span className="badge bg-light text-muted border small px-2 py-1">
                       <i className="bi bi-file-earmark-medical me-1 text-primary"></i>
                       {std.id === 'zvk' || std.id === 'isolation' ? 'SOP & Leitfaden' : 'Expertenstandard'}
                     </span>
-                    <span className="text-muted small" style={{ fontSize: '0.75rem' }}>
+                    <span className="text-muted small d-none d-sm-inline" style={{ fontSize: '0.75rem' }}>
                       {std.clinicalFocus ? `${std.clinicalFocus.length} Handlungsschritte` : ''}
                     </span>
                   </div>
 
                   <button
                     type="button"
-                    className="btn btn-sm rounded-pill px-3 py-1 d-flex align-items-center gap-2 shadow-sm text-white fw-semibold"
+                    className="btn btn-sm rounded-pill px-3 py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm text-white fw-semibold w-100 w-sm-auto"
                     style={{
                       background: std.accentColor,
                       border: 'none',
-                      fontSize: '0.82rem'
+                      minHeight: '42px',
+                      fontSize: '0.84rem'
                     }}
                   >
                     <span>Zur Pocketcard</span>
@@ -819,6 +912,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [isModalMaximized, setIsModalMaximized] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+  const [docViewMode, setDocViewMode] = useState('graphic'); // 'graphic' (infographic), 'poster' (official poster), 'pdf' (desktop pdf)
   const isPdfPopupStandard = standard.id === 'zvk' || standard.id === 'isolation';
   const rawPdfUrl = standard.pdfUrl || (standard.id === 'zvk' ? 'assets/zvk-sop-verfahrensanweisung.pdf' : (standard.id === 'isolation' ? 'assets/isolation-sop-verfahrensanweisung.pdf' : 'assets/umf-expertenstandards-folien.pdf'));
   const pdfBaseUrl = rawPdfUrl.split('#')[0];
@@ -872,59 +966,179 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
           {/* 3. The Pictures Section */}
           <div className="row g-3 mb-3">
             {standard.id === 'zvk' || standard.id === 'isolation' ? (
-              /* ZVK & Isolation: Full-width dedicated Interactive PDF Viewer */
+              /* ZVK & Isolation: Modern Mobile-Friendly Smart Viewer (Replaces broken mobile iframe) */
               <div className="col-12">
                 <div className="clinical-picture-card h-100 d-flex flex-column shadow-sm rounded-4 overflow-hidden border">
-                  <div className="d-flex justify-content-between align-items-center px-3 py-2 bg-light border-bottom">
-                    <span className="fw-bold text-dark d-flex align-items-center gap-2" style={{ fontSize: '0.95rem' }}>
-                      <i className="bi bi-file-earmark-pdf-fill text-danger fs-5"></i>
-                      <span>Schulungsillustration &amp; SOP (PDF Viewer) &bull; {standard.shortTitle}</span>
-                    </span>
+                  {/* Card Header with View Mode Switcher */}
+                  <div className="d-flex flex-wrap justify-content-between align-items-center px-3 py-2 bg-light border-bottom gap-2">
                     <div className="d-flex align-items-center gap-2">
+                      <i className={`bi ${docViewMode === 'pdf' ? 'bi-file-earmark-pdf-fill text-danger' : docViewMode === 'poster' ? 'bi-file-richtext-fill text-primary' : 'bi-diagram-3-fill text-danger'} fs-5`}></i>
+                      <span className="fw-bold text-dark" style={{ fontSize: '0.92rem' }}>
+                        {docViewMode === 'poster' ? 'Offizielles Schulungs-Poster' : docViewMode === 'pdf' ? 'Verfahrensanweisung (SOP)' : 'Klinische Infografik & Praxis'}: {standard.shortTitle}
+                      </span>
+                    </div>
+
+                    {/* View Switcher: Infografik / Poster / SOP PDF */}
+                    <div className="mobile-segmented-control mt-2 mt-sm-0" style={{ maxWidth: '360px' }}>
                       <button
                         type="button"
-                        className="btn btn-sm btn-primary rounded-pill py-1 px-3 d-flex align-items-center gap-1 shadow-sm fw-semibold"
-                        style={{ fontSize: '0.8rem' }}
-                        onClick={() => setIsPdfModalOpen(true)}
-                        title="PDF im vergrößerten Pop-up mit Vollbild / allen Seiten öffnen"
+                        className={`btn btn-sm ${docViewMode === 'graphic' ? 'btn-danger text-white shadow-sm' : 'btn-light border-0 text-secondary'}`}
+                        style={{ fontSize: '0.78rem' }}
+                        onClick={() => setDocViewMode('graphic')}
+                        title="Klinische Handlungsschritte & Infografik"
                       >
-                        <i className="bi bi-arrows-fullscreen"></i>
-                        <span>Im Pop-up vergrößern</span>
+                        <i className="bi bi-diagram-3"></i>
+                        <span>Infografik</span>
                       </button>
-                      <span className="badge bg-white text-secondary border px-2 py-1 small">
-                        Interaktives Dokument
-                      </span>
+                      <button
+                        type="button"
+                        className={`btn btn-sm ${docViewMode === 'poster' ? 'btn-danger text-white shadow-sm' : 'btn-light border-0 text-secondary'}`}
+                        style={{ fontSize: '0.78rem' }}
+                        onClick={() => setDocViewMode('poster')}
+                        title="Offizielles Klinik-Poster"
+                      >
+                        <i className="bi bi-file-richtext"></i>
+                        <span>Poster</span>
+                      </button>
+                      <button
+                        type="button"
+                        className={`btn btn-sm ${docViewMode === 'pdf' ? 'btn-danger text-white shadow-sm' : 'btn-light border-0 text-secondary'}`}
+                        style={{ fontSize: '0.78rem' }}
+                        onClick={() => setDocViewMode('pdf')}
+                        title="Originalverfahrensanweisung SOP"
+                      >
+                        <i className="bi bi-file-pdf"></i>
+                        <span>SOP PDF</span>
+                      </button>
                     </div>
                   </div>
 
-                  <div className="position-relative bg-white flex-grow-1 overflow-hidden" style={{ minHeight: '520px', height: '520px' }}>
-                    {/* Interactive Scrollable PDF Embed - Beautiful full-width viewing area */}
-                    <iframe
-                      src={`${pdfBaseUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
-                      title={`PDF Schulungsillustration ${standard.shortTitle}`}
-                      className="w-100 h-100 border-0 d-block"
-                      style={{ minHeight: '520px', overflowY: 'auto' }}
-                    />
+                  {/* Body based on docViewMode */}
+                  {docViewMode === 'pdf' ? (
+                    <div>
+                      {/* Desktop / Tablet: Interactive PDF iframe embed */}
+                      <div className="d-none d-md-block position-relative bg-white" style={{ minHeight: '520px', height: '520px' }}>
+                        <iframe
+                          src={`${pdfBaseUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
+                          title={`PDF Schulungsillustration ${standard.shortTitle}`}
+                          className="w-100 h-100 border-0 d-block"
+                          style={{ minHeight: '520px', overflowY: 'auto' }}
+                        />
+                        <div className="position-absolute bottom-0 end-0 m-3 no-print" data-html2canvas-ignore="true">
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-dark bg-opacity-90 backdrop-blur text-white shadow rounded-pill py-1 px-3 d-flex align-items-center gap-1 hover-lift"
+                            style={{ fontSize: '0.78rem' }}
+                            onClick={() => setIsPdfModalOpen(true)}
+                          >
+                            <i className="bi bi-arrows-fullscreen"></i>
+                            <span>Vollbild öffnen</span>
+                          </button>
+                        </div>
+                      </div>
 
-                    {/* Floating Action Button to Expand into Pop-up */}
-                    <div className="position-absolute bottom-0 end-0 m-3 no-print" data-html2canvas-ignore="true">
+                      {/* Mobile Smartphone: High-Performance, Touch-Friendly Native PDF Card */}
+                      <div className="d-block d-md-none p-3 text-center bg-light">
+                        <div className="bg-white p-3 rounded-4 shadow-sm border mb-2">
+                          <div className="d-inline-flex p-3 rounded-circle bg-danger bg-opacity-10 text-danger mb-2">
+                            <i className="bi bi-file-earmark-pdf-fill fs-1"></i>
+                          </div>
+                          <h6 className="fw-bold text-dark mb-1">
+                            {standard.topic}
+                          </h6>
+                          <div className="text-muted small mb-3">
+                            {standard.id === 'zvk' ? 'Offizielle Verfahrensanweisung ZVK (10 Seiten) • roXtra ID: 391904' : 'Allgemeines Vorgehen bei Isolation und Reinigung (4 Seiten) • roXtra ID: 239411'}
+                          </div>
+
+                          <div className="alert alert-info py-2 px-3 small text-start d-flex align-items-center gap-2 mb-3">
+                            <i className="bi bi-phone text-info fs-5 flex-shrink-0"></i>
+                            <span style={{ fontSize: '0.8rem' }}>Für flüssiges Scrollen &amp; Zoom am Smartphone tippen Sie auf den Button, um die SOP im systemeigenen PDF-Viewer zu öffnen.</span>
+                          </div>
+
+                          <div className="d-grid gap-2">
+                            <a
+                              href={standard.sopPdfUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-danger rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-bold shadow-sm"
+                            >
+                              <i className="bi bi-box-arrow-up-right fs-5"></i>
+                              <span>SOP PDF im Vollbild öffnen</span>
+                            </a>
+                            <a
+                              href={standard.sopPdfUrl}
+                              download
+                              className="btn btn-outline-secondary rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-semibold small"
+                            >
+                              <i className="bi bi-download"></i>
+                              <span>PDF Datei herunterladen</span>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Infografik or Poster Mode: Crystal-clear, instant-loading, responsive image with click-to-zoom */
+                    <div
+                      className="p-3 text-center bg-white d-flex align-items-center justify-content-center position-relative"
+                      style={{ cursor: 'pointer', minHeight: '260px' }}
+                      onClick={() => setPreviewImage({
+                        src: docViewMode === 'poster' ? standard.image : standard.graphicImage,
+                        title: standard.topic,
+                        subtitle: docViewMode === 'poster' ? 'Offizielles Klinik-Poster (Schulungsillustration)' : 'Klinische Infografik & Praxis'
+                      })}
+                      title="Klicken für vergrößerte Vollbild-Ansicht"
+                    >
+                      <img
+                        src={docViewMode === 'poster' ? standard.image : standard.graphicImage}
+                        alt={`${standard.shortTitle} ${docViewMode}`}
+                        className="clinical-picture-img img-fluid rounded"
+                        style={{ maxHeight: '420px', width: '100%', objectFit: 'contain' }}
+                      />
+                      <div className="position-absolute bottom-0 end-0 m-3 no-print">
+                        <span className="badge bg-dark bg-opacity-75 text-white rounded-pill px-3 py-2 shadow-sm" style={{ fontSize: '0.78rem' }}>
+                          <i className="bi bi-zoom-in me-1"></i>Bild vergrößern
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Fallback image for html2pdf / print */}
+                  <img
+                    src={standard.image}
+                    alt={`Illustration ${standard.shortTitle}`}
+                    className="clinical-picture-img print-only-preview d-none"
+                  />
+
+                  {/* Bottom Action Strip */}
+                  <div className="px-3 py-2 bg-light border-top d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div className="d-flex align-items-center gap-2 small text-muted">
+                      <i className="bi bi-file-earmark-check text-success"></i>
+                      <span>Gültige Version im roXtra QM-System</span>
+                    </div>
+                    <div className="d-flex align-items-center gap-2">
                       <button
                         type="button"
-                        className="btn btn-sm btn-dark bg-opacity-90 backdrop-blur text-white shadow rounded-pill py-1 px-3 d-flex align-items-center gap-1 hover-lift"
-                        style={{ fontSize: '0.78rem' }}
-                        onClick={() => setIsPdfModalOpen(true)}
+                        className="btn btn-sm btn-outline-dark rounded-pill px-2 py-1"
+                        style={{ fontSize: '0.76rem' }}
+                        onClick={() => setPreviewImage({
+                          src: docViewMode === 'poster' ? standard.image : standard.graphicImage,
+                          title: standard.topic,
+                          subtitle: docViewMode === 'poster' ? 'Klinik-Poster' : 'Infografik'
+                        })}
                       >
-                        <i className="bi bi-arrows-fullscreen"></i>
-                        <span>Pop-up / Vollbild öffnen</span>
+                        <i className="bi bi-arrows-fullscreen me-1"></i>Vollbild
                       </button>
+                      <a
+                        href={standard.sopPdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-sm btn-outline-danger rounded-pill px-2 py-1 fw-semibold"
+                        style={{ fontSize: '0.76rem' }}
+                      >
+                        <i className="bi bi-file-earmark-pdf-fill me-1"></i>SOP PDF ({standard.id === 'zvk' ? '10 S.' : '4 S.'})
+                      </a>
                     </div>
-
-                    {/* Fallback image for html2pdf and print export */}
-                    <img
-                      src={standard.image}
-                      alt={`Illustration ${standard.shortTitle}`}
-                      className="clinical-picture-img print-only-preview d-none"
-                    />
                   </div>
                 </div>
               </div>
@@ -1098,12 +1312,13 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
           </div>
 
           {/* 6. Action Toolbar (Only on screen, ignored when exporting PDF / printing) */}
-          <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mt-3 pt-3 border-top no-print" data-html2canvas-ignore="true">
+          <div className="d-flex flex-column flex-sm-row flex-wrap align-items-stretch align-items-sm-center justify-content-between gap-2 mt-3 pt-3 border-top no-print w-100" data-html2canvas-ignore="true">
             {/* Primary Document Actions: Download PDF & Print grouped together */}
-            <div className="d-flex align-items-center gap-2">
-              <div className="btn-group shadow-sm rounded-pill overflow-hidden" role="group">
+            <div className="d-flex flex-wrap align-items-center gap-2">
+              <div className="btn-group shadow-sm rounded-pill overflow-hidden w-100 w-sm-auto" role="group">
                 <button
-                  className="btn btn-primary btn-sm px-3 fw-semibold d-flex align-items-center gap-1"
+                  className="btn btn-primary btn-sm px-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-1.5 flex-grow-1"
+                  style={{ minHeight: '42px' }}
                   onClick={() => onDownloadPdf(standard, false)}
                   title="Pocketcard als PDF-Datei herunterladen"
                 >
@@ -1111,7 +1326,8 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                   <span>PDF herunterladen</span>
                 </button>
                 <button
-                  className="btn btn-dark btn-sm px-3 fw-semibold d-flex align-items-center gap-1 border-start border-white border-opacity-25"
+                  className="btn btn-dark btn-sm px-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-1.5 border-start border-white border-opacity-25"
+                  style={{ minHeight: '42px' }}
                   onClick={() => window.print()}
                   title="Drucken / Als PDF drucken"
                 >
@@ -1125,19 +1341,21 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                   href={standard.sopPdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center gap-1"
-                  title="Vollständige 10-seitige Verfahrensanweisung (SOP) als Original-PDF öffnen"
+                  className="btn btn-outline-danger btn-sm rounded-pill px-3 py-2 shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100 w-sm-auto"
+                  style={{ minHeight: '42px' }}
+                  title="Vollständige Verfahrensanweisung (SOP) als Original-PDF öffnen"
                 >
                   <i className="bi bi-file-pdf"></i>
-                  <span>Original SOP (10 S.)</span>
+                  <span>Original SOP ({standard.id === 'zvk' ? '10 S.' : '4 S.'})</span>
                 </a>
               )}
             </div>
 
             {/* Secondary Utilities: QR PNG & Link */}
-            <div className="d-flex align-items-center gap-2">
+            <div className="d-flex align-items-center gap-2 justify-content-between justify-content-sm-end">
               <button
-                className="btn btn-outline-secondary btn-sm rounded-pill px-3 d-flex align-items-center gap-1"
+                className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 d-flex align-items-center justify-content-center gap-1.5 flex-grow-1 flex-sm-grow-0"
+                style={{ minHeight: '40px' }}
                 onClick={() => onDownloadQr(standard)}
                 title="QR-Code als Bilddatei speichern"
               >
@@ -1145,7 +1363,8 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                 <span>QR PNG</span>
               </button>
               <button
-                className="btn btn-outline-secondary btn-sm rounded-pill px-3 d-flex align-items-center gap-1"
+                className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 d-flex align-items-center justify-content-center gap-1.5 flex-grow-1 flex-sm-grow-0"
+                style={{ minHeight: '40px' }}
                 onClick={() => onCopy(standard.videoUrl, 'Video Link')}
                 title="Link kopieren"
               >
@@ -1239,21 +1458,54 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                 </div>
               </div>
 
-              {/* Modal Body with Scrolling PDF Viewport */}
+              {/* Modal Body with Scrolling PDF Viewport on Desktop & Mobile Native View on Phones */}
               <div className="modal-body p-0 flex-grow-1 bg-secondary bg-opacity-10 position-relative d-flex flex-column overflow-hidden">
+                {/* Desktop: Interactive PDF iframe */}
                 <iframe
                   src={`${pdfBaseUrl}#page=${standard.pdfPage || 1}&toolbar=1&navpanes=1&scrollbar=1&view=FitH`}
                   title={`PDF Dokument ${standard.shortTitle}`}
-                  className="w-100 h-100 border-0 flex-grow-1"
+                  className="w-100 h-100 border-0 flex-grow-1 d-none d-md-block"
                   style={{ minHeight: '100%', overflowY: 'auto' }}
                 />
+
+                {/* Mobile Smartphone: High-Res Poster Image + Direct Mobile PDF Viewer Launcher */}
+                <div className="d-block d-md-none p-3 overflow-auto flex-grow-1 text-center bg-white">
+                  <div className="mb-3">
+                    <img
+                      src={standard.image}
+                      alt={standard.shortTitle}
+                      className="img-fluid rounded-3 shadow-sm border mb-2"
+                      style={{ maxHeight: '55vh', objectFit: 'contain' }}
+                    />
+                  </div>
+                  <div className="d-grid gap-2 mb-2">
+                    <a
+                      href={standard.sopPdfUrl || pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-danger rounded-pill py-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2"
+                    >
+                      <i className="bi bi-box-arrow-up-right fs-5"></i>
+                      <span>PDF im mobilen Reader öffnen</span>
+                    </a>
+                    <a
+                      href={standard.sopPdfUrl || pdfUrl}
+                      download
+                      className="btn btn-outline-secondary rounded-pill py-2 fw-semibold d-flex align-items-center justify-content-center gap-2 small"
+                    >
+                      <i className="bi bi-download"></i>
+                      <span>Original-PDF herunterladen</span>
+                    </a>
+                  </div>
+                </div>
               </div>
 
               {/* Modal Footer */}
               <div className="modal-footer bg-white py-2 px-3 d-flex justify-content-between align-items-center">
                 <div className="small text-muted d-flex align-items-center gap-2">
-                  <i className="bi bi-mouse text-primary"></i>
-                  <span>Nutzen Sie das Mausrad oder die Scrollleiste zum Scrollen durch alle Seiten des Dokuments.</span>
+                  <i className="bi bi-info-circle text-primary"></i>
+                  <span className="d-none d-md-inline">Nutzen Sie das Mausrad oder die Scrollleiste zum Scrollen durch alle Seiten des Dokuments.</span>
+                  <span className="d-inline d-md-none">Optimiert für Mobilgeräte: Original-PDF im systemeigenen Reader öffnen.</span>
                 </div>
                 <button
                   type="button"
@@ -1416,27 +1668,33 @@ function PdfSlideCard({ standard, onCopy, onDownloadQr, onDownloadPdf }) {
                 <i className="bi bi-qr-code me-1"></i> QR-Code scannen &bull; Video ansehen
               </div>
 
-              <div className="d-flex justify-content-center gap-2 no-print" data-html2canvas-ignore="true">
+              <div className="d-flex flex-wrap justify-content-center gap-2 no-print" data-html2canvas-ignore="true">
                 {onDownloadPdf && (
                   <button
-                    className="btn btn-sm btn-primary rounded-pill py-1 px-3 shadow-sm"
+                    className="btn btn-sm btn-primary rounded-pill py-1.5 px-3 shadow-sm d-inline-flex align-items-center gap-1"
+                    style={{ minHeight: '38px' }}
                     onClick={() => onDownloadPdf(standard, true)}
                     title="Original-Folie als PDF-Datei (Querformat) herunterladen"
                   >
-                    <i className="bi bi-file-earmark-pdf-fill me-1"></i> Folie als PDF
+                    <i className="bi bi-file-earmark-pdf-fill"></i>
+                    <span>Folie als PDF</span>
                   </button>
                 )}
                 <button
-                  className="btn btn-sm btn-outline-dark rounded-pill py-1 px-3"
+                  className="btn btn-sm btn-outline-dark rounded-pill py-1.5 px-3 d-inline-flex align-items-center gap-1"
+                  style={{ minHeight: '38px' }}
                   onClick={() => onDownloadQr(standard)}
                 >
-                  <i className="bi bi-download me-1"></i> QR PNG
+                  <i className="bi bi-download"></i>
+                  <span>QR PNG</span>
                 </button>
                 <button
-                  className="btn btn-sm btn-outline-secondary rounded-pill py-1 px-3"
+                  className="btn btn-sm btn-outline-secondary rounded-pill py-1.5 px-3 d-inline-flex align-items-center gap-1"
+                  style={{ minHeight: '38px' }}
                   onClick={() => onCopy(standard.videoUrl, 'YouTube Link')}
                 >
-                  <i className="bi bi-link-45deg me-1"></i> Link
+                  <i className="bi bi-link-45deg"></i>
+                  <span>Link</span>
                 </button>
               </div>
             </div>
@@ -1523,7 +1781,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
     <div>
       {/* Top Breadcrumb & Switcher */}
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 no-print">
-        <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center gap-1">
+        <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5 fw-semibold" style={{ minHeight: '38px' }}>
           <i className="bi bi-grid-fill"></i>
           <span>Alle 6 Kacheln</span>
         </a>
@@ -1534,8 +1792,8 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
             {otherStandards.map(s => (
               <button
                 key={s.id}
-                className="btn btn-light btn-sm rounded-pill border px-2 py-1"
-                style={{ fontSize: '0.78rem' }}
+                className="btn btn-light btn-sm rounded-pill border px-2.5 py-1 text-secondary"
+                style={{ fontSize: '0.78rem', minHeight: '34px' }}
                 onClick={() => onNavigate(s.id)}
               >
                 <i className={`bi ${s.icon} me-1`} style={{ color: s.accentColor }}></i>
@@ -1547,15 +1805,18 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
           {/* Grouped PDF & Print Button Pill */}
           <div className="btn-group shadow-sm rounded-pill overflow-hidden" role="group">
             <button
-              className="btn btn-primary btn-sm px-3 fw-semibold d-flex align-items-center gap-1"
+              className="btn btn-primary btn-sm px-3 py-1.5 fw-semibold d-flex align-items-center gap-1.5"
+              style={{ minHeight: '38px' }}
               onClick={() => downloadPdf(standard, activeTab === 'slide')}
               title="Aktuelle Ansicht als PDF-Dokument herunterladen"
             >
               <i className="bi bi-file-earmark-arrow-down-fill"></i>
-              <span>PDF herunterladen</span>
+              <span className="d-none d-sm-inline">PDF herunterladen</span>
+              <span className="d-inline d-sm-none">PDF</span>
             </button>
             <button
-              className="btn btn-dark btn-sm px-3 fw-semibold d-flex align-items-center gap-1 border-start border-white border-opacity-25"
+              className="btn btn-dark btn-sm px-3 py-1.5 fw-semibold d-flex align-items-center gap-1.5 border-start border-white border-opacity-25"
+              style={{ minHeight: '38px' }}
               onClick={() => window.print()}
               title="Drucken / Als PDF drucken"
             >
@@ -1567,21 +1828,25 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
       </div>
 
       {/* VIEW TABS: Switch between Clinical Pocketcard & Original Presentation Slide */}
-      <div className="d-flex align-items-center justify-content-between mb-3 no-print">
-        <div className="btn-group bg-white p-1 border rounded-pill shadow-sm" role="group">
+      <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between mb-3 gap-2 no-print">
+        <div className="mobile-segmented-control" role="group" style={{ maxWidth: '480px' }}>
           <button
             type="button"
-            className={`btn btn-sm rounded-pill px-3 ${activeTab === 'pocketcard' ? 'btn-dark' : 'btn-light border-0'}`}
+            className={`btn btn-sm ${activeTab === 'pocketcard' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
             onClick={() => setActiveTab('pocketcard')}
           >
-            <i className="bi bi-card-heading me-1"></i> Klinische Pocketcard (Modern)
+            <i className="bi bi-card-heading"></i>
+            <span className="d-none d-sm-inline">Klinische Pocketcard (Modern)</span>
+            <span className="d-inline d-sm-none">Pocketcard</span>
           </button>
           <button
             type="button"
-            className={`btn btn-sm rounded-pill px-3 ${activeTab === 'slide' ? 'btn-dark' : 'btn-light border-0'}`}
+            className={`btn btn-sm ${activeTab === 'slide' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
             onClick={() => setActiveTab('slide')}
           >
-            <i className="bi bi-easel me-1"></i> Original-Schulungsfolie (UMF Folie)
+            <i className="bi bi-easel"></i>
+            <span className="d-none d-sm-inline">Original-Schulungsfolie (UMF)</span>
+            <span className="d-inline d-sm-none">Schulungsfolie</span>
           </button>
         </div>
 
@@ -1869,33 +2134,40 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
     <div>
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 no-print">
         <div>
-          <h2 className="fw-bold mb-1 text-dark">Alle Pocketcards der Universitätsmedizin Frankfurt</h2>
+          <h2 className="fw-bold mb-1 text-dark" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)' }}>Alle Pocketcards der Universitätsmedizin Frankfurt</h2>
           <p className="text-muted mb-0 small">
             Die offiziellen digitalen Pflege-Pocketcards mit scannbaren QR-Codes, Minimal-Info und klinischen Praxisgrafiken.
           </p>
         </div>
 
-        <button className="btn btn-primary rounded-pill px-4 shadow-sm" onClick={() => window.print()}>
-          <i className="bi bi-printer me-2"></i> Alle drucken
+        <button
+          className="btn btn-primary rounded-pill px-3 py-2 shadow-sm d-flex align-items-center justify-content-center gap-2 fw-semibold w-100 w-sm-auto"
+          style={{ minHeight: '40px' }}
+          onClick={() => window.print()}
+        >
+          <i className="bi bi-printer"></i>
+          <span>Alle drucken</span>
         </button>
       </div>
 
       {/* Switcher Tab between Pocketcards and Slides */}
       <div className="d-flex align-items-center justify-content-between mb-4 no-print">
-        <div className="btn-group bg-white p-1 border rounded-pill shadow-sm" role="group">
+        <div className="mobile-segmented-control" role="group" style={{ maxWidth: '440px' }}>
           <button
             type="button"
-            className={`btn btn-sm rounded-pill px-3 ${hubTab === 'pocketcard' ? 'btn-dark' : 'btn-light border-0'}`}
+            className={`btn btn-sm ${hubTab === 'pocketcard' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
             onClick={() => setHubTab('pocketcard')}
           >
-            <i className="bi bi-card-heading me-1"></i> Klinische Pocketcards
+            <i className="bi bi-card-heading"></i>
+            <span>Klinische Pocketcards</span>
           </button>
           <button
             type="button"
-            className={`btn btn-sm rounded-pill px-3 ${hubTab === 'slide' ? 'btn-dark' : 'btn-light border-0'}`}
+            className={`btn btn-sm ${hubTab === 'slide' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
             onClick={() => setHubTab('slide')}
           >
-            <i className="bi bi-easel me-1"></i> Original-Schulungsfolien
+            <i className="bi bi-easel"></i>
+            <span>Original-Schulungsfolien</span>
           </button>
         </div>
       </div>
@@ -1993,7 +2265,7 @@ function MagicCardView({ standards, onSelectStandard, showToast }) {
     <div className="py-2">
       {/* Action Buttons Toolbar */}
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 no-print">
-        <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-3 shadow-sm d-flex align-items-center gap-1">
+        <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5 fw-semibold" style={{ minHeight: '38px' }}>
           <i className="bi bi-arrow-left"></i>
           <span>Zurück zur Übersicht</span>
         </a>
@@ -2002,7 +2274,8 @@ function MagicCardView({ standards, onSelectStandard, showToast }) {
           {/* Grouped PDF download & Print actions */}
           <div className="btn-group shadow-sm rounded-pill overflow-hidden" role="group">
             <button
-              className="btn btn-primary btn-sm px-3 fw-semibold d-flex align-items-center gap-1"
+              className="btn btn-primary btn-sm px-3 py-1.5 fw-semibold d-flex align-items-center gap-1.5"
+              style={{ minHeight: '38px' }}
               onClick={downloadPdf}
               title="Magic Card als PDF-Dokument herunterladen"
             >
@@ -2010,7 +2283,8 @@ function MagicCardView({ standards, onSelectStandard, showToast }) {
               <span>PDF herunterladen</span>
             </button>
             <button
-              className="btn btn-dark btn-sm px-3 fw-semibold d-flex align-items-center gap-1 border-start border-white border-opacity-25"
+              className="btn btn-dark btn-sm px-3 py-1.5 fw-semibold d-flex align-items-center gap-1.5 border-start border-white border-opacity-25"
+              style={{ minHeight: '38px' }}
               onClick={() => window.print()}
               title="Magic Card direkt drucken"
             >
@@ -2019,12 +2293,17 @@ function MagicCardView({ standards, onSelectStandard, showToast }) {
             </button>
           </div>
 
-          <button className="btn btn-outline-secondary rounded-pill px-3 shadow-sm btn-sm d-flex align-items-center gap-1" onClick={downloadQrImage}>
+          <button
+            className="btn btn-outline-secondary rounded-pill px-3 py-1.5 shadow-sm btn-sm d-flex align-items-center gap-1.5"
+            style={{ minHeight: '38px' }}
+            onClick={downloadQrImage}
+          >
             <i className="bi bi-qr-code"></i>
             <span>QR PNG</span>
           </button>
           <button
-            className="btn btn-warning text-dark fw-bold rounded-pill px-3 shadow-sm btn-sm d-flex align-items-center gap-1"
+            className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-1.5 shadow-sm btn-sm d-flex align-items-center gap-1.5"
+            style={{ minHeight: '38px' }}
             onClick={() => onSelectStandard('quick-hub')}
           >
             <i className="bi bi-box-arrow-up-right"></i>
@@ -2132,7 +2411,7 @@ function QuickHubView({ standards, onSelectStandard }) {
       {/* 6 Clean, Clickable Tiles aligned in center */}
       <div className="row g-3 g-md-4 justify-content-center">
         {list.map((std) => (
-          <div key={std.id} className="col-12 col-md-6 col-lg-4">
+          <div key={std.id} className="col-12 col-sm-6 col-lg-4">
             <div
               className="quick-hub-label-card p-3 p-md-4 rounded-4 shadow-sm border-0 h-100 d-flex align-items-center gap-3"
               onClick={() => onSelectStandard(std.id)}
