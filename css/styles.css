@@ -883,3 +883,339 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   }
 }
 
+/* =========================================================
+   UNIVERSAL-POCKETCARD (A4 & ATM FORMAT)
+   ========================================================= */
+.universal-card-interactive-box {
+  position: relative;
+  width: 100%;
+  max-width: 980px;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 15px 35px -5px rgba(0, 39, 61, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  background: #ffffff;
+  transition: transform 0.25s ease;
+}
+
+.universal-card-interactive-box.atm-size {
+  max-width: 440px;
+  border-radius: 1rem;
+}
+
+.universal-card-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.universal-card-hotspot {
+  position: absolute;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 5;
+}
+
+.universal-card-hotspot:hover {
+  background: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 16px rgba(0, 71, 103, 0.45);
+  backdrop-filter: blur(1px);
+}
+
+.universal-card-hotspot:active {
+  transform: scale(0.98);
+}
+
+/* =========================================================
+   NATIVE A4 CLINICAL POCKETCARD (CRISP & UNZOOMED)
+   ========================================================= */
+.a4-native-card {
+  width: 100%;
+  max-width: 960px;
+  background: linear-gradient(145deg, #eaf4fb 0%, #ffffff 45%, #eff8ff 100%);
+  border: 2px solid #004767;
+  border-radius: 1.25rem;
+  box-shadow: 0 16px 36px -8px rgba(0, 39, 61, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+}
+
+.a4-card-header {
+  background: #00273d;
+  border-bottom: 2px solid #004767;
+}
+
+.a4-card-subheader {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.8) 100%);
+  border-bottom: 1px solid rgba(0, 71, 103, 0.12);
+}
+
+.a4-yellow-note {
+  background: #fff875;
+  border: 1px solid #f6e05e;
+  border-radius: 6px;
+  padding: 8px 12px;
+  transform: rotate(-3deg);
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.12);
+  font-size: 0.85rem;
+  position: relative;
+  width: 130px;
+  flex-shrink: 0;
+}
+
+.a4-note-pin {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+}
+
+.a4-main-title {
+  font-size: 1.45rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  color: #00273d;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.a4-sop-banner {
+  background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%);
+  font-size: 0.88rem;
+  letter-spacing: 0.05em;
+  box-shadow: 0 3px 8px rgba(220, 38, 38, 0.35);
+}
+
+.a4-checkmarks-list {
+  font-size: 0.82rem;
+  line-height: 1.35;
+  flex-shrink: 0;
+}
+
+.a4-standard-row {
+  min-height: 44px;
+  padding: 3px 0 3px 6px;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  user-select: none;
+}
+
+.a4-standard-row:hover {
+  transform: translateX(4px);
+  box-shadow: 0 6px 16px rgba(0, 39, 61, 0.15) !important;
+}
+
+.a4-standard-row:active {
+  transform: scale(0.99);
+}
+
+.a4-row-thumb-box {
+  height: 42px;
+  width: 125px;
+  flex-shrink: 0;
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.a4-row-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.a4-scanner-col {
+  background: #ffffff;
+  border: 2.5px solid #0284c7;
+  border-radius: 1rem;
+}
+
+.a4-qr-wrapper {
+  position: relative;
+  display: inline-block;
+  padding: 8px;
+  background: #ffffff;
+  border-radius: 8px;
+}
+
+.a4-bracket {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: #0284c7;
+  border-style: solid;
+}
+
+.a4-bracket-tl {
+  top: 2px;
+  left: 2px;
+  border-width: 3px 0 0 3px;
+  border-top-left-radius: 6px;
+}
+
+.a4-bracket-tr {
+  top: 2px;
+  right: 2px;
+  border-width: 3px 3px 0 0;
+  border-top-right-radius: 6px;
+}
+
+.a4-bracket-bl {
+  bottom: 2px;
+  left: 2px;
+  border-width: 0 0 3px 3px;
+  border-bottom-left-radius: 6px;
+}
+
+.a4-bracket-br {
+  bottom: 2px;
+  right: 2px;
+  border-width: 0 3px 3px 0;
+  border-bottom-right-radius: 6px;
+}
+
+.atm-cutout-hint {
+  display: none;
+}
+
+/* Responsive Scaling for Mobile Screens */
+@media (max-width: 768px) {
+  .a4-card-subheader {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+  .a4-yellow-note {
+    width: 100%;
+    transform: none;
+  }
+  .a4-checkmarks-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 0;
+  }
+  .a4-card-body {
+    flex-direction: column;
+  }
+  .a4-scanner-col {
+    width: 100% !important;
+  }
+  .a4-row-thumb-box {
+    width: 80px;
+  }
+  .a4-row-title {
+    font-size: 0.85rem !important;
+  }
+}
+
+/* =========================================================
+   PERFECT PRINT / ISOLATION STYLING FOR A4 & ATM CARDS
+   ========================================================= */
+@media print {
+  @page {
+    size: auto;
+    margin: 8mm;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html, body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .navbar-custom,
+  .hospital-banner,
+  button,
+  .btn,
+  .no-print,
+  .no-print-area,
+  footer,
+  .mobile-segmented-control {
+    display: none !important;
+  }
+
+  iframe {
+    display: none !important;
+  }
+
+  /* --- 1. A4 Print Mode Isolation (Only A4 Card Prints) --- */
+  body.printing-a4 #universal-card-atm-printable,
+  body.active-format-a4:not(.printing-atm) #universal-card-atm-printable {
+    display: none !important;
+  }
+
+  body.printing-a4 #universal-card-a4-printable,
+  body.active-format-a4:not(.printing-atm) #universal-card-a4-printable {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  body.printing-a4 .a4-native-card,
+  body.active-format-a4:not(.printing-atm) .a4-native-card {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    border: 1.5px solid #004767 !important;
+    page-break-inside: avoid !important;
+    margin: 0 !important;
+  }
+
+  /* --- 2. ATM Print Mode Isolation (Only ATM Scheckkarte Prints) --- */
+  body.printing-atm #universal-card-a4-printable,
+  body.active-format-atm:not(.printing-a4) #universal-card-a4-printable {
+    display: none !important;
+  }
+
+  body.printing-atm #universal-card-atm-printable,
+  body.active-format-atm:not(.printing-a4) #universal-card-atm-printable {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  body.printing-atm .universal-card-interactive-box.atm-size,
+  body.active-format-atm:not(.printing-a4) .universal-card-interactive-box.atm-size {
+    width: 85.6mm !important;
+    max-width: 85.6mm !important;
+    height: 54mm !important;
+    margin: 25mm auto 10mm auto !important;
+    border: 1.5px dashed #004767 !important;
+    border-radius: 3.5mm !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    page-break-inside: avoid !important;
+    position: relative !important;
+  }
+
+  body.printing-atm .atm-cutout-hint,
+  body.active-format-atm:not(.printing-a4) .atm-cutout-hint {
+    display: block !important;
+    text-align: center !important;
+    font-size: 9pt !important;
+    color: #475569 !important;
+    margin-top: 4mm !important;
+  }
+}
+

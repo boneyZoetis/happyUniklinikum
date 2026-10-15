@@ -308,9 +308,9 @@ function App() {
       } else if (hash.includes('isolation') || hash.includes('hygiene') || hash.includes('mre') || hash.includes('mrsa') || hash.includes('mrgn') || hash.includes('vre') || hash.includes('diff')) {
         setCurrentRoute('isolation');
         document.title = 'Isolation & Hygiene • UMF Leitfaden';
-      } else if (hash.includes('magic') || hash.includes('card')) {
-        setCurrentRoute('magic-card');
-        document.title = 'Magic Card • UMF Pocketcards';
+      } else if (hash.includes('universal') || hash.includes('magic') || hash.includes('card')) {
+        setCurrentRoute('universal-karte');
+        document.title = 'Universal-Karte • UMF Pocketcards';
       } else if (hash.includes('hub') || hash.includes('menu') || hash.includes('quick')) {
         setCurrentRoute('quick-hub');
         document.title = 'UMF Schnellzugriff • Alle 6 Standards';
@@ -408,13 +408,13 @@ function App() {
 
             <div className="d-flex align-items-center gap-1.5 gap-sm-2">
               <button
-                className={`btn btn-sm ${currentRoute === 'magic-card' ? 'btn-warning text-dark fw-bold' : 'btn-outline-warning text-dark fw-bold'} rounded-pill px-2.5 px-sm-3 py-1.5 shadow-sm d-flex align-items-center gap-1 magic-btn-glow`}
+                className={`btn btn-sm ${currentRoute === 'universal-karte' || currentRoute === 'magic-card' ? 'btn-warning text-dark fw-bold' : 'btn-outline-warning text-dark fw-bold'} rounded-pill px-2.5 px-sm-3 py-1.5 shadow-sm d-flex align-items-center gap-1 magic-btn-glow`}
                 style={{ minHeight: '38px', fontSize: '0.82rem' }}
-                onClick={() => navigateTo('magic-card')}
-                title="Kompakte ATM-Pocketcard mit allen 6 Standards und QR-Code"
+                onClick={() => navigateTo('universal-karte')}
+                title="Universal-Karte (A4- & Scheckkarten-Format) mit allen 6 Standards und QR-Code"
               >
                 <i className="bi bi-stars text-warning"></i>
-                <span>Magic Card</span>
+                <span>Universal-Karte</span>
               </button>
               <button
                 className={`btn btn-sm ${currentRoute === 'qrcodes' ? 'btn-primary text-white' : 'btn-outline-primary'} rounded-pill px-2.5 px-sm-3 py-1.5 shadow-sm fw-semibold d-flex align-items-center gap-1`}
@@ -434,35 +434,27 @@ function App() {
       {/* Main Menu Bar with Clinical Category Colors - Always visible on quick-hub */}
       <nav className="navbar navbar-expand-lg navbar-custom sticky-top shadow-sm py-1">
         <div className="container d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center justify-content-between gap-1 gap-lg-2 py-0">
-          {/* Top Row on Mobile: Brand Title on Left, Quick Scanner on Right */}
+          {/* Top Row on Mobile: Brand Title on Left */}
           <div className="d-flex align-items-center justify-content-between w-100 w-lg-auto">
             <a className="navbar-brand d-flex align-items-center gap-2 text-decoration-none py-1 m-0" href="#/">
               <span className="brand-dot"></span>
               <span className="brand-title fs-5">UMF Expertenstandards</span>
             </a>
 
-            {/* Mobile Quick Action Buttons (Scan & Overview) */}
-            <div className="d-flex d-lg-none align-items-center gap-1">
-              <button
-                className="btn btn-sm btn-outline-primary rounded-pill px-2.5 py-1 d-flex align-items-center gap-1 shadow-sm"
-                style={{ minHeight: '34px', fontSize: '0.78rem' }}
-                onClick={() => setIsScanModalOpen(true)}
-                title="QR-Code scannen oder roXtra suchen"
-              >
-                <i className="bi bi-qr-code-scan"></i>
-                <span>Scan</span>
-              </button>
-              {currentRoute !== 'home' && (
+            {/* Mobile Overview button on subpages */}
+            {currentRoute !== 'home' && (
+              <div className="d-flex d-lg-none align-items-center">
                 <a
                   href="#/"
-                  className="btn btn-sm btn-light border rounded-pill px-2 py-1 text-secondary shadow-sm d-flex align-items-center"
+                  className="btn btn-sm btn-light border rounded-pill px-2.5 py-1 text-secondary shadow-sm d-flex align-items-center gap-1"
                   style={{ minHeight: '34px', fontSize: '0.78rem' }}
                   title="Zur Hauptübersicht"
                 >
                   <i className="bi bi-house-door-fill"></i>
+                  <span>Übersicht</span>
                 </a>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Horizontally Scrollable Category Ribbon on Mobile, Inline Pills on Desktop */}
@@ -525,7 +517,6 @@ function App() {
           <TilesOverview
             standards={UMF_STANDARDS}
             onSelectStandard={(id) => navigateTo(id)}
-            onOpenScanner={() => setIsScanModalOpen(true)}
           />
         )}
 
@@ -592,9 +583,9 @@ function App() {
           />
         )}
 
-        {/* VIEW: Magic Card (ATM-sized Universal Pocketcard) */}
-        {currentRoute === 'magic-card' && (
-          <MagicCardView
+        {/* VIEW: Universal-Karte (A4- & ATM-Format Universal Pocketcard) */}
+        {(currentRoute === 'universal-karte' || currentRoute === 'magic-card') && (
+          <UniversalCardView
             standards={UMF_STANDARDS}
             onSelectStandard={(id) => navigateTo(id)}
             showToast={showToast}
@@ -678,8 +669,8 @@ function App() {
                   <a href="#/zvk" className="footer-category-pill pill-zvk">
                     <i className="bi bi-droplet-half"></i> ZVK SOP
                   </a>
-                  <a href="#/magic-card" className="footer-category-pill pill-magic">
-                    <i className="bi bi-stars text-warning"></i> Magic Card (ATM)
+                  <a href="#/universal-karte" className="footer-category-pill pill-magic">
+                    <i className="bi bi-stars text-warning"></i> Universal-Karte (A4 &amp; Scheckkarte)
                   </a>
                   <a href="#/qrcodes" className="footer-category-pill pill-hub">
                     <i className="bi bi-collection"></i> Alle Pocketcards
@@ -726,7 +717,7 @@ function App() {
 // -------------------------------------------------------------
 // Component: The Main Tiles Overview (Modern, Beautified Cards without embedded QR codes)
 // -------------------------------------------------------------
-function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
+function TilesOverview({ standards, onSelectStandard }) {
   const list = Object.values(standards);
 
   return (
@@ -755,28 +746,6 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
             <p className="text-white text-opacity-80 mb-0" style={{ lineHeight: '1.55', fontSize: '0.86rem' }}>
               Evidenzbasierte Expertenstandards, Intensiv-SOPs und Hygieneleitfäden für den Stations- und Intensivalltag. Wählen Sie eine Kategorie, um die Leitlinie, klinischen Handlungsschritte und Dokumentationen direkt einzusehen.
             </p>
-
-            {/* Quick Action Buttons for Mobile Nurses */}
-            <div className="mt-3 d-flex flex-wrap align-items-center gap-2">
-              <button
-                className="btn btn-light btn-sm rounded-pill px-3 py-2 fw-bold text-dark shadow-sm d-inline-flex align-items-center gap-2"
-                style={{ minHeight: '40px', fontSize: '0.82rem' }}
-                onClick={onOpenScanner}
-                title="QR-Code scannen oder roXtra QM-ID eingeben"
-              >
-                <i className="bi bi-qr-code-scan text-primary"></i>
-                <span>QR scannen / roXtra suchen</span>
-              </button>
-              <a
-                href="#/quick-hub"
-                className="btn btn-outline-light btn-sm rounded-pill px-3 py-2 fw-semibold shadow-sm d-inline-flex align-items-center gap-1.5"
-                style={{ minHeight: '40px', fontSize: '0.82rem' }}
-                title="Schnellzugriff auf alle 6 Kacheln"
-              >
-                <i className="bi bi-grid-3x3-gap-fill text-warning"></i>
-                <span>Schnellzugriff</span>
-              </a>
-            </div>
           </div>
         </div>
 
@@ -871,17 +840,7 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
                 </div>
 
                 {/* Card Footer: Action button */}
-                <div className="d-flex flex-wrap justify-content-between align-items-center pt-3 border-top gap-2 mt-auto">
-                  <div className="d-flex align-items-center gap-2">
-                    <span className="badge bg-light text-muted border small px-2 py-1">
-                      <i className="bi bi-file-earmark-medical me-1 text-primary"></i>
-                      {std.id === 'zvk' || std.id === 'isolation' ? 'SOP & Leitfaden' : 'Expertenstandard'}
-                    </span>
-                    <span className="text-muted small d-none d-sm-inline" style={{ fontSize: '0.75rem' }}>
-                      {std.clinicalFocus ? `${std.clinicalFocus.length} Handlungsschritte` : ''}
-                    </span>
-                  </div>
-
+                <div className="d-flex justify-content-end align-items-center pt-3 border-top gap-2 mt-auto">
                   <button
                     type="button"
                     className="btn btn-sm rounded-pill px-3 py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm text-white fw-semibold w-100 w-sm-auto"
@@ -912,7 +871,6 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [isModalMaximized, setIsModalMaximized] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
-  const [docViewMode, setDocViewMode] = useState('graphic'); // 'graphic' (infographic), 'poster' (official poster), 'pdf' (desktop pdf)
   const isPdfPopupStandard = standard.id === 'zvk' || standard.id === 'isolation';
   const rawPdfUrl = standard.pdfUrl || (standard.id === 'zvk' ? 'assets/zvk-sop-verfahrensanweisung.pdf' : (standard.id === 'isolation' ? 'assets/isolation-sop-verfahrensanweisung.pdf' : 'assets/umf-expertenstandards-folien.pdf'));
   const pdfBaseUrl = rawPdfUrl.split('#')[0];
@@ -966,142 +924,88 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
           {/* 3. The Pictures Section */}
           <div className="row g-3 mb-3">
             {standard.id === 'zvk' || standard.id === 'isolation' ? (
-              /* ZVK & Isolation: Modern Mobile-Friendly Smart Viewer (Replaces broken mobile iframe) */
+              /* ZVK & Isolation: Direct SOP PDF Viewer (Without Infografik/Poster tabs) */
               <div className="col-12">
                 <div className="clinical-picture-card h-100 d-flex flex-column shadow-sm rounded-4 overflow-hidden border">
-                  {/* Card Header with View Mode Switcher */}
+                  {/* Card Header: Official SOP document */}
                   <div className="d-flex flex-wrap justify-content-between align-items-center px-3 py-2 bg-light border-bottom gap-2">
                     <div className="d-flex align-items-center gap-2">
-                      <i className={`bi ${docViewMode === 'pdf' ? 'bi-file-earmark-pdf-fill text-danger' : docViewMode === 'poster' ? 'bi-file-richtext-fill text-primary' : 'bi-diagram-3-fill text-danger'} fs-5`}></i>
+                      <i className="bi bi-file-earmark-pdf-fill text-danger fs-5"></i>
                       <span className="fw-bold text-dark" style={{ fontSize: '0.92rem' }}>
-                        {docViewMode === 'poster' ? 'Offizielles Schulungs-Poster' : docViewMode === 'pdf' ? 'Verfahrensanweisung (SOP)' : 'Klinische Infografik & Praxis'}: {standard.shortTitle}
+                        Verfahrensanweisung &amp; SOP: {standard.shortTitle}
                       </span>
                     </div>
 
-                    {/* View Switcher: Infografik / Poster / SOP PDF */}
-                    <div className="mobile-segmented-control mt-2 mt-sm-0" style={{ maxWidth: '360px' }}>
-                      <button
-                        type="button"
-                        className={`btn btn-sm ${docViewMode === 'graphic' ? 'btn-danger text-white shadow-sm' : 'btn-light border-0 text-secondary'}`}
-                        style={{ fontSize: '0.78rem' }}
-                        onClick={() => setDocViewMode('graphic')}
-                        title="Klinische Handlungsschritte & Infografik"
-                      >
-                        <i className="bi bi-diagram-3"></i>
-                        <span>Infografik</span>
-                      </button>
-                      <button
-                        type="button"
-                        className={`btn btn-sm ${docViewMode === 'poster' ? 'btn-danger text-white shadow-sm' : 'btn-light border-0 text-secondary'}`}
-                        style={{ fontSize: '0.78rem' }}
-                        onClick={() => setDocViewMode('poster')}
-                        title="Offizielles Klinik-Poster"
-                      >
-                        <i className="bi bi-file-richtext"></i>
-                        <span>Poster</span>
-                      </button>
-                      <button
-                        type="button"
-                        className={`btn btn-sm ${docViewMode === 'pdf' ? 'btn-danger text-white shadow-sm' : 'btn-light border-0 text-secondary'}`}
-                        style={{ fontSize: '0.78rem' }}
-                        onClick={() => setDocViewMode('pdf')}
-                        title="Originalverfahrensanweisung SOP"
-                      >
-                        <i className="bi bi-file-pdf"></i>
-                        <span>SOP PDF</span>
-                      </button>
+                    <div className="d-flex align-items-center gap-2">
+                      <span className="badge bg-white text-secondary border px-2.5 py-1 small font-monospace">
+                        roXtra ID: <strong>{standard.roXtraIds.join(' / ')}</strong>
+                      </span>
                     </div>
                   </div>
 
-                  {/* Body based on docViewMode */}
-                  {docViewMode === 'pdf' ? (
-                    <div>
-                      {/* Desktop / Tablet: Interactive PDF iframe embed */}
-                      <div className="d-none d-md-block position-relative bg-white" style={{ minHeight: '520px', height: '520px' }}>
-                        <iframe
-                          src={`${pdfBaseUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
-                          title={`PDF Schulungsillustration ${standard.shortTitle}`}
-                          className="w-100 h-100 border-0 d-block"
-                          style={{ minHeight: '520px', overflowY: 'auto' }}
-                        />
-                        <div className="position-absolute bottom-0 end-0 m-3 no-print" data-html2canvas-ignore="true">
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-dark bg-opacity-90 backdrop-blur text-white shadow rounded-pill py-1 px-3 d-flex align-items-center gap-1 hover-lift"
-                            style={{ fontSize: '0.78rem' }}
-                            onClick={() => setIsPdfModalOpen(true)}
-                          >
-                            <i className="bi bi-arrows-fullscreen"></i>
-                            <span>Vollbild öffnen</span>
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Mobile Smartphone: High-Performance, Touch-Friendly Native PDF Card */}
-                      <div className="d-block d-md-none p-3 text-center bg-light">
-                        <div className="bg-white p-3 rounded-4 shadow-sm border mb-2">
-                          <div className="d-inline-flex p-3 rounded-circle bg-danger bg-opacity-10 text-danger mb-2">
-                            <i className="bi bi-file-earmark-pdf-fill fs-1"></i>
-                          </div>
-                          <h6 className="fw-bold text-dark mb-1">
-                            {standard.topic}
-                          </h6>
-                          <div className="text-muted small mb-3">
-                            {standard.id === 'zvk' ? 'Offizielle Verfahrensanweisung ZVK (10 Seiten) • roXtra ID: 391904' : 'Allgemeines Vorgehen bei Isolation und Reinigung (4 Seiten) • roXtra ID: 239411'}
-                          </div>
-
-                          <div className="alert alert-info py-2 px-3 small text-start d-flex align-items-center gap-2 mb-3">
-                            <i className="bi bi-phone text-info fs-5 flex-shrink-0"></i>
-                            <span style={{ fontSize: '0.8rem' }}>Für flüssiges Scrollen &amp; Zoom am Smartphone tippen Sie auf den Button, um die SOP im systemeigenen PDF-Viewer zu öffnen.</span>
-                          </div>
-
-                          <div className="d-grid gap-2">
-                            <a
-                              href={standard.sopPdfUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="btn btn-danger rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-bold shadow-sm"
-                            >
-                              <i className="bi bi-box-arrow-up-right fs-5"></i>
-                              <span>SOP PDF im Vollbild öffnen</span>
-                            </a>
-                            <a
-                              href={standard.sopPdfUrl}
-                              download
-                              className="btn btn-outline-secondary rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-semibold small"
-                            >
-                              <i className="bi bi-download"></i>
-                              <span>PDF Datei herunterladen</span>
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    /* Infografik or Poster Mode: Crystal-clear, instant-loading, responsive image with click-to-zoom */
-                    <div
-                      className="p-3 text-center bg-white d-flex align-items-center justify-content-center position-relative"
-                      style={{ cursor: 'pointer', minHeight: '260px' }}
-                      onClick={() => setPreviewImage({
-                        src: docViewMode === 'poster' ? standard.image : standard.graphicImage,
-                        title: standard.topic,
-                        subtitle: docViewMode === 'poster' ? 'Offizielles Klinik-Poster (Schulungsillustration)' : 'Klinische Infografik & Praxis'
-                      })}
-                      title="Klicken für vergrößerte Vollbild-Ansicht"
-                    >
-                      <img
-                        src={docViewMode === 'poster' ? standard.image : standard.graphicImage}
-                        alt={`${standard.shortTitle} ${docViewMode}`}
-                        className="clinical-picture-img img-fluid rounded"
-                        style={{ maxHeight: '420px', width: '100%', objectFit: 'contain' }}
+                  {/* Body: Direct SOP PDF Viewer */}
+                  <div>
+                    {/* Desktop / Tablet: Interactive PDF iframe embed */}
+                    <div className="d-none d-md-block position-relative bg-white" style={{ minHeight: '520px', height: '520px' }}>
+                      <iframe
+                        src={`${pdfBaseUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
+                        title={`PDF Schulungsillustration ${standard.shortTitle}`}
+                        className="w-100 h-100 border-0 d-block"
+                        style={{ minHeight: '520px', overflowY: 'auto' }}
                       />
-                      <div className="position-absolute bottom-0 end-0 m-3 no-print">
-                        <span className="badge bg-dark bg-opacity-75 text-white rounded-pill px-3 py-2 shadow-sm" style={{ fontSize: '0.78rem' }}>
-                          <i className="bi bi-zoom-in me-1"></i>Bild vergrößern
-                        </span>
+                      <div className="position-absolute bottom-0 end-0 m-3 no-print" data-html2canvas-ignore="true">
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-dark bg-opacity-90 backdrop-blur text-white shadow rounded-pill py-1 px-3 d-flex align-items-center gap-1 hover-lift"
+                          style={{ fontSize: '0.78rem' }}
+                          onClick={() => setIsPdfModalOpen(true)}
+                        >
+                          <i className="bi bi-arrows-fullscreen"></i>
+                          <span>Vollbild öffnen</span>
+                        </button>
                       </div>
                     </div>
-                  )}
+
+                    {/* Mobile Smartphone: High-Performance, Touch-Friendly Native PDF Card */}
+                    <div className="d-block d-md-none p-3 text-center bg-light">
+                      <div className="bg-white p-3 rounded-4 shadow-sm border mb-2">
+                        <div className="d-inline-flex p-3 rounded-circle bg-danger bg-opacity-10 text-danger mb-2">
+                          <i className="bi bi-file-earmark-pdf-fill fs-1"></i>
+                        </div>
+                        <h6 className="fw-bold text-dark mb-1">
+                          {standard.topic}
+                        </h6>
+                        <div className="text-muted small mb-3">
+                          {standard.id === 'zvk' ? 'Offizielle Verfahrensanweisung ZVK (10 Seiten) • roXtra ID: 391904' : 'Allgemeines Vorgehen bei Isolation und Reinigung (4 Seiten) • roXtra ID: 239411'}
+                        </div>
+
+                        <div className="alert alert-info py-2 px-3 small text-start d-flex align-items-center gap-2 mb-3">
+                          <i className="bi bi-phone text-info fs-5 flex-shrink-0"></i>
+                          <span style={{ fontSize: '0.8rem' }}>Für flüssiges Scrollen &amp; Zoom am Smartphone tippen Sie auf den Button, um die SOP im systemeigenen PDF-Viewer zu öffnen.</span>
+                        </div>
+
+                        <div className="d-grid gap-2">
+                          <a
+                            href={standard.sopPdfUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-danger rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-bold shadow-sm"
+                          >
+                            <i className="bi bi-box-arrow-up-right fs-5"></i>
+                            <span>SOP PDF im Vollbild öffnen</span>
+                          </a>
+                          <a
+                            href={standard.sopPdfUrl}
+                            download
+                            className="btn btn-outline-secondary rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-semibold small"
+                          >
+                            <i className="bi bi-download"></i>
+                            <span>PDF Datei herunterladen</span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
                   {/* Fallback image for html2pdf / print */}
                   <img
@@ -1119,13 +1023,9 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                     <div className="d-flex align-items-center gap-2">
                       <button
                         type="button"
-                        className="btn btn-sm btn-outline-dark rounded-pill px-2 py-1"
+                        className="btn btn-sm btn-outline-dark rounded-pill px-2.5 py-1"
                         style={{ fontSize: '0.76rem' }}
-                        onClick={() => setPreviewImage({
-                          src: docViewMode === 'poster' ? standard.image : standard.graphicImage,
-                          title: standard.topic,
-                          subtitle: docViewMode === 'poster' ? 'Klinik-Poster' : 'Infografik'
-                        })}
+                        onClick={() => setIsPdfModalOpen(true)}
                       >
                         <i className="bi bi-arrows-fullscreen me-1"></i>Vollbild
                       </button>
@@ -1133,7 +1033,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                         href={standard.sopPdfUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn btn-sm btn-outline-danger rounded-pill px-2 py-1 fw-semibold"
+                        className="btn btn-sm btn-outline-danger rounded-pill px-2.5 py-1 fw-semibold"
                         style={{ fontSize: '0.76rem' }}
                       >
                         <i className="bi bi-file-earmark-pdf-fill me-1"></i>SOP PDF ({standard.id === 'zvk' ? '10 S.' : '4 S.'})
@@ -1709,7 +1609,6 @@ function PdfSlideCard({ standard, onCopy, onDownloadQr, onDownloadPdf }) {
 // Component: Dedicated Separate Page for Each Standard
 // -------------------------------------------------------------
 function StandardDetailPage({ standard, onNavigate, showToast }) {
-  const [activeTab, setActiveTab] = useState('pocketcard'); // 'pocketcard' | 'slide'
   const otherStandards = Object.values(UMF_STANDARDS).filter(s => s.id !== standard.id);
 
   const copyToClipboard = (text, label = 'Text') => {
@@ -1739,26 +1638,25 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
     showToast('QR-Code Bild heruntergeladen!');
   };
 
-  const downloadPdf = (std, isSlide = false) => {
-    const elementId = isSlide ? `slide-card-${std.id}` : `pocketcard-${std.id}`;
+  const downloadPdf = (std) => {
+    const elementId = `pocketcard-${std.id}`;
     const element = document.getElementById(elementId);
     if (!element) {
       window.print();
       return;
     }
-    const label = isSlide ? 'Original-Folie' : 'Pocketcard';
-    showToast(`PDF für ${label} wird erstellt...`);
+    showToast('PDF für Pocketcard wird erstellt...');
 
     if (window.html2pdf) {
       const opt = {
-        margin: isSlide ? [8, 8, 8, 8] : [6, 6, 6, 6],
-        filename: `UMF-${isSlide ? 'Original-Folie' : 'Pocketcard'}-${std.shortTitle.replace(/\s+/g, '_')}.pdf`,
+        margin: [6, 6, 6, 6],
+        filename: `UMF-Pocketcard-${std.shortTitle.replace(/\s+/g, '_')}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, logging: false },
         jsPDF: {
           unit: 'mm',
           format: 'a4',
-          orientation: isSlide ? 'landscape' : 'portrait'
+          orientation: 'portrait'
         }
       };
       window.html2pdf()
@@ -1766,7 +1664,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
         .from(element)
         .save()
         .then(() => {
-          showToast(`PDF für ${label} erfolgreich heruntergeladen!`);
+          showToast('PDF für Pocketcard erfolgreich heruntergeladen!');
         })
         .catch((err) => {
           console.error('PDF error:', err);
@@ -1807,7 +1705,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
             <button
               className="btn btn-primary btn-sm px-3 py-1.5 fw-semibold d-flex align-items-center gap-1.5"
               style={{ minHeight: '38px' }}
-              onClick={() => downloadPdf(standard, activeTab === 'slide')}
+              onClick={() => downloadPdf(standard)}
               title="Aktuelle Ansicht als PDF-Dokument herunterladen"
             >
               <i className="bi bi-file-earmark-arrow-down-fill"></i>
@@ -1827,52 +1725,13 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
         </div>
       </div>
 
-      {/* VIEW TABS: Switch between Clinical Pocketcard & Original Presentation Slide */}
-      <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between mb-3 gap-2 no-print">
-        <div className="mobile-segmented-control" role="group" style={{ maxWidth: '480px' }}>
-          <button
-            type="button"
-            className={`btn btn-sm ${activeTab === 'pocketcard' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            onClick={() => setActiveTab('pocketcard')}
-          >
-            <i className="bi bi-card-heading"></i>
-            <span className="d-none d-sm-inline">Klinische Pocketcard (Modern)</span>
-            <span className="d-inline d-sm-none">Pocketcard</span>
-          </button>
-          <button
-            type="button"
-            className={`btn btn-sm ${activeTab === 'slide' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            onClick={() => setActiveTab('slide')}
-          >
-            <i className="bi bi-easel"></i>
-            <span className="d-none d-sm-inline">Original-Schulungsfolie (UMF)</span>
-            <span className="d-inline d-sm-none">Schulungsfolie</span>
-          </button>
-        </div>
-
-        <small className="text-muted d-none d-md-block">
-          {activeTab === 'pocketcard'
-            ? 'Format: A4 Porträt • Dual-Grafiken & Minimal-Info'
-            : 'Format: A4 Querformat • 1:1 Original Schulungsfolie'}
-        </small>
-      </div>
-
-      {/* 1. CARD VIEW (Pocketcard OR Slide based on activeTab) */}
-      {activeTab === 'pocketcard' ? (
-        <BeautifiedPocketcard
-          standard={standard}
-          onCopy={copyToClipboard}
-          onDownloadQr={downloadQrImage}
-          onDownloadPdf={downloadPdf}
-        />
-      ) : (
-        <PdfSlideCard
-          standard={standard}
-          onCopy={copyToClipboard}
-          onDownloadQr={downloadQrImage}
-          onDownloadPdf={downloadPdf}
-        />
-      )}
+      {/* 1. CLINICAL POCKETCARD VIEW */}
+      <BeautifiedPocketcard
+        standard={standard}
+        onCopy={copyToClipboard}
+        onDownloadQr={downloadQrImage}
+        onDownloadPdf={downloadPdf}
+      />
 
       {/* 2. EMBEDDED TRAINING VIDEO & NURSING PROCESS */}
       <div className="row g-4 mt-1 no-print">
@@ -2064,7 +1923,6 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
 // Component: All 5 QR Codes Presentation / Pocketcards Hub
 // -------------------------------------------------------------
 function AllQrCodesView({ standards, onSelectStandard, showToast }) {
-  const [hubTab, setHubTab] = useState('pocketcard'); // 'pocketcard' | 'slide'
   const list = Object.values(standards);
 
   const copyToClipboard = (text, label = 'Text') => {
@@ -2074,7 +1932,7 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
   };
 
   const downloadQrImage = (std) => {
-    const container = document.querySelector(`.pocket-qr-${std.id}`) || document.querySelector(`.slide-qr-${std.id}`) || document.querySelector(`.detail-qr-${std.id}`);
+    const container = document.querySelector(`.pocket-qr-${std.id}`) || document.querySelector(`.detail-qr-${std.id}`);
     if (!container) return;
     const img = container.querySelector('img');
     const canvas = container.querySelector('canvas');
@@ -2092,26 +1950,25 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
     showToast('QR-Code Bild heruntergeladen!');
   };
 
-  const downloadPdf = (std, isSlide = false) => {
-    const elementId = isSlide ? `slide-card-${std.id}` : `pocketcard-${std.id}`;
+  const downloadPdf = (std) => {
+    const elementId = `pocketcard-${std.id}`;
     const element = document.getElementById(elementId);
     if (!element) {
       window.print();
       return;
     }
-    const label = isSlide ? 'Original-Folie' : 'Pocketcard';
-    showToast(`PDF für ${label} wird erstellt...`);
+    showToast('PDF für Pocketcard wird erstellt...');
 
     if (window.html2pdf) {
       const opt = {
-        margin: isSlide ? [8, 8, 8, 8] : [6, 6, 6, 6],
-        filename: `UMF-${isSlide ? 'Original-Folie' : 'Pocketcard'}-${std.shortTitle.replace(/\s+/g, '_')}.pdf`,
+        margin: [6, 6, 6, 6],
+        filename: `UMF-Pocketcard-${std.shortTitle.replace(/\s+/g, '_')}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, logging: false },
         jsPDF: {
           unit: 'mm',
           format: 'a4',
-          orientation: isSlide ? 'landscape' : 'portrait'
+          orientation: 'portrait'
         }
       };
       window.html2pdf()
@@ -2119,7 +1976,7 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
         .from(element)
         .save()
         .then(() => {
-          showToast(`PDF für ${label} erfolgreich heruntergeladen!`);
+          showToast(`PDF für ${std.shortTitle} erfolgreich heruntergeladen!`);
         })
         .catch((err) => {
           console.error('PDF error:', err);
@@ -2150,47 +2007,16 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
         </button>
       </div>
 
-      {/* Switcher Tab between Pocketcards and Slides */}
-      <div className="d-flex align-items-center justify-content-between mb-4 no-print">
-        <div className="mobile-segmented-control" role="group" style={{ maxWidth: '440px' }}>
-          <button
-            type="button"
-            className={`btn btn-sm ${hubTab === 'pocketcard' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            onClick={() => setHubTab('pocketcard')}
-          >
-            <i className="bi bi-card-heading"></i>
-            <span>Klinische Pocketcards</span>
-          </button>
-          <button
-            type="button"
-            className={`btn btn-sm ${hubTab === 'slide' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            onClick={() => setHubTab('slide')}
-          >
-            <i className="bi bi-easel"></i>
-            <span>Original-Schulungsfolien</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Render list based on selected view */}
+      {/* Render list of pocketcards */}
       <div className="d-flex flex-column gap-4">
         {list.map((std) => (
           <div key={std.id} className="page-break">
-            {hubTab === 'pocketcard' ? (
-              <BeautifiedPocketcard
-                standard={std}
-                onCopy={copyToClipboard}
-                onDownloadQr={downloadQrImage}
-                onDownloadPdf={downloadPdf}
-              />
-            ) : (
-              <PdfSlideCard
-                standard={std}
-                onCopy={copyToClipboard}
-                onDownloadQr={downloadQrImage}
-                onDownloadPdf={downloadPdf}
-              />
-            )}
+            <BeautifiedPocketcard
+              standard={std}
+              onCopy={copyToClipboard}
+              onDownloadQr={downloadQrImage}
+              onDownloadPdf={downloadPdf}
+            />
           </div>
         ))}
       </div>
@@ -2198,51 +2024,369 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
   );
 }
 
+/// -------------------------------------------------------------
+// Component: Universal-Karte (A4-Pocketcard & ATM-Scheckkarte)
 // -------------------------------------------------------------
-// Component: Magic Card (ATM-sized Universal Pocketcard)
+function UniversalCardInteractiveCard({ isAtm = false, onSelectStandard }) {
+  return (
+    <div className={`universal-card-interactive-box ${isAtm ? 'atm-size' : ''} mx-auto position-relative`}>
+      <img
+        src="assets/universal-card-umf.jpg"
+        alt="Universitätsmedizin Frankfurt - Klinische Pflegestandards Universal-Pocketcard"
+        className="universal-card-img"
+      />
+
+      {/* 1. Dekubitusprophylaxe Hotspot */}
+      <div
+        className="universal-card-hotspot"
+        style={{ left: '1.2%', top: '41.2%', width: '57.0%', height: '8.4%' }}
+        onClick={() => onSelectStandard('dekubitus')}
+        title="1. Dekubitusprophylaxe aufrufen"
+      />
+
+      {/* 2. Sturzprophylaxe Hotspot */}
+      <div
+        className="universal-card-hotspot"
+        style={{ left: '1.2%', top: '49.8%', width: '57.0%', height: '8.4%' }}
+        onClick={() => onSelectStandard('sturz')}
+        title="2. Sturzprophylaxe aufrufen"
+      />
+
+      {/* 3. Schmerzmanagement Hotspot */}
+      <div
+        className="universal-card-hotspot"
+        style={{ left: '1.2%', top: '58.4%', width: '57.0%', height: '8.4%' }}
+        onClick={() => onSelectStandard('schmerz')}
+        title="3. Schmerzmanagement aufrufen"
+      />
+
+      {/* 4. Ernährungsmanagement Hotspot */}
+      <div
+        className="universal-card-hotspot"
+        style={{ left: '1.2%', top: '67.0%', width: '57.0%', height: '8.4%' }}
+        onClick={() => onSelectStandard('ernaehrung')}
+        title="4. Ernährungsmanagement aufrufen"
+      />
+
+      {/* 5. ZVK Intensivpflege Hotspot */}
+      <div
+        className="universal-card-hotspot"
+        style={{ left: '1.2%', top: '75.6%', width: '57.0%', height: '8.4%' }}
+        onClick={() => onSelectStandard('zvk')}
+        title="5. ZVK Intensivpflege & SOP aufrufen"
+      />
+
+      {/* 6. Isolation & Hygiene Hotspot */}
+      <div
+        className="universal-card-hotspot"
+        style={{ left: '1.2%', top: '84.2%', width: '57.0%', height: '8.4%' }}
+        onClick={() => onSelectStandard('isolation')}
+        title="6. Isolation & Hygiene aufrufen"
+      />
+
+      {/* QR Code & 'HIER SCANNEN' Hotspot */}
+      <div
+        className="universal-card-hotspot"
+        style={{ left: '61.5%', top: '30.5%', width: '28.0%', height: '53.0%', borderRadius: '24px' }}
+        onClick={() => onSelectStandard('quick-hub')}
+        title="Hier scannen / Schnellzugriff für alle 6 Standards öffnen"
+      />
+    </div>
+  );
+}
+
 // -------------------------------------------------------------
-function MagicCardView({ standards, onSelectStandard, showToast }) {
+// Component: Universal-Karte Native A4 Clinical Sheet (Crisp & Unzoomed)
+// -------------------------------------------------------------
+function UniversalCardA4Native({ onSelectStandard }) {
+  const cardUrl = (typeof window !== 'undefined' && window.location)
+    ? `${window.location.origin}${window.location.pathname}#/quick-hub`
+    : 'https://umf-nursing-standards.web.app/#/quick-hub';
+
+  const rows = [
+    {
+      num: 1,
+      id: 'dekubitus',
+      title: 'Dekubitusprophylaxe',
+      icon: 'bi-bandaid-fill',
+      color: '#c026d3',
+      bgGradient: 'linear-gradient(90deg, #fdf2f8 0%, #fce7f3 35%, #ffffff 100%)',
+      thumb: 'assets/pocket-thumb-dekubitus.jpg'
+    },
+    {
+      num: 2,
+      id: 'sturz',
+      title: 'Sturzprophylaxe',
+      icon: 'bi-shield-exclamation',
+      color: '#16a34a',
+      bgGradient: 'linear-gradient(90deg, #f0fdf4 0%, #dcfce7 35%, #ffffff 100%)',
+      thumb: 'assets/pocket-thumb-sturz.jpg'
+    },
+    {
+      num: 3,
+      id: 'schmerz',
+      title: 'Schmerzmanagement',
+      icon: 'bi-heart-pulse-fill',
+      color: '#ea580c',
+      bgGradient: 'linear-gradient(90deg, #fff7ed 0%, #ffedd5 35%, #ffffff 100%)',
+      thumb: 'assets/pocket-thumb-schmerz.jpg'
+    },
+    {
+      num: 4,
+      id: 'ernaehrung',
+      title: 'Ernährungsmanagement',
+      icon: 'bi-apple',
+      color: '#0284c7',
+      bgGradient: 'linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 35%, #ffffff 100%)',
+      thumb: 'assets/pocket-thumb-ernaehrung.jpg'
+    },
+    {
+      num: 5,
+      id: 'zvk',
+      title: 'ZVK Intensivpflege',
+      icon: 'bi-droplet-half',
+      color: '#e11d48',
+      bgGradient: 'linear-gradient(90deg, #fff1f2 0%, #ffe4e6 35%, #ffffff 100%)',
+      thumb: 'assets/pocket-thumb-zvk.jpg'
+    },
+    {
+      num: 6,
+      id: 'isolation',
+      title: 'Isolation & Hygiene',
+      icon: 'bi-shield-shaded',
+      color: '#7c3aed',
+      bgGradient: 'linear-gradient(90deg, #faf5ff 0%, #f3e8ff 35%, #ffffff 100%)',
+      thumb: 'assets/pocket-thumb-isolation.jpg'
+    }
+  ];
+
+  return (
+    <div className="a4-native-card position-relative overflow-hidden">
+      {/* 1. TOP HEADER (Deep Navy) */}
+      <div className="a4-card-header d-flex align-items-center justify-content-between px-3 py-2">
+        <div className="d-flex align-items-center gap-2">
+          <div className="bg-white p-1 rounded-2 shadow-sm d-flex align-items-center">
+            <img src="assets/umf-logo.jpg" alt="UMF Logo" style={{ height: '34px', width: 'auto' }} />
+          </div>
+          <div>
+            <div className="text-white fw-bold text-uppercase tracking-wider" style={{ fontSize: '1.02rem', letterSpacing: '0.04em', lineHeight: 1.2 }}>
+              Universitätsmedizin Frankfurt
+            </div>
+            <div className="fw-semibold" style={{ fontSize: '0.80rem', color: '#ffea79', letterSpacing: '0.02em' }}>
+              Digitale Pflege-Pocketcard &bull; SOP-Schnellzugriff
+            </div>
+          </div>
+        </div>
+
+        <div className="d-flex align-items-center gap-2">
+          <span className="badge rounded-pill px-3 py-1.5 fw-bold text-white shadow-sm" style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', border: '1px solid rgba(255,255,255,0.3)', fontSize: '0.82rem' }}>
+            ✨ UNIVERSAL-KARTE
+          </span>
+        </div>
+      </div>
+
+      {/* 2. SUBHEADER BANNER WITH YELLOW NOTE & CENTRAL BANNER */}
+      <div className="a4-card-subheader px-3 py-2 d-flex align-items-center justify-content-between position-relative">
+        {/* Left: Yellow sticky note */}
+        <div className="a4-yellow-note shadow-sm">
+          <div className="a4-note-pin"><i className="bi bi-pin-angle-fill text-danger"></i></div>
+          <div className="fw-bold text-dark" style={{ lineHeight: 1.25 }}>
+            Wissen<br/>
+            Sicherheit<br/>
+            Qualität<br/>
+            <span style={{ fontSize: '0.78rem', fontWeight: 600 }}>in der Pflege</span>
+          </div>
+        </div>
+
+        {/* Center: Title Banner */}
+        <div className="text-center flex-grow-1 px-3">
+          <h2 className="a4-main-title mb-1 fw-black text-uppercase">
+            Klinische Pflegestandards
+          </h2>
+          <div className="a4-sop-banner text-uppercase fw-bold text-white d-inline-block px-4 py-1 rounded-pill shadow-sm">
+            SOP – Schnellzugriff
+          </div>
+        </div>
+
+        {/* Right: 4 Checkmarks */}
+        <div className="a4-checkmarks-list text-start ps-2">
+          <div className="text-dark fw-bold small"><i className="bi bi-check-lg text-primary me-1"></i> Aktuell</div>
+          <div className="text-dark fw-bold small"><i className="bi bi-check-lg text-primary me-1"></i> Einfach</div>
+          <div className="text-dark fw-bold small"><i className="bi bi-check-lg text-primary me-1"></i> Schnell</div>
+          <div className="text-dark fw-bold small"><i className="bi bi-check-lg text-primary me-1"></i> Zuverlässig</div>
+        </div>
+      </div>
+
+      {/* 3. MAIN SECTION: 6 ROWS ON LEFT + QR SCANNER CARD ON RIGHT */}
+      <div className="a4-card-body px-3 py-2.5 d-flex gap-3 align-items-stretch">
+        {/* LEFT COLUMN: 6 ROWS */}
+        <div className="a4-rows-col d-flex flex-column gap-2 flex-grow-1" style={{ flex: '1 1 65%' }}>
+          {rows.map((row) => (
+            <div
+              key={row.id}
+              className="a4-standard-row d-flex align-items-center justify-content-between shadow-sm"
+              onClick={() => onSelectStandard(row.id)}
+              style={{
+                background: row.bgGradient,
+                border: `1.5px solid ${row.color}33`,
+                borderRadius: '50rem'
+              }}
+              title={`${row.num}. ${row.title} öffnen`}
+            >
+              <div className="d-flex align-items-center gap-2 ps-1.5 py-1">
+                {/* Number Badge */}
+                <div
+                  className="a4-row-number text-white fw-black rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                  style={{ backgroundColor: row.color, width: '32px', height: '32px', fontSize: '1rem', flexShrink: 0 }}
+                >
+                  {row.num}
+                </div>
+
+                {/* Icon Circle */}
+                <div
+                  className="a4-row-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                  style={{ backgroundColor: '#ffffff', color: row.color, width: '32px', height: '32px', fontSize: '1.05rem', border: `1.5px solid ${row.color}55`, flexShrink: 0 }}
+                >
+                  <i className={`bi ${row.icon}`}></i>
+                </div>
+
+                {/* Standard Title */}
+                <div className="fw-bold text-dark pe-2 text-nowrap a4-row-title" style={{ fontSize: '0.98rem' }}>
+                  {row.title}
+                </div>
+
+                {/* Chevron */}
+                <i className="bi bi-chevron-right fw-bold" style={{ color: row.color, fontSize: '1.1rem' }}></i>
+              </div>
+
+              {/* Real Thumbnail Photo */}
+              <div className="a4-row-thumb-box overflow-hidden rounded-end-pill">
+                <img
+                  src={row.thumb}
+                  alt={row.title}
+                  className="a4-row-thumb-img"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* RIGHT COLUMN: SCANNER CARD */}
+        <div className="a4-scanner-col d-flex flex-column align-items-center justify-content-center p-3 text-center shadow-sm" style={{ width: '270px', flexShrink: 0 }}>
+          <div className="a4-qr-wrapper shadow-sm border mb-2">
+            <div className="a4-bracket a4-bracket-tl"></div>
+            <div className="a4-bracket a4-bracket-tr"></div>
+            <div className="a4-bracket a4-bracket-bl"></div>
+            <div className="a4-bracket a4-bracket-br"></div>
+            <QrCodeCanvas value={cardUrl} size={150} color="#00273d" />
+          </div>
+
+          <button
+            type="button"
+            className="btn btn-primary fw-bold text-uppercase w-100 py-1.5 px-3 rounded-pill shadow-sm d-flex align-items-center justify-content-center gap-2 mb-1"
+            style={{ fontSize: '0.88rem', letterSpacing: '0.03em', background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', border: 'none' }}
+            onClick={() => onSelectStandard('quick-hub')}
+          >
+            <i className="bi bi-qr-code-scan"></i>
+            <span>Hier scannen</span>
+          </button>
+
+          <div className="fw-bold text-dark small" style={{ fontSize: '0.78rem', lineHeight: 1.25 }}>
+            Schnellzugriff auf alle<br/>
+            <span className="text-primary">6 Pflegestandards / SOPs</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. BOTTOM PILLS BAR */}
+      <div className="a4-bottom-bar px-3 py-1.5 d-flex flex-wrap align-items-center justify-content-between gap-1 border-top" style={{ background: '#f8fafc' }}>
+        <span className="badge rounded-pill px-2.5 py-1 text-white fw-semibold d-inline-flex align-items-center gap-1" style={{ background: '#0284c7', fontSize: '0.75rem' }}>
+          <i className="bi bi-clipboard-check"></i> Standardisiert
+        </span>
+        <span className="badge rounded-pill px-2.5 py-1 text-white fw-semibold d-inline-flex align-items-center gap-1" style={{ background: '#0d9488', fontSize: '0.75rem' }}>
+          <i className="bi bi-bullseye"></i> Patientensicherheit
+        </span>
+        <span className="badge rounded-pill px-2.5 py-1 text-white fw-semibold d-inline-flex align-items-center gap-1" style={{ background: '#f97316', fontSize: '0.75rem' }}>
+          <i className="bi bi-people-fill"></i> Qualität in der Pflege
+        </span>
+        <span className="badge rounded-pill px-2.5 py-1 text-dark fw-semibold d-inline-flex align-items-center gap-1" style={{ background: '#facc15', fontSize: '0.75rem' }}>
+          <i className="bi bi-lightbulb-fill"></i> Wissensmanagement
+        </span>
+        <span className="badge rounded-pill px-2.5 py-1 text-white fw-semibold d-inline-flex align-items-center gap-1" style={{ background: '#7c3aed', fontSize: '0.75rem' }}>
+          <i className="bi bi-gear-wide-connected"></i> Aktuelle SOPs
+        </span>
+        <span className="badge rounded-pill px-2.5 py-1 text-white fw-semibold d-inline-flex align-items-center gap-1" style={{ background: '#db2777', fontSize: '0.75rem' }}>
+          <i className="bi bi-book-half"></i> Immer verfügbar
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function UniversalCardView({ standards, onSelectStandard, showToast }) {
+  const [cardFormat, setCardFormat] = useState('both'); // 'both' | 'a4' | 'atm'
   const list = Object.values(standards);
   const cardUrl = (typeof window !== 'undefined' && window.location)
     ? `${window.location.origin}${window.location.pathname}#/quick-hub`
-    : 'http://localhost:3000/#/quick-hub';
+    : 'https://umf-nursing-standards.web.app/#/quick-hub';
 
-  const downloadQrImage = () => {
-    const container = document.querySelector('#magic-qr-container');
-    if (!container) return;
-    const img = container.querySelector('img');
-    const canvas = container.querySelector('canvas');
-    let url = null;
-    if (img && img.src && img.src.startsWith('data:')) {
-      url = img.src;
-    } else if (canvas) {
-      url = canvas.toDataURL('image/png');
+  // Synchronize active format class to document body for automatic Ctrl+P isolation
+  useEffect(() => {
+    document.body.classList.remove('active-format-a4', 'active-format-atm');
+    if (cardFormat === 'atm') {
+      document.body.classList.add('active-format-atm');
+    } else {
+      document.body.classList.add('active-format-a4');
     }
-    if (!url) return;
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'MagicCard-QR-Code-UMF.png';
-    a.click();
-    showToast('Magic Card QR-Code heruntergeladen!');
+    return () => {
+      document.body.classList.remove('active-format-a4', 'active-format-atm', 'printing-a4', 'printing-atm');
+    };
+  }, [cardFormat]);
+
+  // Guaranteed print isolation: Only the chosen card is sent to the printer
+  const handlePrint = (format) => {
+    const isAtm = format === 'atm';
+    document.body.classList.remove('printing-a4', 'printing-atm');
+    document.body.classList.add(isAtm ? 'printing-atm' : 'printing-a4');
+
+    const cleanup = () => {
+      document.body.classList.remove('printing-a4', 'printing-atm');
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+    setTimeout(cleanup, 4000);
+
+    window.print();
   };
 
-  const downloadPdf = () => {
-    const element = document.getElementById('magic-card-printable');
+  const downloadCardImage = () => {
+    const a = document.createElement('a');
+    a.href = 'assets/universal-card-umf.jpg';
+    a.download = 'UMF-Universal-Pocketcard.jpg';
+    a.click();
+    showToast('Universal-Pocketcard Bild heruntergeladen!');
+  };
+
+  const downloadPdf = (format = cardFormat) => {
+    const targetFormat = format === 'both' ? 'a4' : format;
+    const elementId = targetFormat === 'atm' ? 'universal-card-atm-printable' : 'universal-card-a4-printable';
+    const element = document.getElementById(elementId);
     if (!element) {
-      window.print();
+      handlePrint(targetFormat);
       return;
     }
-    showToast('Magic Card PDF wird erstellt...');
+    const isAtm = targetFormat === 'atm';
+    showToast(isAtm ? 'Scheckkarten-PDF wird erstellt...' : 'A4 Universal-Pocketcard PDF wird erstellt...');
     if (window.html2pdf) {
       const opt = {
-        margin: [10, 10, 10, 10],
-        filename: 'UMF-MagicCard-Pocketcard.pdf',
+        margin: isAtm ? [10, 10, 10, 10] : [6, 6, 6, 6],
+        filename: isAtm ? 'UMF-Universal-Karte-Scheckkarte.pdf' : 'UMF-Universal-Pocketcard-A4.pdf',
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 3, useCORS: true, logging: false },
+        html2canvas: { scale: 2.5, useCORS: true, logging: false },
         jsPDF: {
           unit: 'mm',
           format: 'a4',
-          orientation: 'portrait'
+          orientation: isAtm ? 'portrait' : 'landscape'
         }
       };
       window.html2pdf()
@@ -2250,25 +2394,59 @@ function MagicCardView({ standards, onSelectStandard, showToast }) {
         .from(element)
         .save()
         .then(() => {
-          showToast('Magic Card PDF erfolgreich heruntergeladen!');
+          showToast(isAtm ? 'Scheckkarten-PDF erfolgreich heruntergeladen!' : 'A4 Universal-Pocketcard PDF erfolgreich heruntergeladen!');
         })
         .catch((err) => {
           console.error('PDF error:', err);
-          window.print();
+          handlePrint(targetFormat);
         });
     } else {
-      window.print();
+      handlePrint(targetFormat);
     }
   };
 
   return (
     <div className="py-2">
-      {/* Action Buttons Toolbar */}
+      {/* Top Action Toolbar */}
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 no-print">
         <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5 fw-semibold" style={{ minHeight: '38px' }}>
           <i className="bi bi-arrow-left"></i>
           <span>Zurück zur Übersicht</span>
         </a>
+
+        {/* Format Selector Pills */}
+        <div className="mobile-segmented-control" role="group" style={{ maxWidth: '460px' }}>
+          <button
+            type="button"
+            className={`btn btn-sm ${cardFormat === 'both' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
+            style={{ fontSize: '0.78rem' }}
+            onClick={() => setCardFormat('both')}
+            title="A4-Pocketcard und Scheckkarten-Format gleichzeitig anzeigen"
+          >
+            <i className="bi bi-columns"></i>
+            <span>Beide Formate</span>
+          </button>
+          <button
+            type="button"
+            className={`btn btn-sm ${cardFormat === 'a4' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
+            style={{ fontSize: '0.78rem' }}
+            onClick={() => setCardFormat('a4')}
+            title="A4-Format für Stationsaushang und Dokumentenmappe"
+          >
+            <i className="bi bi-file-earmark-text"></i>
+            <span>A4-Pocketcard</span>
+          </button>
+          <button
+            type="button"
+            className={`btn btn-sm ${cardFormat === 'atm' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
+            style={{ fontSize: '0.78rem' }}
+            onClick={() => setCardFormat('atm')}
+            title="Kompaktes Scheckkarten-Format für Kitteltasche und Ausweishülle"
+          >
+            <i className="bi bi-credit-card-2-front"></i>
+            <span>Scheckkarte (ATM)</span>
+          </button>
+        </div>
 
         <div className="d-flex flex-wrap align-items-center gap-2">
           {/* Grouped PDF download & Print actions */}
@@ -2276,8 +2454,8 @@ function MagicCardView({ standards, onSelectStandard, showToast }) {
             <button
               className="btn btn-primary btn-sm px-3 py-1.5 fw-semibold d-flex align-items-center gap-1.5"
               style={{ minHeight: '38px' }}
-              onClick={downloadPdf}
-              title="Magic Card als PDF-Dokument herunterladen"
+              onClick={() => downloadPdf(cardFormat === 'both' ? 'a4' : cardFormat)}
+              title="Universal-Pocketcard als PDF-Dokument herunterladen"
             >
               <i className="bi bi-file-earmark-arrow-down-fill"></i>
               <span>PDF herunterladen</span>
@@ -2285,8 +2463,8 @@ function MagicCardView({ standards, onSelectStandard, showToast }) {
             <button
               className="btn btn-dark btn-sm px-3 py-1.5 fw-semibold d-flex align-items-center gap-1.5 border-start border-white border-opacity-25"
               style={{ minHeight: '38px' }}
-              onClick={() => window.print()}
-              title="Magic Card direkt drucken"
+              onClick={() => handlePrint(cardFormat === 'atm' ? 'atm' : 'a4')}
+              title={cardFormat === 'atm' ? 'Nur Scheckkarte drucken' : 'Nur A4-Pocketcard drucken'}
             >
               <i className="bi bi-printer-fill"></i>
               <span>Drucken</span>
@@ -2296,15 +2474,17 @@ function MagicCardView({ standards, onSelectStandard, showToast }) {
           <button
             className="btn btn-outline-secondary rounded-pill px-3 py-1.5 shadow-sm btn-sm d-flex align-items-center gap-1.5"
             style={{ minHeight: '38px' }}
-            onClick={downloadQrImage}
+            onClick={downloadCardImage}
+            title="Pocketcard als hochauflösendes Bild herunterladen"
           >
-            <i className="bi bi-qr-code"></i>
-            <span>QR PNG</span>
+            <i className="bi bi-image"></i>
+            <span>Bild herunterladen</span>
           </button>
           <button
             className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-1.5 shadow-sm btn-sm d-flex align-items-center gap-1.5"
             style={{ minHeight: '38px' }}
             onClick={() => onSelectStandard('quick-hub')}
+            title="Die Zielseite aller 6 Standards testen"
           >
             <i className="bi bi-box-arrow-up-right"></i>
             <span>Zielseite testen</span>
@@ -2312,93 +2492,120 @@ function MagicCardView({ standards, onSelectStandard, showToast }) {
         </div>
       </div>
 
-      {/* Centered Preview Container */}
-      <div className="d-flex flex-column align-items-center justify-content-center my-3">
-        <div id="magic-card-printable" className="magic-card-wrapper p-3">
-          {/* THE ATM-SIZED MAGIC CARD */}
-          <div className="magic-atm-card shadow-lg rounded-4 overflow-hidden position-relative">
-            {/* Top Spectrum Header Line */}
-            <div className="magic-spectrum-bar d-flex">
-              <div style={{ flex: 1, backgroundColor: 'var(--dekubitus-color)' }}></div>
-              <div style={{ flex: 1, backgroundColor: 'var(--sturz-color)' }}></div>
-              <div style={{ flex: 1, backgroundColor: 'var(--schmerz-color)' }}></div>
-              <div style={{ flex: 1, backgroundColor: 'var(--ernaehrung-color)' }}></div>
-              <div style={{ flex: 1, backgroundColor: 'var(--isolation-color)' }}></div>
-              <div style={{ flex: 1, backgroundColor: 'var(--zvk-color)' }}></div>
-            </div>
-
-            {/* Card Header */}
-            <div className="magic-card-header d-flex align-items-center justify-content-between px-3 py-2">
+      {/* Main Container */}
+      <div className="d-flex flex-column align-items-center justify-content-center my-2 gap-4">
+        {/* 1. THE A4-FORMAT UNIVERSAL POCKETCARD (CRISP NATIVE A4 LAYOUT) */}
+        {(cardFormat === 'a4' || cardFormat === 'both') && (
+          <div className="w-100 p-3 p-md-4 bg-white rounded-4 border shadow-sm" id="universal-card-a4-printable" style={{ maxWidth: '1020px' }}>
+            <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-2 border-bottom gap-2">
               <div className="d-flex align-items-center gap-2">
-                <div className="bg-white rounded px-1 py-0 shadow-sm d-flex align-items-center">
-                  <img src="assets/umf-logo.jpg" alt="UMF" height="24" className="rounded" />
+                <div className="bg-light p-1.5 rounded-3 border d-flex align-items-center">
+                  <img src="assets/umf-logo.jpg" alt="UMF" height="28" className="rounded" />
                 </div>
                 <div>
-                  <div className="magic-hospital-title fw-bold text-white lh-1">
-                    UNIVERSITÄTSMEDIZIN FRANKFURT
-                  </div>
-                  <div className="magic-hospital-sub text-white-50">
-                    Digitale Pflege-Pocketcard
+                  <h5 className="fw-bold text-dark mb-0" style={{ fontSize: '1.05rem' }}>
+                    Klinische Pflegestandards &bull; Universal-Pocketcard (A4-Format)
+                  </h5>
+                  <div className="text-muted small" style={{ fontSize: '0.78rem' }}>
+                    Universitätsmedizin Frankfurt &bull; Pflegedirektion &bull; Stationsaushang &bull; Gestochen scharf &bull; Ungezoomt
                   </div>
                 </div>
               </div>
 
-              <div className="badge bg-white bg-opacity-25 text-white fw-bold px-2 py-1 rounded-pill" style={{ fontSize: '0.62rem' }}>
-                <i className="bi bi-stars text-warning me-1"></i> MAGIC CARD
+              <div className="d-flex align-items-center gap-2">
+                <span className="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1.5 rounded-pill small fw-semibold">
+                  <i className="bi bi-aspect-ratio me-1"></i> A4-Querformat
+                </span>
+                <span className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2.5 py-1.5 rounded-pill small fw-semibold font-monospace">
+                  <i className="bi bi-shield-check me-1"></i> roXtra verifiziert
+                </span>
               </div>
             </div>
 
-            {/* Card Body: Left Column (6 Standards with Icons) + Right Column (Single QR Code) */}
-            <div className="magic-card-body d-flex p-3 gap-3 align-items-center bg-white">
-              {/* Left Column: 6 Tiles List */}
-              <div className="magic-tiles-list flex-grow-1">
-                <div className="magic-list-heading small fw-bold text-uppercase text-secondary mb-2" style={{ fontSize: '0.66rem', letterSpacing: '0.5px' }}>
-                  6 Klinische Pflegestandards:
-                </div>
-                <div className="d-flex flex-column gap-1">
-                  {list.map((std) => (
-                    <div
-                      key={std.id}
-                      className="magic-tile-item d-flex align-items-center gap-2 px-2 py-1 rounded-2"
-                      style={{
-                        backgroundColor: '#f8fafc',
-                        borderLeft: `3px solid ${std.accentColor}`
-                      }}
-                    >
-                      <i className={`bi ${std.icon}`} style={{ color: std.accentColor, fontSize: '0.85rem' }}></i>
-                      <span className="fw-bold text-dark text-truncate" style={{ fontSize: '0.74rem' }}>
-                        {std.shortTitle}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+            {/* Render Crisp Native A4 Card */}
+            <UniversalCardA4Native onSelectStandard={onSelectStandard} />
+
+            {/* Bottom Info Bar & Quick Actions for A4 */}
+            <div className="d-flex flex-wrap justify-content-between align-items-center pt-3 mt-3 border-top gap-2 no-print" data-html2canvas-ignore="true">
+              <div className="small text-muted d-flex align-items-center gap-2" style={{ fontSize: '0.8rem' }}>
+                <i className="bi bi-info-circle-fill text-primary"></i>
+                <span>Tippen Sie direkt auf einen der 6 Standards oder den QR-Code, um das jeweilige Modul zu öffnen.</span>
               </div>
 
-              {/* Right Column: Single High-Res Scannable QR Code */}
-              <div className="magic-qr-box d-flex flex-column align-items-center justify-content-center text-center p-2 rounded-3" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                <div id="magic-qr-container" className="p-1 bg-white rounded-2 shadow-sm border">
-                  <QrCodeCanvas value={cardUrl} size={118} color="#00273d" />
-                </div>
-                <div className="fw-bolder text-primary mt-1 lh-1" style={{ fontSize: '0.68rem', letterSpacing: '0.3px' }}>
-                  SCAN TO OPEN
-                </div>
-                <div className="text-muted" style={{ fontSize: '0.58rem' }}>
-                  Alle 6 Standards
-                </div>
+              <div className="d-flex align-items-center gap-2">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-dark rounded-pill px-3 py-1.5 shadow-sm fw-semibold d-flex align-items-center gap-1.5"
+                  onClick={() => handlePrint('a4')}
+                  title="Nur die A4-Pocketcard drucken"
+                >
+                  <i className="bi bi-printer-fill"></i>
+                  <span>A4 drucken</span>
+                </button>
               </div>
-            </div>
-
-            {/* Card Footer Bar */}
-            <div className="magic-card-footer px-3 py-1 d-flex justify-content-between align-items-center text-white" style={{ background: '#00273d', fontSize: '0.62rem' }}>
-              <span className="text-white-50">Klinikum der Goethe-Universität</span>
-              <span className="fw-semibold text-white">roXtra QM-System &bull; Pflegedirektion</span>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* 2. THE POCKETCARD / ATM-FORMAT */}
+        {(cardFormat === 'atm' || cardFormat === 'both') && (
+          <div className="w-100 p-3 p-md-4 bg-white rounded-4 border shadow-sm d-flex flex-column align-items-center" id="universal-card-atm-printable" style={{ maxWidth: '1020px' }}>
+            <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-2 border-bottom w-100 gap-2">
+              <div className="d-flex align-items-center gap-2">
+                <div className="bg-light p-1.5 rounded-3 border d-flex align-items-center">
+                  <img src="assets/umf-logo.jpg" alt="UMF" height="28" className="rounded" />
+                </div>
+                <div>
+                  <h5 className="fw-bold text-dark mb-0" style={{ fontSize: '1.05rem' }}>
+                    Kompakte Pocketcard (Scheckkarten- / ATM-Format)
+                  </h5>
+                  <div className="text-muted small" style={{ fontSize: '0.78rem' }}>
+                    Optimiert für Kitteltasche, ID-Ausweishülle und Umhängeband (85,6 &times; 54 mm)
+                  </div>
+                </div>
+              </div>
+
+              <span className="badge bg-warning bg-opacity-25 text-dark border border-warning px-2.5 py-1.5 rounded-pill small fw-bold">
+                <i className="bi bi-credit-card-2-front me-1"></i> ATM-Scheckkarte
+              </span>
+            </div>
+
+            {/* The Visual Card scaled to ATM size with Clickable Hotspots */}
+            <UniversalCardInteractiveCard isAtm={true} onSelectStandard={onSelectStandard} />
+
+            {/* Print-only cutout guide */}
+            <div className="atm-cutout-hint">
+              ✂️ Entlang der gestrichelten Linie ausschneiden (Standard ID-Ausweisformat: 85,6 &times; 54 mm)
+            </div>
+
+            {/* Bottom Info Bar & Quick Actions for ATM */}
+            <div className="d-flex flex-wrap justify-content-between align-items-center pt-3 mt-3 border-top w-100 gap-2 no-print" data-html2canvas-ignore="true">
+              <div className="small text-muted" style={{ fontSize: '0.8rem' }}>
+                <i className="bi bi-check2-circle text-success me-1"></i>
+                Kompakte Abmessungen für Ausweis- und Kitteltaschen &bull; 100% scannbar
+              </div>
+
+              <div className="d-flex align-items-center gap-2">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-dark rounded-pill px-3 py-1.5 shadow-sm fw-semibold d-flex align-items-center gap-1.5"
+                  onClick={() => handlePrint('atm')}
+                  title="Nur die Scheckkarte drucken"
+                >
+                  <i className="bi bi-printer-fill"></i>
+                  <span>Scheckkarte drucken</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
+
+// Backward compatibility alias
+const MagicCardView = UniversalCardView;
 
 // -------------------------------------------------------------
 // Component: Quick Hub (Target Landing Page Opened by Magic Card Scan)
