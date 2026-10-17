@@ -26,10 +26,19 @@ root.QRParser = (function () {
       graphicImage: 'assets/graphic-dekubitus.jpg',
       leadText: 'An der UMF werden verschiedene Expertenstandards umgesetzt. Die Anwendung orientiert sich immer am Pflegeprozess.',
       instructions: 'Erfahren Sie mehr über den Expertenstandard Dekubitusprophylaxe, in dem Sie den QR – Code scannen und sich das Video anschauen. Weiterführende Informationen zu diesem Expertenstandard finden Sie auch im roXtra unter der ID: 400139 sowie der ID: 400129.',
+      whyImportant: [
+        'Druck gezielt reduzieren & Gewebeschäden vermeiden',
+        'Haut schützen & gefährdete Körperstellen entlasten',
+        'Eigenbewegung und Mobilität aktiv fördern',
+        'Frühzeitig Risiko erkennen & interprofessionell handeln'
+      ],
       keyPoints: [
-        'Regelmäßige 30°-Lagerung alle 2–4 Stunden zur gezielten Druckentlastung',
-        'Einsatz von druckverteilenden Spezialmatratzen und Weichlagerungskissen',
-        'Tägliche Hautinspektion der gefährdeten Knochenpunkte (Fingertest bei Rötungen)'
+        'Regelmäßige Umlagerung (alle 2–4 Stunden) zur gezielten Entlastung',
+        'Druckentlastende Spezialmatratze und Weichlagerungskissen verwenden',
+        '30°-Seitenlagerung zur effektiven Druckentlastung gefährdeter Stellen',
+        'Haut täglich kontrollieren (Hinterkopf, Schulter, Ellenbogen, Hüfte, Knie, Ferse)',
+        'Systematische Risikoeinschätzung und Pflegemaßnahmen lückenlos dokumentieren',
+        'Ausreichende Flüssigkeitszufuhr und bedarfsgerechte Ernährung beachten'
       ],
       clinicalFocus: [
         {
@@ -204,16 +213,20 @@ root.QRParser = (function () {
       videoUrl: (typeof window !== 'undefined' && window.location ? window.location.origin + window.location.pathname + '#/zvk' : 'http://localhost:3000/#/zvk'),
       videoId: 'zvk_poster',
       sopPdfUrl: 'assets/zvk-sop-verfahrensanweisung.pdf',
-      roXtraIds: ['391904', '484866', '456904', '414354'],
+      roXtraIds: ['391904', '484866', '456904', '414354', '414362'],
       roXtraDetails: {
         '391904': 'Verfahrensanweisung ZVK (Ver. 002/09.2024)',
         '484866': 'OMW ZVK Verbandswechsel (Ver. 001/07.2026)',
         '456904': 'OMW - Infusionsfilter (Ver. 001/08.2025)',
-        '414354': 'Standard-Infusionsschema ITS'
+        '414354': 'Standard-Infusionsschema ITS (Ver. 001/05.2024)',
+        '414362': 'Meldeformular für Inkompatibilitäten'
       },
       image: 'assets/zvk-poster.jpg',
       pdfUrl: 'assets/zvk-sop-verfahrensanweisung.pdf#page=1',
       pdfPage: 1,
+      sopPdfUrl: 'assets/zvk-sop-verfahrensanweisung.pdf',
+      infusionsschemaImage: 'assets/zvk-standard-infusionsschema.jpg',
+      infusionsschemaPdfUrl: 'assets/zvk-sop-verfahrensanweisung.pdf#page=10',
       graphicImage: 'assets/graphic-zvk.jpg',
       leadText: 'Einsatz von SOPs auf der Intensivstation – Schnell. Sicher. Gemeinsam. Ein ZVK dient der sicheren zentralvenösen Therapie. Ein aseptischer Umgang hilft, Infektionen und Komplikationen zu vermeiden.',
       instructions: 'Scannen Sie den QR-Code, um die vollständige Verfahrensanweisung (SOP) sowie klinische Checklisten zum ZVK aufzurufen. Weiterführende Dokumente im roXtra unter ID: 391904, ID: 484866, ID: 456904 und ID: 414354.',

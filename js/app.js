@@ -392,16 +392,16 @@ function App() {
         <div className="hospital-banner shadow-sm">
           <div className="container d-flex align-items-center justify-content-between py-1">
             <div className="d-flex align-items-center gap-2 gap-sm-3">
-              <a href="#/" className="text-decoration-none d-flex align-items-center bg-white rounded-3 p-1 shadow-sm border border-light">
+              <a href="#/" className="text-decoration-none d-flex align-items-center bg-white rounded-3 p-1 shadow-sm border border-info border-opacity-25">
                 <img src="assets/umf-logo.jpg" alt="Universitätsmedizin Frankfurt" height="34" className="rounded" style={{ maxHeight: '38px' }} />
               </a>
-              <div className="border-start border-2 ps-2 ps-sm-3 d-none d-md-block" style={{ borderColor: 'var(--umf-navy)' }}>
-                <div className="fw-bolder text-dark" style={{ letterSpacing: '0.6px', fontSize: '0.92rem' }}>
+              <div className="border-start border-2 ps-2 ps-sm-3 d-none d-md-block" style={{ borderColor: '#0284c7' }}>
+                <div className="fw-black" style={{ letterSpacing: '0.5px', fontSize: '0.94rem', color: '#00273d' }}>
                   UNIVERSITÄTSMEDIZIN FRANKFURT
                 </div>
-                <div className="text-muted fw-semibold" style={{ fontSize: '0.74rem' }}>
-                  <i className="bi bi-shield-check text-primary me-1"></i>
-                  Digitale Pocketcards &bull; Expertenstandards in der Pflege
+                <div className="fw-semibold" style={{ fontSize: '0.75rem', color: '#0369a1' }}>
+                  <i className="bi bi-shield-check text-success me-1"></i>
+                  Digitale Pocketcards &bull; <span className="fw-bold" style={{ color: '#0f766e' }}>Expertenstandards in der Pflege</span>
                 </div>
               </div>
             </div>
@@ -413,16 +413,16 @@ function App() {
                 onClick={() => navigateTo('universal-karte')}
                 title="Universal-Karte (A4- & Scheckkarten-Format) mit allen 6 Standards und QR-Code"
               >
-                <i className="bi bi-stars text-warning"></i>
+                <i className="bi bi-stars text-danger"></i>
                 <span>Universal-Karte</span>
               </button>
               <button
-                className={`btn btn-sm ${currentRoute === 'qrcodes' ? 'btn-primary text-white' : 'btn-outline-primary'} rounded-pill px-2.5 px-sm-3 py-1.5 shadow-sm fw-semibold d-flex align-items-center gap-1`}
+                className={`btn btn-sm ${currentRoute === 'qrcodes' ? 'btn-primary text-white fw-bold' : 'btn-white bg-white text-dark border fw-semibold'} rounded-pill px-2.5 px-sm-3 py-1.5 shadow-sm d-flex align-items-center gap-1`}
                 style={{ minHeight: '38px', fontSize: '0.82rem' }}
                 onClick={() => navigateTo('qrcodes')}
                 title="Alle 6 Pocketcards anzeigen"
               >
-                <i className="bi bi-collection"></i>
+                <i className="bi bi-collection text-primary"></i>
                 <span className="d-none d-sm-inline">Alle Pocketcards</span>
                 <span className="d-inline d-sm-none">Karten</span>
               </button>
@@ -1057,7 +1057,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                   </div>
 
                   <div
-                    className="p-3 text-center bg-white d-flex align-items-center justify-content-center position-relative"
+                    className="p-2 p-sm-3 text-center bg-white d-flex align-items-center justify-content-center position-relative"
                     style={{ cursor: 'pointer' }}
                     onClick={() => setPreviewImage({ src: standard.graphicImage, title: standard.topic, subtitle: 'Klinische Praxis & Handlungsschritte (Infografik)' })}
                     title="Klicken für vergrößerte Pop-up-Ansicht"
@@ -1065,8 +1065,13 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                     <img
                       src={standard.graphicImage}
                       alt={`Klinische Grafik ${standard.shortTitle}`}
-                      className="clinical-picture-img"
-                      style={{ height: '240px', width: '100%', objectFit: 'contain' }}
+                      className="clinical-picture-img rounded-3 shadow-sm"
+                      style={{
+                        maxHeight: standard.id === 'dekubitus' ? '520px' : '250px',
+                        height: 'auto',
+                        width: '100%',
+                        objectFit: 'contain'
+                      }}
                     />
                     <div className="position-absolute bottom-0 end-0 m-3 no-print">
                       <span className="badge bg-dark bg-opacity-75 text-white rounded-pill px-3 py-2 shadow-sm" style={{ fontSize: '0.78rem' }}>
@@ -2109,8 +2114,8 @@ function UniversalCardA4Native({ onSelectStandard }) {
       id: 'dekubitus',
       title: 'Dekubitusprophylaxe',
       icon: 'bi-bandaid-fill',
-      color: '#c026d3',
-      bgGradient: 'linear-gradient(90deg, #fdf2f8 0%, #fce7f3 35%, #ffffff 100%)',
+      color: '#db2777',
+      bgGradient: 'linear-gradient(90deg, #fce7f3 0%, #fbcfe8 55%, #fdf2f8 100%)',
       thumb: 'assets/pocket-thumb-dekubitus.jpg'
     },
     {
@@ -2119,7 +2124,7 @@ function UniversalCardA4Native({ onSelectStandard }) {
       title: 'Sturzprophylaxe',
       icon: 'bi-shield-exclamation',
       color: '#16a34a',
-      bgGradient: 'linear-gradient(90deg, #f0fdf4 0%, #dcfce7 35%, #ffffff 100%)',
+      bgGradient: 'linear-gradient(90deg, #dcfce7 0%, #bbf7d0 55%, #f0fdf4 100%)',
       thumb: 'assets/pocket-thumb-sturz.jpg'
     },
     {
@@ -2128,7 +2133,7 @@ function UniversalCardA4Native({ onSelectStandard }) {
       title: 'Schmerzmanagement',
       icon: 'bi-heart-pulse-fill',
       color: '#ea580c',
-      bgGradient: 'linear-gradient(90deg, #fff7ed 0%, #ffedd5 35%, #ffffff 100%)',
+      bgGradient: 'linear-gradient(90deg, #ffedd5 0%, #fed7aa 55%, #fff7ed 100%)',
       thumb: 'assets/pocket-thumb-schmerz.jpg'
     },
     {
@@ -2137,16 +2142,16 @@ function UniversalCardA4Native({ onSelectStandard }) {
       title: 'Ernährungsmanagement',
       icon: 'bi-apple',
       color: '#0284c7',
-      bgGradient: 'linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 35%, #ffffff 100%)',
+      bgGradient: 'linear-gradient(90deg, #e0f2fe 0%, #bae6fd 55%, #f0f9ff 100%)',
       thumb: 'assets/pocket-thumb-ernaehrung.jpg'
     },
     {
       num: 5,
       id: 'zvk',
       title: 'ZVK Intensivpflege',
-      icon: 'bi-droplet-half',
+      icon: 'bi-droplet-fill',
       color: '#e11d48',
-      bgGradient: 'linear-gradient(90deg, #fff1f2 0%, #ffe4e6 35%, #ffffff 100%)',
+      bgGradient: 'linear-gradient(90deg, #ffe4e6 0%, #fecdd3 55%, #fff1f2 100%)',
       thumb: 'assets/pocket-thumb-zvk.jpg'
     },
     {
@@ -2155,111 +2160,170 @@ function UniversalCardA4Native({ onSelectStandard }) {
       title: 'Isolation & Hygiene',
       icon: 'bi-shield-shaded',
       color: '#7c3aed',
-      bgGradient: 'linear-gradient(90deg, #faf5ff 0%, #f3e8ff 35%, #ffffff 100%)',
+      bgGradient: 'linear-gradient(90deg, #f3e8ff 0%, #e9d5ff 55%, #faf5ff 100%)',
       thumb: 'assets/pocket-thumb-isolation.jpg'
     }
   ];
 
+  const bottomItems = [
+    { icon: 'bi-clipboard2-check-fill', label: 'Standardisiert', bg: '#d8effc', iconColor: '#0369a1' },
+    { icon: 'bi-bullseye', label: 'Patientensicherheit', bg: '#d5f5e9', iconColor: '#0f766e' },
+    { icon: 'bi-people-fill', label: 'Qualität in der Pflege', bg: '#fde6cd', iconColor: '#ea580c' },
+    { icon: 'bi-lightbulb-fill', label: 'Wissensmanagement', bg: '#fef0b8', iconColor: '#d97706' },
+    { icon: 'bi-gear-fill', label: 'Aktuelle SOPs', bg: '#ebe4ff', iconColor: '#6d28d9' },
+    { icon: 'bi-book-half', label: 'Immer verfügbar', bg: '#fce2ef', iconColor: '#be185d' }
+  ];
+
   return (
-    <div className="a4-native-card position-relative overflow-hidden">
-      {/* 1. TOP HEADER (Deep Navy) */}
-      <div className="a4-card-header d-flex align-items-center justify-content-between px-3 py-2">
-        <div className="d-flex align-items-center gap-2">
-          <div className="bg-white p-1 rounded-2 shadow-sm d-flex align-items-center">
-            <img src="assets/umf-logo.jpg" alt="UMF Logo" style={{ height: '34px', width: 'auto' }} />
+    <div className="a4-native-card d-flex flex-column position-relative overflow-hidden" id="universal-card-a4-sheet">
+      {/* 1. COMPACT TOP HEADER WITH FRANKFURT SKYLINE & ECG WAVE */}
+      <div className="a4-card-header d-flex align-items-center justify-content-between ps-2.5 pe-0 py-0 position-relative overflow-hidden">
+        <div className="d-flex align-items-center gap-2 py-1 z-1">
+          <div className="bg-white px-1.5 py-0.5 rounded-2 shadow-sm d-flex align-items-center" style={{ border: '1.5px solid #60a5fa' }}>
+            <img src="assets/umf-logo.jpg" alt="UMF Logo" style={{ height: '30px', width: 'auto' }} />
           </div>
-          <div>
-            <div className="text-white fw-bold text-uppercase tracking-wider" style={{ fontSize: '1.02rem', letterSpacing: '0.04em', lineHeight: 1.2 }}>
+          <div className="ps-0.5">
+            <div className="fw-black text-uppercase" style={{ fontSize: '1.02rem', letterSpacing: '0.03em', lineHeight: 1.1, color: '#00273d' }}>
               Universitätsmedizin Frankfurt
             </div>
-            <div className="fw-semibold" style={{ fontSize: '0.80rem', color: '#ffea79', letterSpacing: '0.02em' }}>
-              Digitale Pflege-Pocketcard &bull; SOP-Schnellzugriff
+            <div className="fw-bold d-flex align-items-center flex-wrap gap-1" style={{ fontSize: '0.76rem', letterSpacing: '0.01em' }}>
+              <span style={{ color: '#0c4a6e' }}>Digitale Pflege-Pocketcard</span>
+              <span style={{ color: '#64748b' }}>|</span>
+              <span style={{ color: '#1e3a8a', background: '#ffffff', padding: '0 6px', borderRadius: '4px', border: '1px solid #93c5fd' }}>SOP-Schnellzugriff</span>
             </div>
           </div>
         </div>
 
-        <div className="d-flex align-items-center gap-2">
-          <span className="badge rounded-pill px-3 py-1.5 fw-bold text-white shadow-sm" style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', border: '1px solid rgba(255,255,255,0.3)', fontSize: '0.82rem' }}>
-            ✨ UNIVERSAL-KARTE
-          </span>
+        {/* Right Header: Magic Card Pill + ECG Wave + Frankfurt Skyline Photo */}
+        <div className="d-flex align-items-center align-self-stretch position-relative">
+          <div className="d-none d-sm-flex flex-column align-items-center justify-content-center me-1 z-2">
+            <span
+              className="badge rounded-pill px-2.5 py-0.5 fw-bold text-white shadow-sm d-inline-flex align-items-center gap-1"
+              style={{
+                background: 'linear-gradient(135deg, #0284c7 0%, #1d4ed8 100%)',
+                border: '1px solid #60a5fa',
+                fontSize: '0.68rem',
+                letterSpacing: '0.04em',
+                boxShadow: '0 2px 6px rgba(2, 132, 199, 0.3)'
+              }}
+            >
+              <span style={{ color: '#fde047' }}>✦</span> MAGIC CARD
+            </span>
+            <svg width="84" height="16" viewBox="0 0 96 22" style={{ overflow: 'visible' }}>
+              <path
+                d="M 0 15 L 26 15 L 32 9 L 37 18 L 43 2 L 49 20 L 54 11 L 59 15 L 96 15"
+                fill="none"
+                stroke="#0284c7"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+
+          <div className="a4-header-skyline-box h-100 position-relative overflow-hidden">
+            <img
+              src="assets/pocket-skyline.jpg"
+              alt="Frankfurt Skyline"
+              className="a4-header-skyline-img"
+            />
+          </div>
         </div>
       </div>
 
-      {/* 2. SUBHEADER BANNER WITH YELLOW NOTE & CENTRAL BANNER */}
-      <div className="a4-card-subheader px-3 py-2 d-flex align-items-center justify-content-between position-relative">
+      {/* 2. COMPACT SUBHEADER BANNER WITH YELLOW NOTE & CENTRAL BANNER */}
+      <div className="a4-card-subheader px-2.5 py-1 d-flex align-items-center justify-content-between position-relative">
         {/* Left: Yellow sticky note */}
-        <div className="a4-yellow-note shadow-sm">
-          <div className="a4-note-pin"><i className="bi bi-pin-angle-fill text-danger"></i></div>
-          <div className="fw-bold text-dark" style={{ lineHeight: 1.25 }}>
-            Wissen<br/>
-            Sicherheit<br/>
-            Qualität<br/>
-            <span style={{ fontSize: '0.78rem', fontWeight: 600 }}>in der Pflege</span>
+        <div className="d-flex align-items-center gap-1.5">
+          <div className="a4-yellow-note shadow-sm">
+            <div className="a4-note-pin"><i className="bi bi-pin-angle-fill text-danger"></i></div>
+            <div className="a4-note-heart">❤️</div>
+            <div className="fw-bold text-dark" style={{ lineHeight: 1.12 }}>
+              Wissen &bull; Sicherheit<br/>
+              Qualität <span style={{ fontSize: '0.7rem', fontWeight: 700 }}>in der Pflege</span>
+            </div>
+          </div>
+          <div className="d-none d-md-flex align-items-center opacity-25 text-primary" style={{ pointerEvents: 'none' }}>
+            <i className="bi bi-clipboard2-check" style={{ fontSize: '1.85rem', transform: 'rotate(-10deg)' }}></i>
           </div>
         </div>
 
-        {/* Center: Title Banner */}
-        <div className="text-center flex-grow-1 px-3">
-          <h2 className="a4-main-title mb-1 fw-black text-uppercase">
-            Klinische Pflegestandards
-          </h2>
-          <div className="a4-sop-banner text-uppercase fw-bold text-white d-inline-block px-4 py-1 rounded-pill shadow-sm">
+        {/* Center: Golden Yellow Highlight Banner + Red SOP Ribbon */}
+        <div className="text-center flex-grow-1 px-2 d-flex flex-column align-items-center">
+          <div className="a4-yellow-title-banner px-3 py-0.5 shadow-sm">
+            <h2 className="a4-main-title mb-0 fw-black text-uppercase">
+              Klinische Pflegestandards
+            </h2>
+          </div>
+          <div className="a4-sop-banner text-uppercase fw-black text-white d-inline-block px-3 py-0.5 rounded-pill shadow-sm">
             SOP – Schnellzugriff
           </div>
         </div>
 
         {/* Right: 4 Checkmarks */}
-        <div className="a4-checkmarks-list text-start ps-2">
-          <div className="text-dark fw-bold small"><i className="bi bi-check-lg text-primary me-1"></i> Aktuell</div>
-          <div className="text-dark fw-bold small"><i className="bi bi-check-lg text-primary me-1"></i> Einfach</div>
-          <div className="text-dark fw-bold small"><i className="bi bi-check-lg text-primary me-1"></i> Schnell</div>
-          <div className="text-dark fw-bold small"><i className="bi bi-check-lg text-primary me-1"></i> Zuverlässig</div>
+        <div className="a4-checkmarks-list text-start ps-1 pe-1">
+          <div className="text-dark fw-bold"><i className="bi bi-check2 text-dark fw-black me-1"></i> <em>Aktuell</em></div>
+          <div className="text-dark fw-bold"><i className="bi bi-check2 text-dark fw-black me-1"></i> <em>Einfach</em></div>
+          <div className="text-dark fw-bold"><i className="bi bi-check2 text-dark fw-black me-1"></i> <em>Schnell</em></div>
+          <div className="text-dark fw-bold"><i className="bi bi-check2 text-dark fw-black me-1"></i> <em>Zuverlässig</em></div>
         </div>
       </div>
 
-      {/* 3. MAIN SECTION: 6 ROWS ON LEFT + QR SCANNER CARD ON RIGHT */}
-      <div className="a4-card-body px-3 py-2.5 d-flex gap-3 align-items-stretch">
-        {/* LEFT COLUMN: 6 ROWS */}
-        <div className="a4-rows-col d-flex flex-column gap-2 flex-grow-1" style={{ flex: '1 1 65%' }}>
+      {/* 3. MAIN SECTION: COMPACT 6 ROWS (NO EXTRA WIDTH/GAP) + QR SCANNER & ICU SCENE */}
+      <div className="a4-card-body ps-2.5 pe-0 py-1.5 d-flex gap-2 align-items-stretch justify-content-between position-relative">
+        {/* LEFT COLUMN: 6 TIGHTLY STACKED ROWS WITH ZERO EMPTY HORIZONTAL GAP */}
+        <div className="a4-rows-col d-flex flex-column justify-content-between" style={{ width: '475px', maxWidth: '100%', gap: '3px', flexShrink: 0 }}>
           {rows.map((row) => (
             <div
               key={row.id}
-              className="a4-standard-row d-flex align-items-center justify-content-between shadow-sm"
+              className="a4-standard-row d-flex align-items-center justify-content-between shadow-sm position-relative overflow-hidden"
               onClick={() => onSelectStandard(row.id)}
               style={{
                 background: row.bgGradient,
-                border: `1.5px solid ${row.color}33`,
+                border: `1.5px solid ${row.color}45`,
                 borderRadius: '50rem'
               }}
               title={`${row.num}. ${row.title} öffnen`}
             >
-              <div className="d-flex align-items-center gap-2 ps-1.5 py-1">
-                {/* Number Badge */}
+              <div className="d-flex align-items-center gap-1.5 ps-1 py-0.5 z-1">
+                {/* Number Circle */}
                 <div
                   className="a4-row-number text-white fw-black rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                  style={{ backgroundColor: row.color, width: '32px', height: '32px', fontSize: '1rem', flexShrink: 0 }}
+                  style={{
+                    backgroundColor: row.color,
+                    width: '30px',
+                    height: '30px',
+                    fontSize: '0.92rem',
+                    border: '2px solid #ffffff',
+                    flexShrink: 0
+                  }}
                 >
                   {row.num}
                 </div>
 
-                {/* Icon Circle */}
+                {/* Solid Colored Icon Circle with White Ring */}
                 <div
-                  className="a4-row-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                  style={{ backgroundColor: '#ffffff', color: row.color, width: '32px', height: '32px', fontSize: '1.05rem', border: `1.5px solid ${row.color}55`, flexShrink: 0 }}
+                  className="a4-row-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm text-white"
+                  style={{
+                    backgroundColor: row.color,
+                    width: '30px',
+                    height: '30px',
+                    fontSize: '0.92rem',
+                    border: '2px solid #ffffff',
+                    flexShrink: 0
+                  }}
                 >
                   <i className={`bi ${row.icon}`}></i>
                 </div>
 
-                {/* Standard Title */}
-                <div className="fw-bold text-dark pe-2 text-nowrap a4-row-title" style={{ fontSize: '0.98rem' }}>
+                {/* Standard Title + Immediate Chevron (no wide empty gap!) */}
+                <div className="fw-black text-dark ps-0.5 text-nowrap a4-row-title" style={{ fontSize: '0.94rem', letterSpacing: '-0.01em' }}>
                   {row.title}
                 </div>
-
-                {/* Chevron */}
-                <i className="bi bi-chevron-right fw-bold" style={{ color: row.color, fontSize: '1.1rem' }}></i>
+                <i className="bi bi-chevron-right fw-black ms-0.5" style={{ color: row.color, fontSize: '0.98rem' }}></i>
               </div>
 
-              {/* Real Thumbnail Photo */}
+              {/* Clean Original Clinical Thumbnail Photo */}
               <div className="a4-row-thumb-box overflow-hidden rounded-end-pill">
                 <img
                   src={row.thumb}
@@ -2271,53 +2335,90 @@ function UniversalCardA4Native({ onSelectStandard }) {
           ))}
         </div>
 
-        {/* RIGHT COLUMN: SCANNER CARD */}
-        <div className="a4-scanner-col d-flex flex-column align-items-center justify-content-center p-3 text-center shadow-sm" style={{ width: '270px', flexShrink: 0 }}>
-          <div className="a4-qr-wrapper shadow-sm border mb-2">
-            <div className="a4-bracket a4-bracket-tl"></div>
-            <div className="a4-bracket a4-bracket-tr"></div>
-            <div className="a4-bracket a4-bracket-bl"></div>
-            <div className="a4-bracket a4-bracket-br"></div>
-            <QrCodeCanvas value={cardUrl} size={150} color="#00273d" />
+        {/* RIGHT COLUMN: GLASSMORPHIC QR SCANNER CARD + ICU MONITOR & HOSPITAL BED PHOTO */}
+        <div className="a4-right-clinical-panel d-flex align-items-stretch flex-grow-1 position-relative">
+          {/* Glassmorphic QR Scanner Card */}
+          <div className="a4-scanner-col d-flex flex-column align-items-center justify-content-center p-2 text-center shadow-sm position-relative z-2" style={{ width: '215px', flexShrink: 0 }}>
+            <div className="a4-scanner-rays" aria-hidden="true">
+              <span className="ray ray-1"></span>
+              <span className="ray ray-2"></span>
+              <span className="ray ray-3"></span>
+            </div>
+
+            <div
+              className="a4-qr-wrapper shadow-sm mb-1.5"
+              onClick={() => onSelectStandard('quick-hub')}
+              style={{ cursor: 'pointer' }}
+              title="QR-Code scannen oder antippen für Schnellzugriff"
+            >
+              <div className="a4-bracket a4-bracket-tl"></div>
+              <div className="a4-bracket a4-bracket-tr"></div>
+              <div className="a4-bracket a4-bracket-bl"></div>
+              <div className="a4-bracket a4-bracket-br"></div>
+              <QrCodeCanvas value={cardUrl} size={118} color="#001f33" />
+            </div>
+
+            <button
+              type="button"
+              className="a4-scan-cta-btn btn btn-primary fw-black text-uppercase w-100 py-1 px-2.5 rounded-pill shadow-sm d-flex align-items-center justify-content-center gap-1.5 mb-1"
+              style={{
+                fontSize: '0.8rem',
+                letterSpacing: '0.03em',
+                background: 'linear-gradient(180deg, #0ea5e9 0%, #0284c7 45%, #0369a1 100%)',
+                border: '1.5px solid #bae6fd'
+              }}
+              onClick={() => onSelectStandard('quick-hub')}
+            >
+              <i className="bi bi-qr-code-scan"></i>
+              <span>Hier scannen</span>
+            </button>
+
+            <div className="fw-bold text-dark" style={{ fontSize: '0.72rem', lineHeight: 1.15 }}>
+              Schnellzugriff auf alle<br/>
+              <span className="fw-black" style={{ color: '#00273d', fontSize: '0.76rem' }}>6 Pflegestandards / SOPs</span>
+            </div>
           </div>
 
-          <button
-            type="button"
-            className="btn btn-primary fw-bold text-uppercase w-100 py-1.5 px-3 rounded-pill shadow-sm d-flex align-items-center justify-content-center gap-2 mb-1"
-            style={{ fontSize: '0.88rem', letterSpacing: '0.03em', background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', border: 'none' }}
-            onClick={() => onSelectStandard('quick-hub')}
-          >
-            <i className="bi bi-qr-code-scan"></i>
-            <span>Hier scannen</span>
-          </button>
-
-          <div className="fw-bold text-dark small" style={{ fontSize: '0.78rem', lineHeight: 1.25 }}>
-            Schnellzugriff auf alle<br/>
-            <span className="text-primary">6 Pflegestandards / SOPs</span>
+          {/* Right Clinical Picture: ICU Vital Monitor (72/98/16), Infusion Pumps & Hospital Bed */}
+          <div className="a4-icu-scene-box flex-grow-1 overflow-hidden position-relative">
+            <img
+              src="assets/pocket-icu-monitor.jpg"
+              alt="Klinisches Intensivpflege-Monitoring und Krankenbett"
+              className="a4-icu-scene-img"
+            />
           </div>
         </div>
       </div>
 
-      {/* 4. BOTTOM PILLS BAR */}
-      <div className="a4-bottom-bar px-3 py-1.5 d-flex flex-wrap align-items-center justify-content-between gap-1 border-top" style={{ background: '#f8fafc' }}>
-        <span className="badge rounded-pill px-2.5 py-1 text-white fw-semibold d-inline-flex align-items-center gap-1" style={{ background: '#0284c7', fontSize: '0.75rem' }}>
-          <i className="bi bi-clipboard-check"></i> Standardisiert
-        </span>
-        <span className="badge rounded-pill px-2.5 py-1 text-white fw-semibold d-inline-flex align-items-center gap-1" style={{ background: '#0d9488', fontSize: '0.75rem' }}>
-          <i className="bi bi-bullseye"></i> Patientensicherheit
-        </span>
-        <span className="badge rounded-pill px-2.5 py-1 text-white fw-semibold d-inline-flex align-items-center gap-1" style={{ background: '#f97316', fontSize: '0.75rem' }}>
-          <i className="bi bi-people-fill"></i> Qualität in der Pflege
-        </span>
-        <span className="badge rounded-pill px-2.5 py-1 text-dark fw-semibold d-inline-flex align-items-center gap-1" style={{ background: '#facc15', fontSize: '0.75rem' }}>
-          <i className="bi bi-lightbulb-fill"></i> Wissensmanagement
-        </span>
-        <span className="badge rounded-pill px-2.5 py-1 text-white fw-semibold d-inline-flex align-items-center gap-1" style={{ background: '#7c3aed', fontSize: '0.75rem' }}>
-          <i className="bi bi-gear-wide-connected"></i> Aktuelle SOPs
-        </span>
-        <span className="badge rounded-pill px-2.5 py-1 text-white fw-semibold d-inline-flex align-items-center gap-1" style={{ background: '#db2777', fontSize: '0.75rem' }}>
-          <i className="bi bi-book-half"></i> Immer verfügbar
-        </span>
+      {/* 4. CLEARLY VISIBLE UNIVERSITÄTSKLINIKUM FRANKFURT CAMPUS PICTURE BANNER (Fills A4 Paper Height) */}
+      <div className="a4-ukf-bottom-banner flex-grow-1 position-relative overflow-hidden border-top" style={{ borderColor: '#38bdf8' }}>
+        <img
+          src="assets/uniklinikum-frankfurt-banner.jpg"
+          alt="Universitätsklinikum Frankfurt Campus und Haupteingang"
+          className="a4-ukf-bottom-img"
+        />
+        <div className="a4-ukf-bottom-badge-corner px-2.5 py-1">
+          <span className="badge rounded-pill bg-white bg-opacity-90 text-dark fw-black px-2.5 py-1 shadow-sm d-inline-flex align-items-center gap-1.5" style={{ fontSize: '0.68rem', border: '1px solid #38bdf8' }}>
+            <i className="bi bi-hospital-fill text-primary"></i>
+            <span>UNIVERSITÄTSKLINIKUM FRANKFURT &bull; THEODOR-STERN-KAI 7</span>
+          </span>
+        </div>
+      </div>
+
+      {/* 5. BOTTOM 6-SEGMENT PASTEL VALUE BAR (MATCHING ATM CARD) */}
+      <div className="a4-bottom-bar d-grid border-top">
+        {bottomItems.map((item, idx) => (
+          <div
+            key={idx}
+            className="a4-bottom-segment d-flex align-items-center justify-content-center gap-1 px-1.5 py-1"
+            style={{ backgroundColor: item.bg }}
+          >
+            <i className={`bi ${item.icon}`} style={{ color: item.iconColor, fontSize: '0.92rem' }}></i>
+            <span className="fw-bold text-dark text-nowrap" style={{ fontSize: '0.72rem' }}>
+              {item.label}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -2369,8 +2470,8 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
   const downloadPdf = (format = cardFormat) => {
     const targetFormat = format === 'both' ? 'a4' : format;
-    const elementId = targetFormat === 'atm' ? 'universal-card-atm-printable' : 'universal-card-a4-printable';
-    const element = document.getElementById(elementId);
+    const elementId = targetFormat === 'atm' ? 'universal-card-atm-printable' : 'universal-card-a4-sheet';
+    const element = document.getElementById(elementId) || document.getElementById('universal-card-a4-printable');
     if (!element) {
       handlePrint(targetFormat);
       return;
@@ -2379,7 +2480,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
     showToast(isAtm ? 'Scheckkarten-PDF wird erstellt...' : 'A4 Universal-Pocketcard PDF wird erstellt...');
     if (window.html2pdf) {
       const opt = {
-        margin: isAtm ? [10, 10, 10, 10] : [6, 6, 6, 6],
+        margin: isAtm ? [10, 10, 10, 10] : [5, 5, 5, 5],
         filename: isAtm ? 'UMF-Universal-Karte-Scheckkarte.pdf' : 'UMF-Universal-Pocketcard-A4.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2.5, useCORS: true, logging: false },
@@ -2406,20 +2507,20 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
   };
 
   return (
-    <div className="py-2">
-      {/* Top Action Toolbar */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 no-print">
-        <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5 fw-semibold" style={{ minHeight: '38px' }}>
+    <div className="py-1">
+      {/* Top Action Toolbar (Compact to fit screen height) */}
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-1.5 gap-2 no-print">
+        <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-2.5 py-1 shadow-sm d-flex align-items-center gap-1.5 fw-semibold" style={{ minHeight: '32px', fontSize: '0.8rem' }}>
           <i className="bi bi-arrow-left"></i>
           <span>Zurück zur Übersicht</span>
         </a>
 
         {/* Format Selector Pills */}
-        <div className="mobile-segmented-control" role="group" style={{ maxWidth: '460px' }}>
+        <div className="mobile-segmented-control" role="group" style={{ maxWidth: '420px', padding: '0.15rem' }}>
           <button
             type="button"
             className={`btn btn-sm ${cardFormat === 'both' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            style={{ fontSize: '0.78rem' }}
+            style={{ fontSize: '0.75rem', minHeight: '30px', padding: '0.2rem 0.6rem' }}
             onClick={() => setCardFormat('both')}
             title="A4-Pocketcard und Scheckkarten-Format gleichzeitig anzeigen"
           >
@@ -2429,7 +2530,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           <button
             type="button"
             className={`btn btn-sm ${cardFormat === 'a4' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            style={{ fontSize: '0.78rem' }}
+            style={{ fontSize: '0.75rem', minHeight: '30px', padding: '0.2rem 0.6rem' }}
             onClick={() => setCardFormat('a4')}
             title="A4-Format für Stationsaushang und Dokumentenmappe"
           >
@@ -2439,7 +2540,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           <button
             type="button"
             className={`btn btn-sm ${cardFormat === 'atm' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            style={{ fontSize: '0.78rem' }}
+            style={{ fontSize: '0.75rem', minHeight: '30px', padding: '0.2rem 0.6rem' }}
             onClick={() => setCardFormat('atm')}
             title="Kompaktes Scheckkarten-Format für Kitteltasche und Ausweishülle"
           >
@@ -2448,21 +2549,21 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           </button>
         </div>
 
-        <div className="d-flex flex-wrap align-items-center gap-2">
+        <div className="d-flex flex-wrap align-items-center gap-1.5">
           {/* Grouped PDF download & Print actions */}
           <div className="btn-group shadow-sm rounded-pill overflow-hidden" role="group">
             <button
-              className="btn btn-primary btn-sm px-3 py-1.5 fw-semibold d-flex align-items-center gap-1.5"
-              style={{ minHeight: '38px' }}
+              className="btn btn-primary btn-sm px-2.5 py-1 fw-semibold d-flex align-items-center gap-1"
+              style={{ minHeight: '32px', fontSize: '0.78rem' }}
               onClick={() => downloadPdf(cardFormat === 'both' ? 'a4' : cardFormat)}
               title="Universal-Pocketcard als PDF-Dokument herunterladen"
             >
               <i className="bi bi-file-earmark-arrow-down-fill"></i>
-              <span>PDF herunterladen</span>
+              <span>PDF</span>
             </button>
             <button
-              className="btn btn-dark btn-sm px-3 py-1.5 fw-semibold d-flex align-items-center gap-1.5 border-start border-white border-opacity-25"
-              style={{ minHeight: '38px' }}
+              className="btn btn-dark btn-sm px-2.5 py-1 fw-semibold d-flex align-items-center gap-1 border-start border-white border-opacity-25"
+              style={{ minHeight: '32px', fontSize: '0.78rem' }}
               onClick={() => handlePrint(cardFormat === 'atm' ? 'atm' : 'a4')}
               title={cardFormat === 'atm' ? 'Nur Scheckkarte drucken' : 'Nur A4-Pocketcard drucken'}
             >
@@ -2472,70 +2573,64 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           </div>
 
           <button
-            className="btn btn-outline-secondary rounded-pill px-3 py-1.5 shadow-sm btn-sm d-flex align-items-center gap-1.5"
-            style={{ minHeight: '38px' }}
+            className="btn btn-outline-secondary rounded-pill px-2.5 py-1 shadow-sm btn-sm d-flex align-items-center gap-1"
+            style={{ minHeight: '32px', fontSize: '0.78rem' }}
             onClick={downloadCardImage}
             title="Pocketcard als hochauflösendes Bild herunterladen"
           >
             <i className="bi bi-image"></i>
-            <span>Bild herunterladen</span>
+            <span>Bild</span>
           </button>
           <button
-            className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-1.5 shadow-sm btn-sm d-flex align-items-center gap-1.5"
-            style={{ minHeight: '38px' }}
+            className="btn btn-warning text-dark fw-bold rounded-pill px-2.5 py-1 shadow-sm btn-sm d-flex align-items-center gap-1"
+            style={{ minHeight: '32px', fontSize: '0.78rem' }}
             onClick={() => onSelectStandard('quick-hub')}
             title="Die Zielseite aller 6 Standards testen"
           >
             <i className="bi bi-box-arrow-up-right"></i>
-            <span>Zielseite testen</span>
+            <span>Zielseite</span>
           </button>
         </div>
       </div>
 
       {/* Main Container */}
-      <div className="d-flex flex-column align-items-center justify-content-center my-2 gap-4">
-        {/* 1. THE A4-FORMAT UNIVERSAL POCKETCARD (CRISP NATIVE A4 LAYOUT) */}
+      <div className="d-flex flex-column align-items-center justify-content-center my-1 gap-3">
+        {/* 1. THE A4-FORMAT UNIVERSAL POCKETCARD (ISO A4 PAPER PROPORTION & PRINT FIT) */}
         {(cardFormat === 'a4' || cardFormat === 'both') && (
-          <div className="w-100 p-3 p-md-4 bg-white rounded-4 border shadow-sm" id="universal-card-a4-printable" style={{ maxWidth: '1020px' }}>
-            <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-2 border-bottom gap-2">
+          <div className="w-100 p-2 bg-white rounded-4 border shadow-sm" id="universal-card-a4-printable" style={{ maxWidth: '890px' }}>
+            <div
+              className="d-flex flex-wrap justify-content-between align-items-center mb-2 px-3 py-2 rounded-3 gap-2 no-print shadow-sm"
+              data-html2canvas-ignore="true"
+              style={{
+                background: 'linear-gradient(135deg, #bae6fd 0%, #dbeafe 52%, #e0e7ff 100%)',
+                border: '1px solid #60a5fa'
+              }}
+            >
               <div className="d-flex align-items-center gap-2">
-                <div className="bg-light p-1.5 rounded-3 border d-flex align-items-center">
-                  <img src="assets/umf-logo.jpg" alt="UMF" height="28" className="rounded" />
+                <div className="bg-white p-1 rounded-2 shadow-sm d-flex align-items-center" style={{ border: '1px solid #93c5fd' }}>
+                  <img src="assets/umf-logo.jpg" alt="UMF" height="24" className="rounded" />
                 </div>
                 <div>
-                  <h5 className="fw-bold text-dark mb-0" style={{ fontSize: '1.05rem' }}>
-                    Klinische Pflegestandards &bull; Universal-Pocketcard (A4-Format)
+                  <h5 className="fw-bold mb-0" style={{ fontSize: '0.94rem', lineHeight: 1.15, color: '#00273d' }}>
+                    Klinische Pflegestandards &bull; Universal-Pocketcard (DIN A4-Querformat: 297 &times; 210 mm)
                   </h5>
-                  <div className="text-muted small" style={{ fontSize: '0.78rem' }}>
-                    Universitätsmedizin Frankfurt &bull; Pflegedirektion &bull; Stationsaushang &bull; Gestochen scharf &bull; Ungezoomt
+                  <div style={{ fontSize: '0.73rem', lineHeight: 1.1, color: '#0c4a6e' }}>
+                    Universitätsmedizin Frankfurt &bull; Pflegedirektion &bull; Stationsaushang &bull; <span style={{ color: '#1d4ed8', fontWeight: 700 }}>Exakte DIN-A4-Passform</span>
                   </div>
                 </div>
               </div>
 
-              <div className="d-flex align-items-center gap-2">
-                <span className="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1.5 rounded-pill small fw-semibold">
-                  <i className="bi bi-aspect-ratio me-1"></i> A4-Querformat
+              <div className="d-flex align-items-center gap-1.5">
+                <span className="badge rounded-pill fw-semibold px-2.5 py-1" style={{ fontSize: '0.7rem', color: '#00273d', background: 'rgba(255,255,255,0.9)', border: '1px solid #93c5fd' }}>
+                  <i className="bi bi-aspect-ratio me-1 text-primary"></i> DIN A4 (297&times;210mm)
                 </span>
-                <span className="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2.5 py-1.5 rounded-pill small fw-semibold font-monospace">
-                  <i className="bi bi-shield-check me-1"></i> roXtra verifiziert
+                <span className="badge rounded-pill fw-semibold font-monospace px-2.5 py-1 text-dark" style={{ fontSize: '0.7rem', background: '#dcfce7', border: '1px solid #86efac' }}>
+                  <i className="bi bi-shield-check me-1 text-success"></i> roXtra verifiziert
                 </span>
-              </div>
-            </div>
-
-            {/* Render Crisp Native A4 Card */}
-            <UniversalCardA4Native onSelectStandard={onSelectStandard} />
-
-            {/* Bottom Info Bar & Quick Actions for A4 */}
-            <div className="d-flex flex-wrap justify-content-between align-items-center pt-3 mt-3 border-top gap-2 no-print" data-html2canvas-ignore="true">
-              <div className="small text-muted d-flex align-items-center gap-2" style={{ fontSize: '0.8rem' }}>
-                <i className="bi bi-info-circle-fill text-primary"></i>
-                <span>Tippen Sie direkt auf einen der 6 Standards oder den QR-Code, um das jeweilige Modul zu öffnen.</span>
-              </div>
-
-              <div className="d-flex align-items-center gap-2">
                 <button
                   type="button"
-                  className="btn btn-sm btn-dark rounded-pill px-3 py-1.5 shadow-sm fw-semibold d-flex align-items-center gap-1.5"
+                  className="btn btn-sm btn-warning text-dark rounded-pill px-2.5 py-0.5 shadow-sm fw-bold d-flex align-items-center gap-1 no-print"
+                  style={{ fontSize: '0.74rem' }}
                   onClick={() => handlePrint('a4')}
                   title="Nur die A4-Pocketcard drucken"
                 >
@@ -2544,6 +2639,9 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                 </button>
               </div>
             </div>
+
+            {/* Render Crisp Native A4 Card */}
+            <UniversalCardA4Native onSelectStandard={onSelectStandard} />
           </div>
         )}
 

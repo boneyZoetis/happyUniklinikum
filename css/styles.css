@@ -31,12 +31,12 @@ body {
   flex-direction: column;
 }
 
-/* Glassmorphism Navbar with Top Accent */
+/* Glassmorphism Navbar with Soft Ice-Blue Tint */
 .navbar-custom {
-  background: rgba(255, 255, 255, 0.95);
+  background: linear-gradient(90deg, rgba(240, 249, 255, 0.96) 0%, rgba(255, 255, 255, 0.98) 50%, rgba(238, 242, 255, 0.96) 100%);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  border-bottom: 1px solid #93c5fd;
   box-shadow: 0 4px 20px -2px rgba(0, 39, 61, 0.06);
   z-index: 1020;
 }
@@ -58,11 +58,11 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-/* Hospital Sub-header / Top Bar with subtle elegant gradient */
+/* Hospital Sub-header / Main Top Header with crisp clinical sky-blue to periwinkle-ice gradient */
 .hospital-banner {
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  border-bottom: 2px solid #e2e8f0;
-  padding: 0.75rem 0;
+  background: linear-gradient(135deg, #bae6fd 0%, #dbeafe 52%, #e0e7ff 100%);
+  border-bottom: 2px solid #38bdf8;
+  padding: 0.65rem 0;
   position: relative;
 }
 
@@ -72,8 +72,8 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #be185d 0%, #556b2f 20%, #d97706 40%, #0284c7 60%, #e11d48 80%, #004767 100%);
+  height: 3.5px;
+  background: linear-gradient(90deg, #be185d 0%, #16a34a 20%, #ea580c 40%, #0284c7 60%, #e11d48 80%, #facc15 100%);
 }
 
 /* =========================================================
@@ -931,80 +931,116 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
    ========================================================= */
 .a4-native-card {
   width: 100%;
-  max-width: 960px;
-  background: linear-gradient(145deg, #eaf4fb 0%, #ffffff 45%, #eff8ff 100%);
-  border: 2px solid #004767;
-  border-radius: 1.25rem;
-  box-shadow: 0 16px 36px -8px rgba(0, 39, 61, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  max-width: 870px;
+  aspect-ratio: 297 / 210;
+  background: linear-gradient(180deg, #bbe3fa 0%, #dff2fe 35%, #eaf6ff 70%, #cce9fb 100%);
+  border: 2.5px solid #0284c7;
+  border-radius: 1.15rem;
+  box-shadow: 0 14px 32px -6px rgba(0, 39, 61, 0.22), 0 0 0 1px rgba(0, 71, 103, 0.12);
   margin: 0 auto;
   overflow: hidden;
   position: relative;
 }
 
 .a4-card-header {
-  background: #00273d;
-  border-bottom: 2px solid #004767;
+  background: linear-gradient(90deg, #bae6fd 0%, #dbeafe 52%, #e0e7ff 100%);
+  border-bottom: 2px solid #38bdf8;
+  min-height: 48px;
+}
+
+.a4-header-skyline-box {
+  width: 175px;
+  height: 50px;
+  flex-shrink: 0;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 22%, black 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 22%, black 100%);
+}
+
+.a4-header-skyline-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 .a4-card-subheader {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.8) 100%);
-  border-bottom: 1px solid rgba(0, 71, 103, 0.12);
+  background: linear-gradient(90deg, #f0f9ff 0%, #f8fafc 50%, #eef2ff 100%);
+  border-bottom: 1.5px solid #93c5fd;
 }
 
 .a4-yellow-note {
-  background: #fff875;
-  border: 1px solid #f6e05e;
+  background: linear-gradient(145deg, #fef08a 0%, #facc15 100%);
+  border: 1px solid #eab308;
   border-radius: 6px;
-  padding: 8px 12px;
+  padding: 5px 12px 5px 9px;
   transform: rotate(-3deg);
-  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.12);
-  font-size: 0.85rem;
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.14);
+  font-size: 0.76rem;
   position: relative;
-  width: 130px;
   flex-shrink: 0;
 }
 
 .a4-note-pin {
   position: absolute;
-  top: -8px;
+  top: -7px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+}
+
+.a4-note-heart {
+  position: absolute;
+  right: -6px;
+  top: 52%;
+  transform: translateY(-50%) rotate(12deg);
+  font-size: 0.82rem;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.a4-yellow-title-banner {
+  background: linear-gradient(90deg, #fde047 0%, #facc15 50%, #fde047 100%);
+  border: 1.5px solid #eab308;
+  border-radius: 50rem;
+  transform: rotate(-0.4deg);
+  box-shadow: 0 3px 10px rgba(234, 179, 8, 0.35);
 }
 
 .a4-main-title {
-  font-size: 1.45rem;
+  font-size: 1.24rem;
   font-weight: 900;
-  letter-spacing: 0.03em;
-  color: #00273d;
+  letter-spacing: 0.02em;
+  color: #001f33;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .a4-sop-banner {
-  background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%);
-  font-size: 0.88rem;
+  background: linear-gradient(90deg, #dc2626 0%, #e11d48 50%, #b91c1c 100%);
+  font-size: 0.78rem;
   letter-spacing: 0.05em;
-  box-shadow: 0 3px 8px rgba(220, 38, 38, 0.35);
+  margin-top: -2px;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 .a4-checkmarks-list {
-  font-size: 0.82rem;
-  line-height: 1.35;
+  font-size: 0.74rem;
+  line-height: 1.22;
   flex-shrink: 0;
 }
 
 .a4-standard-row {
-  min-height: 44px;
-  padding: 3px 0 3px 6px;
+  height: 36px;
+  padding: 1px 0 1px 3px;
   cursor: pointer;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
   user-select: none;
 }
 
 .a4-standard-row:hover {
-  transform: translateX(4px);
-  box-shadow: 0 6px 16px rgba(0, 39, 61, 0.15) !important;
+  transform: translateX(3px);
+  box-shadow: 0 4px 12px rgba(0, 39, 61, 0.18) !important;
 }
 
 .a4-standard-row:active {
@@ -1012,31 +1048,95 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 }
 
 .a4-row-thumb-box {
-  height: 42px;
-  width: 125px;
+  height: 34px;
+  width: 195px;
   flex-shrink: 0;
-  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 18%, black 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 18%, black 100%);
 }
 
 .a4-row-thumb-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
 }
 
-.a4-scanner-col {
-  background: #ffffff;
-  border: 2.5px solid #0284c7;
+.a4-right-clinical-panel {
   border-radius: 1rem;
+}
+
+.a4-scanner-col {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid #38bdf8;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 39, 61, 0.16), 0 0 0 2px rgba(255, 255, 255, 0.65) !important;
+}
+
+.a4-scanner-rays {
+  position: absolute;
+  top: -10px;
+  left: -12px;
+  width: 28px;
+  height: 28px;
+  pointer-events: none;
+}
+
+.a4-scanner-rays .ray {
+  position: absolute;
+  display: block;
+  width: 4px;
+  height: 11px;
+  background: #facc15;
+  border-radius: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.a4-scanner-rays .ray-1 {
+  top: 10px;
+  left: 0px;
+  transform: rotate(-62deg);
+}
+
+.a4-scanner-rays .ray-2 {
+  top: 2px;
+  left: 6px;
+  transform: rotate(-35deg);
+}
+
+.a4-scanner-rays .ray-3 {
+  top: -2px;
+  left: 15px;
+  transform: rotate(-10deg);
+}
+
+.a4-icu-scene-box {
+  margin-left: -8px;
+  border-top-left-radius: 0.65rem;
+  border-bottom-left-radius: 0.65rem;
+  box-shadow: -4px 0 12px rgba(0, 39, 61, 0.12);
+  border-left: 1.5px solid rgba(255, 255, 255, 0.7);
+  max-height: 235px;
+}
+
+.a4-icu-scene-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
 }
 
 .a4-qr-wrapper {
   position: relative;
   display: inline-block;
-  padding: 8px;
+  padding: 6px;
   background: #ffffff;
-  border-radius: 8px;
+  border-radius: 10px;
+  border: 1.5px solid #bae6fd;
 }
 
 .a4-bracket {
@@ -1075,16 +1175,53 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   border-bottom-right-radius: 6px;
 }
 
+/* Bottom Universitätsklinikum Frankfurt Panoramic Picture Banner */
+.a4-ukf-bottom-banner {
+  min-height: 175px;
+  width: 100%;
+  background: #e0f2fe;
+}
+
+.a4-ukf-bottom-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 46%;
+  display: block;
+}
+
+.a4-ukf-bottom-badge-corner {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  pointer-events: none;
+}
+
+.a4-bottom-bar {
+  grid-template-columns: repeat(6, 1fr);
+  border-top: 2px solid #38bdf8 !important;
+}
+
+.a4-bottom-segment + .a4-bottom-segment {
+  border-left: 1px solid rgba(0, 39, 61, 0.08);
+}
+
 .atm-cutout-hint {
   display: none;
 }
 
 /* Responsive Scaling for Mobile Screens */
 @media (max-width: 768px) {
+  .a4-native-card {
+    aspect-ratio: auto;
+  }
+  .a4-header-skyline-box {
+    width: 110px;
+  }
   .a4-card-subheader {
     flex-direction: column;
     text-align: center;
-    gap: 8px;
+    gap: 6px;
   }
   .a4-yellow-note {
     width: 100%;
@@ -1094,20 +1231,35 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
     padding: 0;
   }
   .a4-card-body {
     flex-direction: column;
+    padding-right: 0.65rem !important;
   }
-  .a4-scanner-col {
+  .a4-rows-col {
     width: 100% !important;
   }
+  .a4-right-clinical-panel {
+    width: 100% !important;
+    justify-content: center;
+  }
+  .a4-scanner-col {
+    width: 65% !important;
+  }
   .a4-row-thumb-box {
-    width: 80px;
+    width: 110px;
   }
   .a4-row-title {
-    font-size: 0.85rem !important;
+    font-size: 0.82rem !important;
+  }
+  .a4-ukf-bottom-banner {
+    height: 140px;
+    min-height: 140px;
+  }
+  .a4-bottom-bar {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -1116,8 +1268,8 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
    ========================================================= */
 @media print {
   @page {
-    size: auto;
-    margin: 8mm;
+    size: A4 landscape;
+    margin: 5mm;
   }
 
   * {
@@ -1135,8 +1287,8 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 
   .navbar-custom,
   .hospital-banner,
-  button,
-  .btn,
+  button:not(.a4-scan-cta-btn),
+  .btn:not(.a4-scan-cta-btn),
   .no-print,
   .no-print-area,
   footer,
@@ -1144,11 +1296,15 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     display: none !important;
   }
 
+  .a4-scan-cta-btn {
+    display: flex !important;
+  }
+
   iframe {
     display: none !important;
   }
 
-  /* --- 1. A4 Print Mode Isolation (Only A4 Card Prints) --- */
+  /* --- 1. A4 Print Mode Isolation (Only A4 Card Prints on Exact A4 Landscape Sheet) --- */
   body.printing-a4 #universal-card-atm-printable,
   body.active-format-a4:not(.printing-atm) #universal-card-atm-printable {
     display: none !important;
@@ -1169,12 +1325,14 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 
   body.printing-a4 .a4-native-card,
   body.active-format-a4:not(.printing-atm) .a4-native-card {
-    max-width: 100% !important;
-    width: 100% !important;
+    max-width: 286mm !important;
+    width: 286mm !important;
+    height: 198mm !important;
+    aspect-ratio: 297 / 210 !important;
     box-shadow: none !important;
-    border: 1.5px solid #004767 !important;
+    border: 2px solid #0284c7 !important;
     page-break-inside: avoid !important;
-    margin: 0 !important;
+    margin: 0 auto !important;
   }
 
   /* --- 2. ATM Print Mode Isolation (Only ATM Scheckkarte Prints) --- */
