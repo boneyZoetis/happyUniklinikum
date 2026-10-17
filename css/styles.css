@@ -1210,56 +1210,197 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   display: none;
 }
 
+/* =========================================================
+   MOBILE STICKY BOTTOM NAVIGATION BAR (SMARTPHONES ONLY)
+   ========================================================= */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(60px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1.5px solid #93c5fd;
+  box-shadow: 0 -4px 20px rgba(0, 39, 61, 0.1);
+  z-index: 1050;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.mobile-bottom-nav-item {
+  flex: 1 1 0;
+  border: none;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 100%;
+  padding: 4px 2px;
+  color: #64748b;
+  font-size: 0.68rem;
+  font-weight: 700;
+  transition: all 0.18s ease;
+}
+
+.mobile-bottom-nav-item i {
+  font-size: 1.18rem;
+  line-height: 1;
+}
+
+.mobile-bottom-nav-item.active {
+  color: #0284c7;
+}
+
+.mobile-bottom-nav-item.highlight {
+  color: #b45309;
+}
+
+.mobile-bottom-nav-item.highlight i {
+  color: #e11d48;
+}
+
+.mobile-bottom-nav-item.highlight.active {
+  color: #00273d;
+  background: rgba(254, 240, 138, 0.45);
+}
+
 /* Responsive Scaling for Mobile Screens */
 @media (max-width: 768px) {
+  body {
+    padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .copy-feedback-toast {
+    bottom: calc(74px + env(safe-area-inset-bottom, 0px));
+    right: 1rem;
+    left: 1rem;
+  }
+
   .a4-native-card {
     aspect-ratio: auto;
+    border-radius: 0.95rem;
   }
+
+  .a4-card-header {
+    min-height: 44px;
+    padding-left: 0.5rem !important;
+  }
+
   .a4-header-skyline-box {
-    width: 110px;
+    width: 82px;
+    height: 44px;
   }
+
   .a4-card-subheader {
     flex-direction: column;
     text-align: center;
     gap: 6px;
+    padding: 0.5rem !important;
   }
+
   .a4-yellow-note {
     width: 100%;
     transform: none;
+    text-align: center;
+    padding: 4px 8px;
   }
+
+  .a4-main-title {
+    font-size: 1.02rem;
+  }
+
+  .a4-sop-banner {
+    font-size: 0.72rem;
+  }
+
   .a4-checkmarks-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 8px;
     padding: 0;
+    font-size: 0.72rem;
   }
+
   .a4-card-body {
     flex-direction: column;
-    padding-right: 0.65rem !important;
+    padding: 0.5rem !important;
+    gap: 0.65rem !important;
   }
+
   .a4-rows-col {
     width: 100% !important;
+    gap: 5px !important;
   }
+
+  .a4-standard-row {
+    height: 42px;
+  }
+
+  .a4-row-thumb-box {
+    width: 96px;
+    height: 40px;
+  }
+
+  .a4-row-title {
+    font-size: 0.84rem !important;
+  }
+
   .a4-right-clinical-panel {
     width: 100% !important;
-    justify-content: center;
+    display: grid !important;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 8px;
+    align-items: stretch;
   }
+
   .a4-scanner-col {
-    width: 65% !important;
+    width: 100% !important;
+    padding: 0.6rem !important;
   }
-  .a4-row-thumb-box {
-    width: 110px;
+
+  .a4-icu-scene-box {
+    margin-left: 0 !important;
+    border-radius: 0.85rem !important;
+    border: 1.5px solid #bae6fd !important;
+    max-height: 215px;
+    min-height: 185px;
   }
-  .a4-row-title {
-    font-size: 0.82rem !important;
-  }
+
   .a4-ukf-bottom-banner {
-    height: 140px;
-    min-height: 140px;
+    height: 155px;
+    min-height: 155px;
   }
+
+  .a4-ukf-bottom-badge-corner span {
+    font-size: 0.6rem !important;
+    white-space: normal !important;
+    text-align: left;
+  }
+
   .a4-bottom-bar {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .a4-bottom-segment {
+    min-height: 32px;
+  }
+}
+
+@media (max-width: 400px) {
+  .a4-header-skyline-box {
+    display: none;
+  }
+  .a4-row-thumb-box {
+    width: 76px;
+  }
+  .a4-row-title {
+    font-size: 0.78rem !important;
   }
 }
 
@@ -1287,6 +1428,7 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 
   .navbar-custom,
   .hospital-banner,
+  .mobile-bottom-nav,
   button:not(.a4-scan-cta-btn),
   .btn:not(.a4-scan-cta-btn),
   .no-print,

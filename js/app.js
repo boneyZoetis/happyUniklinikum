@@ -390,11 +390,12 @@ function App() {
       {/* Modern Hospital Top Banner - Hidden on quick-hub */}
       {currentRoute !== 'quick-hub' && (
         <div className="hospital-banner shadow-sm">
-          <div className="container d-flex align-items-center justify-content-between py-1">
-            <div className="d-flex align-items-center gap-2 gap-sm-3">
-              <a href="#/" className="text-decoration-none d-flex align-items-center bg-white rounded-3 p-1 shadow-sm border border-info border-opacity-25">
-                <img src="assets/umf-logo.jpg" alt="Universitätsmedizin Frankfurt" height="34" className="rounded" style={{ maxHeight: '38px' }} />
+          <div className="container d-flex align-items-center justify-content-between py-1 gap-2">
+            <div className="d-flex align-items-center gap-2 min-w-0">
+              <a href="#/" className="text-decoration-none d-flex align-items-center bg-white rounded-3 p-1 shadow-sm border border-info border-opacity-25 flex-shrink-0">
+                <img src="assets/umf-logo.jpg" alt="Universitätsmedizin Frankfurt" height="32" className="rounded" style={{ maxHeight: '34px' }} />
               </a>
+              {/* Desktop Title */}
               <div className="border-start border-2 ps-2 ps-sm-3 d-none d-md-block" style={{ borderColor: '#0284c7' }}>
                 <div className="fw-black" style={{ letterSpacing: '0.5px', fontSize: '0.94rem', color: '#00273d' }}>
                   UNIVERSITÄTSMEDIZIN FRANKFURT
@@ -404,12 +405,21 @@ function App() {
                   Digitale Pocketcards &bull; <span className="fw-bold" style={{ color: '#0f766e' }}>Expertenstandards in der Pflege</span>
                 </div>
               </div>
+              {/* Compact Mobile Title */}
+              <div className="d-block d-md-none min-w-0">
+                <div className="fw-black text-truncate" style={{ fontSize: '0.78rem', lineHeight: 1.15, color: '#00273d' }}>
+                  UMF FRANKFURT
+                </div>
+                <div className="fw-semibold text-truncate" style={{ fontSize: '0.68rem', lineHeight: 1.15, color: '#0369a1' }}>
+                  Pflege-Pocketcards &bull; SOPs
+                </div>
+              </div>
             </div>
 
-            <div className="d-flex align-items-center gap-1.5 gap-sm-2">
+            <div className="d-flex align-items-center gap-1.5 flex-shrink-0">
               <button
-                className={`btn btn-sm ${currentRoute === 'universal-karte' || currentRoute === 'magic-card' ? 'btn-warning text-dark fw-bold' : 'btn-outline-warning text-dark fw-bold'} rounded-pill px-2.5 px-sm-3 py-1.5 shadow-sm d-flex align-items-center gap-1 magic-btn-glow`}
-                style={{ minHeight: '38px', fontSize: '0.82rem' }}
+                className={`btn btn-sm ${currentRoute === 'universal-karte' || currentRoute === 'magic-card' ? 'btn-warning text-dark fw-bold' : 'btn-outline-warning text-dark fw-bold'} rounded-pill px-2.5 px-sm-3 py-1 shadow-sm d-flex align-items-center gap-1 magic-btn-glow`}
+                style={{ minHeight: '36px', fontSize: '0.78rem' }}
                 onClick={() => navigateTo('universal-karte')}
                 title="Universal-Karte (A4- & Scheckkarten-Format) mit allen 6 Standards und QR-Code"
               >
@@ -417,8 +427,8 @@ function App() {
                 <span>Universal-Karte</span>
               </button>
               <button
-                className={`btn btn-sm ${currentRoute === 'qrcodes' ? 'btn-primary text-white fw-bold' : 'btn-white bg-white text-dark border fw-semibold'} rounded-pill px-2.5 px-sm-3 py-1.5 shadow-sm d-flex align-items-center gap-1`}
-                style={{ minHeight: '38px', fontSize: '0.82rem' }}
+                className={`btn btn-sm ${currentRoute === 'qrcodes' ? 'btn-primary text-white fw-bold' : 'btn-white bg-white text-dark border fw-semibold'} rounded-pill px-2.5 px-sm-3 py-1 shadow-sm d-flex align-items-center gap-1`}
+                style={{ minHeight: '36px', fontSize: '0.78rem' }}
                 onClick={() => navigateTo('qrcodes')}
                 title="Alle 6 Pocketcards anzeigen"
               >
@@ -434,27 +444,37 @@ function App() {
       {/* Main Menu Bar with Clinical Category Colors - Always visible on quick-hub */}
       <nav className="navbar navbar-expand-lg navbar-custom sticky-top shadow-sm py-1">
         <div className="container d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center justify-content-between gap-1 gap-lg-2 py-0">
-          {/* Top Row on Mobile: Brand Title on Left */}
+          {/* Top Row on Mobile: Brand Title on Left + Quick Actions on Right */}
           <div className="d-flex align-items-center justify-content-between w-100 w-lg-auto">
-            <a className="navbar-brand d-flex align-items-center gap-2 text-decoration-none py-1 m-0" href="#/">
+            <a className="navbar-brand d-flex align-items-center gap-2 text-decoration-none py-0.5 m-0" href="#/">
               <span className="brand-dot"></span>
               <span className="brand-title fs-5">UMF Expertenstandards</span>
             </a>
 
-            {/* Mobile Overview button on subpages */}
-            {currentRoute !== 'home' && (
-              <div className="d-flex d-lg-none align-items-center">
+            {/* Mobile Quick Action Pills on Right of Brand Title */}
+            <div className="d-flex d-lg-none align-items-center gap-1.5">
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-primary rounded-pill px-2.5 py-1 fw-semibold d-flex align-items-center gap-1 shadow-sm"
+                style={{ minHeight: '32px', fontSize: '0.74rem' }}
+                onClick={() => setIsScanModalOpen(true)}
+                title="QR-Code scannen oder Foto/SOP erkennen"
+              >
+                <i className="bi bi-qr-code-scan"></i>
+                <span>Scan</span>
+              </button>
+              {currentRoute !== 'home' && (
                 <a
                   href="#/"
                   className="btn btn-sm btn-light border rounded-pill px-2.5 py-1 text-secondary shadow-sm d-flex align-items-center gap-1"
-                  style={{ minHeight: '34px', fontSize: '0.78rem' }}
+                  style={{ minHeight: '32px', fontSize: '0.74rem' }}
                   title="Zur Hauptübersicht"
                 >
                   <i className="bi bi-house-door-fill"></i>
-                  <span>Übersicht</span>
+                  <span>Start</span>
                 </a>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           {/* Horizontally Scrollable Category Ribbon on Mobile, Inline Pills on Desktop */}
@@ -511,12 +531,13 @@ function App() {
       </nav>
 
       {/* Main Container */}
-      <main className={currentRoute === 'quick-hub' ? "container flex-grow-1 d-flex flex-column justify-content-center py-4" : "container py-4"}>
+      <main className={currentRoute === 'quick-hub' ? "container flex-grow-1 d-flex flex-column justify-content-center py-3 py-md-4" : "container py-3 py-md-4"}>
         {/* VIEW: The 5 Main Tiles */}
         {currentRoute === 'home' && (
           <TilesOverview
             standards={UMF_STANDARDS}
             onSelectStandard={(id) => navigateTo(id)}
+            onOpenScanner={() => setIsScanModalOpen(true)}
           />
         )}
 
@@ -597,9 +618,54 @@ function App() {
           <QuickHubView
             standards={UMF_STANDARDS}
             onSelectStandard={(id) => navigateTo(id)}
+            onOpenScanner={() => setIsScanModalOpen(true)}
           />
         )}
       </main>
+
+      {/* Native-Style Mobile Sticky Bottom Navigation Bar (Smartphones Only) */}
+      <nav className="mobile-bottom-nav d-flex d-md-none no-print" aria-label="Mobile Schnellnavigation">
+        <button
+          type="button"
+          className={`mobile-bottom-nav-item ${currentRoute === 'home' ? 'active' : ''}`}
+          onClick={() => navigateTo('')}
+        >
+          <i className="bi bi-grid-fill"></i>
+          <span>Start</span>
+        </button>
+        <button
+          type="button"
+          className={`mobile-bottom-nav-item ${currentRoute === 'quick-hub' ? 'active' : ''}`}
+          onClick={() => navigateTo('quick-hub')}
+        >
+          <i className="bi bi-lightning-charge-fill"></i>
+          <span>6 Standards</span>
+        </button>
+        <button
+          type="button"
+          className={`mobile-bottom-nav-item highlight ${currentRoute === 'universal-karte' || currentRoute === 'magic-card' ? 'active' : ''}`}
+          onClick={() => navigateTo('universal-karte')}
+        >
+          <i className="bi bi-stars"></i>
+          <span>Universal</span>
+        </button>
+        <button
+          type="button"
+          className={`mobile-bottom-nav-item ${currentRoute === 'qrcodes' ? 'active' : ''}`}
+          onClick={() => navigateTo('qrcodes')}
+        >
+          <i className="bi bi-collection-fill"></i>
+          <span>Karten</span>
+        </button>
+        <button
+          type="button"
+          className="mobile-bottom-nav-item"
+          onClick={() => setIsScanModalOpen(true)}
+        >
+          <i className="bi bi-qr-code-scan"></i>
+          <span>Scanner</span>
+        </button>
+      </nav>
 
       {/* Footer: on quick-hub show ONLY the colorful accent line; on other pages show full footer */}
       {currentRoute === 'quick-hub' ? (
@@ -680,7 +746,7 @@ function App() {
 
               {/* System Info & Status Badge */}
               <div className="col-lg-3 col-md-12 text-lg-end">
-                <div className="footer-status-card p-3 rounded-3 text-start text-lg-end d-inline-block">
+                <div className="footer-status-card p-3 rounded-3 text-start text-lg-end d-inline-block w-100 w-md-auto">
                   <div className="d-flex align-items-center gap-2 justify-content-lg-end mb-1">
                     <span className="live-status-dot"></span>
                     <span className="small fw-bold text-white">roXtra QM-System</span>
@@ -717,14 +783,14 @@ function App() {
 // -------------------------------------------------------------
 // Component: The Main Tiles Overview (Modern, Beautified Cards without embedded QR codes)
 // -------------------------------------------------------------
-function TilesOverview({ standards, onSelectStandard }) {
+function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
   const list = Object.values(standards);
 
   return (
     <div>
       {/* Hero Header Banner */}
       <div
-        className="card border-0 shadow-lg rounded-4 p-3 p-sm-4 p-md-5 mb-4 text-white position-relative overflow-hidden"
+        className="card border-0 shadow-lg rounded-4 p-3 p-sm-4 p-md-5 mb-3 mb-md-4 text-white position-relative overflow-hidden"
         style={{
           background: 'linear-gradient(135deg, #00273d 0%, #004767 45%, #0284c7 100%)',
           boxShadow: '0 12px 35px rgba(0, 39, 61, 0.25)'
@@ -732,20 +798,42 @@ function TilesOverview({ standards, onSelectStandard }) {
       >
         <div className="position-relative d-flex flex-wrap justify-content-between align-items-center gap-3 gap-md-4" style={{ zIndex: 2 }}>
           <div style={{ maxWidth: '820px' }}>
-            <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
-              <span className="badge bg-white text-dark fw-bold text-uppercase px-2.5 px-sm-3 py-1 rounded-pill shadow-sm" style={{ fontSize: '0.72rem', letterSpacing: '0.5px' }}>
+            <div className="d-flex flex-wrap align-items-center gap-1.5 gap-sm-2 mb-2">
+              <span className="badge bg-white text-dark fw-bold text-uppercase px-2.5 py-1 rounded-pill shadow-sm" style={{ fontSize: '0.7rem', letterSpacing: '0.4px' }}>
                 Universitätsmedizin Frankfurt
               </span>
-              <span className="badge bg-white bg-opacity-25 text-white fw-medium px-2.5 px-sm-3 py-1 rounded-pill shadow-sm" style={{ fontSize: '0.72rem' }}>
+              <span className="badge bg-white bg-opacity-25 text-white fw-medium px-2.5 py-1 rounded-pill shadow-sm" style={{ fontSize: '0.7rem' }}>
                 <i className="bi bi-hospital me-1"></i> Pflegedirektion &bull; Evidenzbasierte Pflege
               </span>
             </div>
-            <h1 className="fw-bold mb-2 text-white" style={{ letterSpacing: '-0.5px', fontSize: 'clamp(1.35rem, 3.5vw, 2.2rem)' }}>
+            <h1 className="fw-bold mb-2 text-white" style={{ letterSpacing: '-0.5px', fontSize: 'clamp(1.25rem, 4vw, 2.2rem)' }}>
               Klinische Standards &amp; Pflege-Leitfäden
             </h1>
-            <p className="text-white text-opacity-80 mb-0" style={{ lineHeight: '1.55', fontSize: '0.86rem' }}>
-              Evidenzbasierte Expertenstandards, Intensiv-SOPs und Hygieneleitfäden für den Stations- und Intensivalltag. Wählen Sie eine Kategorie, um die Leitlinie, klinischen Handlungsschritte und Dokumentationen direkt einzusehen.
+            <p className="text-white text-opacity-85 mb-0" style={{ lineHeight: '1.5', fontSize: '0.85rem' }}>
+              Evidenzbasierte Expertenstandards, Intensiv-SOPs und Hygieneleitfäden für den Stations- und Intensivalltag. Tippen Sie auf eine Kategorie für Leitlinien, Bilder, Videos und SOPs.
             </p>
+
+            {/* Mobile Quick-Action Buttons inside Hero */}
+            <div className="d-grid d-sm-flex gap-2 mt-3" style={{ gridTemplateColumns: '1fr 1fr' }}>
+              <button
+                type="button"
+                className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-2 shadow-sm d-flex align-items-center justify-content-center gap-1.5"
+                style={{ minHeight: '42px', fontSize: '0.82rem' }}
+                onClick={() => onSelectStandard('universal-karte')}
+              >
+                <i className="bi bi-stars text-danger"></i>
+                <span>Universal-Karte</span>
+              </button>
+              <button
+                type="button"
+                className="btn btn-light text-dark fw-bold rounded-pill px-3 py-2 shadow-sm d-flex align-items-center justify-content-center gap-1.5"
+                style={{ minHeight: '42px', fontSize: '0.82rem' }}
+                onClick={() => onOpenScanner ? onOpenScanner() : onSelectStandard('quick-hub')}
+              >
+                <i className="bi bi-qr-code-scan text-primary"></i>
+                <span>QR / Foto Scan</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -774,65 +862,63 @@ function TilesOverview({ standards, onSelectStandard }) {
             >
               <div className="p-3 p-sm-4 d-flex flex-column h-100">
                 {/* Header: Icon, Category Badge & roXtra ID */}
-                <div className="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
-                  <div className="d-flex align-items-center gap-2.5">
+                <div className="d-flex flex-wrap justify-content-between align-items-center mb-2.5 gap-2">
+                  <div className="d-flex align-items-center gap-2 min-w-0">
                     <div
                       className="rounded-4 d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0"
                       style={{
-                        width: '44px',
-                        height: '44px',
+                        width: '42px',
+                        height: '42px',
                         background: std.bannerGradient || std.accentColor
                       }}
                     >
-                      <i className={`bi ${std.icon} fs-4`}></i>
+                      <i className={`bi ${std.icon} fs-5`}></i>
                     </div>
-                    <div>
-                      <span
-                        className="fw-bold px-2.5 py-1 rounded-pill d-inline-block text-uppercase"
-                        style={{
-                          fontSize: '0.72rem',
-                          letterSpacing: '0.4px',
-                          backgroundColor: std.badgeBg || 'rgba(0, 71, 103, 0.08)',
-                          color: std.accentColor
-                        }}
-                      >
-                        {std.shortTitle}
-                      </span>
-                    </div>
+                    <span
+                      className="fw-bold px-2.5 py-1 rounded-pill d-inline-block text-uppercase text-truncate"
+                      style={{
+                        fontSize: '0.7rem',
+                        letterSpacing: '0.4px',
+                        backgroundColor: std.badgeBg || 'rgba(0, 71, 103, 0.08)',
+                        color: std.accentColor
+                      }}
+                    >
+                      {std.shortTitle}
+                    </span>
                   </div>
 
-                  <span className="badge bg-light text-secondary border font-monospace px-2.5 py-1.5 rounded-pill" style={{ fontSize: '0.74rem' }}>
-                    roXtra: <strong>{std.roXtraIds.join(' / ')}</strong>
+                  <span className="badge bg-light text-secondary border font-monospace px-2 py-1 rounded-pill" style={{ fontSize: '0.72rem' }}>
+                    roXtra: <strong>{std.roXtraIds.slice(0, 2).join(' / ')}{std.roXtraIds.length > 2 ? '…' : ''}</strong>
                   </span>
                 </div>
 
                 {/* Title */}
-                <h4 className="fw-bold text-dark mb-2" style={{ lineHeight: '1.3', fontSize: '1.15rem' }}>
+                <h4 className="fw-bold text-dark mb-1.5" style={{ lineHeight: '1.3', fontSize: '1.08rem' }}>
                   {std.topic}
                 </h4>
 
                 {/* Subtitle / Lead text */}
-                <p className="text-secondary small mb-3" style={{ lineHeight: '1.5', fontSize: '0.86rem' }}>
+                <p className="text-secondary small mb-2.5" style={{ lineHeight: '1.45', fontSize: '0.84rem' }}>
                   {std.leadText}
                 </p>
 
                 {/* Highlighted Clinical Bullet Points Box (Full width, no QR) */}
                 <div
-                  className="p-3 rounded-3 mb-3 mt-auto"
+                  className="p-2.5 p-sm-3 rounded-3 mb-3 mt-auto"
                   style={{
                     backgroundColor: '#f8fafc',
                     border: '1px solid #e2e8f0',
                     borderLeft: `3px solid ${std.accentColor}`
                   }}
                 >
-                  <div className="small fw-bold text-uppercase mb-2 d-flex align-items-center gap-1" style={{ fontSize: '0.72rem', color: std.accentColor }}>
+                  <div className="small fw-bold text-uppercase mb-1.5 d-flex align-items-center gap-1" style={{ fontSize: '0.7rem', color: std.accentColor }}>
                     <i className="bi bi-shield-check"></i>
                     <span>Klinische Kernaspekte:</span>
                   </div>
-                  <div className="d-flex flex-column gap-2">
+                  <div className="d-flex flex-column gap-1.5">
                     {std.keyPoints.slice(0, 3).map((kp, idx) => (
-                      <div key={idx} className="small text-dark d-flex align-items-start gap-2" style={{ fontSize: '0.84rem', lineHeight: '1.45' }}>
-                        <i className="bi bi-check-circle-fill flex-shrink-0 mt-1" style={{ color: std.accentColor, fontSize: '0.85rem' }}></i>
+                      <div key={idx} className="small text-dark d-flex align-items-start gap-2" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
+                        <i className="bi bi-check-circle-fill flex-shrink-0 mt-0.5" style={{ color: std.accentColor, fontSize: '0.82rem' }}></i>
                         <span>{kp}</span>
                       </div>
                     ))}
@@ -840,18 +926,18 @@ function TilesOverview({ standards, onSelectStandard }) {
                 </div>
 
                 {/* Card Footer: Action button */}
-                <div className="d-flex justify-content-end align-items-center pt-3 border-top gap-2 mt-auto">
+                <div className="d-flex justify-content-end align-items-center pt-2.5 border-top gap-2 mt-auto">
                   <button
                     type="button"
-                    className="btn btn-sm rounded-pill px-3 py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm text-white fw-semibold w-100 w-sm-auto"
+                    className="btn btn-sm rounded-pill px-3 py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm text-white fw-bold w-100 w-sm-auto"
                     style={{
                       background: std.accentColor,
                       border: 'none',
-                      minHeight: '42px',
-                      fontSize: '0.84rem'
+                      minHeight: '44px',
+                      fontSize: '0.85rem'
                     }}
                   >
-                    <span>Zur Pocketcard</span>
+                    <span>Pocketcard &amp; Leitfaden öffnen</span>
                     <i className="bi bi-arrow-right"></i>
                   </button>
                 </div>
@@ -881,22 +967,22 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
       {/* THE BEAUTIFIED PRINTABLE / DOWNLOADABLE POCKETCARD */}
       <div className="pocketcard-printable-view" id={`pocketcard-${standard.id}`}>
         {/* 1. Hospital Header Bar */}
-        <div className="pocketcard-print-header">
-          <div className="d-flex align-items-center gap-3">
-            <div className="bg-white rounded px-2 py-1 shadow-sm d-flex align-items-center">
-              <img src="assets/umf-logo.jpg" alt="Universitätsmedizin Frankfurt" height="36" />
+        <div className="pocketcard-print-header flex-wrap gap-2">
+          <div className="d-flex align-items-center gap-2 gap-sm-3 min-w-0">
+            <div className="bg-white rounded px-1.5 py-1 shadow-sm d-flex align-items-center flex-shrink-0">
+              <img src="assets/umf-logo.jpg" alt="Universitätsmedizin Frankfurt" height="32" />
             </div>
-            <div>
-              <div className="fw-bold text-white text-uppercase" style={{ fontSize: '0.88rem', letterSpacing: '0.4px' }}>
+            <div className="min-w-0">
+              <div className="fw-bold text-white text-uppercase text-truncate" style={{ fontSize: '0.84rem', letterSpacing: '0.3px' }}>
                 Universitätsmedizin Frankfurt
               </div>
-              <div className="text-white-50" style={{ fontSize: '0.72rem' }}>
-                Klinikum der Goethe-Universität &bull; Pflegedirektion &bull; Digitale Pocketcard
+              <div className="text-white-50 text-truncate" style={{ fontSize: '0.7rem' }}>
+                Pflegedirektion &bull; Digitale Pocketcard
               </div>
             </div>
           </div>
 
-          <div>
+          <div className="ms-auto">
             <span className={`pocketcard-badge-pill ${standard.id}`}>
               <i className={`bi ${standard.icon} me-1`}></i> {standard.shortTitle}
             </span>
@@ -904,17 +990,17 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
         </div>
 
         {/* 2. Pocketcard Main Content Area */}
-        <div className="p-4 bg-white">
+        <div className="p-3 p-sm-4 bg-white">
           {/* Title & roXtra Identification */}
-          <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-2 border-bottom">
+          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 pb-2 border-bottom gap-2">
             <div>
-              <span className="text-muted small text-uppercase fw-bold" style={{ letterSpacing: '0.5px' }}>
-                Expertenstandard in der Pflege
+              <span className="text-muted small text-uppercase fw-bold" style={{ letterSpacing: '0.5px', fontSize: '0.72rem' }}>
+                {standard.id === 'zvk' || standard.id === 'isolation' ? 'Klinische Verfahrensanweisung (SOP)' : 'Expertenstandard in der Pflege'}
               </span>
-              <h4 className="fw-bold text-dark mb-0 mt-1">{standard.topic}</h4>
+              <h4 className="fw-bold text-dark mb-0 mt-1" style={{ fontSize: 'clamp(1.05rem, 3vw, 1.35rem)' }}>{standard.topic}</h4>
             </div>
-            <div className="d-flex align-items-center gap-2 mt-2 mt-md-0">
-              <span className="badge bg-light text-dark border px-3 py-2 font-monospace" style={{ fontSize: '0.82rem' }}>
+            <div className="d-flex align-items-center gap-2 flex-shrink-0">
+              <span className="badge bg-light text-dark border px-2.5 py-1.5 font-monospace" style={{ fontSize: '0.78rem' }}>
                 <i className="bi bi-file-earmark-medical text-primary me-1"></i>
                 roXtra: <strong>{standard.roXtraIds.join(' / ')}</strong>
               </span>
@@ -1211,7 +1297,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
           </div>
 
           {/* 5. Pocketcard QM Footer */}
-          <div className="d-flex justify-content-between align-items-center pt-2 border-top text-muted" style={{ fontSize: '0.72rem' }}>
+          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center pt-2 border-top text-muted gap-1 text-center text-sm-start" style={{ fontSize: '0.72rem' }}>
             <span>Universitätsmedizin Frankfurt &bull; Pflegedirektion &bull; Expertenstandards im Pflegeprozess</span>
             <span>QM-Dokumentation roXtra &bull; Stand: 2026</span>
           </div>
@@ -1219,20 +1305,20 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
           {/* 6. Action Toolbar (Only on screen, ignored when exporting PDF / printing) */}
           <div className="d-flex flex-column flex-sm-row flex-wrap align-items-stretch align-items-sm-center justify-content-between gap-2 mt-3 pt-3 border-top no-print w-100" data-html2canvas-ignore="true">
             {/* Primary Document Actions: Download PDF & Print grouped together */}
-            <div className="d-flex flex-wrap align-items-center gap-2">
+            <div className="d-flex flex-column flex-sm-row flex-wrap align-items-stretch align-items-sm-center gap-2 w-100 w-sm-auto">
               <div className="btn-group shadow-sm rounded-pill overflow-hidden w-100 w-sm-auto" role="group">
                 <button
-                  className="btn btn-primary btn-sm px-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-1.5 flex-grow-1"
-                  style={{ minHeight: '42px' }}
+                  className="btn btn-primary btn-sm px-3 py-2 fw-bold d-flex align-items-center justify-content-center gap-1.5 flex-grow-1"
+                  style={{ minHeight: '44px', flex: '1 1 50%' }}
                   onClick={() => onDownloadPdf(standard, false)}
                   title="Pocketcard als PDF-Datei herunterladen"
                 >
                   <i className="bi bi-file-earmark-arrow-down-fill fs-6"></i>
-                  <span>PDF herunterladen</span>
+                  <span>PDF speichern</span>
                 </button>
                 <button
-                  className="btn btn-dark btn-sm px-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-1.5 border-start border-white border-opacity-25"
-                  style={{ minHeight: '42px' }}
+                  className="btn btn-dark btn-sm px-3 py-2 fw-bold d-flex align-items-center justify-content-center gap-1.5 border-start border-white border-opacity-25 flex-grow-1"
+                  style={{ minHeight: '44px', flex: '1 1 50%' }}
                   onClick={() => window.print()}
                   title="Drucken / Als PDF drucken"
                 >
@@ -1246,35 +1332,35 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                   href={standard.sopPdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn btn-outline-danger btn-sm rounded-pill px-3 py-2 shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100 w-sm-auto"
-                  style={{ minHeight: '42px' }}
+                  className="btn btn-danger btn-sm rounded-pill px-3 py-2 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-1.5 w-100 w-sm-auto"
+                  style={{ minHeight: '44px' }}
                   title="Vollständige Verfahrensanweisung (SOP) als Original-PDF öffnen"
                 >
-                  <i className="bi bi-file-pdf"></i>
-                  <span>Original SOP ({standard.id === 'zvk' ? '10 S.' : '4 S.'})</span>
+                  <i className="bi bi-file-earmark-pdf-fill"></i>
+                  <span>Original SOP öffnen ({standard.id === 'zvk' ? '10 S.' : '4 S.'})</span>
                 </a>
               )}
             </div>
 
-            {/* Secondary Utilities: QR PNG & Link */}
-            <div className="d-flex align-items-center gap-2 justify-content-between justify-content-sm-end">
+            {/* Secondary Utilities: QR PNG & Link in equal 50/50 row on mobile */}
+            <div className="d-grid d-sm-flex align-items-center gap-2 w-100 w-sm-auto" style={{ gridTemplateColumns: '1fr 1fr' }}>
               <button
-                className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 d-flex align-items-center justify-content-center gap-1.5 flex-grow-1 flex-sm-grow-0"
-                style={{ minHeight: '40px' }}
+                className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-1.5"
+                style={{ minHeight: '42px' }}
                 onClick={() => onDownloadQr(standard)}
                 title="QR-Code als Bilddatei speichern"
               >
                 <i className="bi bi-qr-code"></i>
-                <span>QR PNG</span>
+                <span>QR-Bild</span>
               </button>
               <button
-                className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 d-flex align-items-center justify-content-center gap-1.5 flex-grow-1 flex-sm-grow-0"
-                style={{ minHeight: '40px' }}
-                onClick={() => onCopy(standard.videoUrl, 'Video Link')}
+                className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-1.5"
+                style={{ minHeight: '42px' }}
+                onClick={() => onCopy(standard.videoUrl, 'Link')}
                 title="Link kopieren"
               >
                 <i className="bi bi-link-45deg"></i>
-                <span>Link</span>
+                <span>Link kopieren</span>
               </button>
             </div>
           </div>
@@ -1683,33 +1769,18 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
   return (
     <div>
       {/* Top Breadcrumb & Switcher */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 no-print">
-        <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5 fw-semibold" style={{ minHeight: '38px' }}>
-          <i className="bi bi-grid-fill"></i>
-          <span>Alle 6 Kacheln</span>
-        </a>
-
-        {/* Quick Switch to the other standards & Grouped Actions */}
-        <div className="d-flex flex-wrap gap-2 align-items-center">
-          <div className="d-none d-lg-flex flex-wrap gap-1 align-items-center me-2">
-            {otherStandards.map(s => (
-              <button
-                key={s.id}
-                className="btn btn-light btn-sm rounded-pill border px-2.5 py-1 text-secondary"
-                style={{ fontSize: '0.78rem', minHeight: '34px' }}
-                onClick={() => onNavigate(s.id)}
-              >
-                <i className={`bi ${s.icon} me-1`} style={{ color: s.accentColor }}></i>
-                {s.shortTitle}
-              </button>
-            ))}
-          </div>
+      <div className="d-flex flex-column gap-2 mb-3 no-print">
+        <div className="d-flex justify-content-between align-items-center gap-2 w-100">
+          <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5 fw-semibold" style={{ minHeight: '40px', fontSize: '0.82rem' }}>
+            <i className="bi bi-grid-fill"></i>
+            <span>Alle 6 Kacheln</span>
+          </a>
 
           {/* Grouped PDF & Print Button Pill */}
           <div className="btn-group shadow-sm rounded-pill overflow-hidden" role="group">
             <button
               className="btn btn-primary btn-sm px-3 py-1.5 fw-semibold d-flex align-items-center gap-1.5"
-              style={{ minHeight: '38px' }}
+              style={{ minHeight: '40px', fontSize: '0.82rem' }}
               onClick={() => downloadPdf(standard)}
               title="Aktuelle Ansicht als PDF-Dokument herunterladen"
             >
@@ -1719,7 +1790,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
             </button>
             <button
               className="btn btn-dark btn-sm px-3 py-1.5 fw-semibold d-flex align-items-center gap-1.5 border-start border-white border-opacity-25"
-              style={{ minHeight: '38px' }}
+              style={{ minHeight: '40px', fontSize: '0.82rem' }}
               onClick={() => window.print()}
               title="Drucken / Als PDF drucken"
             >
@@ -1727,6 +1798,22 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
               <span>Drucken</span>
             </button>
           </div>
+        </div>
+
+        {/* Horizontally scrollable quick-switch pills for all other standards on both mobile and desktop */}
+        <div className="nav-standards-scroll w-100 py-0.5">
+          {otherStandards.map(s => (
+            <button
+              key={s.id}
+              type="button"
+              className="btn btn-white bg-white btn-sm rounded-pill border px-2.5 py-1 text-dark shadow-sm flex-shrink-0 d-inline-flex align-items-center gap-1.5"
+              style={{ fontSize: '0.78rem', minHeight: '36px' }}
+              onClick={() => onNavigate(s.id)}
+            >
+              <i className={`bi ${s.icon}`} style={{ color: s.accentColor }}></i>
+              <span className="fw-semibold">{s.shortTitle}</span>
+            </button>
+          ))}
         </div>
       </div>
 
@@ -2508,73 +2595,86 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
   return (
     <div className="py-1">
-      {/* Top Action Toolbar (Compact to fit screen height) */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-1.5 gap-2 no-print">
-        <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-2.5 py-1 shadow-sm d-flex align-items-center gap-1.5 fw-semibold" style={{ minHeight: '32px', fontSize: '0.8rem' }}>
-          <i className="bi bi-arrow-left"></i>
-          <span>Zurück zur Übersicht</span>
-        </a>
+      {/* Top Action Toolbar (Mobile-First Structured Layout & Compact Desktop Row) */}
+      <div className="d-flex flex-column flex-lg-row justify-content-between align-items-stretch align-items-lg-center mb-2 gap-2 no-print">
+        {/* Top Row on Mobile: Back Button + Quick Target Page Button */}
+        <div className="d-flex justify-content-between align-items-center gap-2">
+          <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5 fw-semibold" style={{ minHeight: '38px', fontSize: '0.8rem' }}>
+            <i className="bi bi-arrow-left"></i>
+            <span>Übersicht</span>
+          </a>
 
-        {/* Format Selector Pills */}
-        <div className="mobile-segmented-control" role="group" style={{ maxWidth: '420px', padding: '0.15rem' }}>
+          <button
+            className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-1.5 shadow-sm btn-sm d-flex d-lg-none align-items-center gap-1.5"
+            style={{ minHeight: '38px', fontSize: '0.8rem' }}
+            onClick={() => onSelectStandard('quick-hub')}
+            title="Die Zielseite aller 6 Standards testen"
+          >
+            <i className="bi bi-lightning-charge-fill text-danger"></i>
+            <span>Schnellwahl (6 Standards)</span>
+          </button>
+        </div>
+
+        {/* Row 2 on Mobile / Center on Desktop: Format Selector Pills */}
+        <div className="mobile-segmented-control mx-lg-auto" role="group" style={{ maxWidth: '460px', padding: '0.2rem' }}>
           <button
             type="button"
             className={`btn btn-sm ${cardFormat === 'both' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            style={{ fontSize: '0.75rem', minHeight: '30px', padding: '0.2rem 0.6rem' }}
+            style={{ fontSize: '0.76rem', minHeight: '36px', padding: '0.2rem 0.5rem' }}
             onClick={() => setCardFormat('both')}
             title="A4-Pocketcard und Scheckkarten-Format gleichzeitig anzeigen"
           >
             <i className="bi bi-columns"></i>
-            <span>Beide Formate</span>
+            <span className="d-none d-sm-inline">Beide Formate</span>
+            <span className="d-inline d-sm-none">Beide</span>
           </button>
           <button
             type="button"
             className={`btn btn-sm ${cardFormat === 'a4' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            style={{ fontSize: '0.75rem', minHeight: '30px', padding: '0.2rem 0.6rem' }}
+            style={{ fontSize: '0.76rem', minHeight: '36px', padding: '0.2rem 0.5rem' }}
             onClick={() => setCardFormat('a4')}
             title="A4-Format für Stationsaushang und Dokumentenmappe"
           >
             <i className="bi bi-file-earmark-text"></i>
-            <span>A4-Pocketcard</span>
+            <span className="d-none d-sm-inline">A4-Pocketcard</span>
+            <span className="d-inline d-sm-none">A4-Karte</span>
           </button>
           <button
             type="button"
             className={`btn btn-sm ${cardFormat === 'atm' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            style={{ fontSize: '0.75rem', minHeight: '30px', padding: '0.2rem 0.6rem' }}
+            style={{ fontSize: '0.76rem', minHeight: '36px', padding: '0.2rem 0.5rem' }}
             onClick={() => setCardFormat('atm')}
             title="Kompaktes Scheckkarten-Format für Kitteltasche und Ausweishülle"
           >
             <i className="bi bi-credit-card-2-front"></i>
-            <span>Scheckkarte (ATM)</span>
+            <span className="d-none d-sm-inline">Scheckkarte (ATM)</span>
+            <span className="d-inline d-sm-none">ATM-Karte</span>
           </button>
         </div>
 
-        <div className="d-flex flex-wrap align-items-center gap-1.5">
-          {/* Grouped PDF download & Print actions */}
-          <div className="btn-group shadow-sm rounded-pill overflow-hidden" role="group">
-            <button
-              className="btn btn-primary btn-sm px-2.5 py-1 fw-semibold d-flex align-items-center gap-1"
-              style={{ minHeight: '32px', fontSize: '0.78rem' }}
-              onClick={() => downloadPdf(cardFormat === 'both' ? 'a4' : cardFormat)}
-              title="Universal-Pocketcard als PDF-Dokument herunterladen"
-            >
-              <i className="bi bi-file-earmark-arrow-down-fill"></i>
-              <span>PDF</span>
-            </button>
-            <button
-              className="btn btn-dark btn-sm px-2.5 py-1 fw-semibold d-flex align-items-center gap-1 border-start border-white border-opacity-25"
-              style={{ minHeight: '32px', fontSize: '0.78rem' }}
-              onClick={() => handlePrint(cardFormat === 'atm' ? 'atm' : 'a4')}
-              title={cardFormat === 'atm' ? 'Nur Scheckkarte drucken' : 'Nur A4-Pocketcard drucken'}
-            >
-              <i className="bi bi-printer-fill"></i>
-              <span>Drucken</span>
-            </button>
-          </div>
-
+        {/* Row 3 on Mobile / Right on Desktop: Symmetrical Action Buttons */}
+        <div className="d-grid d-lg-flex align-items-center gap-1.5" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
           <button
-            className="btn btn-outline-secondary rounded-pill px-2.5 py-1 shadow-sm btn-sm d-flex align-items-center gap-1"
-            style={{ minHeight: '32px', fontSize: '0.78rem' }}
+            className="btn btn-primary btn-sm rounded-pill px-3 py-1.5 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5"
+            style={{ minHeight: '38px', fontSize: '0.78rem' }}
+            onClick={() => downloadPdf(cardFormat === 'both' ? 'a4' : cardFormat)}
+            title="Universal-Pocketcard als PDF-Dokument herunterladen"
+          >
+            <i className="bi bi-file-earmark-arrow-down-fill"></i>
+            <span>PDF</span>
+          </button>
+          <button
+            className="btn btn-dark btn-sm rounded-pill px-3 py-1.5 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5"
+            style={{ minHeight: '38px', fontSize: '0.78rem' }}
+            onClick={() => handlePrint(cardFormat === 'atm' ? 'atm' : 'a4')}
+            title={cardFormat === 'atm' ? 'Nur Scheckkarte drucken' : 'Nur A4-Pocketcard drucken'}
+          >
+            <i className="bi bi-printer-fill"></i>
+            <span>Drucken</span>
+          </button>
+          <button
+            className="btn btn-outline-secondary rounded-pill px-3 py-1.5 shadow-sm btn-sm fw-semibold d-flex align-items-center justify-content-center gap-1.5 bg-white"
+            style={{ minHeight: '38px', fontSize: '0.78rem' }}
             onClick={downloadCardImage}
             title="Pocketcard als hochauflösendes Bild herunterladen"
           >
@@ -2582,8 +2682,8 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
             <span>Bild</span>
           </button>
           <button
-            className="btn btn-warning text-dark fw-bold rounded-pill px-2.5 py-1 shadow-sm btn-sm d-flex align-items-center gap-1"
-            style={{ minHeight: '32px', fontSize: '0.78rem' }}
+            className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-1.5 shadow-sm btn-sm d-none d-lg-flex align-items-center justify-content-center gap-1"
+            style={{ minHeight: '38px', fontSize: '0.78rem' }}
             onClick={() => onSelectStandard('quick-hub')}
             title="Die Zielseite aller 6 Standards testen"
           >
@@ -2597,40 +2697,42 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
       <div className="d-flex flex-column align-items-center justify-content-center my-1 gap-3">
         {/* 1. THE A4-FORMAT UNIVERSAL POCKETCARD (ISO A4 PAPER PROPORTION & PRINT FIT) */}
         {(cardFormat === 'a4' || cardFormat === 'both') && (
-          <div className="w-100 p-2 bg-white rounded-4 border shadow-sm" id="universal-card-a4-printable" style={{ maxWidth: '890px' }}>
+          <div className="w-100 p-1.5 p-sm-2 bg-white rounded-4 border shadow-sm" id="universal-card-a4-printable" style={{ maxWidth: '890px' }}>
             <div
-              className="d-flex flex-wrap justify-content-between align-items-center mb-2 px-3 py-2 rounded-3 gap-2 no-print shadow-sm"
+              className="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center mb-2 px-2.5 px-sm-3 py-2 rounded-3 gap-2 no-print shadow-sm"
               data-html2canvas-ignore="true"
               style={{
                 background: 'linear-gradient(135deg, #bae6fd 0%, #dbeafe 52%, #e0e7ff 100%)',
                 border: '1px solid #60a5fa'
               }}
             >
-              <div className="d-flex align-items-center gap-2">
-                <div className="bg-white p-1 rounded-2 shadow-sm d-flex align-items-center" style={{ border: '1px solid #93c5fd' }}>
+              <div className="d-flex align-items-center gap-2 min-w-0">
+                <div className="bg-white p-1 rounded-2 shadow-sm d-flex align-items-center flex-shrink-0" style={{ border: '1px solid #93c5fd' }}>
                   <img src="assets/umf-logo.jpg" alt="UMF" height="24" className="rounded" />
                 </div>
-                <div>
-                  <h5 className="fw-bold mb-0" style={{ fontSize: '0.94rem', lineHeight: 1.15, color: '#00273d' }}>
-                    Klinische Pflegestandards &bull; Universal-Pocketcard (DIN A4-Querformat: 297 &times; 210 mm)
+                <div className="min-w-0">
+                  <h5 className="fw-bold mb-0 text-truncate" style={{ fontSize: '0.88rem', lineHeight: 1.2, color: '#00273d' }}>
+                    Universal-Pocketcard (DIN A4: 297 &times; 210 mm)
                   </h5>
-                  <div style={{ fontSize: '0.73rem', lineHeight: 1.1, color: '#0c4a6e' }}>
-                    Universitätsmedizin Frankfurt &bull; Pflegedirektion &bull; Stationsaushang &bull; <span style={{ color: '#1d4ed8', fontWeight: 700 }}>Exakte DIN-A4-Passform</span>
+                  <div className="text-truncate" style={{ fontSize: '0.72rem', lineHeight: 1.15, color: '#0c4a6e' }}>
+                    Universitätsmedizin Frankfurt &bull; <span style={{ color: '#1d4ed8', fontWeight: 700 }}>Exakte DIN-A4-Passform</span>
                   </div>
                 </div>
               </div>
 
-              <div className="d-flex align-items-center gap-1.5">
-                <span className="badge rounded-pill fw-semibold px-2.5 py-1" style={{ fontSize: '0.7rem', color: '#00273d', background: 'rgba(255,255,255,0.9)', border: '1px solid #93c5fd' }}>
-                  <i className="bi bi-aspect-ratio me-1 text-primary"></i> DIN A4 (297&times;210mm)
-                </span>
-                <span className="badge rounded-pill fw-semibold font-monospace px-2.5 py-1 text-dark" style={{ fontSize: '0.7rem', background: '#dcfce7', border: '1px solid #86efac' }}>
-                  <i className="bi bi-shield-check me-1 text-success"></i> roXtra verifiziert
-                </span>
+              <div className="d-flex flex-wrap align-items-center justify-content-between justify-content-md-end gap-1.5">
+                <div className="d-flex align-items-center gap-1">
+                  <span className="badge rounded-pill fw-semibold px-2 py-1" style={{ fontSize: '0.68rem', color: '#00273d', background: 'rgba(255,255,255,0.9)', border: '1px solid #93c5fd' }}>
+                    <i className="bi bi-aspect-ratio me-1 text-primary"></i> DIN A4
+                  </span>
+                  <span className="badge rounded-pill fw-semibold font-monospace px-2 py-1 text-dark" style={{ fontSize: '0.68rem', background: '#dcfce7', border: '1px solid #86efac' }}>
+                    <i className="bi bi-shield-check me-1 text-success"></i> roXtra
+                  </span>
+                </div>
                 <button
                   type="button"
-                  className="btn btn-sm btn-warning text-dark rounded-pill px-2.5 py-0.5 shadow-sm fw-bold d-flex align-items-center gap-1 no-print"
-                  style={{ fontSize: '0.74rem' }}
+                  className="btn btn-sm btn-warning text-dark rounded-pill px-3 py-1 shadow-sm fw-bold d-flex align-items-center gap-1 no-print ms-auto ms-md-0"
+                  style={{ fontSize: '0.75rem', minHeight: '34px' }}
                   onClick={() => handlePrint('a4')}
                   title="Nur die A4-Pocketcard drucken"
                 >
@@ -2647,24 +2749,24 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
         {/* 2. THE POCKETCARD / ATM-FORMAT */}
         {(cardFormat === 'atm' || cardFormat === 'both') && (
-          <div className="w-100 p-3 p-md-4 bg-white rounded-4 border shadow-sm d-flex flex-column align-items-center" id="universal-card-atm-printable" style={{ maxWidth: '1020px' }}>
+          <div className="w-100 p-2.5 p-sm-3 p-md-4 bg-white rounded-4 border shadow-sm d-flex flex-column align-items-center" id="universal-card-atm-printable" style={{ maxWidth: '1020px' }}>
             <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-2 border-bottom w-100 gap-2">
-              <div className="d-flex align-items-center gap-2">
-                <div className="bg-light p-1.5 rounded-3 border d-flex align-items-center">
-                  <img src="assets/umf-logo.jpg" alt="UMF" height="28" className="rounded" />
+              <div className="d-flex align-items-center gap-2 min-w-0">
+                <div className="bg-light p-1.5 rounded-3 border d-flex align-items-center flex-shrink-0">
+                  <img src="assets/umf-logo.jpg" alt="UMF" height="26" className="rounded" />
                 </div>
-                <div>
-                  <h5 className="fw-bold text-dark mb-0" style={{ fontSize: '1.05rem' }}>
-                    Kompakte Pocketcard (Scheckkarten- / ATM-Format)
+                <div className="min-w-0">
+                  <h5 className="fw-bold text-dark mb-0 text-truncate" style={{ fontSize: '0.96rem' }}>
+                    Scheckkarten- / ATM-Format
                   </h5>
-                  <div className="text-muted small" style={{ fontSize: '0.78rem' }}>
-                    Optimiert für Kitteltasche, ID-Ausweishülle und Umhängeband (85,6 &times; 54 mm)
+                  <div className="text-muted small text-truncate" style={{ fontSize: '0.74rem' }}>
+                    Für Kitteltasche &amp; Ausweishülle (85,6 &times; 54 mm)
                   </div>
                 </div>
               </div>
 
-              <span className="badge bg-warning bg-opacity-25 text-dark border border-warning px-2.5 py-1.5 rounded-pill small fw-bold">
-                <i className="bi bi-credit-card-2-front me-1"></i> ATM-Scheckkarte
+              <span className="badge bg-warning bg-opacity-25 text-dark border border-warning px-2.5 py-1 rounded-pill small fw-bold">
+                <i className="bi bi-credit-card-2-front me-1"></i> ATM-Karte
               </span>
             </div>
 
@@ -2677,23 +2779,22 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
             </div>
 
             {/* Bottom Info Bar & Quick Actions for ATM */}
-            <div className="d-flex flex-wrap justify-content-between align-items-center pt-3 mt-3 border-top w-100 gap-2 no-print" data-html2canvas-ignore="true">
-              <div className="small text-muted" style={{ fontSize: '0.8rem' }}>
+            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-stretch align-items-sm-center pt-3 mt-3 border-top w-100 gap-2 no-print" data-html2canvas-ignore="true">
+              <div className="small text-muted text-center text-sm-start" style={{ fontSize: '0.78rem' }}>
                 <i className="bi bi-check2-circle text-success me-1"></i>
-                Kompakte Abmessungen für Ausweis- und Kitteltaschen &bull; 100% scannbar
+                Kompakt für Ausweis- &amp; Kitteltaschen &bull; 100% scannbar
               </div>
 
-              <div className="d-flex align-items-center gap-2">
-                <button
-                  type="button"
-                  className="btn btn-sm btn-dark rounded-pill px-3 py-1.5 shadow-sm fw-semibold d-flex align-items-center gap-1.5"
-                  onClick={() => handlePrint('atm')}
-                  title="Nur die Scheckkarte drucken"
-                >
-                  <i className="bi bi-printer-fill"></i>
-                  <span>Scheckkarte drucken</span>
-                </button>
-              </div>
+              <button
+                type="button"
+                className="btn btn-sm btn-dark rounded-pill px-3 py-2 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-1.5 w-100 w-sm-auto"
+                style={{ minHeight: '42px' }}
+                onClick={() => handlePrint('atm')}
+                title="Nur die Scheckkarte drucken"
+              >
+                <i className="bi bi-printer-fill"></i>
+                <span>Scheckkarte drucken</span>
+              </button>
             </div>
           </div>
         )}
@@ -2708,13 +2809,59 @@ const MagicCardView = UniversalCardView;
 // -------------------------------------------------------------
 // Component: Quick Hub (Target Landing Page Opened by Magic Card Scan)
 // -------------------------------------------------------------
-function QuickHubView({ standards, onSelectStandard }) {
+function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
   const list = Object.values(standards);
 
   return (
-    <div className="py-2 py-md-3 w-100">
+    <div className="py-1 py-md-3 w-100">
+      {/* Compact Mobile-First Header Card for QR-Code Scanners */}
+      <div
+        className="p-3 rounded-4 mb-3 shadow-sm d-flex flex-wrap justify-content-between align-items-center gap-2"
+        style={{
+          background: 'linear-gradient(135deg, #bae6fd 0%, #dbeafe 52%, #e0e7ff 100%)',
+          border: '1.5px solid #60a5fa'
+        }}
+      >
+        <div className="d-flex align-items-center gap-2.5 min-w-0">
+          <div className="bg-white p-1.5 rounded-3 shadow-sm d-flex align-items-center flex-shrink-0" style={{ border: '1px solid #93c5fd' }}>
+            <img src="assets/umf-logo.jpg" alt="UMF" height="28" className="rounded" />
+          </div>
+          <div className="min-w-0">
+            <div className="fw-black text-uppercase text-truncate" style={{ fontSize: '0.88rem', color: '#00273d', lineHeight: 1.15 }}>
+              SOP &amp; Expertenstandards Schnellwahl
+            </div>
+            <div className="fw-semibold text-truncate" style={{ fontSize: '0.74rem', color: '#0369a1' }}>
+              Universitätsmedizin Frankfurt &bull; Direktzugriff per Smartphone
+            </div>
+          </div>
+        </div>
+
+        <div className="d-flex align-items-center gap-1.5 w-100 w-sm-auto justify-content-end">
+          <button
+            type="button"
+            className="btn btn-sm btn-warning text-dark fw-bold rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center justify-content-center gap-1.5 flex-grow-1 flex-sm-grow-0"
+            style={{ minHeight: '38px', fontSize: '0.78rem' }}
+            onClick={() => onSelectStandard('universal-karte')}
+          >
+            <i className="bi bi-stars text-danger"></i>
+            <span>Universal-Karte</span>
+          </button>
+          {onOpenScanner && (
+            <button
+              type="button"
+              className="btn btn-sm btn-white bg-white text-dark border fw-semibold rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center justify-content-center gap-1.5 flex-grow-1 flex-sm-grow-0"
+              style={{ minHeight: '38px', fontSize: '0.78rem' }}
+              onClick={onOpenScanner}
+            >
+              <i className="bi bi-qr-code-scan text-primary"></i>
+              <span>QR Scan</span>
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* 6 Clean, Clickable Tiles aligned in center */}
-      <div className="row g-3 g-md-4 justify-content-center">
+      <div className="row g-2.5 g-md-4 justify-content-center">
         {list.map((std) => (
           <div key={std.id} className="col-12 col-sm-6 col-lg-4">
             <div
@@ -2730,8 +2877,8 @@ function QuickHubView({ standards, onSelectStandard }) {
               <div
                 className="rounded-3 d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0"
                 style={{
-                  width: '54px',
-                  height: '54px',
+                  width: '52px',
+                  height: '52px',
                   background: std.bannerGradient || std.accentColor
                 }}
               >
@@ -2749,15 +2896,15 @@ function QuickHubView({ standards, onSelectStandard }) {
                 >
                   {std.id === 'zvk' || std.id === 'isolation' ? 'SOP & Leitfaden' : 'Expertenstandard'}
                 </span>
-                <h5 className="fw-bold text-dark mb-0 text-truncate" style={{ fontSize: '1.05rem' }}>
+                <h5 className="fw-bold text-dark mb-0 text-truncate" style={{ fontSize: '1.02rem' }}>
                   {std.shortTitle}
                 </h5>
-                <div className="small text-muted text-truncate mt-1" style={{ fontSize: '0.78rem' }}>
+                <div className="small text-muted text-truncate mt-1" style={{ fontSize: '0.76rem' }}>
                   roXtra ID: {std.roXtraIds.join(', ')}
                 </div>
               </div>
 
-              <div className="text-secondary ps-2">
+              <div className="text-secondary ps-1">
                 <i className="bi bi-chevron-right fs-5 text-muted"></i>
               </div>
             </div>
