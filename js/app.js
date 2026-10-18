@@ -1127,8 +1127,11 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
                       </div>
                     </div>
 
-                    <span className="badge bg-white text-secondary border font-monospace px-2.5 py-1 rounded-pill shadow-xs" style={{ fontSize: '0.72rem', borderColor: enh.borderColor }}>
-                      roXtra: <strong className="text-dark">{std.roXtraIds.slice(0, 2).join(' / ')}</strong>
+                    <span
+                      className="badge bg-white text-secondary border font-monospace px-2.5 py-1 rounded-pill shadow-xs text-wrap"
+                      style={{ fontSize: '0.72rem', borderColor: enh.borderColor, lineHeight: '1.3' }}
+                    >
+                      roXtra: <strong className="text-dark">{std.roXtraIds.join(' / ')}</strong>
                     </span>
                   </div>
 
@@ -1444,7 +1447,7 @@ function StandardA4PrintSheet({ standard }) {
       </div>
       <div className="d-flex justify-content-between align-items-center gap-2 pt-1 border-top text-muted" style={{ fontSize: '0.63rem' }}>
         <span className="text-truncate">Universitätsmedizin Frankfurt &bull; Pflegedirektion &bull; Expertenstandards im Pflegeprozess</span>
-        <span className="fw-semibold text-dark text-nowrap flex-shrink-0">QM-Dokumentation roXtra (ID: {standard.roXtraIds.slice(0, 2).join(', ')}) &bull; {pageLabel}</span>
+        <span className="fw-semibold text-dark text-nowrap flex-shrink-0">QM-Dokumentation roXtra (ID: {standard.roXtraIds.join(', ')}) &bull; {pageLabel}</span>
       </div>
     </div>
   );
@@ -1875,8 +1878,8 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                     className="clinical-picture-img print-only-preview d-none"
                   />
 
-                  {/* Bottom Action Strip */}
-                  <div className="px-3 py-2 bg-light border-top d-flex flex-wrap justify-content-between align-items-center gap-2">
+                  {/* Bottom Action Strip (Desktop/Tablet Only, hidden on mobile) */}
+                  <div className="px-3 py-2 bg-light border-top d-none d-md-flex flex-wrap justify-content-between align-items-center gap-2">
                     <div className="d-flex align-items-center gap-2 small text-muted">
                       <i className="bi bi-file-earmark-check text-success"></i>
                       <span>Gültige Version im roXtra QM-System</span>
