@@ -834,103 +834,296 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
 
       {/* Grid of Clean, Modern Standard Cards (No QR Codes) */}
       <div className="row g-3 g-md-4">
-        {list.map((std) => (
-          <div key={std.id} className="col-12 col-lg-6">
-            <div
-              className="standard-tile h-100 p-0 border-0 shadow-sm rounded-4"
-              onClick={() => onSelectStandard(std.id)}
-              style={{
-                cursor: 'pointer',
-                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                background: '#ffffff',
-                borderLeft: `5px solid ${std.accentColor}`
-              }}
-            >
-              <div className="p-3 p-sm-4 d-flex flex-column h-100">
-                {/* Header: Icon, Category Badge & roXtra ID */}
-                <div className="d-flex flex-wrap justify-content-between align-items-center mb-2.5 gap-2">
-                  <div className="d-flex align-items-center gap-2 min-w-0">
-                    <div
-                      className="rounded-4 d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0"
-                      style={{
-                        width: '42px',
-                        height: '42px',
-                        background: std.bannerGradient || std.accentColor
-                      }}
-                    >
-                      <i className={`bi ${std.icon} fs-5`}></i>
+        {list.map((std) => {
+          if (std.id === 'dekubitus') {
+            return (
+              <div key={std.id} className="col-12 col-lg-6">
+                <div
+                  className="standard-tile h-100 p-0 border-0 rounded-4 position-relative overflow-hidden"
+                  onClick={() => onSelectStandard(std.id)}
+                  style={{
+                    cursor: 'pointer',
+                    transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
+                    background: 'linear-gradient(155deg, #ffffff 0%, #fff1f6 45%, #fdf2f8 100%)',
+                    border: '1.5px solid #fbcfe8',
+                    borderLeft: '6px solid #be185d',
+                    boxShadow: '0 10px 28px -4px rgba(190, 24, 93, 0.16), 0 4px 10px -2px rgba(190, 24, 93, 0.06)'
+                  }}
+                >
+                  <div className="p-3 p-sm-4 d-flex flex-column h-100">
+                    {/* Header: Colorful Gradient Icon, Category Badge & roXtra ID */}
+                    <div className="d-flex flex-wrap justify-content-between align-items-center mb-2.5 gap-2">
+                      <div className="d-flex align-items-center gap-2 min-w-0">
+                        <div
+                          className="rounded-4 d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0"
+                          style={{
+                            width: '44px',
+                            height: '44px',
+                            background: 'linear-gradient(135deg, #831843 0%, #be185d 50%, #ec4899 100%)',
+                            boxShadow: '0 4px 14px rgba(190, 24, 93, 0.38)'
+                          }}
+                        >
+                          <i className="bi bi-bandaid-fill fs-5"></i>
+                        </div>
+                        <div>
+                          <span
+                            className="fw-bold px-2.5 py-1 rounded-pill d-inline-flex align-items-center gap-1.5 text-uppercase text-truncate"
+                            style={{
+                              fontSize: '0.72rem',
+                              letterSpacing: '0.4px',
+                              backgroundColor: '#fce7f3',
+                              color: '#9d174d',
+                              border: '1px solid #fbcfe8'
+                            }}
+                          >
+                            <i className="bi bi-star-fill text-warning" style={{ fontSize: '0.65rem' }}></i>
+                            <span>Dekubitusprophylaxe</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      <span className="badge bg-white text-secondary border font-monospace px-2.5 py-1 rounded-pill shadow-xs" style={{ fontSize: '0.72rem', borderColor: '#fbcfe8' }}>
+                        roXtra: <strong className="text-dark">{std.roXtraIds.slice(0, 2).join(' / ')}</strong>
+                      </span>
                     </div>
-                    <span
-                      className="fw-bold px-2.5 py-1 rounded-pill d-inline-block text-uppercase text-truncate"
+
+                    {/* Title */}
+                    <h4 className="fw-bold mb-1.5" style={{ lineHeight: '1.3', fontSize: '1.14rem', color: '#831843' }}>
+                      Dekubitusprophylaxe in der Pflege
+                    </h4>
+
+                    {/* Subtitle / Lead text */}
+                    <p className="text-secondary small mb-2.5" style={{ lineHeight: '1.45', fontSize: '0.84rem' }}>
+                      Evidenzbasierte Risikoeinschätzung, gezielte Druckentlastung und strukturierte Hautpflege nach DNQP-Expertenstandard.
+                    </p>
+
+                    {/* Visual Clinical Positioning Strip with Mini Image & Quick Badges */}
+                    <div
+                      className="rounded-3 overflow-hidden border mb-2.5 shadow-xs bg-white"
+                      style={{ borderColor: '#fbcfe8' }}
+                    >
+                      <div className="row g-0 align-items-center">
+                        <div className="col-4 position-relative">
+                          <img
+                            src="assets/qh-dekubitus.jpg"
+                            alt="Dekubitus 30°-Lagerung"
+                            className="w-100 h-100 d-block"
+                            style={{ minHeight: '94px', maxHeight: '105px', objectFit: 'cover' }}
+                          />
+                          <span
+                            className="badge bg-dark bg-opacity-75 text-white position-absolute bottom-0 start-0 m-1 px-1.5 py-0.5 rounded"
+                            style={{ fontSize: '0.62rem' }}
+                          >
+                            <i className="bi bi-check2-circle text-success me-0.5"></i>30°-Lagerung
+                          </span>
+                        </div>
+                        <div className="col-8 p-2.5">
+                          <div className="d-flex flex-wrap gap-1 mb-1.5">
+                            <span className="badge rounded-pill fw-bold px-2 py-0.5" style={{ backgroundColor: '#ffe4e6', color: '#be123c', border: '1px solid #fecdd3', fontSize: '0.68rem' }}>
+                              <i className="bi bi-clock-history me-1"></i>2–4h Rhythmus
+                            </span>
+                            <span className="badge rounded-pill fw-bold px-2 py-0.5" style={{ backgroundColor: '#ede9fe', color: '#6d28d9', border: '1px solid #ddd6fe', fontSize: '0.68rem' }}>
+                              <i className="bi bi-layers-fill me-1"></i>Spezialmatratze
+                            </span>
+                          </div>
+                          <div className="text-dark fw-medium" style={{ fontSize: '0.76rem', lineHeight: '1.35' }}>
+                            Weichlagerung zur gezielten Druckentlastung gefährdeter Haut- &amp; Knochenpunkte
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 3 Colorful Core Goals */}
+                    <div className="d-flex flex-wrap gap-1.5 mb-2.5">
+                      <span className="badge rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1 fw-bold shadow-xs" style={{ backgroundColor: '#ffe4e6', color: '#9f1239', border: '1px solid #fecdd3', fontSize: '0.72rem' }}>
+                        <i className="bi bi-arrow-down-circle-fill text-danger"></i> Druck reduzieren
+                      </span>
+                      <span className="badge rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1 fw-bold shadow-xs" style={{ backgroundColor: '#dcfce7', color: '#166534', border: '1px solid #bbf7d0', fontSize: '0.72rem' }}>
+                        <i className="bi bi-shield-check text-success"></i> Haut schützen
+                      </span>
+                      <span className="badge rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1 fw-bold shadow-xs" style={{ backgroundColor: '#e0f2fe', color: '#075985', border: '1px solid #bae6fd', fontSize: '0.72rem' }}>
+                        <i className="bi bi-person-walking text-primary"></i> Mobilität fördern
+                      </span>
+                    </div>
+
+                    {/* Colorful Clinical Action Steps with Visual Icons */}
+                    <div
+                      className="p-3 rounded-3 mb-2.5 mt-auto bg-white"
                       style={{
-                        fontSize: '0.7rem',
-                        letterSpacing: '0.4px',
-                        backgroundColor: std.badgeBg || 'rgba(0, 71, 103, 0.08)',
-                        color: std.accentColor
+                        border: '1px solid #fbcfe8',
+                        borderLeft: '4px solid #be185d',
+                        boxShadow: '0 2px 8px rgba(190, 24, 93, 0.05)'
                       }}
                     >
-                      {std.shortTitle}
+                      <div className="small fw-bold text-uppercase mb-2 d-flex align-items-center gap-1.5" style={{ fontSize: '0.72rem', color: '#9d174d' }}>
+                        <i className="bi bi-list-check fs-6"></i>
+                        <span>Wichtigste Handlungsschritte:</span>
+                      </div>
+                      <div className="d-flex flex-column gap-2">
+                        <div className="small text-dark d-flex align-items-start gap-2" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
+                          <span
+                            className="rounded-circle d-inline-flex align-items-center justify-content-center text-white flex-shrink-0 mt-0.5"
+                            style={{ width: '20px', height: '20px', background: '#be185d', fontSize: '0.7rem' }}
+                          >
+                            <i className="bi bi-arrow-repeat"></i>
+                          </span>
+                          <span><strong>Regelmäßige Umlagerung</strong> alle 2–4 Stunden zur gezielten Entlastung</span>
+                        </div>
+                        <div className="small text-dark d-flex align-items-start gap-2" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
+                          <span
+                            className="rounded-circle d-inline-flex align-items-center justify-content-center text-white flex-shrink-0 mt-0.5"
+                            style={{ width: '20px', height: '20px', background: '#7c3aed', fontSize: '0.7rem' }}
+                          >
+                            <i className="bi bi-layers-fill"></i>
+                          </span>
+                          <span><strong>Druckentlastende Spezialmatratze</strong> und 30°-Seitenlagerung nutzen</span>
+                        </div>
+                        <div className="small text-dark d-flex align-items-start gap-2" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
+                          <span
+                            className="rounded-circle d-inline-flex align-items-center justify-content-center text-white flex-shrink-0 mt-0.5"
+                            style={{ width: '20px', height: '20px', background: '#059669', fontSize: '0.7rem' }}
+                          >
+                            <i className="bi bi-eye-fill"></i>
+                          </span>
+                          <span><strong>Haut täglich kontrollieren:</strong> Hinterkopf, Kreuzbein, Fersen, Ellenbogen</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Anatomical Risk Spots Chips */}
+                    <div className="p-2 rounded-2 mb-3 d-flex flex-wrap align-items-center gap-1" style={{ backgroundColor: '#fff', border: '1px dashed #f472b6' }}>
+                      <span className="small fw-bold text-uppercase me-1" style={{ fontSize: '0.66rem', color: '#be185d' }}>
+                        <i className="bi bi-geo-alt-fill me-0.5"></i>Gefährdete Stellen:
+                      </span>
+                      {['Hinterkopf', 'Schultern', 'Kreuzbein', 'Trochanter', 'Fersen'].map((spot, si) => (
+                        <span key={si} className="badge bg-light text-dark border px-2 py-0.5 rounded-pill" style={{ fontSize: '0.68rem', fontWeight: 500 }}>
+                          {spot}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Card Footer: Action button */}
+                    <div className="d-flex justify-content-end align-items-center pt-2.5 border-top gap-2 mt-auto" style={{ borderColor: '#fce7f3' }}>
+                      <button
+                        type="button"
+                        className="btn btn-sm rounded-pill px-3 py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm text-white fw-bold w-100 w-sm-auto"
+                        style={{
+                          background: 'linear-gradient(90deg, #be185d 0%, #db2777 100%)',
+                          border: 'none',
+                          minHeight: '44px',
+                          fontSize: '0.85rem',
+                          boxShadow: '0 4px 12px rgba(190, 24, 93, 0.28)'
+                        }}
+                      >
+                        <i className="bi bi-file-earmark-medical me-0.5"></i>
+                        <span>Pocketcard &amp; Leitfaden öffnen</span>
+                        <i className="bi bi-arrow-right"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div key={std.id} className="col-12 col-lg-6">
+              <div
+                className="standard-tile h-100 p-0 border-0 shadow-sm rounded-4"
+                onClick={() => onSelectStandard(std.id)}
+                style={{
+                  cursor: 'pointer',
+                  transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                  background: '#ffffff',
+                  borderLeft: `5px solid ${std.accentColor}`
+                }}
+              >
+                <div className="p-3 p-sm-4 d-flex flex-column h-100">
+                  {/* Header: Icon, Category Badge & roXtra ID */}
+                  <div className="d-flex flex-wrap justify-content-between align-items-center mb-2.5 gap-2">
+                    <div className="d-flex align-items-center gap-2 min-w-0">
+                      <div
+                        className="rounded-4 d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0"
+                        style={{
+                          width: '42px',
+                          height: '42px',
+                          background: std.bannerGradient || std.accentColor
+                        }}
+                      >
+                        <i className={`bi ${std.icon} fs-5`}></i>
+                      </div>
+                      <span
+                        className="fw-bold px-2.5 py-1 rounded-pill d-inline-block text-uppercase text-truncate"
+                        style={{
+                          fontSize: '0.7rem',
+                          letterSpacing: '0.4px',
+                          backgroundColor: std.badgeBg || 'rgba(0, 71, 103, 0.08)',
+                          color: std.accentColor
+                        }}
+                      >
+                        {std.shortTitle}
+                      </span>
+                    </div>
+
+                    <span className="badge bg-light text-secondary border font-monospace px-2 py-1 rounded-pill" style={{ fontSize: '0.72rem' }}>
+                      roXtra: <strong>{std.roXtraIds.slice(0, 2).join(' / ')}{std.roXtraIds.length > 2 ? '…' : ''}</strong>
                     </span>
                   </div>
 
-                  <span className="badge bg-light text-secondary border font-monospace px-2 py-1 rounded-pill" style={{ fontSize: '0.72rem' }}>
-                    roXtra: <strong>{std.roXtraIds.slice(0, 2).join(' / ')}{std.roXtraIds.length > 2 ? '…' : ''}</strong>
-                  </span>
-                </div>
+                  {/* Title */}
+                  <h4 className="fw-bold text-dark mb-1.5" style={{ lineHeight: '1.3', fontSize: '1.08rem' }}>
+                    {std.topic}
+                  </h4>
 
-                {/* Title */}
-                <h4 className="fw-bold text-dark mb-1.5" style={{ lineHeight: '1.3', fontSize: '1.08rem' }}>
-                  {std.topic}
-                </h4>
+                  {/* Subtitle / Lead text */}
+                  <p className="text-secondary small mb-2.5" style={{ lineHeight: '1.45', fontSize: '0.84rem' }}>
+                    {std.leadText}
+                  </p>
 
-                {/* Subtitle / Lead text */}
-                <p className="text-secondary small mb-2.5" style={{ lineHeight: '1.45', fontSize: '0.84rem' }}>
-                  {std.leadText}
-                </p>
-
-                {/* Highlighted Clinical Bullet Points Box (Full width, no QR) */}
-                <div
-                  className="p-2.5 p-sm-3 rounded-3 mb-3 mt-auto"
-                  style={{
-                    backgroundColor: '#f8fafc',
-                    border: '1px solid #e2e8f0',
-                    borderLeft: `3px solid ${std.accentColor}`
-                  }}
-                >
-                  <div className="small fw-bold text-uppercase mb-1.5 d-flex align-items-center gap-1" style={{ fontSize: '0.7rem', color: std.accentColor }}>
-                    <i className="bi bi-shield-check"></i>
-                    <span>Klinische Kernaspekte:</span>
-                  </div>
-                  <div className="d-flex flex-column gap-1.5">
-                    {std.keyPoints.slice(0, 3).map((kp, idx) => (
-                      <div key={idx} className="small text-dark d-flex align-items-start gap-2" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
-                        <i className="bi bi-check-circle-fill flex-shrink-0 mt-0.5" style={{ color: std.accentColor, fontSize: '0.82rem' }}></i>
-                        <span>{kp}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Card Footer: Action button */}
-                <div className="d-flex justify-content-end align-items-center pt-2.5 border-top gap-2 mt-auto">
-                  <button
-                    type="button"
-                    className="btn btn-sm rounded-pill px-3 py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm text-white fw-bold w-100 w-sm-auto"
+                  {/* Highlighted Clinical Bullet Points Box (Full width, no QR) */}
+                  <div
+                    className="p-2.5 p-sm-3 rounded-3 mb-3 mt-auto"
                     style={{
-                      background: std.accentColor,
-                      border: 'none',
-                      minHeight: '44px',
-                      fontSize: '0.85rem'
+                      backgroundColor: '#f8fafc',
+                      border: '1px solid #e2e8f0',
+                      borderLeft: `3px solid ${std.accentColor}`
                     }}
                   >
-                    <span>Pocketcard &amp; Leitfaden öffnen</span>
-                    <i className="bi bi-arrow-right"></i>
-                  </button>
+                    <div className="small fw-bold text-uppercase mb-1.5 d-flex align-items-center gap-1" style={{ fontSize: '0.7rem', color: std.accentColor }}>
+                      <i className="bi bi-shield-check"></i>
+                      <span>Klinische Kernaspekte:</span>
+                    </div>
+                    <div className="d-flex flex-column gap-1.5">
+                      {std.keyPoints.slice(0, 3).map((kp, idx) => (
+                        <div key={idx} className="small text-dark d-flex align-items-start gap-2" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
+                          <i className="bi bi-check-circle-fill flex-shrink-0 mt-0.5" style={{ color: std.accentColor, fontSize: '0.82rem' }}></i>
+                          <span>{kp}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Card Footer: Action button */}
+                  <div className="d-flex justify-content-end align-items-center pt-2.5 border-top gap-2 mt-auto">
+                    <button
+                      type="button"
+                      className="btn btn-sm rounded-pill px-3 py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm text-white fw-bold w-100 w-sm-auto"
+                      style={{
+                        background: std.accentColor,
+                        border: 'none',
+                        minHeight: '44px',
+                        fontSize: '0.85rem'
+                      }}
+                    >
+                      <span>Pocketcard &amp; Leitfaden öffnen</span>
+                      <i className="bi bi-arrow-right"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -1763,7 +1956,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                 </button>
               </div>
 
-              {standard.sopPdfUrl && (
+              {standard.sopPdfUrl && standard.id !== 'zvk' && (
                 <a
                   href={standard.sopPdfUrl}
                   target="_blank"
@@ -1773,7 +1966,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                   title="Vollständige Verfahrensanweisung (SOP) als Original-PDF öffnen"
                 >
                   <i className="bi bi-file-earmark-pdf-fill"></i>
-                  <span>Original SOP öffnen ({standard.id === 'zvk' ? '10 S.' : '4 S.'})</span>
+                  <span>Original SOP öffnen (4 S.)</span>
                 </a>
               )}
             </div>
@@ -2298,14 +2491,6 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                     <i className="bi bi-file-earmark-medical-fill text-danger me-2"></i>
                     Verfahrensanweisung &amp; SOP (10 Seiten)
                   </h5>
-                  <a
-                    href={standard.sopPdfUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-sm btn-danger rounded-pill px-3 shadow-sm"
-                  >
-                    <i className="bi bi-file-earmark-pdf-fill me-1"></i> SOP PDF öffnen
-                  </a>
                 </div>
 
                 <div className="p-3 bg-light rounded-3 border mb-3">
@@ -3401,7 +3586,7 @@ function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
               SOP &amp; Expertenstandards Schnellwahl
             </div>
             <div className="fw-semibold text-truncate mt-0.5" style={{ fontSize: '0.84rem', color: '#0369a1' }}>
-              Universitätsmedizin Frankfurt &bull; Direktzugriff per Smartphone
+              Universitätsmedizin Frankfurt
             </div>
           </div>
         </div>
@@ -3438,9 +3623,9 @@ function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
                 onClick={() => onSelectStandard(std.id)}
                 style={{
                   cursor: 'pointer',
-                  background: '#ffffff',
-                  border: '1px solid rgba(226, 232, 240, 0.9)',
-                  boxShadow: '0 3px 14px rgba(15, 23, 42, 0.06)',
+                  background: std.id === 'dekubitus' ? 'linear-gradient(135deg, #ffffff 0%, #fff1f6 55%, #fdf2f8 100%)' : '#ffffff',
+                  border: std.id === 'dekubitus' ? '1.5px solid #fbcfe8' : '1px solid rgba(226, 232, 240, 0.9)',
+                  boxShadow: std.id === 'dekubitus' ? '0 4px 18px rgba(190, 24, 93, 0.12)' : '0 3px 14px rgba(15, 23, 42, 0.06)',
                   minHeight: '94px',
                   padding: '0.75rem 0.85rem',
                   transition: 'all 0.22s cubic-bezier(0.4, 0, 0.2, 1)'
