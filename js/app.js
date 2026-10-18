@@ -367,6 +367,8 @@ function App() {
     window.location.hash = `#/${route}`;
   };
 
+  const isStandardRoute = ['dekubitus', 'sturz', 'schmerz', 'ernaehrung', 'zvk', 'isolation'].includes(currentRoute);
+
   return (
     <div className="d-flex flex-column min-vh-100">
       {/* Toast Feedback */}
@@ -387,9 +389,9 @@ function App() {
         showToast={showToast}
       />
 
-      {/* Modern Hospital Top Banner - Hidden on quick-hub */}
+      {/* Modern Hospital Top Banner - Hidden on quick-hub, and hidden on mobile when viewing a selected standard tile */}
       {currentRoute !== 'quick-hub' && (
-        <div className="hospital-banner shadow-sm">
+        <div className={`hospital-banner shadow-sm ${isStandardRoute ? 'd-none d-md-block' : ''}`}>
           <div className="container d-flex align-items-center justify-content-between py-1 gap-2">
             <div className="d-flex align-items-center gap-2 min-w-0">
               <a href="#/" className="text-decoration-none d-flex align-items-center bg-white rounded-3 p-1 shadow-sm border border-info border-opacity-25 flex-shrink-0">
@@ -441,8 +443,8 @@ function App() {
         </div>
       )}
 
-      {/* Main Menu Bar with Clinical Category Colors - Always visible on quick-hub */}
-      <nav className="navbar navbar-expand-lg navbar-custom sticky-top shadow-sm py-1">
+      {/* Main Menu Bar with Clinical Category Colors - Hidden on mobile for quick-hub and selected tiles, always visible on desktop */}
+      <nav className={`navbar navbar-expand-lg navbar-custom sticky-top shadow-sm py-1 ${(isStandardRoute || currentRoute === 'quick-hub') ? 'd-none d-md-block' : ''}`}>
         <div className="container d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center justify-content-between gap-1 gap-lg-2 py-0">
           {/* Top Row on Mobile: Brand Title on Left + Quick Actions on Right */}
           <div className="d-flex align-items-center justify-content-between w-100 w-lg-auto">
@@ -623,51 +625,53 @@ function App() {
         )}
       </main>
 
-      {/* Native-Style Mobile Sticky Bottom Navigation Bar (Smartphones Only) */}
-      <nav className="mobile-bottom-nav d-flex d-md-none no-print" aria-label="Mobile Schnellnavigation">
-        <button
-          type="button"
-          className={`mobile-bottom-nav-item ${currentRoute === 'home' ? 'active' : ''}`}
-          onClick={() => navigateTo('')}
-        >
-          <i className="bi bi-grid-fill"></i>
-          <span>Start</span>
-        </button>
-        <button
-          type="button"
-          className={`mobile-bottom-nav-item ${currentRoute === 'quick-hub' ? 'active' : ''}`}
-          onClick={() => navigateTo('quick-hub')}
-        >
-          <i className="bi bi-lightning-charge-fill"></i>
-          <span>6 Standards</span>
-        </button>
-        <button
-          type="button"
-          className={`mobile-bottom-nav-item highlight ${currentRoute === 'universal-karte' || currentRoute === 'magic-card' ? 'active' : ''}`}
-          onClick={() => navigateTo('universal-karte')}
-        >
-          <i className="bi bi-stars"></i>
-          <span>Universal</span>
-        </button>
-        <button
-          type="button"
-          className={`mobile-bottom-nav-item ${currentRoute === 'qrcodes' ? 'active' : ''}`}
-          onClick={() => navigateTo('qrcodes')}
-        >
-          <i className="bi bi-collection-fill"></i>
-          <span>Karten</span>
-        </button>
-        <button
-          type="button"
-          className="mobile-bottom-nav-item"
-          onClick={() => setIsScanModalOpen(true)}
-        >
-          <i className="bi bi-qr-code-scan"></i>
-          <span>Scanner</span>
-        </button>
-      </nav>
+      {/* Native-Style Mobile Sticky Bottom Navigation Bar (Hidden on Quick Hub and Selected Standard Tiles) */}
+      {!isStandardRoute && currentRoute !== 'quick-hub' && (
+        <nav className="mobile-bottom-nav d-flex d-md-none no-print" aria-label="Mobile Schnellnavigation">
+          <button
+            type="button"
+            className={`mobile-bottom-nav-item ${currentRoute === 'home' ? 'active' : ''}`}
+            onClick={() => navigateTo('')}
+          >
+            <i className="bi bi-grid-fill"></i>
+            <span>Start</span>
+          </button>
+          <button
+            type="button"
+            className={`mobile-bottom-nav-item ${currentRoute === 'quick-hub' ? 'active' : ''}`}
+            onClick={() => navigateTo('quick-hub')}
+          >
+            <i className="bi bi-lightning-charge-fill"></i>
+            <span>6 Standards</span>
+          </button>
+          <button
+            type="button"
+            className={`mobile-bottom-nav-item highlight ${currentRoute === 'universal-karte' || currentRoute === 'magic-card' ? 'active' : ''}`}
+            onClick={() => navigateTo('universal-karte')}
+          >
+            <i className="bi bi-stars"></i>
+            <span>Universal</span>
+          </button>
+          <button
+            type="button"
+            className={`mobile-bottom-nav-item ${currentRoute === 'qrcodes' ? 'active' : ''}`}
+            onClick={() => navigateTo('qrcodes')}
+          >
+            <i className="bi bi-collection-fill"></i>
+            <span>Karten</span>
+          </button>
+          <button
+            type="button"
+            className="mobile-bottom-nav-item"
+            onClick={() => setIsScanModalOpen(true)}
+          >
+            <i className="bi bi-qr-code-scan"></i>
+            <span>Scanner</span>
+          </button>
+        </nav>
+      )}
 
-      {/* Footer: on quick-hub show ONLY the colorful accent line; on other pages show full footer */}
+      {/* Footer: on quick-hub show ONLY the colorful accent line; on standard tiles hide full footer on mobile */}
       {currentRoute === 'quick-hub' ? (
         <div className="footer-accent-bar d-flex mt-auto" style={{ height: '6px' }}>
           <div style={{ flex: 1, backgroundColor: 'var(--dekubitus-color)' }} title="Dekubitusprophylaxe"></div>
@@ -678,7 +682,7 @@ function App() {
           <div style={{ flex: 1, backgroundColor: 'var(--zvk-color)' }} title="ZVK Intensivpflege"></div>
         </div>
       ) : (
-        <footer className="modern-footer mt-auto text-white">
+        <footer className={`modern-footer mt-auto text-white ${isStandardRoute ? 'd-none d-md-block' : ''}`}>
           {/* Color accent spectrum bar matching all clinical categories */}
           <div className="footer-accent-bar d-flex" style={{ height: '5px' }}>
             <div style={{ flex: 1, backgroundColor: 'var(--dekubitus-color)' }} title="Dekubitusprophylaxe"></div>
@@ -1007,10 +1011,10 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
             </div>
           </div>
 
-          {/* 3. The Pictures Section */}
+          {/* 3. The Pictures / SOP PDF Viewer Section */}
           <div className="row g-3 mb-3">
             {standard.id === 'zvk' || standard.id === 'isolation' ? (
-              /* ZVK & Isolation: Direct SOP PDF Viewer (Without Infografik/Poster tabs) */
+              /* ZVK & Isolation: Direct SOP PDF Viewer at the top */
               <div className="col-12">
                 <div className="clinical-picture-card h-100 d-flex flex-column shadow-sm rounded-4 overflow-hidden border">
                   {/* Card Header: Official SOP document */}
@@ -1062,7 +1066,9 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                           {standard.topic}
                         </h6>
                         <div className="text-muted small mb-3">
-                          {standard.id === 'zvk' ? 'Offizielle Verfahrensanweisung ZVK (10 Seiten) • roXtra ID: 391904' : 'Allgemeines Vorgehen bei Isolation und Reinigung (4 Seiten) • roXtra ID: 239411'}
+                          {standard.id === 'zvk'
+                            ? 'Offizielle Verfahrensanweisung ZVK (10 Seiten) • roXtra ID: 391904'
+                            : 'Allgemeines Vorgehen bei Isolation und Reinigung (4 Seiten) • roXtra ID: 239411'}
                         </div>
 
                         <div className="alert alert-info py-2 px-3 small text-start d-flex align-items-center gap-2 mb-3">
@@ -1153,7 +1159,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                       alt={`Klinische Grafik ${standard.shortTitle}`}
                       className="clinical-picture-img rounded-3 shadow-sm"
                       style={{
-                        maxHeight: standard.id === 'dekubitus' ? '520px' : '250px',
+                        maxHeight: '520px',
                         height: 'auto',
                         width: '100%',
                         objectFit: 'contain'
@@ -1170,7 +1176,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
             )}
           </div>
 
-          {/* 4. Minimal Info Action Steps & Scannable QR Code */}
+          {/* 4. Minimal Info Action Steps & Right Container (Picture for ZVK/Isolation, QR Code for others) */}
           <div className="row g-3 align-items-stretch mb-3">
             {/* Minimal Info: Essential Clinical Focus Points */}
             <div className="col-lg-7 col-md-6">
@@ -1224,38 +1230,35 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
               </div>
             </div>
 
-            {/* The Scanner Code / Right Picture Container */}
+            {/* Right Area: Klinische Praxis & Handlungsschritte Picture for ZVK & Isolation (No QR Code), or Scannable QR Code for the other 4 tiles */}
             <div className="col-lg-5 col-md-6">
               {standard.id === 'zvk' || standard.id === 'isolation' ? (
-                /* ZVK & Isolation: Display the official 'Klinische Praxis & Durchführung' infographic here with click-to-zoom */
                 <div className="p-3 rounded-4 border bg-white h-100 text-center d-flex flex-column align-items-center justify-content-between shadow-sm">
                   <div className="d-flex justify-content-between align-items-center w-100 mb-2 border-bottom pb-2">
-                    <span className="fw-bold text-dark d-flex align-items-center gap-2" style={{ fontSize: '0.86rem' }}>
-                      <i className={`bi ${standard.id === 'isolation' ? 'bi-shield-check text-primary' : 'bi-heart-pulse-fill text-danger'} fs-5`}></i>
-                      <span>{standard.id === 'isolation' ? 'Klinische Hygiene-Praxis & Vorgehen' : 'Klinische Praxis & Durchführung'}</span>
+                    <span className="fw-bold text-dark d-flex align-items-center gap-2 text-start" style={{ fontSize: '0.85rem' }}>
+                      <i className={`bi ${standard.id === 'isolation' ? 'bi-shield-check text-primary' : 'bi-heart-pulse-fill text-danger'} fs-5 flex-shrink-0`}></i>
+                      <span>Klinische Praxis &amp; Handlungsschritte: {standard.shortTitle}</span>
                     </span>
-                    <span className="badge bg-light text-secondary border px-2 py-1 small">
+                    <span className="badge bg-light text-secondary border px-2 py-1 small flex-shrink-0">
                       <i className="bi bi-zoom-in me-1"></i>Vergrößern
                     </span>
                   </div>
 
                   <div
-                    className="position-relative w-100 flex-grow-1 d-flex align-items-center justify-content-center bg-white rounded-3 p-2"
+                    className="position-relative w-100 flex-grow-1 d-flex align-items-center justify-content-center bg-white rounded-3 p-1"
                     style={{ cursor: 'pointer', minHeight: '260px' }}
                     onClick={() => setPreviewImage({
                       src: standard.graphicImage,
                       title: standard.topic,
-                      subtitle: standard.id === 'isolation'
-                        ? 'Klinische Hygiene-Praxis & Vorgehen (Infografik)'
-                        : 'Klinische Praxis & Durchführung (Infografik)'
+                      subtitle: `Klinische Praxis & Handlungsschritte: ${standard.shortTitle}`
                     })}
                     title="Klicken für vergrößerte Pop-up-Ansicht"
                   >
                     <img
                       src={standard.graphicImage}
-                      alt={standard.id === 'isolation' ? 'Klinische Hygiene-Praxis' : 'Klinische Praxis & Durchführung'}
+                      alt={`Klinische Praxis & Handlungsschritte: ${standard.shortTitle}`}
                       className="img-fluid rounded shadow-sm"
-                      style={{ maxHeight: '250px', width: 'auto', objectFit: 'contain' }}
+                      style={{ maxHeight: '300px', width: '100%', objectFit: 'contain' }}
                     />
                     <div className="position-absolute bottom-0 end-0 m-2 no-print">
                       <span className="badge bg-dark bg-opacity-75 text-white rounded-pill px-3 py-1 shadow-sm" style={{ fontSize: '0.72rem' }}>
@@ -1272,7 +1275,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                   </div>
                 </div>
               ) : (
-                /* Other standards: Crisp Scannable Single QR Code */
+                /* Other 4 standards: Crisp Scannable Single QR Code */
                 <div className="p-3 rounded-3 border bg-white h-100 text-center d-flex flex-column align-items-center justify-content-center">
                   <div className="small fw-bold text-uppercase text-secondary mb-1">
                     <i className="bi bi-qr-code me-1 text-dark"></i> Schulungsvideo scannen
@@ -1342,17 +1345,22 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
               )}
             </div>
 
-            {/* Secondary Utilities: QR PNG & Link in equal 50/50 row on mobile */}
-            <div className="d-grid d-sm-flex align-items-center gap-2 w-100 w-sm-auto" style={{ gridTemplateColumns: '1fr 1fr' }}>
-              <button
-                className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-1.5"
-                style={{ minHeight: '42px' }}
-                onClick={() => onDownloadQr(standard)}
-                title="QR-Code als Bilddatei speichern"
-              >
-                <i className="bi bi-qr-code"></i>
-                <span>QR-Bild</span>
-              </button>
+            {/* Secondary Utilities: QR PNG (only for video standards) & Link */}
+            <div
+              className="d-grid d-sm-flex align-items-center gap-2 w-100 w-sm-auto"
+              style={{ gridTemplateColumns: (standard.id === 'zvk' || standard.id === 'isolation') ? '1fr' : '1fr 1fr' }}
+            >
+              {standard.id !== 'zvk' && standard.id !== 'isolation' && (
+                <button
+                  className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-1.5"
+                  style={{ minHeight: '42px' }}
+                  onClick={() => onDownloadQr(standard)}
+                  title="QR-Code als Bilddatei speichern"
+                >
+                  <i className="bi bi-qr-code"></i>
+                  <span>QR-Bild</span>
+                </button>
+              )}
               <button
                 className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-1.5"
                 style={{ minHeight: '42px' }}
@@ -1768,8 +1776,20 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
 
   return (
     <div>
-      {/* Top Breadcrumb & Switcher */}
-      <div className="d-flex flex-column gap-2 mb-3 no-print">
+      {/* Mobile-Only Single Home Button -> Returns to Quick Hub */}
+      <div className="d-flex d-md-none mb-2.5 no-print">
+        <a
+          href="#/quick-hub"
+          className="btn btn-primary btn-sm rounded-pill px-3.5 py-2 shadow-sm d-inline-flex align-items-center gap-2 fw-bold"
+          style={{ minHeight: '40px', fontSize: '0.86rem' }}
+        >
+          <i className="bi bi-house-door-fill"></i>
+          <span>Home</span>
+        </a>
+      </div>
+
+      {/* Top Breadcrumb & Switcher (Desktop/Tablet Only) */}
+      <div className="d-none d-md-flex flex-column gap-2 mb-3 no-print">
         <div className="d-flex justify-content-between align-items-center gap-2 w-100">
           <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5 fw-semibold" style={{ minHeight: '40px', fontSize: '0.82rem' }}>
             <i className="bi bi-grid-fill"></i>
@@ -1800,7 +1820,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
           </div>
         </div>
 
-        {/* Horizontally scrollable quick-switch pills for all other standards on both mobile and desktop */}
+        {/* Horizontally scrollable quick-switch pills for all other standards on desktop */}
         <div className="nav-standards-scroll w-100 py-0.5">
           {otherStandards.map(s => (
             <button
@@ -2836,27 +2856,16 @@ function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
           </div>
         </div>
 
-        <div className="d-flex align-items-center gap-1.5 w-100 w-sm-auto justify-content-end">
+        <div className="d-none d-md-flex align-items-center gap-1.5 justify-content-end">
           <button
             type="button"
-            className="btn btn-sm btn-warning text-dark fw-bold rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center justify-content-center gap-1.5 flex-grow-1 flex-sm-grow-0"
+            className="btn btn-sm btn-warning text-dark fw-bold rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center justify-content-center gap-1.5"
             style={{ minHeight: '38px', fontSize: '0.78rem' }}
             onClick={() => onSelectStandard('universal-karte')}
           >
             <i className="bi bi-stars text-danger"></i>
             <span>Universal-Karte</span>
           </button>
-          {onOpenScanner && (
-            <button
-              type="button"
-              className="btn btn-sm btn-white bg-white text-dark border fw-semibold rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center justify-content-center gap-1.5 flex-grow-1 flex-sm-grow-0"
-              style={{ minHeight: '38px', fontSize: '0.78rem' }}
-              onClick={onOpenScanner}
-            >
-              <i className="bi bi-qr-code-scan text-primary"></i>
-              <span>QR Scan</span>
-            </button>
-          )}
         </div>
       </div>
 

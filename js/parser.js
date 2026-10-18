@@ -79,12 +79,21 @@ root.QRParser = (function () {
       pdfUrl: 'assets/umf-expertenstandards-folien.pdf#page=2',
       pdfPage: 2,
       graphicImage: 'assets/graphic-sturz.jpg',
-      leadText: 'An der UMF werden verschiedene Expertenstandards umgesetzt. Die Anwendung orientiert sich immer am Pflegeprozess.',
+      leadText: 'Sichere Maßnahmen zur Vermeidung von Stürzen – Sicherheit, Mobilität und Lebensqualität in der Pflege an der Universitätsmedizin Frankfurt.',
       instructions: 'Erfahren Sie mehr über den Expertenstandard Sturzprophylaxe in der Pflege, in dem Sie den QR – Code scannen und sich das Video anschauen. Weiterführende Informationen zu diesem Expertenstandard finden Sie auch im roXtra unter der ID: 138896 sowie der ID: 275545.',
+      whyImportant: [
+        'Stürze vermeiden (Verletzungen & Sturzfolgen wirksam verhindern)',
+        'Mobilität fördern (Regelmäßige Mobilisation sicher unterstützen)',
+        'Sicherheit stärken (Stolperfallen vermeiden & Hilfsmittel nutzen)',
+        'Lebensqualität & Eigenständigkeit im Klinikalltag erhalten'
+      ],
       keyPoints: [
-        'Systematische Erfassung individueller Sturzrisikofaktoren bei Aufnahme',
-        'Sicherstellung von rutschfestem Schuhwerk, Niedrigbett und hindernisfreien Wegen',
-        'Rufanlage und Gehhilfen (Rollator, Gehstock) in direkter Patientenreichweite'
+        'Sturzrisiko einschätzen: Regelmäßig beurteilen (z. B. mit validierten Assessment-Instrumenten) und individuelle Risikofaktoren beachten.',
+        'Geeignete Hilfsmittel nutzen: z. B. Gehstock, Rollator oder Haltegriffe passend auswählen und sicher anwenden.',
+        'Rutschfeste Schuhe anziehen: Geschlossenes, gut sitzendes Schuhwerk oder Socken mit rutschfester Sohle verwenden.',
+        'Klingel erreichbar platzieren: Rufklingel sowie persönliche Gegenstände stets in direkter Reichweite des Patienten positionieren.',
+        'Bett in niedriger Position: Bett auf eine sichere, niedrige Höhe einstellen und bei Bedarf Seitengitter nutzen.',
+        'Umgebung sichern und Stolperfallen vermeiden: Für einen aufgeräumten, gut beleuchteten, rutschfreien und hindernisfreien Bereich sorgen.'
       ],
       clinicalFocus: [
         {
@@ -125,12 +134,21 @@ root.QRParser = (function () {
       pdfUrl: 'assets/umf-expertenstandards-folien.pdf#page=3',
       pdfPage: 3,
       graphicImage: 'assets/graphic-schmerz.jpg',
-      leadText: 'An der UMF werden verschiedene Expertenstandards umgesetzt. Die Anwendung orientiert sich immer am Pflegeprozess.',
+      leadText: 'Schmerzen erkennen, einschätzen und wirksam lindern – Wissen, Sicherheit und Qualität in der Pflege an der Universitätsmedizin Frankfurt.',
       instructions: 'Erfahren Sie mehr über den Expertenstandard Schmerzmanagement in der Pflege, in dem Sie den QR – Code scannen und sich das Video anschauen. Weiterführende Informationen zu diesem Expertenstandard finden Sie auch im roXtra unter der ID: 399503 sowie der ID: 399486.',
+      whyImportant: [
+        'Schmerzen lindern (Gezielte & zeitgerechte Schmerztherapie)',
+        'Komfort fördern (Wohlbefinden, Ruhe & Mobilität unterstützen)',
+        'Sicherheit gewährleisten (Komplikationen & Chronifizierung vermeiden)',
+        'Individuelle Schmerzäußerung ernst nehmen (Subjektives Empfinden)'
+      ],
       keyPoints: [
-        'Regelmäßige Schmerzerfassung („Haben Sie Schmerzen?“) mittels NRS-Skala (0–10)',
-        'Zeitgerechte und präventive Gabe verordneter Analgetika vor Belastungen',
-        'Kombination mit nicht-medikamentösen Maßnahmen (Lagerung, Wärme/Kälte)'
+        'Schmerzen systematisch erfassen: Regelmäßig erheben – spezifische Schmerzqualität, Lokalisation, Dauer, Auslöser und bisherige Maßnahmen.',
+        'Schmerzskalen anwenden: z. B. Numerische Rating Skala (NRS 0–10 von kein Schmerz bis stärkster Schmerz) regelmäßig nutzen.',
+        'Patienten beobachten und befragen: Körpersprache, verbale Äußerungen, Mimik, Unruhe und Schonhaltungen beachten und ernst nehmen.',
+        'Maßnahmen umsetzen: Ärztliche Verordnung durchführen sowie nicht-medikamentöse Maßnahmen (Lagerung, Wärme/Kälte, Entspannung, Ablenkung) kombinieren.',
+        'Wirkung kontrollieren: Schmerzintensität erneut beurteilen, Wirksamkeit überprüfen und bei unzureichender Wirkung frühzeitig Rücksprache halten.',
+        'Dokumentation und Weitergabe: Schmerzerfassung, Verlauf, durchgeführte Maßnahmen und Wirkung dokumentieren sowie im Team weitergeben.'
       ],
       clinicalFocus: [
         {
@@ -171,12 +189,21 @@ root.QRParser = (function () {
       pdfUrl: 'assets/umf-expertenstandards-folien.pdf#page=4',
       pdfPage: 4,
       graphicImage: 'assets/graphic-ernaehrung.jpg',
-      leadText: 'An der UMF werden verschiedene Expertenstandards umgesetzt. Die Anwendung orientiert sich immer am Pflegeprozess.',
+      leadText: 'Sicherung der oralen Ernährung in der Pflege – Gut ernährt, mehr Lebensqualität! Wissen, Sicherheit und Qualität an der Universitätsmedizin Frankfurt.',
       instructions: 'Erfahren Sie mehr über den Expertenstandard Ernährungsmanagement zur Sicherung der oralen Ernährung in der Pflege, in dem Sie den QR – Code scannen und sich das Video anschauen. Weiterführende Informationen zu diesem Expertenstandard finden Sie auch im roXtra unter der ID: 408310 sowie der ID: 408331.',
+      whyImportant: [
+        'Mangelernährung vermeiden (Früherkennung & bedarfsgerechte Kost)',
+        'Selbstständigkeit fördern (Individuelle Hilfe & Hilfsmittel bereitstellen)',
+        'Flüssigkeitszufuhr sichern (Trinkmenge beobachten & motivieren)',
+        'Lebensqualität & Genuss beim Essen erhalten'
+      ],
       keyPoints: [
-        'Frühzeitiges Screening auf Mangelernährung und Schluckstörungen (Dysphagie)',
-        'Aufrechte 90°-Sitzposition bei den Mahlzeiten und angenehme Essatmosphäre',
-        'Ausreichende Flüssigkeitsversorgung & energiereiche Zwischenmahlzeiten'
+        'Ernährungszustand einschätzen: Gewicht (BMI) und Verlauf beobachten, Essverhalten erfassen und Risiko für Mangelernährung erkennen (z. B. MNA).',
+        'Essbiografie und Vorlieben beachten: Persönliche Essgewohnheiten, kulturelle/religiöse Aspekte, Abneigungen und Lieblingsspeisen einbeziehen.',
+        'Beim Essen unterstützen: Individuelle Hilfe anbieten, angemessene Sitzposition sichern, Zeit und Geduld geben sowie Eigenständigkeit fördern.',
+        'Ausreichend trinken fördern: Trinkmenge beobachten, Lieblingsgetränke anbieten, regelmäßig zum Trinken motivieren und Trinkhilfen nutzen.',
+        'Mahlzeiten ansprechend anbieten: Appetitliche Zubereitung, kleine bedarfsgerechte Portionen, angenehme Essatmosphäre sowie Temperatur & Konsistenz beachten.',
+        'Nahrungsaufnahme dokumentieren: Menge und Art im Ess-/Trinkprotokoll erfassen, Flüssigkeitsbilanz führen und Auffälligkeiten im Team weitergeben.'
       ],
       clinicalFocus: [
         {
@@ -231,18 +258,18 @@ root.QRParser = (function () {
       leadText: 'Einsatz von SOPs auf der Intensivstation – Schnell. Sicher. Gemeinsam. Ein ZVK dient der sicheren zentralvenösen Therapie. Ein aseptischer Umgang hilft, Infektionen und Komplikationen zu vermeiden.',
       instructions: 'Scannen Sie den QR-Code, um die vollständige Verfahrensanweisung (SOP) sowie klinische Checklisten zum ZVK aufzurufen. Weiterführende Dokumente im roXtra unter ID: 391904, ID: 484866, ID: 456904 und ID: 414354.',
       whyImportant: [
-        'Sichere und fehlerfreie Medikamentengabe',
-        'Sichere Blutentnahme ohne Kontamination',
-        'Signifikant weniger Komplikationen (CRBSI-Prävention)',
-        'Höchste Patientensicherheit im Intensivsetting'
+        'Infektionen vermeiden (Katheter-assoziierte Infektionen / CLABSI verhindern)',
+        'Durchgängigkeit sichern (Okklusion, Verschluss & Thrombose vermeiden)',
+        'Sichere Anwendung (Aseptisches Arbeiten & Händedesinfektion vor jedem Kontakt)',
+        'Früherkennung von Komplikationen & lückenlose Dokumentation'
       ],
       keyPoints: [
-        'Einstichstelle: Täglich auf Rötung, Schmerz, Schwellung und Sekretion kontrollieren',
-        'Verbandswechsel: Aseptisch (Non-Touch), Transparentverband alle 7 Tage, Gazeverband alle 3 Tage',
-        'Spülen & Blocken: Nur ≥10-ml-Spritzen, pulsatile Flush-Methode (6–10 Impulse à 1 ml in je 0,5 s)',
-        'Medikamentengabe: ZVK zwischen Lösungen mit 10 ml NaCl 0,9 % spülen (bei G5% erst mit G5% nachspülen!)',
-        '3-Wege-Hähne & Filter: Wechsel nach 96 h (Blut/Lipide: 24 h); Klemmen bei Nichtbenutzung schließen',
-        'Dokumentation: Täglich unter „Zugänge“ in der Kurve, im intensivmedizinischen Setting pro Schicht'
+        'Lage und Zugänge verstehen: Lage und Verlauf kennen (V. jugularis interna, V. subclavia, V. femoralis), Einlageort prüfen und Anzahl der Lumen erkennen.',
+        'Verband steril und trocken halten: Sterilen Verband erhalten, täglich auf Sitz und Dichtigkeit kontrollieren; bei Feuchtigkeit, Verschmutzung oder Ablösung sofort wechseln.',
+        'Lumen korrekt nutzen: Distales, mediales und proximales Lumen eindeutig kennzeichnen und bestimmungsgemäß nutzen; vor/nach Gabe spülen & Kompatibilität beachten.',
+        'Pulsatile Spültechnik anwenden: Mit 10 ml NaCl 0,9 % spülen (Spritze ≥ 10 ml), pulsierend spülen (Druck-Pause), um Verschluss durch Blutreste/Medikamente zu verhindern.',
+        'Filter und Infusionswege beachten: 1,2 µm Filter für fetthaltige Lösungen (Propofol, TPN), 0,2 µm Filter für wässrige Lösungen; Systeme prüfen & Wechsel gemäß Standard.',
+        'Infektionszeichen früh erkennen: Auf Rötung, Schwellung, Überwärmung, Schmerzen, Fieber & Entzündungswerte achten; bei Verdacht sofort melden & ärztliche Maßnahme einleiten.'
       ],
       clinicalFocus: [
         {
@@ -295,18 +322,18 @@ root.QRParser = (function () {
       leadText: 'Hygiene schützt – Gemeinsam für Patienten und Mitarbeitende. Schneller Zugriff auf den aktuellen Hygieneplan und alle wichtigen Handlungsleitfäden bei MRE- und Infektionsnachweis.',
       instructions: 'Scannen Sie den QR-Code, um die vollständige Verfahrensanweisung (SOP) sowie Hygienerichtlinien zur Isolation aufzurufen. Weiterführende Dokumente im QM-System unter ID-Nr.: 239411.',
       whyImportant: [
-        'Prävention von nosokomialen Kreuzinfektionen (MRE-Übertragung)',
-        'Schutz von Mitpatienten, Besuchern und medizinischem Fachpersonal',
-        'Standardisierte Barriere- & Schutzmaßnahmen (PSA / Schutzkleidung)',
-        'Zielgerichtete Flächendesinfektion & fachgerechte Schlussdesinfektion'
+        'Übertragung verhindern (Infektionsketten konsequent unterbrechen)',
+        'Patienten schützen (Schutz vor nosokomialen Infektionen & MRE)',
+        'Team sicher arbeiten lassen (Konsequente PSA & Händehygiene)',
+        'Zielgerichtete Flächendesinfektion & sachgerechte Entsorgung'
       ],
       keyPoints: [
-        'VRE: Zimmer-Isolation; Abrüsten: Materialien mit direktem Kontakt entsorgen; Schlussdesinfektion; Basishygiene + HD-Mittel begrenzt viruzid.',
-        '3MRGN: Bettplatz-Isolation; Bettplatz-Reinigung; Materialien mit direktem Patientenkontakt entsorgen; Basishygiene + HD-Mittel.',
-        '4MRGN & ACBA: Strikte Zimmer-Isolation; Alles verwerfen (ACBA); Schlussdesinfektion; Info an Hygienefachkraft für Umweltabstriche.',
-        'MRSA: Zimmer-Isolation; Materialien mit direktem Kontakt verwerfen; Schlussdesinfektion nach Verlegung; Basishygiene.',
-        'C. difficile: Zimmer-Isolation; Wichtig: ERST Hände mit Seife gründlich waschen, dann Händedesinfektion mit HD-Mittel begrenzt viruzid.',
-        'Türbeschilderung: Farbleitsystem beachten (gelb außen / pink innen) – Schutzkittel & Handschuhe vor Betreten anlegen.'
+        'Indikation zur Isolation prüfen: Bei Nachweis oder begründetem Verdacht auf übertragbare Erreger (VRE, MRGN, MRSA, C. diff.) Schutzmaßnahmen sofort einleiten.',
+        'Schutzkleidung richtig anlegen: Je nach Übertragungsweg Schutzkittel, Handschuhe, Mund-Nasen-Schutz / FFP2 bei Bedarf und ggf. Schutzbrille tragen.',
+        'Händedesinfektion konsequent durchführen: Vor und nach Patientenkontakt, nach Kontakt mit kontaminierten Flächen sowie nach dem Ablegen der Schutzkleidung.',
+        'Patientennahe Flächen desinfizieren: Bett, Nachttisch, Türgriffe, Rufanlage und häufig berührte Flächen regelmäßig nach Hygieneplan aufbereiten.',
+        'Material patientenbezogen verwenden: Pflegeutensilien und Medizinprodukte möglichst nur für diesen Patienten nutzen oder direkt sachgerecht aufbereiten.',
+        'Abfall und Wäsche korrekt entsorgen: Kontaminierte Materialien und Wäsche im Zimmer nach den geltenden Hygienevorgaben sicher sammeln und entsorgen.'
       ],
       clinicalFocus: [
         {
