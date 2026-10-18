@@ -937,6 +937,454 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
 }
 
 // -------------------------------------------------------------
+// -------------------------------------------------------------
+// Helper: Export any Standard as a Complete, Aligned 2-Page A4 Portrait PDF
+// -------------------------------------------------------------
+function exportStandardA4Pdf(std, showToast) {
+  const sheetEl = document.getElementById(`pocketcard-a4-print-${std.id}`);
+  if (!sheetEl || !window.html2pdf) {
+    window.print();
+    return;
+  }
+
+  if (showToast) {
+    showToast(`A4-PDF für ${std.shortTitle} wird erstellt...`);
+  }
+
+  const savedScrollX = window.scrollX || window.pageXOffset || 0;
+  const savedScrollY = window.scrollY || window.pageYOffset || 0;
+  window.scrollTo(0, 0);
+
+  const filename = `UMF-Pocketcard-${std.shortTitle.replace(/\s+/g, '_')}-A4.pdf`;
+
+  // Exact integer ratio math:
+  // A4 portrait (210mm x 297mm) with [8, 8, 8, 8]mm margins has inner area 194mm x 281mm.
+  // 194 * 4 = 776px width; 281 * 4 = 1124px height per page (exact integer ratio, 0px rounding error).
+  const opt = {
+    margin: [8, 8, 8, 8],
+    filename,
+    image: { type: 'jpeg', quality: 0.98 },
+    enableLinks: true,
+    pagebreak: { mode: [] },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#ffffff',
+      scrollX: 0,
+      scrollY: 0,
+      ignoreElements: (el) => el.id === 'root' || el.tagName === 'IFRAME' || el.tagName === 'VIDEO'
+    },
+    jsPDF: {
+      unit: 'mm',
+      format: 'a4',
+      orientation: 'portrait'
+    }
+  };
+
+  const worker = window.html2pdf().set(opt).from(sheetEl);
+
+  worker
+    .toContainer()
+    .then(function () {
+      if (this.prop.overlay) {
+        this.prop.overlay.style.cssText = 'position:fixed !important;top:0px !important;left:0px !important;right:auto !important;bottom:auto !important;width:776px !important;height:auto !important;overflow:visible !important;opacity:0 !important;pointer-events:none !important;z-index:-9999 !important;background:#ffffff !important;';
+      }
+      if (this.prop.container) {
+        this.prop.container.style.cssText = 'position:relative !important;top:0px !important;left:0px !important;right:auto !important;margin:0px !important;padding:0px !important;width:776px !important;height:auto !important;background:#ffffff !important;opacity:1 !important;visibility:visible !important;';
+        const clonedSheet = this.prop.container.querySelector('.pocketcard-a4-print-sheet');
+        if (clonedSheet) {
+          clonedSheet.style.display = 'block';
+          clonedSheet.style.width = '776px';
+          clonedSheet.style.maxWidth = '776px';
+          clonedSheet.style.margin = '0';
+          clonedSheet.style.padding = '0';
+        }
+        const clonedPages = this.prop.container.querySelectorAll('.a4-std-page');
+        clonedPages.forEach((pg) => {
+          pg.style.display = 'flex';
+          pg.style.width = '776px';
+          pg.style.maxWidth = '776px';
+          pg.style.height = '1124px';
+          pg.style.maxHeight = '1124px';
+          pg.style.margin = '0';
+          pg.style.boxSizing = 'border-box';
+        });
+        const imgs = Array.from(this.prop.container.querySelectorAll('img'));
+        return Promise.all(
+          imgs.map((img) => {
+            if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+            return new Promise((res) => {
+              img.onload = res;
+              img.onerror = res;
+              setTimeout(res, 500);
+            });
+          })
+        );
+      }
+    })
+    .toCanvas()
+    .toPdf()
+    .then(function () {
+      if (this.prop.pdf) {
+        this.prop.pdf.save(filename);
+      }
+      window.scrollTo(savedScrollX, savedScrollY);
+      if (showToast) {
+        showToast(`A4-PDF für ${std.shortTitle} erfolgreich heruntergeladen!`);
+      }
+    })
+    .catch((err) => {
+      console.error('PDF error:', err);
+      window.scrollTo(savedScrollX, savedScrollY);
+      window.print();
+    });
+}
+
+// -------------------------------------------------------------
+// Component: Dedicated 2-Page A4 Print & PDF Sheet for Each Standard
+// Page 1: Header + Title/Lead/Instructions + Left Image & Right QR Code + Warum wichtig + Minimal-Info
+// Page 2: Header + Handlungsschritte im Pflegeprozess + YouTube & Website Links + QM Footer
+// -------------------------------------------------------------
+function StandardA4PrintSheet({ standard }) {
+  const isSopStandard = standard.id === 'zvk' || standard.id === 'isolation';
+  const baseOrigin = (typeof window !== 'undefined' && window.location && window.location.origin && !window.location.origin.includes('localhost'))
+    ? `${window.location.origin}${window.location.pathname}`
+    : 'https://umf-nursing-standards.web.app/';
+  const normalizedBase = baseOrigin.endsWith('/') ? baseOrigin : `${baseOrigin}/`;
+  const websiteDirectUrl = `${normalizedBase}#/${standard.id}`;
+  const websiteQuickHubUrl = `${normalizedBase}#/quick-hub`;
+  const primaryMediaUrl = !isSopStandard ? standard.videoUrl : `${normalizedBase}${standard.sopPdfUrl}`;
+
+  const renderHeaderBar = (pageLabel) => (
+    <div className="a4-std-header-bar" style={{ backgroundColor: '#004767' }}>
+      <div className="d-flex align-items-center gap-2">
+        <div className="bg-white rounded px-1.5 py-0.5 d-flex align-items-center shadow-sm">
+          <img src="assets/umf-logo.jpg" alt="Universitätsmedizin Frankfurt" height="26" />
+        </div>
+        <div>
+          <div className="fw-bold text-white text-uppercase" style={{ fontSize: '0.82rem', letterSpacing: '0.35px', lineHeight: 1.15 }}>
+            Universitätsmedizin Frankfurt
+          </div>
+          <div className="text-white-50" style={{ fontSize: '0.67rem', lineHeight: 1.15 }}>
+            Pflegedirektion &bull; Digitale Pflege-Pocketcard (DIN A4)
+          </div>
+        </div>
+      </div>
+      <div className="d-flex align-items-center gap-2">
+        <span
+          className="badge rounded-pill text-white px-2.5 py-1 fw-bold"
+          style={{ backgroundColor: standard.accentColor, fontSize: '0.75rem' }}
+        >
+          {standard.shortTitle}
+        </span>
+        <span className="badge bg-white text-dark fw-bold px-2 py-1 text-nowrap" style={{ fontSize: '0.68rem' }}>
+          {pageLabel}
+        </span>
+      </div>
+    </div>
+  );
+
+  const renderFooterBar = (pageLabel) => (
+    <div className="a4-std-page-footer">
+      <div className="d-flex justify-content-between align-items-center gap-2 mb-0.5" style={{ fontSize: '0.65rem' }}>
+        <div className="text-truncate">
+          <span className="fw-bold text-danger me-1">
+            <i className={`bi ${!isSopStandard ? 'bi-youtube' : 'bi-file-earmark-pdf-fill'} me-1`}></i>
+            {!isSopStandard ? 'YouTube:' : 'SOP-PDF:'}
+          </span>
+          <a href={primaryMediaUrl} className="text-primary text-decoration-underline">
+            {primaryMediaUrl}
+          </a>
+        </div>
+        <div className="flex-shrink-0 text-nowrap">
+          <span className="fw-bold text-dark me-1">
+            <i className="bi bi-globe2 text-primary me-1"></i>Website:
+          </span>
+          <a href={websiteDirectUrl} className="text-primary text-decoration-underline">
+            {websiteDirectUrl}
+          </a>
+        </div>
+      </div>
+      <div className="d-flex justify-content-between align-items-center gap-2 pt-1 border-top text-muted" style={{ fontSize: '0.63rem' }}>
+        <span className="text-truncate">Universitätsmedizin Frankfurt &bull; Pflegedirektion &bull; Expertenstandards im Pflegeprozess</span>
+        <span className="fw-semibold text-dark text-nowrap flex-shrink-0">QM-Dokumentation roXtra (ID: {standard.roXtraIds.slice(0, 2).join(', ')}) &bull; {pageLabel}</span>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="pocketcard-a4-print-sheet" id={`pocketcard-a4-print-${standard.id}`}>
+      {/* =========================================================
+          PAGE 1 / 2: HEADER + LEFT IMAGE & RIGHT QR CODE + CORE STEPS
+          ========================================================= */}
+      <div className="a4-std-page a4-std-page-1" id={`pocketcard-a4-page1-${standard.id}`}>
+        {renderHeaderBar('Seite 1 / 2')}
+
+        <div className="a4-std-body">
+          {/* 1. Title, Lead Text & Instructions Header Box */}
+          <div className="a4-std-title-box" style={{ borderLeftColor: standard.accentColor }}>
+            <div className="d-flex justify-content-between align-items-start gap-2 mb-1">
+              <div>
+                <div className="text-uppercase fw-bold" style={{ fontSize: '0.66rem', color: standard.accentColor, letterSpacing: '0.4px' }}>
+                  {isSopStandard ? 'Klinische Verfahrensanweisung (SOP)' : 'Expertenstandard in der Pflege'}
+                </div>
+                <h4 className="fw-extrabold text-dark mb-0" style={{ fontSize: '1.05rem', lineHeight: 1.2 }}>
+                  {standard.topic}
+                </h4>
+              </div>
+              <span className="badge bg-white text-dark border px-2 py-1 font-monospace flex-shrink-0" style={{ fontSize: '0.72rem' }}>
+                roXtra ID: <strong>{standard.roXtraIds.join(' / ')}</strong>
+              </span>
+            </div>
+            {standard.leadText && (
+              <div className="text-dark fw-semibold mb-1" style={{ fontSize: '0.74rem', lineHeight: 1.32 }}>
+                {standard.leadText}
+              </div>
+            )}
+            {standard.instructions && (
+              <div className="text-secondary" style={{ fontSize: '0.7rem', lineHeight: 1.32 }}>
+                {standard.instructions}
+              </div>
+            )}
+          </div>
+
+          {/* 2. Below Header: Image on Left Side & QR Code on Right Side */}
+          <div className="a4-std-media-grid">
+            {/* Left Side: Clinical Graphic / Image */}
+            <div className="a4-std-image-box">
+              <div className="a4-std-box-header">
+                <i className="bi bi-heart-pulse-fill text-danger me-1.5"></i>
+                <span>Klinische Praxis &amp; Handlungsschritte: {standard.shortTitle}</span>
+              </div>
+              <div className="a4-std-image-frame">
+                <img
+                  src={standard.graphicImage || standard.image}
+                  alt={`Klinische Grafik ${standard.shortTitle}`}
+                  className="a4-std-main-img"
+                />
+              </div>
+            </div>
+
+            {/* Right Side: Scannable QR Code + Direct YouTube & Website Links */}
+            <div className="a4-std-qr-box">
+              <div className="a4-std-box-header justify-content-center">
+                <i className="bi bi-qr-code-scan text-primary me-1.5"></i>
+                <span>{!isSopStandard ? 'Schulungsvideo scannen' : 'SOP & Website scannen'}</span>
+              </div>
+
+              <div className="d-flex flex-column align-items-center justify-content-between flex-grow-1 p-2 text-center">
+                <div className="p-2 bg-white rounded-3 border shadow-sm my-1">
+                  <QrCodeCanvas
+                    value={!isSopStandard ? standard.videoUrl : websiteDirectUrl}
+                    size={122}
+                    color={standard.accentColor}
+                  />
+                </div>
+
+                <div className="text-muted font-monospace mb-1" style={{ fontSize: '0.65rem' }}>
+                  {!isSopStandard
+                    ? 'Kamera auf QR-Code richten • YouTube Video'
+                    : 'Kamera auf QR-Code richten • Digitale SOP'}
+                </div>
+
+                {/* Direct YouTube Link & Website Link inside Right Box */}
+                <div className="w-100 text-start border-top pt-1.5" style={{ fontSize: '0.64rem', lineHeight: 1.28 }}>
+                  <div className="mb-1">
+                    <span className="fw-bold text-danger d-block">
+                      <i className={`bi ${!isSopStandard ? 'bi-youtube' : 'bi-file-earmark-pdf-fill'} me-1`}></i>
+                      {!isSopStandard ? 'YouTube-Video Link:' : 'SOP-Dokument Link:'}
+                    </span>
+                    <a href={primaryMediaUrl} className="text-primary text-break text-decoration-underline">
+                      {primaryMediaUrl}
+                    </a>
+                  </div>
+                  <div>
+                    <span className="fw-bold text-dark d-block">
+                      <i className="bi bi-globe2 me-1 text-primary"></i>Website-Link:
+                    </span>
+                    <a href={websiteDirectUrl} className="text-primary text-break text-decoration-underline">
+                      {websiteDirectUrl}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Below Image & QR Code: Warum ist das wichtig? */}
+          {standard.whyImportant && (
+            <div className="a4-std-section-box">
+              <div className="fw-bold text-success mb-1.5 d-flex align-items-center gap-1.5" style={{ fontSize: '0.78rem' }}>
+                <i className="bi bi-shield-check"></i>
+                <span>Warum ist das wichtig?</span>
+              </div>
+              <div className="a4-std-two-col-grid">
+                {standard.whyImportant.map((why, wi) => (
+                  <div key={wi} className="d-flex align-items-start gap-1.5" style={{ fontSize: '0.74rem', lineHeight: 1.32 }}>
+                    <i className="bi bi-check-circle-fill text-success flex-shrink-0" style={{ marginTop: '1px' }}></i>
+                    <span className="text-dark">{why}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 4. Wichtigste Handlungsschritte (Minimal-Info) */}
+          {standard.keyPoints && (
+            <div className="a4-std-section-box">
+              <div className="fw-bold text-dark text-uppercase mb-1.5 d-flex align-items-center gap-1.5" style={{ fontSize: '0.76rem' }}>
+                <i className="bi bi-list-check text-primary"></i>
+                <span>Wichtigste Handlungsschritte ({standard.id === 'zvk' ? 'DAS IST WICHTIG' : 'Minimal-Info'}):</span>
+              </div>
+              <div className="d-flex flex-column gap-1.5">
+                {standard.keyPoints.map((pt, i) => (
+                  <div key={i} className="d-flex align-items-start gap-2" style={{ fontSize: '0.75rem', lineHeight: 1.34 }}>
+                    <span
+                      className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0"
+                      style={{ width: '19px', height: '19px', backgroundColor: standard.accentColor, fontSize: '0.67rem', marginTop: '1px' }}
+                    >
+                      {i + 1}
+                    </span>
+                    <span className="text-dark">{pt}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {renderFooterBar('Seite 1 / 2')}
+      </div>
+
+      {/* =========================================================
+          PAGE 2 / 2: HANDLUNGSSCHRITTE IM PFLEGEPROZESS + LINKS & QM
+          ========================================================= */}
+      <div className="a4-std-page a4-std-page-2" id={`pocketcard-a4-page2-${standard.id}`}>
+        {renderHeaderBar('Seite 2 / 2')}
+
+        <div className="a4-std-body">
+          {/* 1. Page 2 Subheader Banner */}
+          <div className="a4-std-title-box" style={{ borderLeftColor: standard.accentColor }}>
+            <div className="d-flex justify-content-between align-items-center gap-2">
+              <div>
+                <div className="text-uppercase fw-bold" style={{ fontSize: '0.66rem', color: standard.accentColor, letterSpacing: '0.4px' }}>
+                  {isSopStandard ? 'Klinische Verfahrensanweisung (SOP) • Teil 2' : 'Expertenstandard in der Pflege • Teil 2'}
+                </div>
+                <h5 className="fw-extrabold text-dark mb-0" style={{ fontSize: '0.98rem', lineHeight: 1.25 }}>
+                  {standard.topic} — Pflegeprozess &amp; Digitale Referenzen
+                </h5>
+              </div>
+              <span className="badge bg-white text-dark border px-2 py-1 font-monospace flex-shrink-0" style={{ fontSize: '0.72rem' }}>
+                roXtra ID: <strong>{standard.roXtraIds.join(' / ')}</strong>
+              </span>
+            </div>
+          </div>
+
+          {/* 2. Handlungsschritte im Pflegeprozess (All Phases Complete) */}
+          {standard.clinicalFocus && (
+            <div className="a4-std-section-box">
+              <div className="fw-bold text-dark text-uppercase mb-2 d-flex align-items-center gap-1.5" style={{ fontSize: '0.78rem' }}>
+                <i className="bi bi-check2-circle text-success"></i>
+                <span>Handlungsschritte im Pflegeprozess (Vollständige Übersicht):</span>
+              </div>
+              <div className="d-flex flex-column gap-2">
+                {standard.clinicalFocus.map((item, idx) => (
+                  <div key={idx} className="a4-std-focus-card">
+                    <div className="d-flex align-items-center gap-2 mb-1">
+                      <span
+                        className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0"
+                        style={{ width: '21px', height: '21px', backgroundColor: standard.accentColor, fontSize: '0.7rem' }}
+                      >
+                        {idx + 1}
+                      </span>
+                      <strong className="text-dark" style={{ fontSize: '0.8rem', lineHeight: 1.25 }}>{item.phase}</strong>
+                    </div>
+                    <div className="text-secondary" style={{ fontSize: '0.75rem', lineHeight: 1.38, paddingLeft: '29px' }}>
+                      {item.detail}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 3. Dedicated YouTube Video Link & Website Links Section */}
+          <div className="a4-std-section-box">
+            <div className="fw-bold text-dark text-uppercase mb-2 d-flex align-items-center gap-1.5" style={{ fontSize: '0.76rem' }}>
+              <i className="bi bi-link-45deg text-primary fs-6"></i>
+              <span>Schulungsvideo (YouTube) &amp; Digitale Website-Links:</span>
+            </div>
+
+            <div className="a4-std-two-col-grid" style={{ gap: '10px' }}>
+              {/* Left Card: YouTube Video Link (or SOP Document Link) */}
+              <div className="p-2.5 rounded-3 border bg-light">
+                <div className="fw-bold text-danger mb-1 d-flex align-items-center gap-1.5" style={{ fontSize: '0.76rem' }}>
+                  <i className={`bi ${!isSopStandard ? 'bi-youtube' : 'bi-file-earmark-pdf-fill'} fs-6`}></i>
+                  <span>{!isSopStandard ? 'YouTube Schulungsvideo-Link' : 'Original SOP-Dokument (PDF)'}</span>
+                </div>
+                <div className="small text-secondary mb-1.5" style={{ fontSize: '0.69rem', lineHeight: 1.3 }}>
+                  {!isSopStandard
+                    ? 'Offizielles Schulungsvideo zum Expertenstandard (direkt abrufbar per Klick oder QR-Code auf Seite 1):'
+                    : 'Offizielle Verfahrensanweisung der Universitätsmedizin Frankfurt (direkt abrufbar):'}
+                </div>
+                <div className="p-1.5 bg-white rounded border">
+                  <a href={primaryMediaUrl} className="text-primary fw-semibold text-break text-decoration-underline" style={{ fontSize: '0.7rem', lineHeight: 1.3 }}>
+                    {primaryMediaUrl}
+                  </a>
+                </div>
+              </div>
+
+              {/* Right Card: Website Link & Quick-Hub Link */}
+              <div className="p-2.5 rounded-3 border bg-light">
+                <div className="fw-bold text-primary mb-1 d-flex align-items-center gap-1.5" style={{ fontSize: '0.76rem' }}>
+                  <i className="bi bi-globe2 fs-6"></i>
+                  <span>Website-Link (Digitale Pocketcard)</span>
+                </div>
+                <div className="small text-secondary mb-1" style={{ fontSize: '0.69rem', lineHeight: 1.3 }}>
+                  Direkter Website-Link zu dieser digitalen Pocketcard ({standard.shortTitle}):
+                </div>
+                <div className="p-1.5 bg-white rounded border mb-1.5">
+                  <a href={websiteDirectUrl} className="text-primary fw-semibold text-break text-decoration-underline" style={{ fontSize: '0.7rem', lineHeight: 1.3 }}>
+                    {websiteDirectUrl}
+                  </a>
+                </div>
+                <div className="small text-secondary" style={{ fontSize: '0.68rem' }}>
+                  <span className="fw-semibold text-dark me-1">Schnellwahl (Alle 6 Standards):</span>
+                  <a href={websiteQuickHubUrl} className="text-primary text-decoration-underline">
+                    {websiteQuickHubUrl}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 4. QM-Dokumentation & Klinische Verbindlichkeit */}
+          <div className="a4-std-section-box">
+            <div className="fw-bold text-dark text-uppercase mb-1.5 d-flex align-items-center gap-1.5" style={{ fontSize: '0.74rem' }}>
+              <i className="bi bi-folder2-open text-primary"></i>
+              <span>QM-Dokumentation (roXtra) &amp; Klinische Gültigkeit:</span>
+            </div>
+            <div className="a4-std-two-col-grid" style={{ fontSize: '0.71rem', lineHeight: 1.35 }}>
+              <div>
+                <div><strong>Herausgeber:</strong> Universitätsmedizin Frankfurt &bull; Pflegedirektion</div>
+                <div><strong>Standard / Thema:</strong> {standard.shortTitle}</div>
+              </div>
+              <div>
+                <div><strong>roXtra Dokumenten-IDs:</strong> <span className="font-monospace fw-bold">{standard.roXtraIds.join(', ')}</span></div>
+                <div><strong>Gültigkeit:</strong> Klinikweit &bull; Stationäre &amp; Intensivpflege (Stand: 2026)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {renderFooterBar('Seite 2 / 2')}
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
 // Component: Beautified Pocketcard (Minimal Info + Great Pictures + Scannable QR)
 // -------------------------------------------------------------
 function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf }) {
@@ -950,8 +1398,11 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
 
   return (
     <div className="mb-4">
-      {/* THE BEAUTIFIED PRINTABLE / DOWNLOADABLE POCKETCARD */}
-      <div className="pocketcard-printable-view" id={`pocketcard-${standard.id}`}>
+      {/* DEDICATED A4 PRINT & PDF SHEET (Used when clicking Print or PDF) */}
+      <StandardA4PrintSheet standard={standard} />
+
+      {/* THE INTERACTIVE SCREEN POCKETCARD */}
+      <div className="pocketcard-printable-view pocketcard-screen-view" id={`pocketcard-${standard.id}`}>
         {/* 1. Hospital Header Bar */}
         <div className="pocketcard-print-header flex-wrap gap-2">
           <div className="d-flex align-items-center gap-2 gap-sm-3 min-w-0">
@@ -1720,40 +2171,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
   };
 
   const downloadPdf = (std) => {
-    const elementId = `pocketcard-${std.id}`;
-    const element = document.getElementById(elementId);
-    if (!element) {
-      window.print();
-      return;
-    }
-    showToast('PDF für Pocketcard wird erstellt...');
-
-    if (window.html2pdf) {
-      const opt = {
-        margin: [6, 6, 6, 6],
-        filename: `UMF-Pocketcard-${std.shortTitle.replace(/\s+/g, '_')}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
-        jsPDF: {
-          unit: 'mm',
-          format: 'a4',
-          orientation: 'portrait'
-        }
-      };
-      window.html2pdf()
-        .set(opt)
-        .from(element)
-        .save()
-        .then(() => {
-          showToast('PDF für Pocketcard erfolgreich heruntergeladen!');
-        })
-        .catch((err) => {
-          console.error('PDF error:', err);
-          window.print();
-        });
-    } else {
-      window.print();
-    }
+    exportStandardA4Pdf(std, showToast);
   };
 
   return (
@@ -2033,40 +2451,7 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
   };
 
   const downloadPdf = (std) => {
-    const elementId = `pocketcard-${std.id}`;
-    const element = document.getElementById(elementId);
-    if (!element) {
-      window.print();
-      return;
-    }
-    showToast('PDF für Pocketcard wird erstellt...');
-
-    if (window.html2pdf) {
-      const opt = {
-        margin: [6, 6, 6, 6],
-        filename: `UMF-Pocketcard-${std.shortTitle.replace(/\s+/g, '_')}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
-        jsPDF: {
-          unit: 'mm',
-          format: 'a4',
-          orientation: 'portrait'
-        }
-      };
-      window.html2pdf()
-        .set(opt)
-        .from(element)
-        .save()
-        .then(() => {
-          showToast(`PDF für ${std.shortTitle} erfolgreich heruntergeladen!`);
-        })
-        .catch((err) => {
-          console.error('PDF error:', err);
-          window.print();
-        });
-    } else {
-      window.print();
-    }
+    exportStandardA4Pdf(std, showToast);
   };
 
   return (
@@ -2603,26 +2988,44 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
     const isAtm = targetFormat === 'atm';
     showToast(isAtm ? 'Scheckkarten-PDF wird erstellt...' : 'A4 Universal-Pocketcard PDF wird erstellt...');
     if (window.html2pdf) {
+      const savedScrollX = window.scrollX || window.pageXOffset || 0;
+      const savedScrollY = window.scrollY || window.pageYOffset || 0;
+      window.scrollTo(0, 0);
       const opt = {
         margin: isAtm ? [10, 10, 10, 10] : [5, 5, 5, 5],
         filename: isAtm ? 'UMF-Universal-Karte-Scheckkarte.pdf' : 'UMF-Universal-Pocketcard-A4.pdf',
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2.5, useCORS: true, logging: false },
+        pagebreak: { mode: [] },
+        html2canvas: { scale: 2.2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
         jsPDF: {
           unit: 'mm',
           format: 'a4',
           orientation: isAtm ? 'portrait' : 'landscape'
         }
       };
-      window.html2pdf()
-        .set(opt)
-        .from(element)
-        .save()
+      const worker = window.html2pdf().set(opt).from(element);
+      worker
+        .toContainer()
         .then(() => {
+          if (worker.prop.overlay) {
+            worker.prop.overlay.style.cssText = 'position:fixed !important;top:0px !important;left:0px !important;right:auto !important;bottom:auto !important;width:1150px !important;height:auto !important;overflow:visible !important;opacity:0 !important;pointer-events:none !important;z-index:-9999 !important;background:#ffffff !important;';
+          }
+          if (worker.prop.container) {
+            worker.prop.container.style.margin = '0px';
+            worker.prop.container.style.left = '0px';
+            worker.prop.container.style.top = '0px';
+          }
+        })
+        .then(() => worker.toCanvas())
+        .then(() => worker.toPdf())
+        .then(() => worker.save())
+        .then(() => {
+          window.scrollTo(savedScrollX, savedScrollY);
           showToast(isAtm ? 'Scheckkarten-PDF erfolgreich heruntergeladen!' : 'A4 Universal-Pocketcard PDF erfolgreich heruntergeladen!');
         })
         .catch((err) => {
           console.error('PDF error:', err);
+          window.scrollTo(savedScrollX, savedScrollY);
           handlePrint(targetFormat);
         });
     } else {
