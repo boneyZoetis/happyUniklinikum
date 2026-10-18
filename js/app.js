@@ -368,6 +368,7 @@ function App() {
   };
 
   const isStandardRoute = ['dekubitus', 'sturz', 'schmerz', 'ernaehrung', 'zvk', 'isolation'].includes(currentRoute);
+  const isMobileIsolatedRoute = isStandardRoute || currentRoute === 'universal-karte' || currentRoute === 'magic-card';
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -389,9 +390,9 @@ function App() {
         showToast={showToast}
       />
 
-      {/* Modern Hospital Top Banner - Hidden on quick-hub, and hidden on mobile when viewing a selected standard tile */}
+      {/* Modern Hospital Top Banner - Hidden on quick-hub, and hidden on mobile when viewing a selected standard tile or Universal-Karte */}
       {currentRoute !== 'quick-hub' && (
-        <div className={`hospital-banner shadow-sm ${isStandardRoute ? 'd-none d-md-block' : ''}`}>
+        <div className={`hospital-banner shadow-sm ${isMobileIsolatedRoute ? 'd-none d-md-block' : ''}`}>
           <div className="container d-flex align-items-center justify-content-between py-1 gap-2">
             <div className="d-flex align-items-center gap-2 min-w-0">
               <a href="#/" className="text-decoration-none d-flex align-items-center bg-white rounded-3 p-1 shadow-sm border border-info border-opacity-25 flex-shrink-0">
@@ -443,8 +444,8 @@ function App() {
         </div>
       )}
 
-      {/* Main Menu Bar with Clinical Category Colors - Hidden on mobile for quick-hub and selected tiles, always visible on desktop */}
-      <nav className={`navbar navbar-expand-lg navbar-custom sticky-top shadow-sm py-1 ${(isStandardRoute || currentRoute === 'quick-hub') ? 'd-none d-md-block' : ''}`}>
+      {/* Main Menu Bar with Clinical Category Colors - Hidden on mobile for quick-hub, universal-karte, and selected tiles, always visible on desktop */}
+      <nav className={`navbar navbar-expand-lg navbar-custom sticky-top shadow-sm py-1 ${(isMobileIsolatedRoute || currentRoute === 'quick-hub') ? 'd-none d-md-block' : ''}`}>
         <div className="container d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center justify-content-between gap-1 gap-lg-2 py-0">
           {/* Top Row on Mobile: Brand Title on Left + Quick Actions on Right */}
           <div className="d-flex align-items-center justify-content-between w-100 w-lg-auto">
@@ -625,53 +626,34 @@ function App() {
         )}
       </main>
 
-      {/* Native-Style Mobile Sticky Bottom Navigation Bar (Hidden on Quick Hub and Selected Standard Tiles) */}
-      {!isStandardRoute && currentRoute !== 'quick-hub' && (
-        <nav className="mobile-bottom-nav d-flex d-md-none no-print" aria-label="Mobile Schnellnavigation">
+      {/* Transparent Mobile Footer with 2 Buttons: 1. Home, 2. Universal Karte (Content scrolls behind it) */}
+      <footer className="mobile-transparent-footer d-flex d-md-none no-print" aria-label="Mobile Navigation">
+        <div className="mobile-transparent-footer-inner">
           <button
             type="button"
-            className={`mobile-bottom-nav-item ${currentRoute === 'home' ? 'active' : ''}`}
-            onClick={() => navigateTo('')}
-          >
-            <i className="bi bi-grid-fill"></i>
-            <span>Start</span>
-          </button>
-          <button
-            type="button"
-            className={`mobile-bottom-nav-item ${currentRoute === 'quick-hub' ? 'active' : ''}`}
+            className={`mobile-footer-btn home-btn ${currentRoute === 'quick-hub' || currentRoute === 'home' ? 'active' : ''}`}
             onClick={() => navigateTo('quick-hub')}
           >
-            <i className="bi bi-lightning-charge-fill"></i>
-            <span>6 Standards</span>
+            <span className="mobile-footer-btn-icon">
+              <i className="bi bi-house-door-fill"></i>
+            </span>
+            <span>Home</span>
           </button>
+
           <button
             type="button"
-            className={`mobile-bottom-nav-item highlight ${currentRoute === 'universal-karte' || currentRoute === 'magic-card' ? 'active' : ''}`}
+            className={`mobile-footer-btn universal-btn ${currentRoute === 'universal-karte' || currentRoute === 'magic-card' ? 'active' : ''}`}
             onClick={() => navigateTo('universal-karte')}
           >
-            <i className="bi bi-stars"></i>
-            <span>Universal</span>
+            <span className="mobile-footer-btn-icon">
+              <i className="bi bi-credit-card-2-front-fill"></i>
+            </span>
+            <span>Universal Karte</span>
           </button>
-          <button
-            type="button"
-            className={`mobile-bottom-nav-item ${currentRoute === 'qrcodes' ? 'active' : ''}`}
-            onClick={() => navigateTo('qrcodes')}
-          >
-            <i className="bi bi-collection-fill"></i>
-            <span>Karten</span>
-          </button>
-          <button
-            type="button"
-            className="mobile-bottom-nav-item"
-            onClick={() => setIsScanModalOpen(true)}
-          >
-            <i className="bi bi-qr-code-scan"></i>
-            <span>Scanner</span>
-          </button>
-        </nav>
-      )}
+        </div>
+      </footer>
 
-      {/* Footer: on quick-hub show ONLY the colorful accent line; on standard tiles hide full footer on mobile */}
+      {/* Footer: on quick-hub show ONLY the colorful accent line; on standard tiles and universal-karte hide full footer on mobile */}
       {currentRoute === 'quick-hub' ? (
         <div className="footer-accent-bar d-flex mt-auto" style={{ height: '6px' }}>
           <div style={{ flex: 1, backgroundColor: 'var(--dekubitus-color)' }} title="Dekubitusprophylaxe"></div>
@@ -682,7 +664,7 @@ function App() {
           <div style={{ flex: 1, backgroundColor: 'var(--zvk-color)' }} title="ZVK Intensivpflege"></div>
         </div>
       ) : (
-        <footer className={`modern-footer mt-auto text-white ${isStandardRoute ? 'd-none d-md-block' : ''}`}>
+        <footer className={`modern-footer mt-auto text-white ${isMobileIsolatedRoute ? 'd-none d-md-block' : ''}`}>
           {/* Color accent spectrum bar matching all clinical categories */}
           <div className="footer-accent-bar d-flex" style={{ height: '5px' }}>
             <div style={{ flex: 1, backgroundColor: 'var(--dekubitus-color)' }} title="Dekubitusprophylaxe"></div>
@@ -1776,18 +1758,6 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
 
   return (
     <div>
-      {/* Mobile-Only Single Home Button -> Returns to Quick Hub */}
-      <div className="d-flex d-md-none mb-2.5 no-print">
-        <a
-          href="#/quick-hub"
-          className="btn btn-primary btn-sm rounded-pill px-3.5 py-2 shadow-sm d-inline-flex align-items-center gap-2 fw-bold"
-          style={{ minHeight: '40px', fontSize: '0.86rem' }}
-        >
-          <i className="bi bi-house-door-fill"></i>
-          <span>Home</span>
-        </a>
-      </div>
-
       {/* Top Breadcrumb & Switcher (Desktop/Tablet Only) */}
       <div className="d-none d-md-flex flex-column gap-2 mb-3 no-print">
         <div className="d-flex justify-content-between align-items-center gap-2 w-100">
@@ -2532,11 +2502,58 @@ function UniversalCardA4Native({ onSelectStandard }) {
 }
 
 function UniversalCardView({ standards, onSelectStandard, showToast }) {
-  const [cardFormat, setCardFormat] = useState('both'); // 'both' | 'a4' | 'atm'
+  const [cardFormat, setCardFormat] = useState('atm'); // 'both' | 'a4' | 'atm'
   const list = Object.values(standards);
   const cardUrl = (typeof window !== 'undefined' && window.location)
     ? `${window.location.origin}${window.location.pathname}#/quick-hub`
     : 'https://umf-nursing-standards.web.app/#/quick-hub';
+  const shareTitle = 'Universitätsmedizin Frankfurt – Universal-Pocketcard (6 Expertenstandards & SOPs)';
+  const shareText = `Universitätsmedizin Frankfurt – Universal-Pocketcard (Alle 6 Expertenstandards & SOPs direkt öffnen): ${cardUrl}`;
+
+  const handleShareCard = async () => {
+    if (navigator.share) {
+      try {
+        // Attempt to share the ATM card image file along with text/URL if supported by device
+        try {
+          const response = await fetch('assets/universal-card-umf.jpg');
+          const blob = await response.blob();
+          const file = new File([blob], 'UMF-Universal-Karte.jpg', { type: 'image/jpeg' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: shareTitle,
+              text: shareText,
+              url: cardUrl,
+              files: [file]
+            });
+            return;
+          }
+        } catch (imgErr) {
+          // Fallback to URL/text share below
+        }
+        await navigator.share({
+          title: shareTitle,
+          text: 'Universitätsmedizin Frankfurt – Alle 6 Pflege-Expertenstandards & SOPs:',
+          url: cardUrl
+        });
+      } catch (err) {
+        if (err && err.name !== 'AbortError') {
+          window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener,noreferrer');
+        }
+      }
+    } else {
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener,noreferrer');
+    }
+  };
+
+  const handleCopyShareLink = () => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(cardUrl).then(() => {
+        showToast('Link zur Universal-Karte in die Zwischenablage kopiert!');
+      });
+    } else {
+      showToast('Link: ' + cardUrl);
+    }
+  };
 
   // Synchronize active format class to document body for automatic Ctrl+P isolation
   useEffect(() => {
@@ -2614,39 +2631,29 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
   };
 
   return (
-    <div className="py-1">
-      {/* Top Action Toolbar (Mobile-First Structured Layout & Compact Desktop Row) */}
-      <div className="d-flex flex-column flex-lg-row justify-content-between align-items-stretch align-items-lg-center mb-2 gap-2 no-print">
-        {/* Top Row on Mobile: Back Button + Quick Target Page Button */}
+    <div className="py-2">
+      {/* Top Action Toolbar (Desktop Only) */}
+      <div className="d-none d-md-flex flex-column flex-lg-row justify-content-between align-items-stretch align-items-lg-center mb-2 gap-2 no-print">
+        {/* Left on Desktop: Back Button */}
         <div className="d-flex justify-content-between align-items-center gap-2">
-          <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5 fw-semibold" style={{ minHeight: '38px', fontSize: '0.8rem' }}>
+          <a href="#/quick-hub" className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1 shadow-sm d-flex align-items-center gap-2 fw-semibold" style={{ minHeight: '38px', fontSize: '0.8rem' }}>
             <i className="bi bi-arrow-left"></i>
-            <span>Übersicht</span>
+            <span>Schnellwahl</span>
           </a>
-
-          <button
-            className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-1.5 shadow-sm btn-sm d-flex d-lg-none align-items-center gap-1.5"
-            style={{ minHeight: '38px', fontSize: '0.8rem' }}
-            onClick={() => onSelectStandard('quick-hub')}
-            title="Die Zielseite aller 6 Standards testen"
-          >
-            <i className="bi bi-lightning-charge-fill text-danger"></i>
-            <span>Schnellwahl (6 Standards)</span>
-          </button>
         </div>
 
-        {/* Row 2 on Mobile / Center on Desktop: Format Selector Pills */}
+        {/* Center on Desktop: Format Selector Pills */}
         <div className="mobile-segmented-control mx-lg-auto" role="group" style={{ maxWidth: '460px', padding: '0.2rem' }}>
           <button
             type="button"
-            className={`btn btn-sm ${cardFormat === 'both' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
+            className={`btn btn-sm ${cardFormat === 'atm' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
             style={{ fontSize: '0.76rem', minHeight: '36px', padding: '0.2rem 0.5rem' }}
-            onClick={() => setCardFormat('both')}
-            title="A4-Pocketcard und Scheckkarten-Format gleichzeitig anzeigen"
+            onClick={() => setCardFormat('atm')}
+            title="Kompaktes Scheckkarten-Format für Kitteltasche und Ausweishülle"
           >
-            <i className="bi bi-columns"></i>
-            <span className="d-none d-sm-inline">Beide Formate</span>
-            <span className="d-inline d-sm-none">Beide</span>
+            <i className="bi bi-credit-card-2-front"></i>
+            <span className="d-none d-sm-inline">Scheckkarte (ATM)</span>
+            <span className="d-inline d-sm-none">ATM-Karte</span>
           </button>
           <button
             type="button"
@@ -2661,21 +2668,21 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           </button>
           <button
             type="button"
-            className={`btn btn-sm ${cardFormat === 'atm' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
+            className={`btn btn-sm ${cardFormat === 'both' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
             style={{ fontSize: '0.76rem', minHeight: '36px', padding: '0.2rem 0.5rem' }}
-            onClick={() => setCardFormat('atm')}
-            title="Kompaktes Scheckkarten-Format für Kitteltasche und Ausweishülle"
+            onClick={() => setCardFormat('both')}
+            title="A4-Pocketcard und Scheckkarten-Format gleichzeitig anzeigen"
           >
-            <i className="bi bi-credit-card-2-front"></i>
-            <span className="d-none d-sm-inline">Scheckkarte (ATM)</span>
-            <span className="d-inline d-sm-none">ATM-Karte</span>
+            <i className="bi bi-columns"></i>
+            <span className="d-none d-sm-inline">Beide Formate</span>
+            <span className="d-inline d-sm-none">Beide</span>
           </button>
         </div>
 
-        {/* Row 3 on Mobile / Right on Desktop: Symmetrical Action Buttons */}
-        <div className="d-grid d-lg-flex align-items-center gap-1.5" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
+        {/* Right on Desktop: Symmetrical Action Buttons */}
+        <div className="d-grid d-lg-flex align-items-center gap-2" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
           <button
-            className="btn btn-primary btn-sm rounded-pill px-3 py-1.5 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5"
+            className="btn btn-primary btn-sm rounded-pill px-3 py-1 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2"
             style={{ minHeight: '38px', fontSize: '0.78rem' }}
             onClick={() => downloadPdf(cardFormat === 'both' ? 'a4' : cardFormat)}
             title="Universal-Pocketcard als PDF-Dokument herunterladen"
@@ -2684,7 +2691,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
             <span>PDF</span>
           </button>
           <button
-            className="btn btn-dark btn-sm rounded-pill px-3 py-1.5 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5"
+            className="btn btn-dark btn-sm rounded-pill px-3 py-1 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2"
             style={{ minHeight: '38px', fontSize: '0.78rem' }}
             onClick={() => handlePrint(cardFormat === 'atm' ? 'atm' : 'a4')}
             title={cardFormat === 'atm' ? 'Nur Scheckkarte drucken' : 'Nur A4-Pocketcard drucken'}
@@ -2693,7 +2700,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
             <span>Drucken</span>
           </button>
           <button
-            className="btn btn-outline-secondary rounded-pill px-3 py-1.5 shadow-sm btn-sm fw-semibold d-flex align-items-center justify-content-center gap-1.5 bg-white"
+            className="btn btn-outline-secondary rounded-pill px-3 py-1 shadow-sm btn-sm fw-semibold d-flex align-items-center justify-content-center gap-2 bg-white"
             style={{ minHeight: '38px', fontSize: '0.78rem' }}
             onClick={downloadCardImage}
             title="Pocketcard als hochauflösendes Bild herunterladen"
@@ -2702,7 +2709,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
             <span>Bild</span>
           </button>
           <button
-            className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-1.5 shadow-sm btn-sm d-none d-lg-flex align-items-center justify-content-center gap-1"
+            className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-1 shadow-sm btn-sm d-none d-lg-flex align-items-center justify-content-center gap-1"
             style={{ minHeight: '38px', fontSize: '0.78rem' }}
             onClick={() => onSelectStandard('quick-hub')}
             title="Die Zielseite aller 6 Standards testen"
@@ -2715,11 +2722,11 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
       {/* Main Container */}
       <div className="d-flex flex-column align-items-center justify-content-center my-1 gap-3">
-        {/* 1. THE A4-FORMAT UNIVERSAL POCKETCARD (ISO A4 PAPER PROPORTION & PRINT FIT) */}
+        {/* 1. THE A4-FORMAT UNIVERSAL POCKETCARD (Desktop only if selected) */}
         {(cardFormat === 'a4' || cardFormat === 'both') && (
-          <div className="w-100 p-1.5 p-sm-2 bg-white rounded-4 border shadow-sm" id="universal-card-a4-printable" style={{ maxWidth: '890px' }}>
+          <div className="w-100 p-2 bg-white rounded-4 border shadow-sm d-none d-md-block" id="universal-card-a4-printable" style={{ maxWidth: '890px' }}>
             <div
-              className="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center mb-2 px-2.5 px-sm-3 py-2 rounded-3 gap-2 no-print shadow-sm"
+              className="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center mb-2 px-3 py-2 rounded-3 gap-2 no-print shadow-sm"
               data-html2canvas-ignore="true"
               style={{
                 background: 'linear-gradient(135deg, #bae6fd 0%, #dbeafe 52%, #e0e7ff 100%)',
@@ -2740,7 +2747,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                 </div>
               </div>
 
-              <div className="d-flex flex-wrap align-items-center justify-content-between justify-content-md-end gap-1.5">
+              <div className="d-flex flex-wrap align-items-center justify-content-between justify-content-md-end gap-2">
                 <div className="d-flex align-items-center gap-1">
                   <span className="badge rounded-pill fw-semibold px-2 py-1" style={{ fontSize: '0.68rem', color: '#00273d', background: 'rgba(255,255,255,0.9)', border: '1px solid #93c5fd' }}>
                     <i className="bi bi-aspect-ratio me-1 text-primary"></i> DIN A4
@@ -2769,52 +2776,103 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
         {/* 2. THE POCKETCARD / ATM-FORMAT */}
         {(cardFormat === 'atm' || cardFormat === 'both') && (
-          <div className="w-100 p-2.5 p-sm-3 p-md-4 bg-white rounded-4 border shadow-sm d-flex flex-column align-items-center" id="universal-card-atm-printable" style={{ maxWidth: '1020px' }}>
-            <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-2 border-bottom w-100 gap-2">
+          <div className="w-100 p-3 p-md-4 bg-white rounded-4 border shadow-sm d-flex flex-column align-items-center" id="universal-card-atm-printable" style={{ maxWidth: '540px' }}>
+            {/* Header Row: Properly aligned on both Mobile & Desktop */}
+            <div className="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom w-100 gap-2">
               <div className="d-flex align-items-center gap-2 min-w-0">
-                <div className="bg-light p-1.5 rounded-3 border d-flex align-items-center flex-shrink-0">
+                <div className="bg-light p-1 rounded-3 border d-flex align-items-center flex-shrink-0">
                   <img src="assets/umf-logo.jpg" alt="UMF" height="26" className="rounded" />
                 </div>
                 <div className="min-w-0">
-                  <h5 className="fw-bold text-dark mb-0 text-truncate" style={{ fontSize: '0.96rem' }}>
+                  <h5 className="fw-bold text-dark mb-0 text-truncate" style={{ fontSize: '0.92rem', lineHeight: 1.2 }}>
                     Scheckkarten- / ATM-Format
                   </h5>
-                  <div className="text-muted small text-truncate" style={{ fontSize: '0.74rem' }}>
+                  <div className="text-muted small text-truncate" style={{ fontSize: '0.72rem', lineHeight: 1.2 }}>
                     Für Kitteltasche &amp; Ausweishülle (85,6 &times; 54 mm)
                   </div>
                 </div>
               </div>
 
-              <span className="badge bg-warning bg-opacity-25 text-dark border border-warning px-2.5 py-1 rounded-pill small fw-bold">
+              <span className="badge bg-warning bg-opacity-25 text-dark border border-warning px-2 py-1 rounded-pill small fw-bold flex-shrink-0" style={{ fontSize: '0.72rem' }}>
                 <i className="bi bi-credit-card-2-front me-1"></i> ATM-Karte
               </span>
             </div>
 
             {/* The Visual Card scaled to ATM size with Clickable Hotspots */}
-            <UniversalCardInteractiveCard isAtm={true} onSelectStandard={onSelectStandard} />
+            <div className="w-100 d-flex justify-content-center">
+              <UniversalCardInteractiveCard isAtm={true} onSelectStandard={onSelectStandard} />
+            </div>
 
             {/* Print-only cutout guide */}
             <div className="atm-cutout-hint">
               ✂️ Entlang der gestrichelten Linie ausschneiden (Standard ID-Ausweisformat: 85,6 &times; 54 mm)
             </div>
 
-            {/* Bottom Info Bar & Quick Actions for ATM */}
-            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-stretch align-items-sm-center pt-3 mt-3 border-top w-100 gap-2 no-print" data-html2canvas-ignore="true">
-              <div className="small text-muted text-center text-sm-start" style={{ fontSize: '0.78rem' }}>
+            {/* Symmetrical Share & Action Buttons (No 'Karte teilen' header text) */}
+            <div className="w-100 mt-3 pt-3 border-top no-print" data-html2canvas-ignore="true">
+              <div className="row g-2">
+                {/* WhatsApp Share */}
+                <div className="col-6 col-sm-4">
+                  <a
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-sm rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2 text-white w-100"
+                    style={{ backgroundColor: '#25D366', borderColor: '#25D366', minHeight: '40px', fontSize: '0.82rem' }}
+                    title="Universal-Karte per WhatsApp teilen"
+                  >
+                    <i className="bi bi-whatsapp"></i>
+                    <span>WhatsApp</span>
+                  </a>
+                </div>
+
+                {/* Native Social Media / System Share */}
+                <div className="col-6 col-sm-4">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-primary rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2 w-100"
+                    style={{ backgroundColor: '#004767', borderColor: '#004767', minHeight: '40px', fontSize: '0.82rem' }}
+                    onClick={handleShareCard}
+                    title="Über Social Media oder andere Apps teilen"
+                  >
+                    <i className="bi bi-share-fill"></i>
+                    <span>Teilen</span>
+                  </button>
+                </div>
+
+                {/* Copy Link */}
+                <div className="col-6 col-sm-4">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-dark rounded-pill py-2 px-2 fw-semibold shadow-sm d-flex align-items-center justify-content-center gap-1 bg-white w-100"
+                    style={{ minHeight: '40px', fontSize: '0.82rem' }}
+                    onClick={handleCopyShareLink}
+                    title="Link kopieren"
+                  >
+                    <i className="bi bi-link-45deg fs-6"></i>
+                    <span>Link kopieren</span>
+                  </button>
+                </div>
+
+                {/* Print ATM Card */}
+                <div className="col-6 col-sm-12">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-dark rounded-pill py-2 px-3 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-2 w-100"
+                    style={{ minHeight: '40px', fontSize: '0.82rem' }}
+                    onClick={() => handlePrint('atm')}
+                    title="Nur die Scheckkarte drucken"
+                  >
+                    <i className="bi bi-printer-fill"></i>
+                    <span>Drucken</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="small text-muted text-center mt-2 pt-1" style={{ fontSize: '0.75rem' }}>
                 <i className="bi bi-check2-circle text-success me-1"></i>
                 Kompakt für Ausweis- &amp; Kitteltaschen &bull; 100% scannbar
               </div>
-
-              <button
-                type="button"
-                className="btn btn-sm btn-dark rounded-pill px-3 py-2 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-1.5 w-100 w-sm-auto"
-                style={{ minHeight: '42px' }}
-                onClick={() => handlePrint('atm')}
-                title="Nur die Scheckkarte drucken"
-              >
-                <i className="bi bi-printer-fill"></i>
-                <span>Scheckkarte drucken</span>
-              </button>
             </div>
           </div>
         )}
@@ -2830,37 +2888,126 @@ const MagicCardView = UniversalCardView;
 // Component: Quick Hub (Target Landing Page Opened by Magic Card Scan)
 // -------------------------------------------------------------
 function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
-  const list = Object.values(standards);
+  const orderedIds = ['dekubitus', 'sturz', 'schmerz', 'ernaehrung', 'zvk', 'isolation'];
+  const list = orderedIds
+    .map((id) => standards[id])
+    .filter(Boolean);
+
+  const cardThemeMap = {
+    dekubitus: {
+      badgeText: 'EXPERTENSTANDARD',
+      badgeBg: '#fde8ef',
+      badgeColor: '#d81b60',
+      displayTitle: 'Dekubitusprophylaxe',
+      iconImg: 'assets/qh-icon-dekubitus.jpg',
+      rightImg: 'assets/qh-dekubitus.jpg'
+    },
+    sturz: {
+      badgeText: 'EXPERTENSTANDARD',
+      badgeBg: '#e6f6e6',
+      badgeColor: '#2e7d32',
+      displayTitle: 'Sturzprophylaxe',
+      iconImg: 'assets/qh-icon-sturz.jpg',
+      rightImg: 'assets/qh-sturz.jpg'
+    },
+    schmerz: {
+      badgeText: 'EXPERTENSTANDARD',
+      badgeBg: '#fff0e5',
+      badgeColor: '#d9531e',
+      displayTitle: 'Schmerzmanagement',
+      iconImg: 'assets/qh-icon-schmerz.jpg',
+      rightImg: 'assets/qh-schmerz.jpg'
+    },
+    ernaehrung: {
+      badgeText: 'EXPERTENSTANDARD',
+      badgeBg: '#e3f2fd',
+      badgeColor: '#0277bd',
+      displayTitle: 'Ernährungsmanagement',
+      iconImg: 'assets/qh-icon-ernaehrung.jpg',
+      rightImg: 'assets/qh-ernaehrung.jpg'
+    },
+    zvk: {
+      badgeText: 'SOP & LEITFADEN',
+      badgeBg: '#fde8ef',
+      badgeColor: '#d81b60',
+      displayTitle: 'ZVK Intensivpflege',
+      iconImg: 'assets/qh-icon-zvk.jpg',
+      rightImg: 'assets/qh-zvk.jpg'
+    },
+    isolation: {
+      badgeText: 'SOP & LEITFADEN',
+      badgeBg: '#e0f4ff',
+      badgeColor: '#0277bd',
+      displayTitle: 'Isolation & Hygiene',
+      iconImg: 'assets/qh-icon-isolation.jpg',
+      rightImg: 'assets/qh-isolation.jpg'
+    }
+  };
 
   return (
     <div className="py-1 py-md-3 w-100">
-      {/* Compact Mobile-First Header Card for QR-Code Scanners */}
+      {/* Mobile Header Banner (Exact match to uploaded Quick Hub design) */}
+      <div className="d-block d-md-none mb-2.5">
+        <div
+          className="rounded-4 overflow-hidden shadow-sm"
+          style={{ border: '1px solid rgba(147, 197, 253, 0.7)' }}
+        >
+          <img
+            src="assets/qh-header-banner.jpg"
+            alt="SOP & Expertenstandards Schnellwahl – Universitätsmedizin Frankfurt"
+            className="w-100 d-block"
+            style={{ height: 'auto', objectFit: 'cover' }}
+          />
+        </div>
+      </div>
+
+      {/* Desktop Header Banner */}
       <div
-        className="p-3 rounded-4 mb-3 shadow-sm d-flex flex-wrap justify-content-between align-items-center gap-2"
+        className="d-none d-md-flex p-3 rounded-4 mb-3 shadow-sm flex-wrap justify-content-between align-items-center gap-2 position-relative overflow-hidden"
         style={{
           background: 'linear-gradient(135deg, #bae6fd 0%, #dbeafe 52%, #e0e7ff 100%)',
-          border: '1.5px solid #60a5fa'
+          border: '1.5px solid #60a5fa',
+          minHeight: '86px'
         }}
       >
-        <div className="d-flex align-items-center gap-2.5 min-w-0">
-          <div className="bg-white p-1.5 rounded-3 shadow-sm d-flex align-items-center flex-shrink-0" style={{ border: '1px solid #93c5fd' }}>
-            <img src="assets/umf-logo.jpg" alt="UMF" height="28" className="rounded" />
+        <div
+          className="position-absolute top-0 end-0 bottom-0 pointer-events-none"
+          style={{ width: '280px', zIndex: 0 }}
+        >
+          <img
+            src="assets/qh-header-right.jpg"
+            alt=""
+            className="w-100 h-100"
+            style={{ objectFit: 'cover', objectPosition: 'right center' }}
+          />
+          <div
+            className="position-absolute top-0 start-0 bottom-0"
+            style={{
+              width: '90px',
+              background: 'linear-gradient(90deg, #dbeafe 0%, rgba(219, 234, 254, 0) 100%)'
+            }}
+          />
+        </div>
+
+        <div className="d-flex align-items-center gap-3 min-w-0 position-relative" style={{ zIndex: 1 }}>
+          <div className="bg-white px-2.5 py-1.5 rounded-3 shadow-sm d-flex align-items-center flex-shrink-0" style={{ border: '1px solid #bfdbfe' }}>
+            <img src="assets/umf-logo.jpg" alt="UMF" height="36" className="rounded" />
           </div>
           <div className="min-w-0">
-            <div className="fw-black text-uppercase text-truncate" style={{ fontSize: '0.88rem', color: '#00273d', lineHeight: 1.15 }}>
+            <div className="fw-black text-uppercase text-truncate" style={{ fontSize: '1.08rem', color: '#00273d', lineHeight: 1.15, letterSpacing: '0.2px' }}>
               SOP &amp; Expertenstandards Schnellwahl
             </div>
-            <div className="fw-semibold text-truncate" style={{ fontSize: '0.74rem', color: '#0369a1' }}>
+            <div className="fw-semibold text-truncate mt-0.5" style={{ fontSize: '0.84rem', color: '#0369a1' }}>
               Universitätsmedizin Frankfurt &bull; Direktzugriff per Smartphone
             </div>
           </div>
         </div>
 
-        <div className="d-none d-md-flex align-items-center gap-1.5 justify-content-end">
+        <div className="d-flex align-items-center gap-1.5 justify-content-end ms-auto position-relative" style={{ zIndex: 1 }}>
           <button
             type="button"
-            className="btn btn-sm btn-warning text-dark fw-bold rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center justify-content-center gap-1.5"
-            style={{ minHeight: '38px', fontSize: '0.78rem' }}
+            className="btn btn-sm btn-warning text-dark fw-bold rounded-pill px-3.5 py-2 shadow-sm d-flex align-items-center justify-content-center gap-1.5"
+            style={{ minHeight: '40px', fontSize: '0.82rem' }}
             onClick={() => onSelectStandard('universal-karte')}
           >
             <i className="bi bi-stars text-danger"></i>
@@ -2869,56 +3016,121 @@ function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
         </div>
       </div>
 
-      {/* 6 Clean, Clickable Tiles aligned in center */}
-      <div className="row g-2.5 g-md-4 justify-content-center">
-        {list.map((std) => (
-          <div key={std.id} className="col-12 col-sm-6 col-lg-4">
-            <div
-              className="quick-hub-label-card p-3 p-md-4 rounded-4 shadow-sm border-0 h-100 d-flex align-items-center gap-3"
-              onClick={() => onSelectStandard(std.id)}
-              style={{
-                cursor: 'pointer',
-                background: '#ffffff',
-                borderLeft: `6px solid ${std.accentColor}`,
-                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
-              }}
-            >
+      {/* 6 Illustrated Cards (Single-column stack on mobile matching screenshot, 2/3-col grid on desktop) */}
+      <div className="row g-2.5 g-md-3 justify-content-center">
+        {list.map((std) => {
+          const theme = cardThemeMap[std.id] || {
+            badgeText: std.id === 'zvk' || std.id === 'isolation' ? 'SOP & LEITFADEN' : 'EXPERTENSTANDARD',
+            badgeBg: std.badgeBg || '#e0f2fe',
+            badgeColor: std.accentColor || '#0284c7',
+            displayTitle: std.shortTitle,
+            iconImg: `assets/qh-icon-${std.id}.jpg`,
+            rightImg: `assets/qh-${std.id}.jpg`
+          };
+
+          return (
+            <div key={std.id} className="col-12 col-md-6 col-xl-4">
               <div
-                className="rounded-3 d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0"
+                className="quick-hub-label-card rounded-4 h-100 d-flex align-items-center position-relative overflow-hidden"
+                onClick={() => onSelectStandard(std.id)}
                 style={{
-                  width: '52px',
-                  height: '52px',
-                  background: std.bannerGradient || std.accentColor
+                  cursor: 'pointer',
+                  background: '#ffffff',
+                  border: '1px solid rgba(226, 232, 240, 0.9)',
+                  boxShadow: '0 3px 14px rgba(15, 23, 42, 0.06)',
+                  minHeight: '94px',
+                  padding: '0.75rem 0.85rem',
+                  transition: 'all 0.22s cubic-bezier(0.4, 0, 0.2, 1)'
                 }}
               >
-                <i className={`bi ${std.icon} fs-3`}></i>
-              </div>
-
-              <div className="flex-grow-1 overflow-hidden">
-                <span
-                  className="badge px-2 py-1 rounded-pill text-uppercase fw-bold mb-1"
+                {/* Right-hand clinical illustration + pastel wave + chevron from design */}
+                <div
+                  className="position-absolute top-0 end-0 bottom-0 pointer-events-none"
                   style={{
-                    fontSize: '0.68rem',
-                    backgroundColor: std.badgeBg || 'rgba(0, 71, 103, 0.08)',
-                    color: std.accentColor
+                    width: '47%',
+                    zIndex: 1
                   }}
                 >
-                  {std.id === 'zvk' || std.id === 'isolation' ? 'SOP & Leitfaden' : 'Expertenstandard'}
-                </span>
-                <h5 className="fw-bold text-dark mb-0 text-truncate" style={{ fontSize: '1.02rem' }}>
-                  {std.shortTitle}
-                </h5>
-                <div className="small text-muted text-truncate mt-1" style={{ fontSize: '0.76rem' }}>
-                  roXtra ID: {std.roXtraIds.join(', ')}
+                  <img
+                    src={theme.rightImg}
+                    alt=""
+                    className="w-100 h-100 d-block"
+                    style={{
+                      objectFit: 'cover',
+                      objectPosition: 'right center'
+                    }}
+                  />
+                  {/* Smooth gradient blend into the white card background on the left */}
+                  <div
+                    className="position-absolute top-0 start-0 bottom-0"
+                    style={{
+                      width: '34%',
+                      background: 'linear-gradient(90deg, #ffffff 0%, rgba(255,255,255,0.82) 45%, rgba(255,255,255,0) 100%)'
+                    }}
+                  />
+                </div>
+
+                {/* Left Rounded Gradient Icon */}
+                <div
+                  className="flex-shrink-0 me-3 position-relative"
+                  style={{ zIndex: 2 }}
+                >
+                  <img
+                    src={theme.iconImg}
+                    alt={theme.displayTitle}
+                    style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '14px',
+                      objectFit: 'cover',
+                      display: 'block'
+                    }}
+                  />
+                </div>
+
+                {/* Center Badge, Title, and roXtra IDs */}
+                <div
+                  className="flex-grow-1 min-w-0 position-relative pe-5"
+                  style={{ zIndex: 2 }}
+                >
+                  <span
+                    className="badge rounded-pill text-uppercase fw-extrabold mb-1 d-inline-block"
+                    style={{
+                      fontSize: '0.64rem',
+                      letterSpacing: '0.3px',
+                      padding: '0.26rem 0.6rem',
+                      backgroundColor: theme.badgeBg,
+                      color: theme.badgeColor
+                    }}
+                  >
+                    {theme.badgeText}
+                  </span>
+                  <h5
+                    className="fw-extrabold mb-0 text-truncate"
+                    style={{
+                      fontSize: '1.06rem',
+                      color: '#0c1e35',
+                      lineHeight: 1.2,
+                      fontWeight: 800
+                    }}
+                  >
+                    {theme.displayTitle}
+                  </h5>
+                  <div
+                    className="text-truncate mt-1"
+                    style={{
+                      fontSize: '0.75rem',
+                      color: '#4b5563',
+                      fontWeight: 500
+                    }}
+                  >
+                    roXtra ID: {std.roXtraIds.join(', ')}
+                  </div>
                 </div>
               </div>
-
-              <div className="text-secondary ps-1">
-                <i className="bi bi-chevron-right fs-5 text-muted"></i>
-              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
