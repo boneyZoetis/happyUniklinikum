@@ -767,8 +767,251 @@ function App() {
 }
 
 // -------------------------------------------------------------
-// Component: The Main Tiles Overview (Modern, Beautified Cards without embedded QR codes)
+// Component: The Main Tiles Overview (Modern, Beautified Cards with Clinical Photos & Icons)
 // -------------------------------------------------------------
+const TILE_ENHANCEMENTS = {
+  dekubitus: {
+    bgGradient: 'linear-gradient(155deg, #ffffff 0%, #fff1f6 45%, #fdf2f8 100%)',
+    borderColor: '#fbcfe8',
+    leftBorderColor: '#be185d',
+    shadowColor: 'rgba(190, 24, 93, 0.16)',
+    iconGradient: 'linear-gradient(135deg, #831843 0%, #be185d 50%, #ec4899 100%)',
+    iconShadow: 'rgba(190, 24, 93, 0.38)',
+    icon: 'bi-bandaid-fill',
+    badgeBg: '#fce7f3',
+    badgeColor: '#9d174d',
+    badgeBorder: '#fbcfe8',
+    badgeText: 'Dekubitusprophylaxe',
+    titleColor: '#831843',
+    title: 'Dekubitusprophylaxe in der Pflege',
+    lead: 'Evidenzbasierte Risikoeinschätzung, gezielte Druckentlastung und strukturierte Hautpflege nach DNQP-Expertenstandard.',
+    image: 'assets/qh-dekubitus.jpg',
+    imageOverlay: '30°-Lagerung',
+    quickBadges: [
+      { text: '2–4h Rhythmus', icon: 'bi-clock-history', bg: '#ffe4e6', color: '#be123c', border: '#fecdd3' },
+      { text: 'Spezialmatratze', icon: 'bi-layers-fill', bg: '#ede9fe', color: '#6d28d9', border: '#ddd6fe' }
+    ],
+    imageSubtitle: 'Weichlagerung zur gezielten Druckentlastung gefährdeter Haut- & Knochenpunkte',
+    goals: [
+      { text: 'Druck reduzieren', icon: 'bi-arrow-down-circle-fill text-danger', bg: '#ffe4e6', color: '#9f1239', border: '#fecdd3' },
+      { text: 'Haut schützen', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
+      { text: 'Mobilität fördern', icon: 'bi-person-walking text-primary', bg: '#e0f2fe', color: '#075985', border: '#bae6fd' }
+    ],
+    actionSteps: [
+      { text: 'Regelmäßige Umlagerung alle 2–4 Stunden zur gezielten Entlastung', bold: 'Regelmäßige Umlagerung:', icon: 'bi-arrow-repeat', iconBg: '#be185d' },
+      { text: 'Druckentlastende Spezialmatratze und 30°-Seitenlagerung nutzen', bold: 'Spezialmatratze & 30°:', icon: 'bi-layers-fill', iconBg: '#7c3aed' },
+      { text: 'Haut täglich kontrollieren: Hinterkopf, Kreuzbein, Fersen, Ellenbogen', bold: 'Tägliche Hautkontrolle:', icon: 'bi-eye-fill', iconBg: '#059669' }
+    ],
+    tagLabel: 'Gefährdete Stellen:',
+    tagIcon: 'bi-geo-alt-fill',
+    tagColor: '#be185d',
+    tagBorder: '#f472b6',
+    tags: ['Hinterkopf', 'Schultern', 'Kreuzbein', 'Trochanter', 'Fersen'],
+    btnGradient: 'linear-gradient(90deg, #be185d 0%, #db2777 100%)',
+    btnShadow: 'rgba(190, 24, 93, 0.28)'
+  },
+  sturz: {
+    bgGradient: 'linear-gradient(155deg, #ffffff 0%, #f0fdf4 45%, #ecfdf5 100%)',
+    borderColor: '#bbf7d0',
+    leftBorderColor: '#16a34a',
+    shadowColor: 'rgba(22, 163, 74, 0.16)',
+    iconGradient: 'linear-gradient(135deg, #14532d 0%, #16a34a 50%, #22c55e 100%)',
+    iconShadow: 'rgba(22, 163, 74, 0.38)',
+    icon: 'bi-shield-exclamation',
+    badgeBg: '#dcfce7',
+    badgeColor: '#166534',
+    badgeBorder: '#bbf7d0',
+    badgeText: 'Sturzprophylaxe',
+    titleColor: '#14532d',
+    title: 'Sturzprophylaxe in der Pflege',
+    lead: 'Evidenzbasierte Sturzrisiko-Erfassung, sichere Mobilisation und gezielte Umgebungsanpassung nach DNQP-Expertenstandard.',
+    image: 'assets/qh-sturz.jpg',
+    imageOverlay: 'Sichere Mobilisation',
+    quickBadges: [
+      { text: 'Rutschfeste Schuhe', icon: 'bi-shield-check', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
+      { text: 'Hilfsmittel bereit', icon: 'bi-person-walking', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' }
+    ],
+    imageSubtitle: 'Gezielte Sturzvermeidung bei maximalem Erhalt von Mobilität und Eigenständigkeit',
+    goals: [
+      { text: 'Stürze vermeiden', icon: 'bi-shield-fill-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
+      { text: 'Mobilität fördern', icon: 'bi-person-walking text-primary', bg: '#e0f2fe', color: '#075985', border: '#bae6fd' },
+      { text: 'Sicherheit stärken', icon: 'bi-bell-fill text-warning', bg: '#fef3c7', color: '#92400e', border: '#fde68a' }
+    ],
+    actionSteps: [
+      { text: 'Sturzrisiko regelmäßig beurteilen und individuelle Risikofaktoren erfassen', bold: 'Sturzrisiko beurteilen:', icon: 'bi-clipboard2-pulse', iconBg: '#16a34a' },
+      { text: 'Geeignete Hilfsmittel nutzen (Gehstock, Rollator, Haltegriffe stets griffbereit)', bold: 'Geeignete Hilfsmittel:', icon: 'bi-person-walking', iconBg: '#0284c7' },
+      { text: 'Rutschfeste Schuhe anziehen & Rufklingel immer in Reichweite platzieren', bold: 'Schuhe & Klingel:', icon: 'bi-bell-fill', iconBg: '#d97706' }
+    ],
+    tagLabel: 'Sicherheits-Check:',
+    tagIcon: 'bi-shield-check',
+    tagColor: '#16a34a',
+    tagBorder: '#86efac',
+    tags: ['Stolperfallen entfernen', 'Licht an', 'Bett niedrig', 'Klingel nah', 'Rollator-Bremse'],
+    btnGradient: 'linear-gradient(90deg, #15803d 0%, #16a34a 100%)',
+    btnShadow: 'rgba(22, 163, 74, 0.28)'
+  },
+  schmerz: {
+    bgGradient: 'linear-gradient(155deg, #ffffff 0%, #fff7ed 45%, #ffedd5 100%)',
+    borderColor: '#fed7aa',
+    leftBorderColor: '#ea580c',
+    shadowColor: 'rgba(234, 88, 12, 0.16)',
+    iconGradient: 'linear-gradient(135deg, #9a3412 0%, #ea580c 50%, #f97316 100%)',
+    iconShadow: 'rgba(234, 88, 12, 0.38)',
+    icon: 'bi-heart-pulse-fill',
+    badgeBg: '#ffedd5',
+    badgeColor: '#9a3412',
+    badgeBorder: '#fed7aa',
+    badgeText: 'Schmerzmanagement',
+    titleColor: '#9a3412',
+    title: 'Schmerzmanagement in der Pflege',
+    lead: 'Systematische Schmerzerfassung bei akuten und chronischen Schmerzen zur Steigerung von Wohlbefinden und Lebensqualität.',
+    image: 'assets/qh-schmerz.jpg',
+    imageOverlay: 'Empathische Erfassung',
+    quickBadges: [
+      { text: 'NRS-Skala 0–10', icon: 'bi-speedometer2', bg: '#ffedd5', color: '#9a3412', border: '#fed7aa' },
+      { text: 'Therapiekontrolle', icon: 'bi-capsule', bg: '#ffe4e6', color: '#be123c', border: '#fecdd3' }
+    ],
+    imageSubtitle: 'Strukturierte Schmerzeinschätzung & kombinierte medikamentöse/pflegerische Linderung',
+    goals: [
+      { text: 'Schmerzen lindern', icon: 'bi-heart-fill text-danger', bg: '#ffe4e6', color: '#9f1239', border: '#fecdd3' },
+      { text: 'Exakt erfassen', icon: 'bi-speedometer2 text-warning', bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
+      { text: 'Früh mobilisieren', icon: 'bi-person-walking text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' }
+    ],
+    actionSteps: [
+      { text: 'Schmerzintensität systematisch erfassen (NRS/VRS-Skala bei Ruhe & Bewegung)', bold: 'Systematische Erfassung:', icon: 'bi-speedometer2', iconBg: '#ea580c' },
+      { text: 'Analgetika nach Schema verabreichen und Wirkung nach 30–60 Min. evaluieren', bold: 'Analgetika-Gabe:', icon: 'bi-capsule', iconBg: '#e11d48' },
+      { text: 'Nicht-medikamentöse Maßnahmen (Lagerung, Kälte/Wärme, Zuwendung) gezielt nutzen', bold: 'Begleitmaßnahmen:', icon: 'bi-heart-fill', iconBg: '#7c3aed' }
+    ],
+    tagLabel: 'Erfassungsskalen:',
+    tagIcon: 'bi-clipboard-pulse',
+    tagColor: '#ea580c',
+    tagBorder: '#fb923c',
+    tags: ['NRS (0–10)', 'VRS (Wortskala)', 'BESD (Demenz)', 'Ruheschmerz', 'Belastungsschmerz'],
+    btnGradient: 'linear-gradient(90deg, #c2410c 0%, #ea580c 100%)',
+    btnShadow: 'rgba(234, 88, 12, 0.28)'
+  },
+  ernaehrung: {
+    bgGradient: 'linear-gradient(155deg, #ffffff 0%, #f0f9ff 45%, #e0f2fe 100%)',
+    borderColor: '#bae6fd',
+    leftBorderColor: '#0284c7',
+    shadowColor: 'rgba(2, 132, 199, 0.16)',
+    iconGradient: 'linear-gradient(135deg, #0369a1 0%, #0284c7 50%, #38bdf8 100%)',
+    iconShadow: 'rgba(2, 132, 199, 0.38)',
+    icon: 'bi-cup-hot-fill',
+    badgeBg: '#e0f2fe',
+    badgeColor: '#0369a1',
+    badgeBorder: '#bae6fd',
+    badgeText: 'Ernährungsmanagement',
+    titleColor: '#0369a1',
+    title: 'Ernährungsmanagement in der Pflege',
+    lead: 'Frühzeitige Identifikation von Mangelernährung, individuelle Speisenversorgung und Sicherstellung ausreichender Flüssigkeit.',
+    image: 'assets/qh-ernaehrung.jpg',
+    imageOverlay: 'Vollwertige Kost',
+    quickBadges: [
+      { text: 'Gewichtsverlauf', icon: 'bi-clipboard-data', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' },
+      { text: 'Trinkprotokoll', icon: 'bi-droplet-half', bg: '#cffafe', color: '#0e7490', border: '#a5f3fc' }
+    ],
+    imageSubtitle: 'Protein- & energiereiche Kost zur aktiven Förderung von Wundheilung und Genesung',
+    goals: [
+      { text: 'Mangelernährung stoppen', icon: 'bi-shield-check text-primary', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' },
+      { text: 'Flüssigkeit sichern', icon: 'bi-droplet-half text-info', bg: '#cffafe', color: '#0e7490', border: '#a5f3fc' },
+      { text: 'Gewicht stabilisieren', icon: 'bi-graph-up-arrow text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' }
+    ],
+    actionSteps: [
+      { text: 'Mangelernährungsrisiko erfassen (Screening bei Aufnahme & regelmäßige Gewichtskontrolle)', bold: 'Screening & Gewicht:', icon: 'bi-clipboard-data-fill', iconBg: '#0284c7' },
+      { text: 'Wunschkost & Eiweißanreicherung gezielt anbieten, Zwischenmahlzeiten einplanen', bold: 'Eiweiß- & Wunschkost:', icon: 'bi-egg-fried', iconBg: '#059669' },
+      { text: 'Trinkmenge aktiv unterstützen & bei Bedarf strukturiertes Trinkprotokoll führen', bold: 'Flüssigkeitshaushalt:', icon: 'bi-droplet-half', iconBg: '#0891b2' }
+    ],
+    tagLabel: 'Ernährungsfokus:',
+    tagIcon: 'bi-apple',
+    tagColor: '#0284c7',
+    tagBorder: '#38bdf8',
+    tags: ['Eiweißreich', 'Hochkalorisch', 'Trinkprotokoll', 'Essbegleitung', 'Dysphagie-Kost'],
+    btnGradient: 'linear-gradient(90deg, #0369a1 0%, #0284c7 100%)',
+    btnShadow: 'rgba(2, 132, 199, 0.28)'
+  },
+  zvk: {
+    bgGradient: 'linear-gradient(155deg, #ffffff 0%, #fff1f2 45%, #ffe4e6 100%)',
+    borderColor: '#fecdd3',
+    leftBorderColor: '#dc2626',
+    shadowColor: 'rgba(220, 38, 38, 0.16)',
+    iconGradient: 'linear-gradient(135deg, #991b1b 0%, #dc2626 50%, #f43f5e 100%)',
+    iconShadow: 'rgba(220, 38, 38, 0.38)',
+    icon: 'bi-heart-pulse-fill',
+    badgeBg: '#fee2e2',
+    badgeColor: '#991b1b',
+    badgeBorder: '#fecdd3',
+    badgeText: 'SOP & Leitfaden ITS',
+    titleColor: '#991b1b',
+    title: 'Zentraler Venenkatheter (ZVK) – Intensivpflege',
+    lead: 'Standardisierte Verfahrensanweisung für Aseptik, Verbandswechsel, Infusionsmanagement und CRBSI-Infektionsprävention.',
+    image: 'assets/qh-zvk.jpg',
+    imageOverlay: 'Aseptische Pflege',
+    quickBadges: [
+      { text: 'CRBSI-Prävention', icon: 'bi-shield-shaded', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
+      { text: 'Täglich prüfen', icon: 'bi-calendar-check', bg: '#ffe4e6', color: '#be123c', border: '#fecdd3' }
+    ],
+    imageSubtitle: 'Strenge Aseptik bei Konnektion, Verbandswechsel und Infusionsverabreichung',
+    goals: [
+      { text: 'CRBSI verhindern', icon: 'bi-shield-slash-fill text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
+      { text: 'Aseptik wahren', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
+      { text: 'Sichere Medikation', icon: 'bi-capsule text-primary', bg: '#ede9fe', color: '#6d28d9', border: '#ddd6fe' }
+    ],
+    actionSteps: [
+      { text: 'Strenge Non-Touch-Technik & Hautantiseptik bei jeder Konnektion / Diskonnektion', bold: 'Non-Touch & Antiseptik:', icon: 'bi-shield-shaded', iconBg: '#dc2626' },
+      { text: 'Transparenzverband alle 7 Tage oder bei Verschmutzung/Feuchtigkeit sofort erneuern', bold: 'Verbandswechsel:', icon: 'bi-bandaid', iconBg: '#e11d48' },
+      { text: 'Tägliche Indikationsprüfung des ZVK & standardisiertes Spülen nach Infusionsschema', bold: 'Tägliche Indikation:', icon: 'bi-droplet', iconBg: '#4f46e5' }
+    ],
+    tagLabel: 'SOP Kernpunkte:',
+    tagIcon: 'bi-folder2-open',
+    tagColor: '#dc2626',
+    tagBorder: '#f87171',
+    tags: ['Hautantiseptik', 'Transparenzverband', '7-Tage-Wechsel', 'Non-Touch', 'CRBSI-Schutz'],
+    btnGradient: 'linear-gradient(90deg, #b91c1c 0%, #dc2626 100%)',
+    btnShadow: 'rgba(220, 38, 38, 0.28)'
+  },
+  isolation: {
+    bgGradient: 'linear-gradient(155deg, #ffffff 0%, #faf5ff 45%, #f3e8ff 100%)',
+    borderColor: '#e9d5ff',
+    leftBorderColor: '#7c3aed',
+    shadowColor: 'rgba(124, 58, 237, 0.16)',
+    iconGradient: 'linear-gradient(135deg, #581c87 0%, #7c3aed 50%, #a855f7 100%)',
+    iconShadow: 'rgba(124, 58, 237, 0.38)',
+    icon: 'bi-shield-shaded',
+    badgeBg: '#f3e8ff',
+    badgeColor: '#581c87',
+    badgeBorder: '#e9d5ff',
+    badgeText: 'Hygiene-Leitfaden',
+    titleColor: '#581c87',
+    title: 'Isolation & Krankenhaushygiene',
+    lead: 'Verbindliche Maßnahmen bei MRE, VRE, MRGN, MRSA & C. diff. zum konsequenten Schutz von Patienten und Personal.',
+    image: 'assets/qh-isolation.jpg',
+    imageOverlay: 'Händehygiene & PSA',
+    quickBadges: [
+      { text: '30s Desinfektion', icon: 'bi-clock-history', bg: '#f3e8ff', color: '#581c87', border: '#e9d5ff' },
+      { text: 'Schutzkleidung', icon: 'bi-shield-check', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' }
+    ],
+    imageSubtitle: 'Konsequente Unterbrechung von Infektionsketten durch gezielte Barrierepflege',
+    goals: [
+      { text: 'Übertragung stoppen', icon: 'bi-slash-circle-fill text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
+      { text: 'Personal schützen', icon: 'bi-people-fill text-primary', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' },
+      { text: 'Hygiene sichern', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' }
+    ],
+    actionSteps: [
+      { text: 'Händedesinfektion (30 Sek.) vor und nach Patientenkontakt & nach PSA-Ablage', bold: 'Händedesinfektion 30s:', icon: 'bi-hand-index-thumb-fill', iconBg: '#7c3aed' },
+      { text: 'Schutzkittel, Handschuhe & FFP2/MNS vor Betreten des Isolierzimmers korrekt anlegen', bold: 'PSA vor Betreten:', icon: 'bi-shield-check', iconBg: '#2563eb' },
+      { text: 'Patientennahe Flächen & Geräte täglich wischdesinfizieren (spozid bei C. diff)', bold: 'Flächendesinfektion:', icon: 'bi-stars', iconBg: '#059669' }
+    ],
+    tagLabel: 'Erreger & Schutz:',
+    tagIcon: 'bi-virus',
+    tagColor: '#7c3aed',
+    tagBorder: '#c084fc',
+    tags: ['MRSA', 'VRE', '3/4-MRGN', 'C. difficile', 'Isolierzimmer', 'Schutzkittel'],
+    btnGradient: 'linear-gradient(90deg, #6d28d9 0%, #7c3aed 100%)',
+    btnShadow: 'rgba(124, 58, 237, 0.28)'
+  }
+};
+
 function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
   const list = Object.values(standards);
 
@@ -832,289 +1075,189 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
         </div>
       </div>
 
-      {/* Grid of Clean, Modern Standard Cards (No QR Codes) */}
+      {/* Grid of Clean, Modern Standard Cards (Enhanced with Real Clinical Photos & Icons) */}
       <div className="row g-3 g-md-4">
         {list.map((std) => {
-          if (std.id === 'dekubitus') {
-            return (
-              <div key={std.id} className="col-12 col-lg-6">
-                <div
-                  className="standard-tile h-100 p-0 border-0 rounded-4 position-relative overflow-hidden"
-                  onClick={() => onSelectStandard(std.id)}
-                  style={{
-                    cursor: 'pointer',
-                    transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
-                    background: 'linear-gradient(155deg, #ffffff 0%, #fff1f6 45%, #fdf2f8 100%)',
-                    border: '1.5px solid #fbcfe8',
-                    borderLeft: '6px solid #be185d',
-                    boxShadow: '0 10px 28px -4px rgba(190, 24, 93, 0.16), 0 4px 10px -2px rgba(190, 24, 93, 0.06)'
-                  }}
-                >
-                  <div className="p-3 p-sm-4 d-flex flex-column h-100">
-                    {/* Header: Colorful Gradient Icon, Category Badge & roXtra ID */}
-                    <div className="d-flex flex-wrap justify-content-between align-items-center mb-2.5 gap-2">
-                      <div className="d-flex align-items-center gap-2 min-w-0">
-                        <div
-                          className="rounded-4 d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0"
-                          style={{
-                            width: '44px',
-                            height: '44px',
-                            background: 'linear-gradient(135deg, #831843 0%, #be185d 50%, #ec4899 100%)',
-                            boxShadow: '0 4px 14px rgba(190, 24, 93, 0.38)'
-                          }}
-                        >
-                          <i className="bi bi-bandaid-fill fs-5"></i>
-                        </div>
-                        <div>
-                          <span
-                            className="fw-bold px-2.5 py-1 rounded-pill d-inline-flex align-items-center gap-1.5 text-uppercase text-truncate"
-                            style={{
-                              fontSize: '0.72rem',
-                              letterSpacing: '0.4px',
-                              backgroundColor: '#fce7f3',
-                              color: '#9d174d',
-                              border: '1px solid #fbcfe8'
-                            }}
-                          >
-                            <i className="bi bi-star-fill text-warning" style={{ fontSize: '0.65rem' }}></i>
-                            <span>Dekubitusprophylaxe</span>
-                          </span>
-                        </div>
-                      </div>
-
-                      <span className="badge bg-white text-secondary border font-monospace px-2.5 py-1 rounded-pill shadow-xs" style={{ fontSize: '0.72rem', borderColor: '#fbcfe8' }}>
-                        roXtra: <strong className="text-dark">{std.roXtraIds.slice(0, 2).join(' / ')}</strong>
-                      </span>
-                    </div>
-
-                    {/* Title */}
-                    <h4 className="fw-bold mb-1.5" style={{ lineHeight: '1.3', fontSize: '1.14rem', color: '#831843' }}>
-                      Dekubitusprophylaxe in der Pflege
-                    </h4>
-
-                    {/* Subtitle / Lead text */}
-                    <p className="text-secondary small mb-2.5" style={{ lineHeight: '1.45', fontSize: '0.84rem' }}>
-                      Evidenzbasierte Risikoeinschätzung, gezielte Druckentlastung und strukturierte Hautpflege nach DNQP-Expertenstandard.
-                    </p>
-
-                    {/* Visual Clinical Positioning Strip with Mini Image & Quick Badges */}
-                    <div
-                      className="rounded-3 overflow-hidden border mb-2.5 shadow-xs bg-white"
-                      style={{ borderColor: '#fbcfe8' }}
-                    >
-                      <div className="row g-0 align-items-center">
-                        <div className="col-4 position-relative">
-                          <img
-                            src="assets/qh-dekubitus.jpg"
-                            alt="Dekubitus 30°-Lagerung"
-                            className="w-100 h-100 d-block"
-                            style={{ minHeight: '94px', maxHeight: '105px', objectFit: 'cover' }}
-                          />
-                          <span
-                            className="badge bg-dark bg-opacity-75 text-white position-absolute bottom-0 start-0 m-1 px-1.5 py-0.5 rounded"
-                            style={{ fontSize: '0.62rem' }}
-                          >
-                            <i className="bi bi-check2-circle text-success me-0.5"></i>30°-Lagerung
-                          </span>
-                        </div>
-                        <div className="col-8 p-2.5">
-                          <div className="d-flex flex-wrap gap-1 mb-1.5">
-                            <span className="badge rounded-pill fw-bold px-2 py-0.5" style={{ backgroundColor: '#ffe4e6', color: '#be123c', border: '1px solid #fecdd3', fontSize: '0.68rem' }}>
-                              <i className="bi bi-clock-history me-1"></i>2–4h Rhythmus
-                            </span>
-                            <span className="badge rounded-pill fw-bold px-2 py-0.5" style={{ backgroundColor: '#ede9fe', color: '#6d28d9', border: '1px solid #ddd6fe', fontSize: '0.68rem' }}>
-                              <i className="bi bi-layers-fill me-1"></i>Spezialmatratze
-                            </span>
-                          </div>
-                          <div className="text-dark fw-medium" style={{ fontSize: '0.76rem', lineHeight: '1.35' }}>
-                            Weichlagerung zur gezielten Druckentlastung gefährdeter Haut- &amp; Knochenpunkte
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 3 Colorful Core Goals */}
-                    <div className="d-flex flex-wrap gap-1.5 mb-2.5">
-                      <span className="badge rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1 fw-bold shadow-xs" style={{ backgroundColor: '#ffe4e6', color: '#9f1239', border: '1px solid #fecdd3', fontSize: '0.72rem' }}>
-                        <i className="bi bi-arrow-down-circle-fill text-danger"></i> Druck reduzieren
-                      </span>
-                      <span className="badge rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1 fw-bold shadow-xs" style={{ backgroundColor: '#dcfce7', color: '#166534', border: '1px solid #bbf7d0', fontSize: '0.72rem' }}>
-                        <i className="bi bi-shield-check text-success"></i> Haut schützen
-                      </span>
-                      <span className="badge rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1 fw-bold shadow-xs" style={{ backgroundColor: '#e0f2fe', color: '#075985', border: '1px solid #bae6fd', fontSize: '0.72rem' }}>
-                        <i className="bi bi-person-walking text-primary"></i> Mobilität fördern
-                      </span>
-                    </div>
-
-                    {/* Colorful Clinical Action Steps with Visual Icons */}
-                    <div
-                      className="p-3 rounded-3 mb-2.5 mt-auto bg-white"
-                      style={{
-                        border: '1px solid #fbcfe8',
-                        borderLeft: '4px solid #be185d',
-                        boxShadow: '0 2px 8px rgba(190, 24, 93, 0.05)'
-                      }}
-                    >
-                      <div className="small fw-bold text-uppercase mb-2 d-flex align-items-center gap-1.5" style={{ fontSize: '0.72rem', color: '#9d174d' }}>
-                        <i className="bi bi-list-check fs-6"></i>
-                        <span>Wichtigste Handlungsschritte:</span>
-                      </div>
-                      <div className="d-flex flex-column gap-2">
-                        <div className="small text-dark d-flex align-items-start gap-2" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
-                          <span
-                            className="rounded-circle d-inline-flex align-items-center justify-content-center text-white flex-shrink-0 mt-0.5"
-                            style={{ width: '20px', height: '20px', background: '#be185d', fontSize: '0.7rem' }}
-                          >
-                            <i className="bi bi-arrow-repeat"></i>
-                          </span>
-                          <span><strong>Regelmäßige Umlagerung</strong> alle 2–4 Stunden zur gezielten Entlastung</span>
-                        </div>
-                        <div className="small text-dark d-flex align-items-start gap-2" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
-                          <span
-                            className="rounded-circle d-inline-flex align-items-center justify-content-center text-white flex-shrink-0 mt-0.5"
-                            style={{ width: '20px', height: '20px', background: '#7c3aed', fontSize: '0.7rem' }}
-                          >
-                            <i className="bi bi-layers-fill"></i>
-                          </span>
-                          <span><strong>Druckentlastende Spezialmatratze</strong> und 30°-Seitenlagerung nutzen</span>
-                        </div>
-                        <div className="small text-dark d-flex align-items-start gap-2" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
-                          <span
-                            className="rounded-circle d-inline-flex align-items-center justify-content-center text-white flex-shrink-0 mt-0.5"
-                            style={{ width: '20px', height: '20px', background: '#059669', fontSize: '0.7rem' }}
-                          >
-                            <i className="bi bi-eye-fill"></i>
-                          </span>
-                          <span><strong>Haut täglich kontrollieren:</strong> Hinterkopf, Kreuzbein, Fersen, Ellenbogen</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Anatomical Risk Spots Chips */}
-                    <div className="p-2 rounded-2 mb-3 d-flex flex-wrap align-items-center gap-1" style={{ backgroundColor: '#fff', border: '1px dashed #f472b6' }}>
-                      <span className="small fw-bold text-uppercase me-1" style={{ fontSize: '0.66rem', color: '#be185d' }}>
-                        <i className="bi bi-geo-alt-fill me-0.5"></i>Gefährdete Stellen:
-                      </span>
-                      {['Hinterkopf', 'Schultern', 'Kreuzbein', 'Trochanter', 'Fersen'].map((spot, si) => (
-                        <span key={si} className="badge bg-light text-dark border px-2 py-0.5 rounded-pill" style={{ fontSize: '0.68rem', fontWeight: 500 }}>
-                          {spot}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Card Footer: Action button */}
-                    <div className="d-flex justify-content-end align-items-center pt-2.5 border-top gap-2 mt-auto" style={{ borderColor: '#fce7f3' }}>
-                      <button
-                        type="button"
-                        className="btn btn-sm rounded-pill px-3 py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm text-white fw-bold w-100 w-sm-auto"
-                        style={{
-                          background: 'linear-gradient(90deg, #be185d 0%, #db2777 100%)',
-                          border: 'none',
-                          minHeight: '44px',
-                          fontSize: '0.85rem',
-                          boxShadow: '0 4px 12px rgba(190, 24, 93, 0.28)'
-                        }}
-                      >
-                        <i className="bi bi-file-earmark-medical me-0.5"></i>
-                        <span>Pocketcard &amp; Leitfaden öffnen</span>
-                        <i className="bi bi-arrow-right"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          }
+          const enh = TILE_ENHANCEMENTS[std.id];
+          if (!enh) return null;
 
           return (
             <div key={std.id} className="col-12 col-lg-6">
               <div
-                className="standard-tile h-100 p-0 border-0 shadow-sm rounded-4"
+                className="standard-tile h-100 p-0 border-0 rounded-4 position-relative overflow-hidden"
                 onClick={() => onSelectStandard(std.id)}
                 style={{
                   cursor: 'pointer',
-                  transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                  background: '#ffffff',
-                  borderLeft: `5px solid ${std.accentColor}`
+                  transition: 'all 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
+                  background: enh.bgGradient,
+                  border: `1.5px solid ${enh.borderColor}`,
+                  borderLeft: `6px solid ${enh.leftBorderColor}`,
+                  boxShadow: `0 10px 28px -4px ${enh.shadowColor}, 0 4px 10px -2px rgba(0,0,0,0.04)`
                 }}
               >
                 <div className="p-3 p-sm-4 d-flex flex-column h-100">
-                  {/* Header: Icon, Category Badge & roXtra ID */}
+                  {/* Header: Colorful Gradient Icon, Category Badge & roXtra ID */}
                   <div className="d-flex flex-wrap justify-content-between align-items-center mb-2.5 gap-2">
                     <div className="d-flex align-items-center gap-2 min-w-0">
                       <div
                         className="rounded-4 d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0"
                         style={{
-                          width: '42px',
-                          height: '42px',
-                          background: std.bannerGradient || std.accentColor
+                          width: '44px',
+                          height: '44px',
+                          background: enh.iconGradient,
+                          boxShadow: `0 4px 14px ${enh.iconShadow}`
                         }}
                       >
-                        <i className={`bi ${std.icon} fs-5`}></i>
+                        <i className={`bi ${enh.icon} fs-5`}></i>
                       </div>
-                      <span
-                        className="fw-bold px-2.5 py-1 rounded-pill d-inline-block text-uppercase text-truncate"
-                        style={{
-                          fontSize: '0.7rem',
-                          letterSpacing: '0.4px',
-                          backgroundColor: std.badgeBg || 'rgba(0, 71, 103, 0.08)',
-                          color: std.accentColor
-                        }}
-                      >
-                        {std.shortTitle}
-                      </span>
+                      <div>
+                        <span
+                          className="fw-bold px-2.5 py-1 rounded-pill d-inline-flex align-items-center gap-1.5 text-uppercase text-truncate"
+                          style={{
+                            fontSize: '0.72rem',
+                            letterSpacing: '0.4px',
+                            backgroundColor: enh.badgeBg,
+                            color: enh.badgeColor,
+                            border: `1px solid ${enh.badgeBorder}`
+                          }}
+                        >
+                          <i className="bi bi-star-fill text-warning" style={{ fontSize: '0.65rem' }}></i>
+                          <span>{enh.badgeText}</span>
+                        </span>
+                      </div>
                     </div>
 
-                    <span className="badge bg-light text-secondary border font-monospace px-2 py-1 rounded-pill" style={{ fontSize: '0.72rem' }}>
-                      roXtra: <strong>{std.roXtraIds.slice(0, 2).join(' / ')}{std.roXtraIds.length > 2 ? '…' : ''}</strong>
+                    <span className="badge bg-white text-secondary border font-monospace px-2.5 py-1 rounded-pill shadow-xs" style={{ fontSize: '0.72rem', borderColor: enh.borderColor }}>
+                      roXtra: <strong className="text-dark">{std.roXtraIds.slice(0, 2).join(' / ')}</strong>
                     </span>
                   </div>
 
                   {/* Title */}
-                  <h4 className="fw-bold text-dark mb-1.5" style={{ lineHeight: '1.3', fontSize: '1.08rem' }}>
-                    {std.topic}
+                  <h4 className="fw-bold mb-1.5" style={{ lineHeight: '1.3', fontSize: '1.14rem', color: enh.titleColor }}>
+                    {enh.title}
                   </h4>
 
                   {/* Subtitle / Lead text */}
                   <p className="text-secondary small mb-2.5" style={{ lineHeight: '1.45', fontSize: '0.84rem' }}>
-                    {std.leadText}
+                    {enh.lead}
                   </p>
 
-                  {/* Highlighted Clinical Bullet Points Box (Full width, no QR) */}
+                  {/* Visual Clinical Strip with Mini Image & Quick Badges */}
                   <div
-                    className="p-2.5 p-sm-3 rounded-3 mb-3 mt-auto"
+                    className="rounded-3 overflow-hidden border mb-2.5 shadow-xs bg-white"
+                    style={{ borderColor: enh.borderColor }}
+                  >
+                    <div className="row g-0 align-items-center">
+                      <div className="col-4 position-relative">
+                        <img
+                          src={enh.image}
+                          alt={enh.title}
+                          className="w-100 h-100 d-block"
+                          style={{ minHeight: '94px', maxHeight: '105px', objectFit: 'cover' }}
+                        />
+                        <span
+                          className="badge bg-dark bg-opacity-75 text-white position-absolute bottom-0 start-0 m-1 px-1.5 py-0.5 rounded"
+                          style={{ fontSize: '0.62rem' }}
+                        >
+                          <i className="bi bi-check2-circle text-success me-0.5"></i>{enh.imageOverlay}
+                        </span>
+                      </div>
+                      <div className="col-8 p-2.5">
+                        <div className="d-flex flex-wrap gap-1 mb-1.5">
+                          {enh.quickBadges.map((qb, qbi) => (
+                            <span
+                              key={qbi}
+                              className="badge rounded-pill fw-bold px-2 py-0.5"
+                              style={{
+                                backgroundColor: qb.bg,
+                                color: qb.color,
+                                border: `1px solid ${qb.border}`,
+                                fontSize: '0.68rem'
+                              }}
+                            >
+                              <i className={`bi ${qb.icon} me-1`}></i>{qb.text}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="text-dark fw-medium" style={{ fontSize: '0.76rem', lineHeight: '1.35' }}>
+                          {enh.imageSubtitle}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 3 Colorful Core Goals */}
+                  <div className="d-flex flex-wrap gap-1.5 mb-2.5">
+                    {enh.goals.map((g, gi) => (
+                      <span
+                        key={gi}
+                        className="badge rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1 fw-bold shadow-xs"
+                        style={{
+                          backgroundColor: g.bg,
+                          color: g.color,
+                          border: `1px solid ${g.border}`,
+                          fontSize: '0.72rem'
+                        }}
+                      >
+                        <i className={`bi ${g.icon}`}></i> {g.text}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Colorful Clinical Action Steps with Visual Icons */}
+                  <div
+                    className="p-3 rounded-3 mb-2.5 mt-auto bg-white"
                     style={{
-                      backgroundColor: '#f8fafc',
-                      border: '1px solid #e2e8f0',
-                      borderLeft: `3px solid ${std.accentColor}`
+                      border: `1px solid ${enh.borderColor}`,
+                      borderLeft: `4px solid ${enh.leftBorderColor}`,
+                      boxShadow: `0 2px 8px ${enh.shadowColor}`
                     }}
                   >
-                    <div className="small fw-bold text-uppercase mb-1.5 d-flex align-items-center gap-1" style={{ fontSize: '0.7rem', color: std.accentColor }}>
-                      <i className="bi bi-shield-check"></i>
-                      <span>Klinische Kernaspekte:</span>
+                    <div className="small fw-bold text-uppercase mb-2 d-flex align-items-center gap-1.5" style={{ fontSize: '0.72rem', color: enh.titleColor }}>
+                      <i className="bi bi-list-check fs-6"></i>
+                      <span>Wichtigste Handlungsschritte:</span>
                     </div>
-                    <div className="d-flex flex-column gap-1.5">
-                      {std.keyPoints.slice(0, 3).map((kp, idx) => (
-                        <div key={idx} className="small text-dark d-flex align-items-start gap-2" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
-                          <i className="bi bi-check-circle-fill flex-shrink-0 mt-0.5" style={{ color: std.accentColor, fontSize: '0.82rem' }}></i>
-                          <span>{kp}</span>
+                    <div className="d-flex flex-column gap-2">
+                      {enh.actionSteps.map((step, si) => (
+                        <div key={si} className="small text-dark d-flex align-items-start gap-2" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
+                          <span
+                            className="rounded-circle d-inline-flex align-items-center justify-content-center text-white flex-shrink-0 mt-0.5"
+                            style={{ width: '20px', height: '20px', background: step.iconBg, fontSize: '0.7rem' }}
+                          >
+                            <i className={`bi ${step.icon}`}></i>
+                          </span>
+                          <span><strong>{step.bold}</strong> {step.text.replace(step.bold, '').trim()}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
+                  {/* Clinical Tags Chips */}
+                  <div className="p-2 rounded-2 mb-3 d-flex flex-wrap align-items-center gap-1" style={{ backgroundColor: '#fff', border: `1px dashed ${enh.tagBorder}` }}>
+                    <span className="small fw-bold text-uppercase me-1" style={{ fontSize: '0.66rem', color: enh.tagColor }}>
+                      <i className={`bi ${enh.tagIcon} me-0.5`}></i>{enh.tagLabel}
+                    </span>
+                    {enh.tags.map((tag, ti) => (
+                      <span key={ti} className="badge bg-light text-dark border px-2 py-0.5 rounded-pill" style={{ fontSize: '0.68rem', fontWeight: 500 }}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
                   {/* Card Footer: Action button */}
-                  <div className="d-flex justify-content-end align-items-center pt-2.5 border-top gap-2 mt-auto">
+                  <div className="d-flex justify-content-end align-items-center pt-2.5 border-top gap-2 mt-auto" style={{ borderColor: enh.badgeBg }}>
                     <button
                       type="button"
                       className="btn btn-sm rounded-pill px-3 py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm text-white fw-bold w-100 w-sm-auto"
                       style={{
-                        background: std.accentColor,
+                        background: enh.btnGradient,
                         border: 'none',
                         minHeight: '44px',
-                        fontSize: '0.85rem'
+                        fontSize: '0.85rem',
+                        boxShadow: `0 4px 12px ${enh.btnShadow}`
                       }}
                     >
+                      <i className="bi bi-file-earmark-medical me-0.5"></i>
                       <span>Pocketcard &amp; Leitfaden öffnen</span>
                       <i className="bi bi-arrow-right"></i>
                     </button>
@@ -3488,7 +3631,10 @@ function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
       badgeColor: '#d81b60',
       displayTitle: 'Dekubitusprophylaxe',
       iconImg: 'assets/qh-icon-dekubitus.jpg',
-      rightImg: 'assets/qh-dekubitus.jpg'
+      rightImg: 'assets/qh-dekubitus.jpg',
+      cardBg: 'linear-gradient(135deg, #ffffff 0%, #fff1f6 55%, #fdf2f8 100%)',
+      cardBorder: '#fbcfe8',
+      cardShadow: 'rgba(190, 24, 93, 0.12)'
     },
     sturz: {
       badgeText: 'EXPERTENSTANDARD',
@@ -3496,7 +3642,10 @@ function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
       badgeColor: '#2e7d32',
       displayTitle: 'Sturzprophylaxe',
       iconImg: 'assets/qh-icon-sturz.jpg',
-      rightImg: 'assets/qh-sturz.jpg'
+      rightImg: 'assets/qh-sturz.jpg',
+      cardBg: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 55%, #ecfdf5 100%)',
+      cardBorder: '#bbf7d0',
+      cardShadow: 'rgba(22, 163, 74, 0.12)'
     },
     schmerz: {
       badgeText: 'EXPERTENSTANDARD',
@@ -3504,7 +3653,10 @@ function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
       badgeColor: '#d9531e',
       displayTitle: 'Schmerzmanagement',
       iconImg: 'assets/qh-icon-schmerz.jpg',
-      rightImg: 'assets/qh-schmerz.jpg'
+      rightImg: 'assets/qh-schmerz.jpg',
+      cardBg: 'linear-gradient(135deg, #ffffff 0%, #fff7ed 55%, #ffedd5 100%)',
+      cardBorder: '#fed7aa',
+      cardShadow: 'rgba(234, 88, 12, 0.12)'
     },
     ernaehrung: {
       badgeText: 'EXPERTENSTANDARD',
@@ -3512,7 +3664,10 @@ function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
       badgeColor: '#0277bd',
       displayTitle: 'Ernährungsmanagement',
       iconImg: 'assets/qh-icon-ernaehrung.jpg',
-      rightImg: 'assets/qh-ernaehrung.jpg'
+      rightImg: 'assets/qh-ernaehrung.jpg',
+      cardBg: 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 55%, #e0f2fe 100%)',
+      cardBorder: '#bae6fd',
+      cardShadow: 'rgba(2, 132, 199, 0.12)'
     },
     zvk: {
       badgeText: 'SOP & LEITFADEN',
@@ -3520,7 +3675,10 @@ function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
       badgeColor: '#d81b60',
       displayTitle: 'ZVK Intensivpflege',
       iconImg: 'assets/qh-icon-zvk.jpg',
-      rightImg: 'assets/qh-zvk.jpg'
+      rightImg: 'assets/qh-zvk.jpg',
+      cardBg: 'linear-gradient(135deg, #ffffff 0%, #fff1f2 55%, #ffe4e6 100%)',
+      cardBorder: '#fecdd3',
+      cardShadow: 'rgba(220, 38, 38, 0.12)'
     },
     isolation: {
       badgeText: 'SOP & LEITFADEN',
@@ -3528,7 +3686,10 @@ function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
       badgeColor: '#0277bd',
       displayTitle: 'Isolation & Hygiene',
       iconImg: 'assets/qh-icon-isolation.jpg',
-      rightImg: 'assets/qh-isolation.jpg'
+      rightImg: 'assets/qh-isolation.jpg',
+      cardBg: 'linear-gradient(135deg, #ffffff 0%, #faf5ff 55%, #f3e8ff 100%)',
+      cardBorder: '#e9d5ff',
+      cardShadow: 'rgba(124, 58, 237, 0.12)'
     }
   };
 
@@ -3623,9 +3784,9 @@ function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
                 onClick={() => onSelectStandard(std.id)}
                 style={{
                   cursor: 'pointer',
-                  background: std.id === 'dekubitus' ? 'linear-gradient(135deg, #ffffff 0%, #fff1f6 55%, #fdf2f8 100%)' : '#ffffff',
-                  border: std.id === 'dekubitus' ? '1.5px solid #fbcfe8' : '1px solid rgba(226, 232, 240, 0.9)',
-                  boxShadow: std.id === 'dekubitus' ? '0 4px 18px rgba(190, 24, 93, 0.12)' : '0 3px 14px rgba(15, 23, 42, 0.06)',
+                  background: theme.cardBg || '#ffffff',
+                  border: `1.5px solid ${theme.cardBorder || 'rgba(226, 232, 240, 0.9)'}`,
+                  boxShadow: `0 4px 18px ${theme.cardShadow || 'rgba(15, 23, 42, 0.06)'}`,
                   minHeight: '94px',
                   padding: '0.75rem 0.85rem',
                   transition: 'all 0.22s cubic-bezier(0.4, 0, 0.2, 1)'
