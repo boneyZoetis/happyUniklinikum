@@ -2828,16 +2828,89 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
 function UniversalCardInteractiveCard({ isAtm = false, onSelectStandard }) {
   return (
     <div className={`universal-card-interactive-box ${isAtm ? 'atm-size' : ''} mx-auto position-relative`}>
+      <div className="universal-card-inner position-relative w-100">
+        <img
+          src={isAtm ? "assets/universal-card-12x8.jpg" : "assets/universal-card-umf.jpg"}
+          alt="Universitätsmedizin Frankfurt - Klinische Pflegestandards Universal-Pocketcard"
+          className="universal-card-img"
+        />
+
+        {/* 1. Dekubitusprophylaxe Hotspot */}
+        <div
+          className="universal-card-hotspot"
+          style={{ left: '1.2%', top: '41.2%', width: '57.0%', height: '8.4%' }}
+          onClick={() => onSelectStandard('dekubitus')}
+          title="1. Dekubitusprophylaxe aufrufen"
+        />
+
+        {/* 2. Sturzprophylaxe Hotspot */}
+        <div
+          className="universal-card-hotspot"
+          style={{ left: '1.2%', top: '49.8%', width: '57.0%', height: '8.4%' }}
+          onClick={() => onSelectStandard('sturz')}
+          title="2. Sturzprophylaxe aufrufen"
+        />
+
+        {/* 3. Schmerzmanagement Hotspot */}
+        <div
+          className="universal-card-hotspot"
+          style={{ left: '1.2%', top: '58.4%', width: '57.0%', height: '8.4%' }}
+          onClick={() => onSelectStandard('schmerz')}
+          title="3. Schmerzmanagement aufrufen"
+        />
+
+        {/* 4. Ernährungsmanagement Hotspot */}
+        <div
+          className="universal-card-hotspot"
+          style={{ left: '1.2%', top: '67.0%', width: '57.0%', height: '8.4%' }}
+          onClick={() => onSelectStandard('ernaehrung')}
+          title="4. Ernährungsmanagement aufrufen"
+        />
+
+        {/* 5. ZVK Intensivpflege Hotspot */}
+        <div
+          className="universal-card-hotspot"
+          style={{ left: '1.2%', top: '75.6%', width: '57.0%', height: '8.4%' }}
+          onClick={() => onSelectStandard('zvk')}
+          title="5. ZVK Intensivpflege & SOP aufrufen"
+        />
+
+        {/* 6. Isolation & Hygiene Hotspot */}
+        <div
+          className="universal-card-hotspot"
+          style={{ left: '1.2%', top: '84.2%', width: '57.0%', height: '8.4%' }}
+          onClick={() => onSelectStandard('isolation')}
+          title="6. Isolation & Hygiene aufrufen"
+        />
+
+        {/* QR Code & 'HIER SCANNEN' Hotspot */}
+        <div
+          className="universal-card-hotspot"
+          style={{ left: '61.5%', top: '30.5%', width: '28.0%', height: '53.0%', borderRadius: '24px' }}
+          onClick={() => onSelectStandard('quick-hub')}
+          title="Hier scannen / Schnellzugriff für alle 6 Standards öffnen"
+        />
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
+// Component: Universal-Karte Native A4 Clinical Sheet (Full Page DIN A4)
+// -------------------------------------------------------------
+function UniversalCardA4Native({ onSelectStandard }) {
+  return (
+    <div className="a4-native-card mx-auto position-relative overflow-hidden" id="universal-card-a4-sheet">
       <img
-        src="assets/universal-card-umf.jpg"
-        alt="Universitätsmedizin Frankfurt - Klinische Pflegestandards Universal-Pocketcard"
-        className="universal-card-img"
+        src="assets/universal-card-a4.jpg"
+        alt="Universitätsklinikum Frankfurt - Klinische Pflegestandards Universal-Pocketcard DIN A4"
+        className="w-100 h-auto d-block"
       />
 
       {/* 1. Dekubitusprophylaxe Hotspot */}
       <div
         className="universal-card-hotspot"
-        style={{ left: '1.2%', top: '41.2%', width: '57.0%', height: '8.4%' }}
+        style={{ left: '0.5%', top: '19.5%', width: '39.5%', height: '18.5%' }}
         onClick={() => onSelectStandard('dekubitus')}
         title="1. Dekubitusprophylaxe aufrufen"
       />
@@ -2845,7 +2918,7 @@ function UniversalCardInteractiveCard({ isAtm = false, onSelectStandard }) {
       {/* 2. Sturzprophylaxe Hotspot */}
       <div
         className="universal-card-hotspot"
-        style={{ left: '1.2%', top: '49.8%', width: '57.0%', height: '8.4%' }}
+        style={{ left: '0.5%', top: '38.5%', width: '39.5%', height: '18.5%' }}
         onClick={() => onSelectStandard('sturz')}
         title="2. Sturzprophylaxe aufrufen"
       />
@@ -2853,7 +2926,7 @@ function UniversalCardInteractiveCard({ isAtm = false, onSelectStandard }) {
       {/* 3. Schmerzmanagement Hotspot */}
       <div
         className="universal-card-hotspot"
-        style={{ left: '1.2%', top: '58.4%', width: '57.0%', height: '8.4%' }}
+        style={{ left: '0.5%', top: '57.5%', width: '39.5%', height: '18.5%' }}
         onClick={() => onSelectStandard('schmerz')}
         title="3. Schmerzmanagement aufrufen"
       />
@@ -2861,7 +2934,7 @@ function UniversalCardInteractiveCard({ isAtm = false, onSelectStandard }) {
       {/* 4. Ernährungsmanagement Hotspot */}
       <div
         className="universal-card-hotspot"
-        style={{ left: '1.2%', top: '67.0%', width: '57.0%', height: '8.4%' }}
+        style={{ left: '60.5%', top: '19.5%', width: '39.0%', height: '18.5%' }}
         onClick={() => onSelectStandard('ernaehrung')}
         title="4. Ernährungsmanagement aufrufen"
       />
@@ -2869,350 +2942,26 @@ function UniversalCardInteractiveCard({ isAtm = false, onSelectStandard }) {
       {/* 5. ZVK Intensivpflege Hotspot */}
       <div
         className="universal-card-hotspot"
-        style={{ left: '1.2%', top: '75.6%', width: '57.0%', height: '8.4%' }}
+        style={{ left: '60.5%', top: '38.5%', width: '39.0%', height: '18.5%' }}
         onClick={() => onSelectStandard('zvk')}
-        title="5. ZVK Intensivpflege & SOP aufrufen"
+        title="5. ZVK Intensivpflege aufrufen"
       />
 
       {/* 6. Isolation & Hygiene Hotspot */}
       <div
         className="universal-card-hotspot"
-        style={{ left: '1.2%', top: '84.2%', width: '57.0%', height: '8.4%' }}
+        style={{ left: '60.5%', top: '57.5%', width: '39.0%', height: '18.5%' }}
         onClick={() => onSelectStandard('isolation')}
         title="6. Isolation & Hygiene aufrufen"
       />
 
-      {/* QR Code & 'HIER SCANNEN' Hotspot */}
+      {/* Center QR Scanner Hotspot */}
       <div
         className="universal-card-hotspot"
-        style={{ left: '61.5%', top: '30.5%', width: '28.0%', height: '53.0%', borderRadius: '24px' }}
+        style={{ left: '40.5%', top: '23.5%', width: '19.0%', height: '36.0%', borderRadius: '16px' }}
         onClick={() => onSelectStandard('quick-hub')}
-        title="Hier scannen / Schnellzugriff für alle 6 Standards öffnen"
+        title="QR-Code scannen oder antippen für Schnellzugriff"
       />
-    </div>
-  );
-}
-
-// -------------------------------------------------------------
-// Component: Universal-Karte Native A4 Clinical Sheet (Crisp & Unzoomed)
-// -------------------------------------------------------------
-function UniversalCardA4Native({ onSelectStandard }) {
-  const cardUrl = (typeof window !== 'undefined' && window.location)
-    ? `${window.location.origin}${window.location.pathname}#/quick-hub`
-    : 'https://umf-nursing-standards.web.app/#/quick-hub';
-
-  const rows = [
-    {
-      num: 1,
-      id: 'dekubitus',
-      title: 'Dekubitusprophylaxe',
-      icon: 'bi-bandaid-fill',
-      color: '#db2777',
-      bgGradient: 'linear-gradient(90deg, #fce7f3 0%, #fbcfe8 55%, #fdf2f8 100%)',
-      thumb: 'assets/pocket-thumb-dekubitus.jpg'
-    },
-    {
-      num: 2,
-      id: 'sturz',
-      title: 'Sturzprophylaxe',
-      icon: 'bi-shield-exclamation',
-      color: '#16a34a',
-      bgGradient: 'linear-gradient(90deg, #dcfce7 0%, #bbf7d0 55%, #f0fdf4 100%)',
-      thumb: 'assets/pocket-thumb-sturz.jpg'
-    },
-    {
-      num: 3,
-      id: 'schmerz',
-      title: 'Schmerzmanagement',
-      icon: 'bi-heart-pulse-fill',
-      color: '#ea580c',
-      bgGradient: 'linear-gradient(90deg, #ffedd5 0%, #fed7aa 55%, #fff7ed 100%)',
-      thumb: 'assets/pocket-thumb-schmerz.jpg'
-    },
-    {
-      num: 4,
-      id: 'ernaehrung',
-      title: 'Ernährungsmanagement',
-      icon: 'bi-apple',
-      color: '#0284c7',
-      bgGradient: 'linear-gradient(90deg, #e0f2fe 0%, #bae6fd 55%, #f0f9ff 100%)',
-      thumb: 'assets/pocket-thumb-ernaehrung.jpg'
-    },
-    {
-      num: 5,
-      id: 'zvk',
-      title: 'ZVK Intensivpflege',
-      icon: 'bi-droplet-fill',
-      color: '#e11d48',
-      bgGradient: 'linear-gradient(90deg, #ffe4e6 0%, #fecdd3 55%, #fff1f2 100%)',
-      thumb: 'assets/pocket-thumb-zvk.jpg'
-    },
-    {
-      num: 6,
-      id: 'isolation',
-      title: 'Isolation & Hygiene',
-      icon: 'bi-shield-shaded',
-      color: '#7c3aed',
-      bgGradient: 'linear-gradient(90deg, #f3e8ff 0%, #e9d5ff 55%, #faf5ff 100%)',
-      thumb: 'assets/pocket-thumb-isolation.jpg'
-    }
-  ];
-
-  const bottomItems = [
-    { icon: 'bi-clipboard2-check-fill', label: 'Standardisiert', bg: '#d8effc', iconColor: '#0369a1' },
-    { icon: 'bi-bullseye', label: 'Patientensicherheit', bg: '#d5f5e9', iconColor: '#0f766e' },
-    { icon: 'bi-people-fill', label: 'Qualität in der Pflege', bg: '#fde6cd', iconColor: '#ea580c' },
-    { icon: 'bi-lightbulb-fill', label: 'Wissensmanagement', bg: '#fef0b8', iconColor: '#d97706' },
-    { icon: 'bi-gear-fill', label: 'Aktuelle SOPs', bg: '#ebe4ff', iconColor: '#6d28d9' },
-    { icon: 'bi-book-half', label: 'Immer verfügbar', bg: '#fce2ef', iconColor: '#be185d' }
-  ];
-
-  return (
-    <div className="a4-native-card d-flex flex-column position-relative overflow-hidden" id="universal-card-a4-sheet">
-      {/* 1. COMPACT TOP HEADER WITH FRANKFURT SKYLINE & ECG WAVE */}
-      <div className="a4-card-header d-flex align-items-center justify-content-between ps-2.5 pe-0 py-0 position-relative overflow-hidden">
-        <div className="d-flex align-items-center gap-2 py-1 z-1">
-          <div className="bg-white px-1.5 py-0.5 rounded-2 shadow-sm d-flex align-items-center" style={{ border: '1.5px solid #60a5fa' }}>
-            <img src="assets/umf-logo.jpg" alt="UMF Logo" style={{ height: '30px', width: 'auto' }} />
-          </div>
-          <div className="ps-0.5">
-            <div className="fw-black text-uppercase" style={{ fontSize: '1.02rem', letterSpacing: '0.03em', lineHeight: 1.1, color: '#00273d' }}>
-              Universitätsmedizin Frankfurt
-            </div>
-            <div className="fw-bold d-flex align-items-center flex-wrap gap-1" style={{ fontSize: '0.76rem', letterSpacing: '0.01em' }}>
-              <span style={{ color: '#0c4a6e' }}>Digitale Pflege-Pocketcard</span>
-              <span style={{ color: '#64748b' }}>|</span>
-              <span style={{ color: '#1e3a8a', background: '#ffffff', padding: '0 6px', borderRadius: '4px', border: '1px solid #93c5fd' }}>SOP-Schnellzugriff</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Header: Magic Card Pill + ECG Wave + Frankfurt Skyline Photo */}
-        <div className="d-flex align-items-center align-self-stretch position-relative">
-          <div className="d-none d-sm-flex flex-column align-items-center justify-content-center me-1 z-2">
-            <span
-              className="badge rounded-pill px-2.5 py-0.5 fw-bold text-white shadow-sm d-inline-flex align-items-center gap-1"
-              style={{
-                background: 'linear-gradient(135deg, #0284c7 0%, #1d4ed8 100%)',
-                border: '1px solid #60a5fa',
-                fontSize: '0.68rem',
-                letterSpacing: '0.04em',
-                boxShadow: '0 2px 6px rgba(2, 132, 199, 0.3)'
-              }}
-            >
-              <span style={{ color: '#fde047' }}>✦</span> MAGIC CARD
-            </span>
-            <svg width="84" height="16" viewBox="0 0 96 22" style={{ overflow: 'visible' }}>
-              <path
-                d="M 0 15 L 26 15 L 32 9 L 37 18 L 43 2 L 49 20 L 54 11 L 59 15 L 96 15"
-                fill="none"
-                stroke="#0284c7"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-
-          <div className="a4-header-skyline-box h-100 position-relative overflow-hidden">
-            <img
-              src="assets/pocket-skyline.jpg"
-              alt="Frankfurt Skyline"
-              className="a4-header-skyline-img"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* 2. COMPACT SUBHEADER BANNER WITH YELLOW NOTE & CENTRAL BANNER */}
-      <div className="a4-card-subheader px-2.5 py-1 d-flex align-items-center justify-content-between position-relative">
-        {/* Left: Yellow sticky note */}
-        <div className="d-flex align-items-center gap-1.5">
-          <div className="a4-yellow-note shadow-sm">
-            <div className="a4-note-pin"><i className="bi bi-pin-angle-fill text-danger"></i></div>
-            <div className="a4-note-heart">❤️</div>
-            <div className="fw-bold text-dark" style={{ lineHeight: 1.12 }}>
-              Wissen &bull; Sicherheit<br/>
-              Qualität <span style={{ fontSize: '0.7rem', fontWeight: 700 }}>in der Pflege</span>
-            </div>
-          </div>
-          <div className="d-none d-md-flex align-items-center opacity-25 text-primary" style={{ pointerEvents: 'none' }}>
-            <i className="bi bi-clipboard2-check" style={{ fontSize: '1.85rem', transform: 'rotate(-10deg)' }}></i>
-          </div>
-        </div>
-
-        {/* Center: Golden Yellow Highlight Banner + Red SOP Ribbon */}
-        <div className="text-center flex-grow-1 px-2 d-flex flex-column align-items-center">
-          <div className="a4-yellow-title-banner px-3 py-0.5 shadow-sm">
-            <h2 className="a4-main-title mb-0 fw-black text-uppercase">
-              Klinische Pflegestandards
-            </h2>
-          </div>
-          <div className="a4-sop-banner text-uppercase fw-black text-white d-inline-block px-3 py-0.5 rounded-pill shadow-sm">
-            SOP – Schnellzugriff
-          </div>
-        </div>
-
-        {/* Right: 4 Checkmarks */}
-        <div className="a4-checkmarks-list text-start ps-1 pe-1">
-          <div className="text-dark fw-bold"><i className="bi bi-check2 text-dark fw-black me-1"></i> <em>Aktuell</em></div>
-          <div className="text-dark fw-bold"><i className="bi bi-check2 text-dark fw-black me-1"></i> <em>Einfach</em></div>
-          <div className="text-dark fw-bold"><i className="bi bi-check2 text-dark fw-black me-1"></i> <em>Schnell</em></div>
-          <div className="text-dark fw-bold"><i className="bi bi-check2 text-dark fw-black me-1"></i> <em>Zuverlässig</em></div>
-        </div>
-      </div>
-
-      {/* 3. MAIN SECTION: COMPACT 6 ROWS (NO EXTRA WIDTH/GAP) + QR SCANNER & ICU SCENE */}
-      <div className="a4-card-body ps-2.5 pe-0 py-1.5 d-flex gap-2 align-items-stretch justify-content-between position-relative">
-        {/* LEFT COLUMN: 6 TIGHTLY STACKED ROWS WITH ZERO EMPTY HORIZONTAL GAP */}
-        <div className="a4-rows-col d-flex flex-column justify-content-between" style={{ width: '475px', maxWidth: '100%', gap: '3px', flexShrink: 0 }}>
-          {rows.map((row) => (
-            <div
-              key={row.id}
-              className="a4-standard-row d-flex align-items-center justify-content-between shadow-sm position-relative overflow-hidden"
-              onClick={() => onSelectStandard(row.id)}
-              style={{
-                background: row.bgGradient,
-                border: `1.5px solid ${row.color}45`,
-                borderRadius: '50rem'
-              }}
-              title={`${row.num}. ${row.title} öffnen`}
-            >
-              <div className="d-flex align-items-center gap-1.5 ps-1 py-0.5 z-1">
-                {/* Number Circle */}
-                <div
-                  className="a4-row-number text-white fw-black rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                  style={{
-                    backgroundColor: row.color,
-                    width: '30px',
-                    height: '30px',
-                    fontSize: '0.92rem',
-                    border: '2px solid #ffffff',
-                    flexShrink: 0
-                  }}
-                >
-                  {row.num}
-                </div>
-
-                {/* Solid Colored Icon Circle with White Ring */}
-                <div
-                  className="a4-row-icon rounded-circle d-flex align-items-center justify-content-center shadow-sm text-white"
-                  style={{
-                    backgroundColor: row.color,
-                    width: '30px',
-                    height: '30px',
-                    fontSize: '0.92rem',
-                    border: '2px solid #ffffff',
-                    flexShrink: 0
-                  }}
-                >
-                  <i className={`bi ${row.icon}`}></i>
-                </div>
-
-                {/* Standard Title + Immediate Chevron (no wide empty gap!) */}
-                <div className="fw-black text-dark ps-0.5 text-nowrap a4-row-title" style={{ fontSize: '0.94rem', letterSpacing: '-0.01em' }}>
-                  {row.title}
-                </div>
-                <i className="bi bi-chevron-right fw-black ms-0.5" style={{ color: row.color, fontSize: '0.98rem' }}></i>
-              </div>
-
-              {/* Clean Original Clinical Thumbnail Photo */}
-              <div className="a4-row-thumb-box overflow-hidden rounded-end-pill">
-                <img
-                  src={row.thumb}
-                  alt={row.title}
-                  className="a4-row-thumb-img"
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* RIGHT COLUMN: GLASSMORPHIC QR SCANNER CARD + ICU MONITOR & HOSPITAL BED PHOTO */}
-        <div className="a4-right-clinical-panel d-flex align-items-stretch flex-grow-1 position-relative">
-          {/* Glassmorphic QR Scanner Card */}
-          <div className="a4-scanner-col d-flex flex-column align-items-center justify-content-center p-2 text-center shadow-sm position-relative z-2" style={{ width: '215px', flexShrink: 0 }}>
-            <div className="a4-scanner-rays" aria-hidden="true">
-              <span className="ray ray-1"></span>
-              <span className="ray ray-2"></span>
-              <span className="ray ray-3"></span>
-            </div>
-
-            <div
-              className="a4-qr-wrapper shadow-sm mb-1.5"
-              onClick={() => onSelectStandard('quick-hub')}
-              style={{ cursor: 'pointer' }}
-              title="QR-Code scannen oder antippen für Schnellzugriff"
-            >
-              <div className="a4-bracket a4-bracket-tl"></div>
-              <div className="a4-bracket a4-bracket-tr"></div>
-              <div className="a4-bracket a4-bracket-bl"></div>
-              <div className="a4-bracket a4-bracket-br"></div>
-              <QrCodeCanvas value={cardUrl} size={118} color="#001f33" />
-            </div>
-
-            <button
-              type="button"
-              className="a4-scan-cta-btn btn btn-primary fw-black text-uppercase w-100 py-1 px-2.5 rounded-pill shadow-sm d-flex align-items-center justify-content-center gap-1.5 mb-1"
-              style={{
-                fontSize: '0.8rem',
-                letterSpacing: '0.03em',
-                background: 'linear-gradient(180deg, #0ea5e9 0%, #0284c7 45%, #0369a1 100%)',
-                border: '1.5px solid #bae6fd'
-              }}
-              onClick={() => onSelectStandard('quick-hub')}
-            >
-              <i className="bi bi-qr-code-scan"></i>
-              <span>Hier scannen</span>
-            </button>
-
-            <div className="fw-bold text-dark" style={{ fontSize: '0.72rem', lineHeight: 1.15 }}>
-              Schnellzugriff auf alle<br/>
-              <span className="fw-black" style={{ color: '#00273d', fontSize: '0.76rem' }}>6 Pflegestandards / SOPs</span>
-            </div>
-          </div>
-
-          {/* Right Clinical Picture: ICU Vital Monitor (72/98/16), Infusion Pumps & Hospital Bed */}
-          <div className="a4-icu-scene-box flex-grow-1 overflow-hidden position-relative">
-            <img
-              src="assets/pocket-icu-monitor.jpg"
-              alt="Klinisches Intensivpflege-Monitoring und Krankenbett"
-              className="a4-icu-scene-img"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* 4. CLEARLY VISIBLE UNIVERSITÄTSKLINIKUM FRANKFURT CAMPUS PICTURE BANNER (Fills A4 Paper Height) */}
-      <div className="a4-ukf-bottom-banner flex-grow-1 position-relative overflow-hidden border-top" style={{ borderColor: '#38bdf8' }}>
-        <img
-          src="assets/uniklinikum-frankfurt-banner.jpg"
-          alt="Universitätsklinikum Frankfurt Campus und Haupteingang"
-          className="a4-ukf-bottom-img"
-        />
-        <div className="a4-ukf-bottom-badge-corner px-2.5 py-1">
-          <span className="badge rounded-pill bg-white bg-opacity-90 text-dark fw-black px-2.5 py-1 shadow-sm d-inline-flex align-items-center gap-1.5" style={{ fontSize: '0.68rem', border: '1px solid #38bdf8' }}>
-            <i className="bi bi-hospital-fill text-primary"></i>
-            <span>UNIVERSITÄTSKLINIKUM FRANKFURT &bull; THEODOR-STERN-KAI 7</span>
-          </span>
-        </div>
-      </div>
-
-      {/* 5. BOTTOM 6-SEGMENT PASTEL VALUE BAR (MATCHING ATM CARD) */}
-      <div className="a4-bottom-bar d-grid border-top">
-        {bottomItems.map((item, idx) => (
-          <div
-            key={idx}
-            className="a4-bottom-segment d-flex align-items-center justify-content-center gap-1 px-1.5 py-1"
-            style={{ backgroundColor: item.bg }}
-          >
-            <i className={`bi ${item.icon}`} style={{ color: item.iconColor, fontSize: '0.92rem' }}></i>
-            <span className="fw-bold text-dark text-nowrap" style={{ fontSize: '0.72rem' }}>
-              {item.label}
-            </span>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
@@ -3274,13 +3023,23 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
   // Synchronize active format class to document body for automatic Ctrl+P isolation
   useEffect(() => {
     document.body.classList.remove('active-format-a4', 'active-format-atm');
+    let dynStyle = document.getElementById('dynamic-card-page-style');
+    if (!dynStyle) {
+      dynStyle = document.createElement('style');
+      dynStyle.id = 'dynamic-card-page-style';
+      document.head.appendChild(dynStyle);
+    }
     if (cardFormat === 'atm') {
       document.body.classList.add('active-format-atm');
+      dynStyle.textContent = `@media print { @page { size: portrait; margin: 10mm; } }`;
     } else {
       document.body.classList.add('active-format-a4');
+      dynStyle.textContent = `@media print { @page { size: A4 landscape; margin: 0; } body, html { margin: 0 !important; padding: 0 !important; } }`;
     }
     return () => {
       document.body.classList.remove('active-format-a4', 'active-format-atm', 'printing-a4', 'printing-atm');
+      const s = document.getElementById('dynamic-card-page-style');
+      if (s) s.remove();
     };
   }, [cardFormat]);
 
@@ -3289,6 +3048,18 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
     const isAtm = format === 'atm';
     document.body.classList.remove('printing-a4', 'printing-atm');
     document.body.classList.add(isAtm ? 'printing-atm' : 'printing-a4');
+
+    let dynStyle = document.getElementById('dynamic-card-page-style');
+    if (!dynStyle) {
+      dynStyle = document.createElement('style');
+      dynStyle.id = 'dynamic-card-page-style';
+      document.head.appendChild(dynStyle);
+    }
+    if (isAtm) {
+      dynStyle.textContent = `@media print { @page { size: portrait; margin: 10mm; } }`;
+    } else {
+      dynStyle.textContent = `@media print { @page { size: A4 landscape; margin: 0; } body, html { margin: 0 !important; padding: 0 !important; } }`;
+    }
 
     const cleanup = () => {
       document.body.classList.remove('printing-a4', 'printing-atm');
@@ -3302,32 +3073,33 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
   const downloadCardImage = () => {
     const a = document.createElement('a');
-    a.href = 'assets/universal-card-umf.jpg';
-    a.download = 'UMF-Universal-Pocketcard.jpg';
+    const isAtm = cardFormat === 'atm';
+    a.href = isAtm ? 'assets/universal-card-12x8.jpg' : 'assets/universal-card-a4.jpg';
+    a.download = isAtm ? 'UMF-Universal-Pocketcard-12x8cm.jpg' : 'UMF-Universal-Pocketcard-A4.jpg';
     a.click();
-    showToast('Universal-Pocketcard Bild heruntergeladen!');
+    showToast(isAtm ? 'Universal-Pocketcard (12 × 8 cm) Bild heruntergeladen!' : 'Universal-Pocketcard A4 Bild heruntergeladen!');
   };
 
   const downloadPdf = (format = cardFormat) => {
     const targetFormat = format === 'both' ? 'a4' : format;
-    const elementId = targetFormat === 'atm' ? 'universal-card-atm-printable' : 'universal-card-a4-sheet';
+    const isAtm = targetFormat === 'atm';
+    const elementId = isAtm ? 'universal-card-atm-printable' : 'universal-card-a4-sheet';
     const element = document.getElementById(elementId) || document.getElementById('universal-card-a4-printable');
     if (!element) {
       handlePrint(targetFormat);
       return;
     }
-    const isAtm = targetFormat === 'atm';
-    showToast(isAtm ? 'Scheckkarten-PDF wird erstellt...' : 'A4 Universal-Pocketcard PDF wird erstellt...');
+    showToast(isAtm ? 'Pocketcard-PDF (12 × 8 cm) wird erstellt...' : 'A4 Universal-Pocketcard PDF wird erstellt...');
     if (window.html2pdf) {
       const savedScrollX = window.scrollX || window.pageXOffset || 0;
       const savedScrollY = window.scrollY || window.pageYOffset || 0;
       window.scrollTo(0, 0);
       const opt = {
-        margin: isAtm ? [10, 10, 10, 10] : [5, 5, 5, 5],
-        filename: isAtm ? 'UMF-Universal-Karte-Scheckkarte.pdf' : 'UMF-Universal-Pocketcard-A4.pdf',
+        margin: isAtm ? [10, 10, 10, 10] : [0, 0, 0, 0],
+        filename: isAtm ? 'UMF-Universal-Pocketcard-12x8cm.pdf' : 'UMF-Universal-Pocketcard-A4.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         pagebreak: { mode: [] },
-        html2canvas: { scale: 2.2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+        html2canvas: { scale: 2.5, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
         jsPDF: {
           unit: 'mm',
           format: 'a4',
@@ -3352,7 +3124,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
         .then(() => worker.save())
         .then(() => {
           window.scrollTo(savedScrollX, savedScrollY);
-          showToast(isAtm ? 'Scheckkarten-PDF erfolgreich heruntergeladen!' : 'A4 Universal-Pocketcard PDF erfolgreich heruntergeladen!');
+          showToast(isAtm ? 'Pocketcard-PDF (12 × 8 cm) erfolgreich heruntergeladen!' : 'A4 Universal-Pocketcard PDF erfolgreich heruntergeladen!');
         })
         .catch((err) => {
           console.error('PDF error:', err);
@@ -3366,33 +3138,33 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
   return (
     <div className="py-2">
-      {/* Top Action Toolbar (Desktop Only) */}
-      <div className="d-none d-md-flex flex-column flex-lg-row justify-content-between align-items-stretch align-items-lg-center mb-2 gap-2 no-print">
-        {/* Left on Desktop: Back Button */}
+      {/* Top Action Toolbar (Mobile & Desktop Responsive) */}
+      <div className="d-flex flex-column flex-lg-row justify-content-between align-items-stretch align-items-lg-center mb-2 gap-2 no-print">
+        {/* Left: Back Button */}
         <div className="d-flex justify-content-between align-items-center gap-2">
-          <a href="#/quick-hub" className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1 shadow-sm d-flex align-items-center gap-2 fw-semibold" style={{ minHeight: '38px', fontSize: '0.8rem' }}>
+          <a href="#/quick-hub" className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1 shadow-sm d-flex align-items-center gap-2 fw-semibold" style={{ minHeight: '36px', fontSize: '0.8rem' }}>
             <i className="bi bi-arrow-left"></i>
             <span>Schnellwahl</span>
           </a>
         </div>
 
-        {/* Center on Desktop: Format Selector Pills */}
-        <div className="mobile-segmented-control mx-lg-auto" role="group" style={{ maxWidth: '460px', padding: '0.2rem' }}>
+        {/* Center: Format Selector Pills */}
+        <div className="mobile-segmented-control mx-auto mx-lg-auto w-100" role="group" style={{ maxWidth: '460px', padding: '0.2rem' }}>
           <button
             type="button"
             className={`btn btn-sm ${cardFormat === 'atm' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            style={{ fontSize: '0.76rem', minHeight: '36px', padding: '0.2rem 0.5rem' }}
+            style={{ fontSize: '0.76rem', minHeight: '34px', padding: '0.2rem 0.5rem' }}
             onClick={() => setCardFormat('atm')}
-            title="Kompaktes Scheckkarten-Format für Kitteltasche und Ausweishülle"
+            title="Kompaktes Pocketcard- / ATM-Format (12 × 8 cm) für Kitteltasche und Ausweishülle"
           >
             <i className="bi bi-credit-card-2-front"></i>
-            <span className="d-none d-sm-inline">Scheckkarte (ATM)</span>
-            <span className="d-inline d-sm-none">ATM-Karte</span>
+            <span className="d-none d-sm-inline">Pocketcard (12 &times; 8 cm)</span>
+            <span className="d-inline d-sm-none">12 &times; 8 cm</span>
           </button>
           <button
             type="button"
             className={`btn btn-sm ${cardFormat === 'a4' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            style={{ fontSize: '0.76rem', minHeight: '36px', padding: '0.2rem 0.5rem' }}
+            style={{ fontSize: '0.76rem', minHeight: '34px', padding: '0.2rem 0.5rem' }}
             onClick={() => setCardFormat('a4')}
             title="A4-Format für Stationsaushang und Dokumentenmappe"
           >
@@ -3403,7 +3175,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           <button
             type="button"
             className={`btn btn-sm ${cardFormat === 'both' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            style={{ fontSize: '0.76rem', minHeight: '36px', padding: '0.2rem 0.5rem' }}
+            style={{ fontSize: '0.76rem', minHeight: '34px', padding: '0.2rem 0.5rem' }}
             onClick={() => setCardFormat('both')}
             title="A4-Pocketcard und Scheckkarten-Format gleichzeitig anzeigen"
           >
@@ -3413,11 +3185,11 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           </button>
         </div>
 
-        {/* Right on Desktop: Symmetrical Action Buttons */}
-        <div className="d-grid d-lg-flex align-items-center gap-2" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
+        {/* Right: Symmetrical Action Buttons */}
+        <div className="d-grid d-lg-flex align-items-center gap-1.5" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
           <button
-            className="btn btn-primary btn-sm rounded-pill px-3 py-1 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2"
-            style={{ minHeight: '38px', fontSize: '0.78rem' }}
+            className="btn btn-primary btn-sm rounded-pill px-2.5 py-1 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5"
+            style={{ minHeight: '36px', fontSize: '0.78rem' }}
             onClick={() => downloadPdf(cardFormat === 'both' ? 'a4' : cardFormat)}
             title="Universal-Pocketcard als PDF-Dokument herunterladen"
           >
@@ -3425,17 +3197,17 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
             <span>PDF</span>
           </button>
           <button
-            className="btn btn-dark btn-sm rounded-pill px-3 py-1 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2"
-            style={{ minHeight: '38px', fontSize: '0.78rem' }}
+            className="btn btn-dark btn-sm rounded-pill px-2.5 py-1 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5"
+            style={{ minHeight: '36px', fontSize: '0.78rem' }}
             onClick={() => handlePrint(cardFormat === 'atm' ? 'atm' : 'a4')}
-            title={cardFormat === 'atm' ? 'Nur Scheckkarte drucken' : 'Nur A4-Pocketcard drucken'}
+            title={cardFormat === 'atm' ? 'Nur Pocketcard (12 × 8 cm) drucken' : 'Nur A4-Pocketcard drucken'}
           >
             <i className="bi bi-printer-fill"></i>
             <span>Drucken</span>
           </button>
           <button
-            className="btn btn-outline-secondary rounded-pill px-3 py-1 shadow-sm btn-sm fw-semibold d-flex align-items-center justify-content-center gap-2 bg-white"
-            style={{ minHeight: '38px', fontSize: '0.78rem' }}
+            className="btn btn-outline-secondary rounded-pill px-2.5 py-1 shadow-sm btn-sm fw-semibold d-flex align-items-center justify-content-center gap-1.5 bg-white"
+            style={{ minHeight: '36px', fontSize: '0.78rem' }}
             onClick={downloadCardImage}
             title="Pocketcard als hochauflösendes Bild herunterladen"
           >
@@ -3444,7 +3216,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           </button>
           <button
             className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-1 shadow-sm btn-sm d-none d-lg-flex align-items-center justify-content-center gap-1"
-            style={{ minHeight: '38px', fontSize: '0.78rem' }}
+            style={{ minHeight: '36px', fontSize: '0.78rem' }}
             onClick={() => onSelectStandard('quick-hub')}
             title="Die Zielseite aller 6 Standards testen"
           >
@@ -3456,9 +3228,9 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
       {/* Main Container */}
       <div className="d-flex flex-column align-items-center justify-content-center my-1 gap-3">
-        {/* 1. THE A4-FORMAT UNIVERSAL POCKETCARD (Desktop only if selected) */}
+        {/* 1. THE A4-FORMAT UNIVERSAL POCKETCARD */}
         {(cardFormat === 'a4' || cardFormat === 'both') && (
-          <div className="w-100 p-2 bg-white rounded-4 border shadow-sm d-none d-md-block" id="universal-card-a4-printable" style={{ maxWidth: '890px' }}>
+          <div className="w-100 p-2 bg-white rounded-4 border shadow-sm" id="universal-card-a4-printable" style={{ maxWidth: '890px' }}>
             <div
               className="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center mb-2 px-3 py-2 rounded-3 gap-2 no-print shadow-sm"
               data-html2canvas-ignore="true"
@@ -3519,16 +3291,16 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                 </div>
                 <div className="min-w-0">
                   <h5 className="fw-bold text-dark mb-0 text-truncate" style={{ fontSize: '0.92rem', lineHeight: 1.2 }}>
-                    Scheckkarten- / ATM-Format
+                    Pocketcard- / ATM-Format (12 &times; 8 cm)
                   </h5>
                   <div className="text-muted small text-truncate" style={{ fontSize: '0.72rem', lineHeight: 1.2 }}>
-                    Für Kitteltasche &amp; Ausweishülle (85,6 &times; 54 mm)
+                    Für Kitteltasche &amp; Ausweishülle (12 &times; 8 cm)
                   </div>
                 </div>
               </div>
 
               <span className="badge bg-warning bg-opacity-25 text-dark border border-warning px-2 py-1 rounded-pill small fw-bold flex-shrink-0" style={{ fontSize: '0.72rem' }}>
-                <i className="bi bi-credit-card-2-front me-1"></i> ATM-Karte
+                <i className="bi bi-credit-card-2-front me-1"></i> 12 &times; 8 cm
               </span>
             </div>
 
@@ -3539,7 +3311,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
             {/* Print-only cutout guide */}
             <div className="atm-cutout-hint">
-              ✂️ Entlang der gestrichelten Linie ausschneiden (Standard ID-Ausweisformat: 85,6 &times; 54 mm)
+              ✂️ Entlang der gestrichelten Linie ausschneiden (Format: 12 &times; 8 cm)
             </div>
 
             {/* Symmetrical Share & Action Buttons (No 'Karte teilen' header text) */}

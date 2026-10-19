@@ -554,8 +554,8 @@ body {
 }
 
 /* =========================================================
-   MAGIC CARD (ATM-SIZED POCKETCARD) SPECIFIC STYLING
-   Standard ID-1 ISO 7810 ATM Card Ratio: 85.6mm x 53.98mm (~1.586 aspect ratio)
+   MAGIC CARD (12 × 8 CM POCKETCARD) SPECIFIC STYLING
+   Standard Pocketcard Size: 12 cm × 8 cm (120 mm × 80 mm)
    ========================================================= */
 .magic-card-wrapper {
   perspective: 1000px;
@@ -649,8 +649,8 @@ body {
     margin: 0 auto !important;
   }
   .magic-atm-card {
-    width: 85.6mm !important;
-    height: 54mm !important;
+    width: 120mm !important;
+    height: 80mm !important;
     border: 1px solid #000000 !important;
     box-shadow: none !important;
     page-break-inside: avoid !important;
@@ -902,6 +902,11 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   border-radius: 1rem;
 }
 
+.universal-card-inner {
+  position: relative;
+  width: 100%;
+}
+
 .universal-card-img {
   width: 100%;
   height: auto;
@@ -933,9 +938,9 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   width: 100%;
   max-width: 870px;
   aspect-ratio: 297 / 210;
-  background: linear-gradient(180deg, #bbe3fa 0%, #dff2fe 35%, #eaf6ff 70%, #cce9fb 100%);
-  border: 2.5px solid #0284c7;
-  border-radius: 1.15rem;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 1rem;
   box-shadow: 0 14px 32px -6px rgba(0, 39, 61, 0.22), 0 0 0 1px rgba(0, 71, 103, 0.12);
   margin: 0 auto;
   overflow: hidden;
@@ -1726,7 +1731,7 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     display: none !important;
   }
 
-  /* --- 1. Universal-Karte A4 Print Mode Isolation --- */
+  /* --- 1. Universal-Karte A4 Print Mode Isolation (Full Page DIN A4 Landscape) --- */
   body.printing-a4 #universal-card-atm-printable,
   body.active-format-a4:not(.printing-atm) #universal-card-atm-printable {
     display: none !important;
@@ -1735,24 +1740,53 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   body.printing-a4 #universal-card-a4-printable,
   body.active-format-a4:not(.printing-atm) #universal-card-a4-printable {
     display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
+    width: 297mm !important;
+    max-width: 297mm !important;
+    height: 210mm !important;
+    max-height: 210mm !important;
+    margin: 0 auto !important;
     padding: 0 !important;
     border: none !important;
+    border-radius: 0 !important;
     box-shadow: none !important;
     page-break-inside: avoid !important;
     page-break-after: avoid !important;
+    background: #ffffff !important;
   }
 
   body.printing-a4 .a4-native-card,
   body.active-format-a4:not(.printing-atm) .a4-native-card {
-    max-width: 100% !important;
-    width: 100% !important;
+    max-width: 297mm !important;
+    width: 297mm !important;
+    height: 210mm !important;
+    max-height: 210mm !important;
     box-shadow: none !important;
-    border: 2px solid #0284c7 !important;
+    border: none !important;
+    border-radius: 0 !important;
     page-break-inside: avoid !important;
+    page-break-after: avoid !important;
     margin: 0 auto !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+  body.printing-a4 .a4-native-card img,
+  body.active-format-a4:not(.printing-atm) .a4-native-card img {
+    width: 297mm !important;
+    height: 210mm !important;
+    max-width: 297mm !important;
+    max-height: 210mm !important;
+    object-fit: fill !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body.printing-a4 .universal-card-hotspot,
+  body.printing-atm .universal-card-hotspot,
+  body.active-format-a4 .universal-card-hotspot,
+  body.active-format-atm .universal-card-hotspot {
+    display: none !important;
   }
 
   /* --- 2. Universal-Karte ATM Print Mode Isolation (Only ATM Scheckkarte Prints) --- */
@@ -1775,16 +1809,40 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 
   body.printing-atm .universal-card-interactive-box.atm-size,
   body.active-format-atm:not(.printing-a4) .universal-card-interactive-box.atm-size {
-    width: 85.6mm !important;
-    max-width: 85.6mm !important;
-    height: 54mm !important;
+    width: 120mm !important;
+    max-width: 120mm !important;
+    height: 80mm !important;
+    min-height: 80mm !important;
     margin: 25mm auto 10mm auto !important;
     border: 1.5px dashed #004767 !important;
-    border-radius: 3.5mm !important;
+    border-radius: 4mm !important;
     box-shadow: none !important;
     overflow: hidden !important;
     page-break-inside: avoid !important;
     position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #ffffff !important;
+    box-sizing: border-box !important;
+    padding: 0 !important;
+  }
+
+  body.printing-atm .universal-card-interactive-box.atm-size .universal-card-inner,
+  body.active-format-atm:not(.printing-a4) .universal-card-interactive-box.atm-size .universal-card-inner {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  body.printing-atm .universal-card-interactive-box.atm-size .universal-card-img,
+  body.active-format-atm:not(.printing-a4) .universal-card-interactive-box.atm-size .universal-card-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
   }
 
   body.printing-atm .atm-cutout-hint,
