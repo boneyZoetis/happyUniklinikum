@@ -2830,7 +2830,7 @@ function UniversalCardInteractiveCard({ isAtm = false, onSelectStandard }) {
     <div className={`universal-card-interactive-box ${isAtm ? 'atm-size' : ''} mx-auto position-relative`}>
       <div className="universal-card-inner position-relative w-100">
         <img
-          src={isAtm ? "assets/universal-card-12x8.jpg" : "assets/universal-card-umf.jpg"}
+          src={isAtm ? "assets/universal-card-12x8.jpg?v=20261019-16" : "assets/universal-card-umf.jpg?v=20261019-16"}
           alt="Universitätsmedizin Frankfurt - Klinische Pflegestandards Universal-Pocketcard"
           className="universal-card-img"
         />
@@ -2902,7 +2902,7 @@ function UniversalCardA4Native({ onSelectStandard }) {
   return (
     <div className="a4-native-card mx-auto position-relative overflow-hidden" id="universal-card-a4-sheet">
       <img
-        src="assets/universal-card-a4.jpg"
+        src="assets/universal-card-a4.jpg?v=20261019-16"
         alt="Universitätsklinikum Frankfurt - Klinische Pflegestandards Universal-Pocketcard DIN A4"
         className="w-100 h-auto d-block"
       />
