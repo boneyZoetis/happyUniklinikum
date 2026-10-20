@@ -240,9 +240,42 @@ root.QRParser = (function () {
       videoUrl: (typeof window !== 'undefined' && window.location ? window.location.origin + window.location.pathname + '#/zvk' : 'http://localhost:3000/#/zvk'),
       videoId: 'zvk_poster',
       sopPdfUrl: 'assets/zvk-sop-verfahrensanweisung.pdf',
-      roXtraIds: ['391904', '484866', '456904', '414354', '414362'],
+      sopDocuments: [
+        {
+          id: 'zvk-sop',
+          title: 'Verfahrensanweisung: Zentraler Venenkatheter (ZVK) – Intensivpflege',
+          shortTitle: '1. SOP ZVK (Hauptdokument)',
+          roXtraId: '391904',
+          version: 'Ver. 002 / 09.2024',
+          pageCount: 10,
+          badge: 'SOP • 10 Seiten',
+          icon: 'bi-file-earmark-medical-fill',
+          themeColor: '#e11d48',
+          pdfUrl: 'assets/zvk-sop-verfahrensanweisung.pdf',
+          thumb: 'assets/zvk-sop-thumb.jpg',
+          scope: 'Intensivstationen (ITS / IMC) • Zentrum der Chirurgie & Innere Medizin',
+          description: 'Standardisierte Verfahrensanweisung für Aseptik, Verbandswechsel, Spültechnik und Infusionsfilter.'
+        },
+        {
+          id: 'zvk-hygieneplan',
+          title: 'Hygieneplan: Umgang mit multiresistenten & hygienerelevanten Erregern',
+          shortTitle: '2. Hygieneplan MRE (ITS/IMC)',
+          roXtraId: '361678',
+          version: 'Ver. 012 / 02.2026',
+          pageCount: 5,
+          badge: 'Hygieneplan • 5 Seiten • Neu',
+          icon: 'bi-shield-shaded',
+          themeColor: '#0284c7',
+          pdfUrl: 'assets/zvk-hygieneplan-multiresistente-erreger.pdf',
+          thumb: 'assets/zvk-hygieneplan-thumb.jpg',
+          scope: 'Häma-Onko (Station+TK) • ITS / IMC • Neonatologie',
+          description: 'Umgang mit multiresistenten Erregern (VRE+, 2/3/4MRGN, MRSA, C. diff, Noro, TBC, Covid-19, Auslands-Iso).'
+        }
+      ],
+      roXtraIds: ['391904', '361678', '484866', '456904', '414354', '414362'],
       roXtraDetails: {
         '391904': 'Verfahrensanweisung ZVK (Ver. 002/09.2024)',
+        '361678': 'Hygieneplan: Multiresistente Erreger ITS/IMC (Ver. 012/02.2026)',
         '484866': 'OMW ZVK Verbandswechsel (Ver. 001/07.2026)',
         '456904': 'OMW - Infusionsfilter (Ver. 001/08.2025)',
         '414354': 'Standard-Infusionsschema ITS (Ver. 001/05.2024)',
@@ -311,9 +344,42 @@ root.QRParser = (function () {
       videoUrl: (typeof window !== 'undefined' && window.location ? window.location.origin + window.location.pathname + '#/isolation' : 'http://localhost:3000/#/isolation'),
       videoId: 'isolation_poster',
       sopPdfUrl: 'assets/isolation-sop-verfahrensanweisung.pdf',
-      roXtraIds: ['239411'],
+      sopDocuments: [
+        {
+          id: 'iso-sop',
+          title: 'Verfahrensanweisung: Allgemeines Vorgehen bei Isolation und Reinigung',
+          shortTitle: '1. SOP Isolation & Reinigung',
+          roXtraId: '239411',
+          version: 'Ver. 003 / 08.2019',
+          pageCount: 4,
+          badge: 'SOP • 4 Seiten',
+          icon: 'bi-shield-check',
+          themeColor: '#0284c7',
+          pdfUrl: 'assets/isolation-sop-verfahrensanweisung.pdf',
+          thumb: 'assets/isolation-sop-thumb.jpg',
+          scope: 'Klinikweit • Alle Pflegebereiche & Zentren',
+          description: 'Allgemeine Isolationsformen, Desinfektion, Barrieremaßnahmen & Schutzkleidung.'
+        },
+        {
+          id: 'iso-hygieneplan',
+          title: 'Hygieneplan: Umgang mit multiresistenten & hygienerelevanten Erregern',
+          shortTitle: '2. Hygieneplan MRE (ITS/IMC)',
+          roXtraId: '361678',
+          version: 'Ver. 012 / 02.2026',
+          pageCount: 5,
+          badge: 'Hygieneplan • 5 Seiten • Neu',
+          icon: 'bi-shield-shaded',
+          themeColor: '#7c3aed',
+          pdfUrl: 'assets/zvk-hygieneplan-multiresistente-erreger.pdf',
+          thumb: 'assets/zvk-hygieneplan-thumb.jpg',
+          scope: 'Häma-Onko (Station+TK) • ITS / IMC • Neonatologie',
+          description: 'Detaillierter Leitfaden nach Erreger: VRE, MRGN, MRSA, C. diff, Norovirus, TBC, etc.'
+        }
+      ],
+      roXtraIds: ['239411', '361678'],
       roXtraDetails: {
-        '239411': 'Verfahrensanweisung Allgemeines Vorgehen bei Isolation und Reinigung (Ver. 003/08.2019)'
+        '239411': 'Verfahrensanweisung Allgemeines Vorgehen bei Isolation und Reinigung (Ver. 003/08.2019)',
+        '361678': 'Hygieneplan: Umgang mit multiresistenten Erregern (Ver. 012/02.2026)'
       },
       image: 'assets/isolation-poster.jpg',
       pdfUrl: 'assets/isolation-sop-verfahrensanweisung.pdf#page=1',

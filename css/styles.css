@@ -228,6 +228,74 @@ body {
   box-shadow: 0 2px 8px rgba(0,0,0,0.03);
 }
 
+/* Multi-Document SOP Switcher in Clinical Standards */
+.sop-doc-switcher {
+  display: flex;
+  gap: 0.5rem;
+  background: #f8fafc;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+}
+
+.sop-doc-pill {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.75rem;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  color: #1e293b;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.sop-doc-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  border-color: #cbd5e1;
+}
+
+.sop-doc-pill.active {
+  background: linear-gradient(135deg, #ffffff 0%, #fff1f2 100%);
+  border-color: #e11d48;
+  color: #881337;
+  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.16);
+}
+
+.sop-doc-pill.active .doc-icon-badge {
+  background: #e11d48 !important;
+  color: #ffffff !important;
+}
+
+.doc-icon-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.sop-doc-pill.active-hygiene {
+  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+  border-color: #0284c7;
+  color: #0369a1;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.16);
+}
+
+.sop-doc-pill.active-hygiene .doc-icon-badge {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+}
+
 .clinical-picture-img {
   width: 100%;
   height: 190px;
