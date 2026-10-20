@@ -1724,9 +1724,503 @@ function StandardA4PrintSheet({ standard }) {
 }
 
 // -------------------------------------------------------------
+// Component: BedsideChecklistView (Interactive Mobile Bedside Workflow)
+// -------------------------------------------------------------
+function BedsideChecklistView({ standard, showToast }) {
+  const checklists = standard.checklists || [];
+  const [activeChecklistIdx, setActiveChecklistIdx] = useState(0);
+  const activeChecklist = checklists[activeChecklistIdx] || checklists[0];
+
+  const [checkedMap, setCheckedMap] = useState({});
+  const [timerSecondsLeft, setTimerSecondsLeft] = useState(
+    activeChecklist && activeChecklist.timerSeconds ? activeChecklist.timerSeconds : 60
+  );
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [timerAlert, setTimerAlert] = useState(false);
+
+  // Sync timer when checklist switches
+  useEffect(() => {
+    if (activeChecklist && activeChecklist.timerSeconds) {
+      setTimerSecondsLeft(activeChecklist.timerSeconds);
+    } else {
+      setTimerSecondsLeft(60);
+    }
+    setIsTimerRunning(false);
+    setTimerAlert(false);
+  }, [activeChecklistIdx, standard.id]);
+
+  // Pleasant hospital monitor chime via Web Audio API (completely offline)
+  const playChime = () => {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, now); // D5
+      osc.frequency.setValueAtTime(880, now + 0.18); // A5
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.9);
+    } catch (e) {
+      // Audio context policy
+    }
+  };
+
+  // Timer countdown interval
+  useEffect(() => {
+    let interval = null;
+    if (isTimerRunning && timerSecondsLeft > 0) {
+      interval = setInterval(() => {
+        setTimerSecondsLeft((prev) => {
+          if (prev <= 1) {
+            setIsTimerRunning(false);
+            setTimerAlert(true);
+            playChime();
+            if (showToast) showToast('⏰ Einwirkzeit erreicht! Haut / Fläche ist vollständig abgetrocknet.');
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTimerRunning, timerSecondsLeft]);
+
+  if (!activeChecklist) {
+    return (
+      <div className="p-4 text-center text-muted bg-light rounded-4 border">
+        <i className="bi bi-info-circle fs-3 text-secondary d-block mb-2"></i>
+        Keine Checkliste für diesen Standard hinterlegt.
+      </div>
+    );
+  }
+
+  // Calculate items and progress
+  const allItems = [];
+  if (activeChecklist.phases) {
+    activeChecklist.phases.forEach((phase) => {
+      if (phase.items) {
+        phase.items.forEach((item) => allItems.push(item));
+      }
+    });
+  }
+  const totalCount = allItems.length;
+  const completedCount = allItems.filter((item) => checkedMap[item.id]).length;
+  const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+  const isAllCompleted = totalCount > 0 && completedCount === totalCount;
+
+  const toggleItem = (itemId) => {
+    setCheckedMap((prev) => ({
+      ...prev,
+      [itemId]: !prev[itemId]
+    }));
+  };
+
+  const handleReset = () => {
+    const updated = { ...checkedMap };
+    allItems.forEach((item) => {
+      delete updated[item.id];
+    });
+    setCheckedMap(updated);
+    if (activeChecklist.timerSeconds) {
+      setTimerSecondsLeft(activeChecklist.timerSeconds);
+    }
+    setIsTimerRunning(false);
+    setTimerAlert(false);
+    if (showToast) showToast('Checkliste zurückgesetzt.');
+  };
+
+  const handleCheckAll = () => {
+    const updated = { ...checkedMap };
+    allItems.forEach((item) => {
+      updated[item.id] = true;
+    });
+    setCheckedMap(updated);
+    if (showToast) showToast('Alle Schritte als erledigt markiert.');
+  };
+
+  const handleCopySnippet = () => {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const timeStr = now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+    const snippet = `[${dateStr} ${timeStr}] ${activeChecklist.docuSnippet || activeChecklist.title + ' leitliniengerecht durchgeführt.'}`;
+    navigator.clipboard.writeText(snippet).then(() => {
+      if (showToast) showToast('Dokumentationstext für KIS / Kurve kopiert!');
+    }).catch(() => {
+      if (showToast) showToast('Kopieren fehlgeschlagen');
+    });
+  };
+
+  const timerMax = activeChecklist.timerSeconds || 60;
+  const timerMinStr = Math.floor(timerSecondsLeft / 60).toString().padStart(2, '0');
+  const timerSecStr = (timerSecondsLeft % 60).toString().padStart(2, '0');
+  const timerProgress = timerMax > 0 ? ((timerMax - timerSecondsLeft) / timerMax) * 100 : 0;
+
+  return (
+    <div className="bedside-checklist-card animate-fade-in mb-3">
+      {/* 1. Multi-Procedure Selector Tabs (if standard has multiple checklists) */}
+      {checklists.length > 1 && (
+        <div className="d-flex gap-1.5 overflow-x-auto pb-2 mb-3 no-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
+          {checklists.map((chk, idx) => {
+            const isActive = activeChecklistIdx === idx;
+            return (
+              <button
+                key={chk.id}
+                type="button"
+                className={`btn btn-sm rounded-pill px-3 py-2 text-nowrap fw-bold d-flex align-items-center gap-1.5 shadow-xs flex-fill ${
+                  isActive
+                    ? 'btn-success text-white shadow-sm'
+                    : 'btn-outline-secondary bg-white text-dark border-secondary border-opacity-25'
+                }`}
+                style={{ minHeight: '44px', fontSize: '0.84rem' }}
+                onClick={() => {
+                  setActiveChecklistIdx(idx);
+                }}
+              >
+                <i className={`bi ${isActive ? 'bi-check-circle-fill' : 'bi-card-checklist'}`}></i>
+                <span>{chk.shortTitle || chk.title}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* 2. Checklist Header & Progress Overview */}
+      <div className="p-3 p-md-3.5 bg-light rounded-4 border mb-3 shadow-xs">
+        <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-2.5">
+          <div>
+            <div className="d-flex align-items-center gap-2 mb-1">
+              <span className="badge rounded-pill bg-success text-white px-2.5 py-1 small fw-bold">
+                {activeChecklist.badge || 'Klinischer Standard'}
+              </span>
+              <span className="text-muted small">
+                roXtra ID: <strong>{standard.roXtraIds.join(' / ')}</strong>
+              </span>
+            </div>
+            <h5 className="fw-black text-dark mb-0" style={{ fontSize: '1.1rem' }}>
+              {activeChecklist.title}
+            </h5>
+            <div className="text-secondary small mt-0.5">
+              {activeChecklist.subtitle}
+            </div>
+          </div>
+
+          <div className="d-flex align-items-center gap-1.5 flex-shrink-0">
+            <span className="badge bg-white text-dark border px-2.5 py-1.5 fw-bold" style={{ fontSize: '0.82rem' }}>
+              {completedCount} / {totalCount} Schritte ({progressPercent}%)
+            </span>
+          </div>
+        </div>
+
+        {/* Animated Progress Bar */}
+        <div className="progress rounded-pill bg-white border overflow-hidden" style={{ height: '10px' }}>
+          <div
+            className={`progress-bar progress-bar-striped progress-bar-animated ${isAllCompleted ? 'bg-success' : 'bg-primary'}`}
+            role="progressbar"
+            style={{
+              width: `${progressPercent}%`,
+              transition: 'width 0.3s ease-in-out'
+            }}
+            aria-valuenow={progressPercent}
+            aria-valuemin="0"
+            aria-valuemax="100"
+          />
+        </div>
+
+        {/* 100% Completion Celebration Alert */}
+        {isAllCompleted && (
+          <div className="mt-2.5 p-2.5 bg-success bg-opacity-15 border border-success border-opacity-35 rounded-3 d-flex align-items-center justify-content-between gap-2 animate-fade-in">
+            <div className="d-flex align-items-center gap-2 text-success fw-bold small">
+              <i className="bi bi-patch-check-fill fs-5"></i>
+              <span>Vollständig durchgeführt &amp; qualitätsgesichert!</span>
+            </div>
+            <button
+              type="button"
+              className="btn btn-sm btn-success rounded-pill px-3 py-1 fw-bold text-nowrap shadow-xs"
+              style={{ fontSize: '0.78rem' }}
+              onClick={handleCopySnippet}
+            >
+              <i className="bi bi-clipboard-check me-1"></i>
+              KIS Doku kopieren
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* 3. Built-in Clinical Countdown Timer Widget (If checklist defines a timer) */}
+      {activeChecklist.timerSeconds && (
+        <div className={`p-3 rounded-4 border mb-3 shadow-xs transition-all ${
+          timerAlert
+            ? 'bg-success bg-opacity-15 border-success border-2 animate-pulse'
+            : isTimerRunning
+              ? 'bg-dark text-white border-dark'
+              : 'bg-white border-light-subtle'
+        }`}>
+          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+            <div className="d-flex align-items-center gap-2.5 min-w-0">
+              <div
+                className={`rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 ${
+                  timerAlert
+                    ? 'bg-success text-white'
+                    : isTimerRunning
+                      ? 'bg-warning text-dark'
+                      : 'bg-light text-primary border'
+                }`}
+                style={{ width: '46px', height: '46px', fontSize: '1.25rem' }}
+              >
+                <i className={`bi ${timerAlert ? 'bi-check-lg' : isTimerRunning ? 'bi-hourglass-split' : 'bi-stopwatch-fill'}`}></i>
+              </div>
+              <div>
+                <div className="d-flex align-items-center gap-2">
+                  <span className={`fw-bold small text-uppercase ${isTimerRunning ? 'text-white-50' : 'text-secondary'}`} style={{ letterSpacing: '0.4px', fontSize: '0.70rem' }}>
+                    BEDSIDE-TIMER:
+                  </span>
+                  {timerAlert && (
+                    <span className="badge bg-success text-white small rounded-pill">
+                      FERTIG!
+                    </span>
+                  )}
+                </div>
+                <div className={`fw-bold text-truncate ${isTimerRunning ? 'text-white' : 'text-dark'}`} style={{ fontSize: '0.90rem' }}>
+                  {activeChecklist.timerLabel || 'Einwirkzeit'}
+                </div>
+              </div>
+            </div>
+
+            {/* Big Countdown Digits & Controls */}
+            <div className="d-flex align-items-center gap-2 ms-auto flex-shrink-0">
+              <span
+                className={`font-monospace fw-black px-3 py-1 rounded-3 ${
+                  timerAlert
+                    ? 'bg-success text-white fs-4'
+                    : isTimerRunning
+                      ? 'bg-black text-warning fs-4 border border-warning border-opacity-50'
+                      : 'bg-light text-dark fs-4 border'
+                }`}
+                style={{ letterSpacing: '1px' }}
+              >
+                {timerMinStr}:{timerSecStr}
+              </span>
+
+              {isTimerRunning ? (
+                <button
+                  type="button"
+                  className="btn btn-warning btn-sm rounded-pill px-3 py-2 fw-bold d-flex align-items-center gap-1 shadow-xs"
+                  style={{ minHeight: '40px', fontSize: '0.82rem' }}
+                  onClick={() => setIsTimerRunning(false)}
+                >
+                  <i className="bi bi-pause-fill"></i>
+                  <span>Pause</span>
+                </button>
+              ) : timerSecondsLeft === 0 ? (
+                <button
+                  type="button"
+                  className="btn btn-success btn-sm rounded-pill px-3 py-2 fw-bold d-flex align-items-center gap-1 shadow-xs"
+                  style={{ minHeight: '40px', fontSize: '0.82rem' }}
+                  onClick={() => {
+                    setTimerSecondsLeft(timerMax);
+                    setTimerAlert(false);
+                    setIsTimerRunning(true);
+                  }}
+                >
+                  <i className="bi bi-arrow-clockwise"></i>
+                  <span>Neu ({timerMax}s)</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm rounded-pill px-3 py-2 fw-bold d-flex align-items-center gap-1 shadow-xs"
+                  style={{ minHeight: '40px', fontSize: '0.82rem' }}
+                  onClick={() => {
+                    setTimerAlert(false);
+                    setIsTimerRunning(true);
+                  }}
+                >
+                  <i className="bi bi-play-fill"></i>
+                  <span>Start ({timerMax}s)</span>
+                </button>
+              )}
+
+              {/* Reset button */}
+              {(isTimerRunning || timerSecondsLeft < timerMax) && (
+                <button
+                  type="button"
+                  className={`btn btn-sm rounded-circle p-2 d-flex align-items-center justify-content-center ${isTimerRunning ? 'btn-outline-light' : 'btn-outline-secondary'}`}
+                  style={{ width: '36px', height: '36px' }}
+                  onClick={() => {
+                    setIsTimerRunning(false);
+                    setTimerSecondsLeft(timerMax);
+                    setTimerAlert(false);
+                  }}
+                  title="Timer zurücksetzen"
+                >
+                  <i className="bi bi-arrow-counterclockwise"></i>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Active Timer Mini Progress Track */}
+          {isTimerRunning && (
+            <div className="progress mt-2.5 bg-secondary bg-opacity-50" style={{ height: '4px' }}>
+              <div
+                className="progress-bar bg-warning"
+                style={{ width: `${timerProgress}%`, transition: 'width 1s linear' }}
+              />
+            </div>
+          )}
+
+          {/* Finished Message */}
+          {timerAlert && (
+            <div className="mt-2 text-success small fw-bold d-flex align-items-center gap-1">
+              <i className="bi bi-check-circle-fill"></i>
+              <span>Vorgeschriebene Einwirkzeit vollständig erreicht. Die Stelle ist trocken und desinfiziert.</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 4. Grouped Phases and Interactive Step Items */}
+      <div className="d-flex flex-column gap-3 mb-3">
+        {activeChecklist.phases && activeChecklist.phases.map((phase, pIdx) => {
+          const phaseItems = phase.items || [];
+          const phaseCompleted = phaseItems.filter((it) => checkedMap[it.id]).length;
+          const isPhaseDone = phaseItems.length > 0 && phaseCompleted === phaseItems.length;
+
+          return (
+            <div key={pIdx} className="bg-white rounded-4 border overflow-hidden shadow-xs">
+              {/* Phase Header */}
+              <div className={`px-3 py-2.5 d-flex align-items-center justify-content-between border-bottom ${
+                isPhaseDone ? 'bg-success bg-opacity-10 text-success' : 'bg-light text-dark'
+              }`}>
+                <div className="d-flex align-items-center gap-2 min-w-0">
+                  <i className={`bi ${phase.icon || 'bi-check2-circle'} fs-5 ${isPhaseDone ? 'text-success' : 'text-primary'}`}></i>
+                  <span className="fw-bold text-truncate" style={{ fontSize: '0.92rem' }}>
+                    {phase.name}
+                  </span>
+                </div>
+                <span className={`badge rounded-pill small ${isPhaseDone ? 'bg-success text-white' : 'bg-white text-secondary border'}`}>
+                  {phaseCompleted} / {phaseItems.length}
+                </span>
+              </div>
+
+              {/* Phase Items List */}
+              <div className="d-flex flex-column divide-y">
+                {phaseItems.map((item) => {
+                  const isChecked = !!checkedMap[item.id];
+                  return (
+                    <div
+                      key={item.id}
+                      className={`checklist-item-row p-3 d-flex align-items-start gap-3 transition-all ${
+                        isChecked ? 'bg-success bg-opacity-5' : 'bg-white hover-bg-light'
+                      }`}
+                      style={{
+                        cursor: 'pointer',
+                        borderBottom: '1px solid #f1f5f9',
+                        minHeight: '48px',
+                        userSelect: 'none',
+                        WebkitTapHighlightColor: 'transparent'
+                      }}
+                      onClick={() => toggleItem(item.id)}
+                      role="checkbox"
+                      aria-checked={isChecked}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === ' ' || e.key === 'Enter') {
+                          e.preventDefault();
+                          toggleItem(item.id);
+                        }
+                      }}
+                    >
+                      {/* Checkbox Icon */}
+                      <div className="flex-shrink-0 mt-0.5">
+                        {isChecked ? (
+                          <i className="bi bi-check-circle-fill text-success fs-5 animate-scale-up"></i>
+                        ) : (
+                          <i className="bi bi-circle text-muted fs-5"></i>
+                        )}
+                      </div>
+
+                      {/* Item Text Content */}
+                      <div className="flex-grow-1 min-w-0">
+                        <div
+                          className={`small ${isChecked ? 'text-decoration-line-through text-muted' : 'text-dark fw-medium'}`}
+                          style={{ fontSize: '0.88rem', lineHeight: 1.4 }}
+                        >
+                          {item.text}
+                        </div>
+                      </div>
+
+                      {/* Optional Indicator Badge */}
+                      {item.hasTimer && (
+                        <span className="badge bg-warning bg-opacity-15 text-dark border border-warning border-opacity-30 small flex-shrink-0" style={{ fontSize: '0.68rem' }}>
+                          <i className="bi bi-clock-history me-1"></i>EWZ
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 5. Bedside Actions Toolbar: Reset, Check All, Copy Documentation */}
+      <div className="p-3 bg-light rounded-4 border d-flex flex-column flex-sm-row justify-content-between align-items-stretch align-items-sm-center gap-2 shadow-xs">
+        <div className="d-flex align-items-center gap-1.5">
+          <button
+            type="button"
+            className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1.5 d-flex align-items-center justify-content-center gap-1 flex-fill flex-sm-grow-0"
+            style={{ minHeight: '38px', fontSize: '0.80rem' }}
+            onClick={handleReset}
+            title="Alle Häkchen und Timer für den nächsten Patienten zurücksetzen"
+          >
+            <i className="bi bi-arrow-counterclockwise"></i>
+            <span>Zurücksetzen</span>
+          </button>
+          <button
+            type="button"
+            className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1.5 d-flex align-items-center justify-content-center gap-1 flex-fill flex-sm-grow-0"
+            style={{ minHeight: '38px', fontSize: '0.80rem' }}
+            onClick={handleCheckAll}
+            title="Alle Schritte als erledigt markieren"
+          >
+            <i className="bi bi-check2-all"></i>
+            <span>Alle abhaken</span>
+          </button>
+        </div>
+
+        <button
+          type="button"
+          className="btn btn-primary btn-sm rounded-pill px-3.5 py-1.5 fw-bold d-flex align-items-center justify-content-center gap-1.5 shadow-xs"
+          style={{ minHeight: '38px', fontSize: '0.82rem' }}
+          onClick={handleCopySnippet}
+          title="Vorgefertigten KIS / Kurven-Dokumentationstext mit Datum & Uhrzeit kopieren"
+        >
+          <i className="bi bi-clipboard2-pulse-fill"></i>
+          <span>KIS-Doku kopieren</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
 // Component: Beautified Pocketcard (Minimal Info + Great Pictures + Scannable QR)
 // -------------------------------------------------------------
-function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf }) {
+function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf, showToast }) {
+  const [activeViewMode, setActiveViewMode] = useState(
+    typeof window !== 'undefined' && (window.location.hash.toLowerCase().includes('checklist') || window.location.hash.toLowerCase().includes('checkliste')) ? 'checklist' : 'documents'
+  );
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [isModalMaximized, setIsModalMaximized] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
@@ -1793,8 +2287,46 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
             </div>
           </div>
 
-          {/* 3. The Pictures / SOP PDF Viewer Section */}
-          <div className="row g-3 mb-3">
+          {/* Primary View Switcher: SOP & Dokumente VS. Bedside-Checkliste */}
+          {standard.checklists && standard.checklists.length > 0 && (
+            <div className="d-flex align-items-center justify-content-between p-1 bg-light rounded-pill border mb-3 shadow-xs">
+              <button
+                type="button"
+                className={`btn btn-sm rounded-pill flex-fill py-2 fw-bold d-flex align-items-center justify-content-center gap-1.5 ${
+                  activeViewMode === 'documents'
+                    ? (standard.id === 'zvk' ? 'btn-danger text-white shadow-sm' : standard.id === 'isolation' ? 'btn-info text-white shadow-sm' : 'btn-dark text-white shadow-sm')
+                    : 'btn-light text-secondary border-0'
+                }`}
+                style={{ minHeight: '44px', fontSize: '0.84rem' }}
+                onClick={() => setActiveViewMode('documents')}
+              >
+                <i className="bi bi-file-earmark-pdf-fill"></i>
+                <span className="text-truncate">{standard.id === 'zvk' || standard.id === 'isolation' ? 'SOP & Dokumente' : 'Standard & Folien'}</span>
+              </button>
+              <button
+                type="button"
+                className={`btn btn-sm rounded-pill flex-fill py-2 fw-bold d-flex align-items-center justify-content-center gap-1.5 ${
+                  activeViewMode === 'checklist'
+                    ? 'btn-success text-white shadow-sm'
+                    : 'btn-light text-secondary border-0'
+                }`}
+                style={{ minHeight: '44px', fontSize: '0.84rem' }}
+                onClick={() => setActiveViewMode('checklist')}
+              >
+                <i className="bi bi-check2-square"></i>
+                <span>Bedside-Checkliste</span>
+                <span className={`badge rounded-pill px-1.5 py-0.5 ms-1 ${activeViewMode === 'checklist' ? 'bg-white text-success' : 'bg-success text-white'}`} style={{ fontSize: '0.68rem' }}>
+                  {standard.checklists.length}
+                </span>
+              </button>
+            </div>
+          )}
+
+          {activeViewMode === 'checklist' ? (
+            <BedsideChecklistView standard={standard} showToast={showToast || onCopy} />
+          ) : (
+            /* 3. The Pictures / SOP PDF Viewer Section */
+            <div className="row g-3 mb-3">
             {standard.id === 'zvk' || standard.id === 'isolation' ? (
               /* ZVK & Isolation: Direct SOP PDF Viewer with Multi-Document Switcher */
               <div className="col-12">
@@ -2419,6 +2951,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
               )}
             </div>
           </div>
+          )}
 
           {/* 5. Pocketcard QM Footer */}
           <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center pt-2 border-top text-muted gap-1 text-center text-sm-start" style={{ fontSize: '0.72rem' }}>
@@ -2952,6 +3485,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
         onCopy={copyToClipboard}
         onDownloadQr={downloadQrImage}
         onDownloadPdf={downloadPdf}
+        showToast={showToast}
       />
 
       {/* 2. EMBEDDED TRAINING VIDEO & NURSING PROCESS */}

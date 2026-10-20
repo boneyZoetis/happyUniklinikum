@@ -2007,3 +2007,39 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     scroll-snap-align: start;
   }
 }
+
+/* =========================================================
+   BEDSIDE CHECKLIST & CLINICAL PROCEDURE STYLES
+   ========================================================= */
+
+.hover-bg-light:hover {
+  background-color: #f8fafc !important;
+}
+
+.checklist-item-row {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.checklist-item-row:active {
+  background-color: #f1f5f9 !important;
+  transform: scale(0.995);
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes scaleUp {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulseTimer {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+}
+
+.animate-pulse {
+  animation: pulseTimer 1.5s infinite;
+}
+
