@@ -61,46 +61,6 @@ root.QRParser = (function () {
           icon: 'bi-chat-heart-fill',
           detail: 'Aktive Information und Einbindung von Patienten sowie Angehörigen bezüglich Eigenbewegung und frühzeitiger Entlastungstechniken.'
         }
-      ],
-      checklists: [
-        {
-          id: 'dek-positioning',
-          title: '30°-Schräglagerung & Fersenfreilagerung',
-          shortTitle: '30°-Lagerung',
-          subtitle: 'Expertenstandard Dekubitusprophylaxe (ID: 400139 / 400129)',
-          badge: 'Druckentlastung',
-          docuSnippet: 'Dekubitusprophylaxe durchgeführt: Hautinspektion Prädilektionsstellen reizlos, Fingertest negativ. 30°-Schräglagerung durchgeführt. Fersen vollständig freigelagert (Schwebeferse). Mikrobewegungen unterstützt.',
-          phases: [
-            {
-              name: 'Phase 1: Hautinspektion & Risikostatus',
-              icon: 'bi-eye-fill',
-              items: [
-                { id: 'dek-1', text: 'Prädilektionsstellen inspizieren: Kreuzbein, Fersen, Trochanter, Schulterblätter, Ohren' },
-                { id: 'dek-2', text: 'Fingertest bei jeder Rötung: Wegdrückbar = Grad 1 Risiko / Nicht wegdrückbar = Dekubitus Grad 1' },
-                { id: 'dek-3', text: 'Hauttrockenheit & Inkontinenzstatus prüfen (Cavilon / Hautschutz auftragen)' }
-              ]
-            },
-            {
-              name: 'Phase 2: Durchführung 30°-Lagerung & Entlastung',
-              icon: 'bi-person-lines-fill',
-              items: [
-                { id: 'dek-4', text: 'Patienten auf die Seite drehen, Lagerungskeil / großes Kissen unter Rücken & Becken platzieren' },
-                { id: 'dek-5', text: 'Rückdrehung auf 30° Neigungswinkel: Sakralbereich & Steißbein vollständig druckentlastet' },
-                { id: 'dek-6', text: 'Knie- und Knöchelbereich mit weichem Kissen abpuffern (kein direkter Knochenkontakt)' },
-                { id: 'dek-7', text: 'Fersenfreilagerung: Kissen unter Unterschenkel, Fersen schweben frei ohne Matratzenkontakt' }
-              ]
-            },
-            {
-              name: 'Phase 3: Bettklima & Dokumentation',
-              icon: 'bi-clipboard-check-fill',
-              items: [
-                { id: 'dek-8', text: 'Bettwäsche & Unterlagen glattziehen (Faltenbildung & Scherkräfte vermeiden)' },
-                { id: 'dek-9', text: 'Umlagerungsintervall festlegen (alle 2–3 Std. bzw. individueller Bewegungsplan)' },
-                { id: 'dek-10', text: 'Dokumentation im KIS / Kurve: Hautstatus, Lagerungsart & Uhrzeit eintragen' }
-              ]
-            }
-          ]
-        }
       ]
     },
     sturz: {
@@ -155,47 +115,6 @@ root.QRParser = (function () {
           phase: '4. Post-Sturz-Management',
           icon: 'bi-journal-medical',
           detail: 'Unverzügliche ärztliche Abklärung, Vitalparameter-Check, strukturierte Sturzprotokollierung und Ursachenanalyse zur Rezidivvermeidung.'
-        }
-      ],
-      checklists: [
-        {
-          id: 'sturz-safety',
-          title: 'Bedside-Sicherheits-Check Sturzprophylaxe',
-          shortTitle: 'Sicherheits-Check',
-          subtitle: 'Expertenstandard Sturzprophylaxe (ID: 138896 / 275545)',
-          badge: 'Patientensicherheit',
-          docuSnippet: 'Sturzprophylaxe Bedside-Check: Bett in niedrigster Position, Bremsen arretiert. Rufanlage & Lichtschalter in greifbarer Reichweite. Rutschfestes Schuhwerk bereitgestellt. Gehstütze am Bett fixiert.',
-          phases: [
-            {
-              name: 'Phase 1: Bett- & Raumumgebung',
-              icon: 'bi-building-check',
-              items: [
-                { id: 'sturz-1', text: 'Bett in niedrigste Position (Floor-Bed / Niederflurbett) gefahren' },
-                { id: 'sturz-2', text: 'Bettbremsen beidseits fest arretiert & Funktionsprüfung' },
-                { id: 'sturz-3', text: 'Laufwege frei: Kabel, Taschen, Infusionsschläuche & Stolperfallen beseitigt' },
-                { id: 'sturz-4', text: 'Nachtbeleuchtung / Orientierungslicht eingeschaltet' }
-              ]
-            },
-            {
-              name: 'Phase 2: Patientennahe Hilfsmittel & Erreichbarkeit',
-              icon: 'bi-bell-fill',
-              items: [
-                { id: 'sturz-5', text: 'Patientenrufklingel in direkter Griffweite am Bett oder am Körper fixiert' },
-                { id: 'sturz-6', text: 'Sehhilfe (Brille) & Hörgerät griffbereit auf dem Nachttisch platziert' },
-                { id: 'sturz-7', text: 'Individuelle Gehhilfen (Rollator, Unterarmgehstützen) griffbereit am Bett arretiert' },
-                { id: 'sturz-8', text: 'Trinkbecher & persönliche Gegenstände ohne Vorbeugen erreichbar' }
-              ]
-            },
-            {
-              name: 'Phase 3: Kleidung & Transferabsprache',
-              icon: 'bi-person-check-fill',
-              items: [
-                { id: 'sturz-9', text: 'Rutschfestes Schuhwerk mit Fersenhalt (oder ABS-Antirutschsocken) angezogen' },
-                { id: 'sturz-10', text: 'Patient instruiert: Bei Aufstehwunsch immer Pflegeklingel betätigen' },
-                { id: 'sturz-11', text: 'Sturzrisiko im KIS / Kurve aktualisiert & Übergabe an Team' }
-              ]
-            }
-          ]
         }
       ]
     },
@@ -252,48 +171,6 @@ root.QRParser = (function () {
           icon: 'bi-graph-up-arrow',
           detail: 'Laufende Überprüfung des Therapieerfolgs bei Ruhe und Belastung sowie lückenlose Dokumentation im Pflegebericht.'
         }
-      ],
-      checklists: [
-        {
-          id: 'schmerz-assessment',
-          title: 'Akutschmerz-Erfassung & Re-Evaluation',
-          shortTitle: 'Schmerzerfassung',
-          subtitle: 'Expertenstandard Schmerzmanagement (ID: 399503 / 399486)',
-          badge: 'Schmerztherapie',
-          timerSeconds: 30,
-          timerLabel: 'Händehygiene & Vorbereitung (30 Sek.)',
-          docuSnippet: 'Schmerzerfassung: NRS in Ruhe: [ ] / bei Bewegung: [ ]. Lokalisation: [ ]. Schmerzcharakter: [stechend/dumpf/brennend]. Bedarfsmedikation nach WHO-Schema verabreicht. Re-Evaluation nach 30-60 Min. dokumentiert.',
-          phases: [
-            {
-              name: 'Phase 1: Strukturierte Schmerzerfassung',
-              icon: 'bi-heart-pulse-fill',
-              items: [
-                { id: 'schm-1', text: 'Schmerzintensität mit NRS (0–10) in Ruhe und bei Bewegung/Atmung erheben' },
-                { id: 'schm-2', text: 'Schmerzlokalisation & Schmerzcharakter (brennend, stechend, dumpf, krampfartig) erfragen' },
-                { id: 'schm-3', text: 'Ausstrahlung, zeitlicher Verlauf & Schmerzauslöser identifizieren' },
-                { id: 'schm-4', text: 'Bei kognitiver Einschränkung: Fremdeinschätzung mit BESD-Skala (Mimik, Lautäußerung, Körpersprache)' }
-              ]
-            },
-            {
-              name: 'Phase 2: Maßnahmen & Analgetikagabe',
-              icon: 'bi-capsule',
-              items: [
-                { id: 'schm-5', text: 'Ärztlich verordnete Bedarfsmedikation nach WHO-Stufenschema prüfen' },
-                { id: 'schm-6', text: 'Nicht-medikamentöse Maßnahmen ergänzen (schonende Entlastungslagerung, Kälte/Wärme, Zuwendung)' },
-                { id: 'schm-7', text: 'Patient über Wirkungszeitraum und mögliche Nebenwirkungen (Übelkeit, Sedierung) aufklären' }
-              ]
-            },
-            {
-              name: 'Phase 3: Re-Evaluation & Dokumentation',
-              icon: 'bi-stopwatch-fill',
-              items: [
-                { id: 'schm-8', text: 'Re-Evaluation der Schmerzstärke nach 30 Min. (i.v.) bzw. 60 Min. (oral/subkutan)' },
-                { id: 'schm-9', text: 'Dokumentation im Schmerzprotokoll / Kurve (Ausgangs-NRS, Maßnahme, Re-Evaluations-NRS)' },
-                { id: 'schm-10', text: 'Bei persistierenden Schmerzen (NRS > 4): Rücksprache mit Stationsarzt / Schmerzdienst' }
-              ]
-            }
-          ]
-        }
       ]
     },
     ernaehrung: {
@@ -349,46 +226,6 @@ root.QRParser = (function () {
           icon: 'bi-people-fill',
           detail: 'Bedarfsgerechter Einbezug von Logopädie, Diätassistenten und Ärzten zur gemeinsamen Anpassung der Ernährungsstrategie.'
         }
-      ],
-      checklists: [
-        {
-          id: 'ern-assessment',
-          title: 'Mangelernährungs- & Schluck-Check',
-          shortTitle: 'Ernährungs-Check',
-          subtitle: 'Expertenstandard Ernährungsmanagement (ID: 408310 / 408331)',
-          badge: 'Ernährung',
-          docuSnippet: 'Ernährungsmanagement: Risikoscreening durchgeführt. Zahnprothese sitzt korrekt. Patient 90° aufrecht gelagert. Schluckakt unauffällig. Nahrungskonsistenz angepasst. Trink- & Tellermenge im Protokoll erfasst.',
-          phases: [
-            {
-              name: 'Phase 1: Screening & Mundstatus',
-              icon: 'bi-clipboard-check',
-              items: [
-                { id: 'ern-1', text: 'Screening auf Mangelernährung: Ungewollter Gewichtsverlust in letzten 3–6 Monaten? BMI prüfen' },
-                { id: 'ern-2', text: 'Mund- und Zahnstatus kontrollieren: Schleimhaut intakt, Zahnprothesen gereinigt & fester Sitz' },
-                { id: 'ern-3', text: 'Schluckvermögen prüfen: Schlucktest (Wasserprobe) bei Verdacht auf Dysphagie' }
-              ]
-            },
-            {
-              name: 'Phase 2: Essensumgebung & Vorbereitung',
-              icon: 'bi-cup-straw',
-              items: [
-                { id: 'ern-4', text: 'Patientenvorbereitung: Hand- und Mundhygiene vor der Mahlzeit' },
-                { id: 'ern-5', text: 'Optimale Sitzposition: 90° aufrecht im Stuhl oder im Bett mit angezogenen Knien' },
-                { id: 'ern-6', text: 'Nahrungskonsistenz anpassen (püriert, flüssig eingedickt, weiche Kost)' },
-                { id: 'ern-7', text: 'Hilfsmittel bereitstellen: Schnabelbecher, ergonomisches Besteck, Tellerranderhöhung' }
-              ]
-            },
-            {
-              name: 'Phase 3: Nahrungsaufnahme & Nachbereitung',
-              icon: 'bi-check2-circle',
-              items: [
-                { id: 'ern-8', text: 'Angemessenes Reichentempo: Patient bestimmt Schluckrhythmus (keine Überforderung)' },
-                { id: 'ern-9', text: 'Patient bleibt nach Mahlzeit mind. 20–30 Min. aufrecht sitzen (Aspirationsprophylaxe)' },
-                { id: 'ern-10', text: 'Trinkmenge & Tellermenge (z. B. 1/4, 1/2, 3/4) im KIS-Ernährungsprotokoll erfassen' }
-              ]
-            }
-          ]
-        }
       ]
     },
     zvk: {
@@ -403,140 +240,9 @@ root.QRParser = (function () {
       videoUrl: (typeof window !== 'undefined' && window.location ? window.location.origin + window.location.pathname + '#/zvk' : 'http://localhost:3000/#/zvk'),
       videoId: 'zvk_poster',
       sopPdfUrl: 'assets/zvk-sop-verfahrensanweisung.pdf',
-      sopDocuments: [
-        {
-          id: 'zvk-sop',
-          title: 'Verfahrensanweisung: Zentraler Venenkatheter (ZVK) – Intensivpflege',
-          shortTitle: '1. SOP ZVK (Hauptdokument)',
-          roXtraId: '391904',
-          version: 'Ver. 002 / 09.2024',
-          pageCount: 10,
-          badge: 'SOP • 10 Seiten',
-          icon: 'bi-file-earmark-medical-fill',
-          themeColor: '#e11d48',
-          pdfUrl: 'assets/zvk-sop-verfahrensanweisung.pdf',
-          thumb: 'assets/zvk-sop-thumb.jpg',
-          scope: 'Intensivstationen (ITS / IMC) • Zentrum der Chirurgie & Innere Medizin',
-          description: 'Standardisierte Verfahrensanweisung für Aseptik, Verbandswechsel, Spültechnik und Infusionsfilter.',
-          pages: [
-            { pageNum: 1, label: 'S. 1: Deckblatt & SOP Übersicht', image: 'assets/zvk-sop-page-1.jpg' },
-            { pageNum: 2, label: 'S. 2: Indikationen & Gefäßwahl', image: 'assets/zvk-sop-page-2.jpg' },
-            { pageNum: 3, label: 'S. 3: Hygiene & Vorbereitung', image: 'assets/zvk-sop-page-3.jpg' },
-            { pageNum: 4, label: 'S. 4: Aseptischer Verbandswechsel', image: 'assets/zvk-sop-page-4.jpg' },
-            { pageNum: 5, label: 'S. 5: Konnektoren & Diskonnektion', image: 'assets/zvk-sop-page-5.jpg' },
-            { pageNum: 6, label: 'S. 6: Spültechnik (Push-Pause)', image: 'assets/zvk-sop-page-6.jpg' },
-            { pageNum: 7, label: 'S. 7: Infusionsfilter (0,2µm / 1,2µm)', image: 'assets/zvk-sop-page-7.jpg' },
-            { pageNum: 8, label: 'S. 8: Blutentnahme & Katheterstilllegung', image: 'assets/zvk-sop-page-8.jpg' },
-            { pageNum: 9, label: 'S. 9: Komplikationen & Entfernung', image: 'assets/zvk-sop-page-9.jpg' },
-            { pageNum: 10, label: 'S. 10: Standard-Infusionsschema ITS', image: 'assets/zvk-sop-page-10.jpg' }
-          ]
-        },
-        {
-          id: 'zvk-hygieneplan',
-          title: 'Hygieneplan: Umgang mit multiresistenten & hygienerelevanten Erregern',
-          shortTitle: '2. Hygieneplan MRE (ITS/IMC)',
-          roXtraId: '361678',
-          version: 'Ver. 012 / 02.2026',
-          pageCount: 5,
-          badge: 'Hygieneplan • 5 Seiten • Neu',
-          icon: 'bi-shield-shaded',
-          themeColor: '#0284c7',
-          pdfUrl: 'assets/zvk-hygieneplan-multiresistente-erreger.pdf',
-          thumb: 'assets/zvk-hygieneplan-thumb.jpg',
-          scope: 'Häma-Onko (Station+TK) • ITS / IMC • Neonatologie',
-          description: 'Umgang mit multiresistenten Erregern (VRE+, 2/3/4MRGN, MRSA, C. diff, Noro, TBC, Covid-19, Auslands-Iso).',
-          pages: [
-            { pageNum: 1, label: 'S. 1: VRE / MRGN / Candida', image: 'assets/zvk-hygieneplan-page-1.jpg' },
-            { pageNum: 2, label: 'S. 2: MRSA / C. diff / Noro', image: 'assets/zvk-hygieneplan-page-2.jpg' },
-            { pageNum: 3, label: 'S. 3: Rota / TBC / Influenza', image: 'assets/zvk-hygieneplan-page-3.jpg' },
-            { pageNum: 4, label: 'S. 4: Hep / Covid-19 / Auslands I', image: 'assets/zvk-hygieneplan-page-4.jpg' },
-            { pageNum: 5, label: 'S. 5: Auslands-Iso II/III & Hinweise', image: 'assets/zvk-hygieneplan-page-5.jpg' }
-          ],
-          pathogens: [
-            {
-              id: 'vre',
-              name: 'VRE (VRE+)',
-              sub: 'Resistenz gg. Linezolid, Tigecyclin, Daptomycin',
-              iso: 'Iso- / Einzelzimmer',
-              ppe: 'Schutzkittel, Handschuhe am Patienten',
-              cleaning: 'Perform Pro 2% Schlussdesinfektion',
-              swab: 'Index: keine Entisolation; Kontakt: Entiso wenn 1x neg.',
-              sheetPage: 1,
-              badgeColor: '#db2777'
-            },
-            {
-              id: 'mrgn',
-              name: '3MRGN / 4MRGN',
-              sub: 'Multiresistente gramnegative Stäbchen',
-              iso: 'Iso- / Einzelzimmer',
-              ppe: 'Schutzkittel, Handschuhe am Patienten',
-              cleaning: 'Incidin Pro 0,5% (3 MRGN ACBA mit Perform Pro 2%)',
-              swab: '3MRGN: 3x neg. (Abst. 1 Wo.) | 4MRGN: 3x neg. (Abst. 1 Mo.)',
-              sheetPage: 1,
-              badgeColor: '#dc2626'
-            },
-            {
-              id: 'mrsa',
-              name: 'MRSA',
-              sub: 'Methicillin-resistenter S. aureus',
-              iso: 'Iso- / Einzelzimmer, gelber Infektionswäsche-Sack',
-              ppe: 'Schutzkittel, Handschuhe, MNS am Patienten',
-              cleaning: 'Schlussdesinfektion Incidin Pro 0,5%',
-              swab: 'Dekolonisation 5 Tage. Entisolation wenn 3x neg. (Abstand ≥ 24 h)',
-              sheetPage: 2,
-              badgeColor: '#ea580c'
-            },
-            {
-              id: 'cdiff',
-              name: 'C. diff',
-              sub: 'Clostridioides difficile (Sporenbildner)',
-              iso: 'Iso- / Einzelzimmer',
-              ppe: 'Erst Hände waschen, dann desinfizieren! Schutzkittel, Handschuhe',
-              cleaning: 'Schlussdesinfektion Perform Pro 2%',
-              swab: 'Entisolation: > 48 h Symptomfreiheit',
-              sheetPage: 2,
-              badgeColor: '#b45309'
-            },
-            {
-              id: 'noro',
-              name: 'Norovirus',
-              sub: 'Gastroenteritis (mit/ohne Erbrechen/Diarrhoe)',
-              iso: 'Iso- / Einzelzimmer',
-              ppe: 'Schutzkittel, Handschuhe, MNS vor Betreten des Zimmers',
-              cleaning: 'Schlussdesinfektion Perform Pro 2%',
-              swab: 'Entisolation: Bis 3 Tage nach Symptomfreiheit',
-              sheetPage: 2,
-              badgeColor: '#7c3aed'
-            },
-            {
-              id: 'tbc',
-              name: 'Offene TBC',
-              sub: 'Tuberkulose (Aerosol-Übertragung)',
-              iso: 'Iso- / Einzelzimmer, gelber Wäsche-Sack',
-              ppe: 'Schutzkittel, Handschuhe, FFP2 vor Betreten des Zimmers!',
-              cleaning: 'Schlussdesinfektion Perform Pro 2%',
-              swab: 'Untersuchung von Kontaktpersonen gem. Leitlinie 03.2',
-              sheetPage: 3,
-              badgeColor: '#0284c7'
-            },
-            {
-              id: 'covid',
-              name: 'SARS-CoV-2',
-              sub: 'Covid-19 Tröpfchen / Aerosol',
-              iso: 'Iso- / Einzelzimmer',
-              ppe: 'FFP2, Schutzbrille, Haube, Schutzkittel, Handschuhe vor Betreten',
-              cleaning: 'Schlussdesinfektion Incidin Pro 0,5%',
-              swab: 'Entisolation gem. 05.8 Isolationsmaßnahme',
-              sheetPage: 4,
-              badgeColor: '#059669'
-            }
-          ]
-        }
-      ],
-      roXtraIds: ['391904', '361678', '484866', '456904', '414354', '414362'],
+      roXtraIds: ['391904', '484866', '456904', '414354', '414362'],
       roXtraDetails: {
         '391904': 'Verfahrensanweisung ZVK (Ver. 002/09.2024)',
-        '361678': 'Hygieneplan: Multiresistente Erreger ITS/IMC (Ver. 012/02.2026)',
         '484866': 'OMW ZVK Verbandswechsel (Ver. 001/07.2026)',
         '456904': 'OMW - Infusionsfilter (Ver. 001/08.2025)',
         '414354': 'Standard-Infusionsschema ITS (Ver. 001/05.2024)',
@@ -591,102 +297,6 @@ root.QRParser = (function () {
           icon: 'bi-journal-check',
           detail: 'Tägliche Dokumentation unter „Zugänge“ in der Kurve (im ITS-Setting pro Schicht). Tägliche kritische Re-Evaluation der ZVK-Notwendigkeit zur frühzeitigen Entfernung (CRBSI-Prävention).'
         }
-      ],
-      checklists: [
-        {
-          id: 'zvk-dressing',
-          title: 'Aseptischer ZVK-Verbandswechsel',
-          shortTitle: 'Verbandswechsel',
-          subtitle: 'Verfahrensanweisung ID: 391904 & OMW ID: 484866',
-          badge: 'Aseptisch • 4 Phasen',
-          timerSeconds: 60,
-          timerLabel: 'Einwirkzeit Hautantiseptikum (mind. 60 Sek.)',
-          docuSnippet: 'ZVK-Verbandswechsel aseptisch durchgeführt: Einstichstelle reizlos, trocken, keine Rötung/Schwellung/Sekretion. Hautantiseptik mind. 60 Sek. EWZ vollständig eingehalten. Steriler PU-Folienverband angelegt. Katheterlage unverändert. Nächster Wechsel in 7 Tagen oder bei Bedarf.',
-          phases: [
-            {
-              name: 'Phase 1: Vorbereitung & Hygiene',
-              icon: 'bi-box-seam-fill',
-              items: [
-                { id: 'zvk-d1', text: 'Patienten aufklären & informieren (Flachlagerung, Kopf zur Gegenseite gewandt)' },
-                { id: 'zvk-d2', text: 'Hygienische Händedesinfektion (mind. 30 Sek.)' },
-                { id: 'zvk-d3', text: 'Mund-Nasen-Schutz für Pflegekraft & Patient anlegen (oder Patient abwenden lassen)' },
-                { id: 'zvk-d4', text: 'Steriles Verbandswechsel-Set, Hautantiseptikum (Octeniderm/Kodan) & steriler Folienverband griffbereit' }
-              ]
-            },
-            {
-              name: 'Phase 2: Verbandsentfernung & Einstichstellen-Inspektion',
-              icon: 'bi-eye-fill',
-              items: [
-                { id: 'zvk-d5', text: 'Unsterile Handschuhe anlegen & alten Transparentverband vorsichtig von distal nach proximal lösen' },
-                { id: 'zvk-d6', text: 'Katheter gegen Herausrutschen / Dislokation sichern (niemals mechanischen Zug ausüben)' },
-                { id: 'zvk-d7', text: 'Alten Verband & Handschuhe verwerfen -> Erneute hygienische Händedesinfektion' },
-                { id: 'zvk-d8', text: 'Einstichstelle inspizieren: Rötung, Schwellung, Druckschmerz, Sekret/Eiter? cm-Markierung an Haut prüfen' }
-              ]
-            },
-            {
-              name: 'Phase 3: Aseptische Desinfektion & Einwirkzeit',
-              icon: 'bi-droplet-half',
-              hasTimer: true,
-              items: [
-                { id: 'zvk-d9', text: 'Sterile Handschuhe anlegen oder strikte Non-Touch-Technik mit sterilen Klemmen/Tupfern' },
-                { id: 'zvk-d10', text: 'Hautantiseptikum von der Einstichstelle zirkulär nach außen auftragen (Wisch- oder Sprühdesinfektion)' },
-                { id: 'zvk-d11', text: 'STRIKTE EINWIRKZEIT: Mindestens 60 Sekunden vollständig an der Luft trocknen lassen (nicht fächern!)' }
-              ]
-            },
-            {
-              name: 'Phase 4: Neuer Verband & Dokumentation',
-              icon: 'bi-clipboard-check-fill',
-              items: [
-                { id: 'zvk-d12', text: 'Sterilen PU-Transparentverband mittig, blasen- und spannungsfrei aufkleben' },
-                { id: 'zvk-d13', text: 'Katheterflügel und Zuleitungen mit Zugentlastung spannungsfrei fixieren' },
-                { id: 'zvk-d14', text: 'Dokumentationsetikett (Datum, Uhrzeit, Handzeichen) am Verbandsrand anbringen' },
-                { id: 'zvk-d15', text: 'Dokumentation im KIS / Kurve: Einstichstellenbefund, cm-Markierung, Datum nächster Wechsel' }
-              ]
-            }
-          ]
-        },
-        {
-          id: 'zvk-flush',
-          title: 'Konnektorenwechsel & Systemspülung (Push-Pause)',
-          shortTitle: 'Konnektoren & Spülung',
-          subtitle: 'Scrub the Hub & pulsatile Spültechnik (ID: 391904)',
-          badge: 'Hygiene & Prävention',
-          timerSeconds: 15,
-          timerLabel: 'Scrub-the-Hub Desinfektion (15–30 Sek.)',
-          docuSnippet: 'ZVK-Konnektorenwechsel durchgeführt: Scrub-the-Hub Wischdesinfektion 15–30 Sek. Neue nadelfreie Ventile konnektiert. Pulsatile Flush-Spülung (Stop-and-Go) mit je 10 ml NaCl 0,9 % ohne Widerstand. Refluxfreier Verschluss.',
-          phases: [
-            {
-              name: 'Phase 1: Material & Spritzengröße',
-              icon: 'bi-shield-check',
-              items: [
-                { id: 'zvk-f1', text: 'Ausschließlich Spritzen ≥ 10 ml verwenden (Vermeidung gefährlicher Druckspitzen / Berstdruck!)' },
-                { id: 'zvk-f2', text: 'Sterile NaCl 0,9 % aufziehen & luftleer vorbereiten' },
-                { id: 'zvk-f3', text: 'Neue desinfizierbare nadelfreie Ventile (z.B. Caresite / Bionector) steril bereitlegen' },
-                { id: 'zvk-f4', text: 'Alkoholtupfer (70% Isopropanol / Octeniderm) zur Wischdesinfektion bereitlegen' }
-              ]
-            },
-            {
-              name: 'Phase 2: Scrub the Hub & Konnektorentausch',
-              icon: 'bi-arrow-repeat',
-              hasTimer: true,
-              items: [
-                { id: 'zvk-f5', text: 'Hygienische Händedesinfektion & unsterile Handschuhe anlegen' },
-                { id: 'zvk-f6', text: 'SCRUB THE HUB: Konnektoransatz mit Alkoholtupfer 15–30 Sek. mechanisch mit Drehbewegung desinfizieren' },
-                { id: 'zvk-f7', text: 'Vollständig an der Luft trocknen lassen' },
-                { id: 'zvk-f8', text: 'Neuen Konnektor steril aufschrauben (Schenkelklemme vorher geschlossen halten)' }
-              ]
-            },
-            {
-              name: 'Phase 3: Pulsatiles Spülen (Stop-and-Go)',
-              icon: 'bi-water',
-              items: [
-                { id: 'zvk-f9', text: 'Pulsatiles Spülen (Push-Pause-Technik): 6–10 kurze Stop-and-Go-Impulse mit 10 ml NaCl 0,9 %' },
-                { id: 'zvk-f10', text: 'Niemals gewaltsam gegen Widerstand spülen oder aspirieren!' },
-                { id: 'zvk-f11', text: 'Positiven Druck beim Abziehen halten (letzten 1 ml unter laufendem Druck spülen & Klemme schließen)' }
-              ]
-            }
-          ]
-        }
       ]
     },
     isolation: {
@@ -712,18 +322,18 @@ root.QRParser = (function () {
       leadText: 'Hygiene schützt – Gemeinsam für Patienten und Mitarbeitende. Schneller Zugriff auf den aktuellen Hygieneplan und alle wichtigen Handlungsleitfäden bei MRE- und Infektionsnachweis.',
       instructions: 'Scannen Sie den QR-Code, um die vollständige Verfahrensanweisung (SOP) sowie Hygienerichtlinien zur Isolation aufzurufen. Weiterführende Dokumente im QM-System unter ID-Nr.: 239411.',
       whyImportant: [
-        'Prävention von nosokomialen Kreuzinfektionen (MRE-Übertragung)',
-        'Schutz von Mitpatienten, Besuchern und medizinischem Fachpersonal',
-        'Standardisierte Barriere- & Schutzmaßnahmen (PSA / Schutzkleidung)',
-        'Zielgerichtete Flächendesinfektion & fachgerechte Schlussdesinfektion'
+        'Übertragung verhindern (Infektionsketten konsequent unterbrechen)',
+        'Patienten schützen (Schutz vor nosokomialen Infektionen & MRE)',
+        'Team sicher arbeiten lassen (Konsequente PSA & Händehygiene)',
+        'Zielgerichtete Flächendesinfektion & sachgerechte Entsorgung'
       ],
       keyPoints: [
-        'VRE: Zimmer-Isolation; Abrüsten: Materialien mit direktem Kontakt entsorgen; Schlussdesinfektion; Basishygiene + HD-Mittel begrenzt viruzid.',
-        '3MRGN: Bettplatz-Isolation; Bettplatz-Reinigung; Materialien mit direktem Patientenkontakt entsorgen; Basishygiene + HD-Mittel.',
-        '4MRGN & ACBA: Strikte Zimmer-Isolation; Alles verwerfen (ACBA); Schlussdesinfektion; Info an Hygienefachkraft für Umweltabstriche.',
-        'MRSA: Zimmer-Isolation; Materialien mit direktem Kontakt verwerfen; Schlussdesinfektion nach Verlegung; Basishygiene.',
-        'C. difficile: Zimmer-Isolation; Wichtig: ERST Hände mit Seife gründlich waschen, dann Händedesinfektion mit HD-Mittel begrenzt viruzid.',
-        'Türbeschilderung: Farbleitsystem beachten (gelb außen / pink innen) – Schutzkittel & Handschuhe vor Betreten anlegen.'
+        'Indikation zur Isolation prüfen: Bei Nachweis oder begründetem Verdacht auf übertragbare Erreger (VRE, MRGN, MRSA, C. diff.) Schutzmaßnahmen sofort einleiten.',
+        'Schutzkleidung richtig anlegen: Je nach Übertragungsweg Schutzkittel, Handschuhe, Mund-Nasen-Schutz / FFP2 bei Bedarf und ggf. Schutzbrille tragen.',
+        'Händedesinfektion konsequent durchführen: Vor und nach Patientenkontakt, nach Kontakt mit kontaminierten Flächen sowie nach dem Ablegen der Schutzkleidung.',
+        'Patientennahe Flächen desinfizieren: Bett, Nachttisch, Türgriffe, Rufanlage und häufig berührte Flächen regelmäßig nach Hygieneplan aufbereiten.',
+        'Material patientenbezogen verwenden: Pflegeutensilien und Medizinprodukte möglichst nur für diesen Patienten nutzen oder direkt sachgerecht aufbereiten.',
+        'Abfall und Wäsche korrekt entsorgen: Kontaminierte Materialien und Wäsche im Zimmer nach den geltenden Hygienevorgaben sicher sammeln und entsorgen.'
       ],
       clinicalFocus: [
         {
@@ -750,76 +360,6 @@ root.QRParser = (function () {
           phase: '5. Verlegung & Schlussdesinfektion',
           icon: 'bi-stars',
           detail: 'Nach Entlassung oder Verlegung: Vollständige Wisch-Schlussdesinfektion aller patientennahen Kontaktflächen. Bei VRE/MRGN/ACBA Information an die Hygienefachkraft für Umweltabstriche.'
-        }
-      ],
-      checklists: [
-        {
-          id: 'iso-ppe',
-          title: 'MRE & Isolation: PSA An- und Ablegen',
-          shortTitle: 'PSA An- & Ablegen',
-          subtitle: 'Vermeidung von Eigenkontamination (ID: 239411)',
-          badge: 'Infektionsschutz',
-          timerSeconds: 30,
-          timerLabel: 'Händedesinfektion (mind. 30 Sek.)',
-          docuSnippet: 'Isolationsmaßnahmen nach Verfahrensanweisung ID: 239411 umgesetzt: Schutzkleidung vor Betreten vollständig angelegt. Kontaminationsfreies Ablegen im Zimmer/Schleuse durchgeführt. Händedesinfektion vor/nach Patientenkontakt sowie nach PSA-Ablegen.',
-          phases: [
-            {
-              name: 'Ablauf 1: Kontaminationsfreies Anlegen (VOR dem Zimmer)',
-              icon: 'bi-box-arrow-in-right',
-              items: [
-                { id: 'iso-a1', text: 'Hygienische Händedesinfektion (mind. 30 Sek.) vor Berühren der PSA' },
-                { id: 'iso-a2', text: 'Schutzkittel anlegen: Im Nacken und an der Taille vollständig schließen (Rücken bedeckt)' },
-                { id: 'iso-a3', text: 'Mund-Nasen-Schutz bzw. FFP2-Maske anlegen: Nasenbügel fest anformen, Dichtsitz prüfen' },
-                { id: 'iso-a4', text: 'Schutzbrille / Visier aufsetzen (bei Aerosolen, Absaugen, Tracheostoma oder Spritzgefahr)' },
-                { id: 'iso-a5', text: 'Einmalhandschuhe anlegen: Bündchen der Handschuhe ÜBER die Kittelärmel ziehen' }
-              ]
-            },
-            {
-              name: 'Ablauf 2: Sicheres Ablegen (IM Zimmer an der Tür / Schleuse)',
-              icon: 'bi-box-arrow-right',
-              hasTimer: true,
-              items: [
-                { id: 'iso-b1', text: '1. Handschuhe kontaminationsfrei abstreifen (Handschuh-in-Handschuh) -> Abwurf im Gelben Müll' },
-                { id: 'iso-b2', text: '2. Hygienische Händedesinfektion (mind. 30 Sek.)' },
-                { id: 'iso-b3', text: '3. Schutzkittel öffnen, von den Schultern fassen, von innen nach außen abrollen & entsorgen' },
-                { id: 'iso-b4', text: '4. Erneute hygienische Händedesinfektion vor dem Öffnen der Zimmertür' },
-                { id: 'iso-b5', text: '5. Außerhalb des Zimmers: Schutzbrille und Maske an den Haltebändern abnehmen (Außenseite nicht berühren!)' },
-                { id: 'iso-b6', text: '6. Abschließende Händedesinfektion (ACHTUNG C. diff.: Gründlich Händewaschen mit Wasser & Seife + Desinfektion)' }
-              ]
-            }
-          ]
-        },
-        {
-          id: 'iso-cleaning',
-          title: 'Flächendesinfektion & Raumaufbereitung',
-          shortTitle: 'Flächendesinfektion',
-          subtitle: 'Mittelwahl nach Hygieneplan: Incidin Pro vs. Perform Pro (sporizid)',
-          badge: 'Hygiene & Reinigung',
-          timerSeconds: 60,
-          timerLabel: 'Einwirkzeit Flächendesinfektion',
-          docuSnippet: 'Flächendesinfektion gemäß Hygieneplan durchgeführt: Patientennahe Kontaktflächen (Bett, Nachtschrank, Monitore, Infusomaten) scheuernd gewischt. Desinfektionsmittel und Einwirkzeit beachtet.',
-          phases: [
-            {
-              name: 'Phase 1: Desinfektionsmittel & PSA wählen',
-              icon: 'bi-shield-check',
-              items: [
-                { id: 'iso-c1', text: 'Desinfektionsmittel prüfen: Standard MRE (VRE, MRGN, MRSA) = Incidin Pro 0,5 %' },
-                { id: 'iso-c2', text: 'Sporenbildner prüfen: C. difficile / Norovirus = ZWINGEND Perform Pro 2 % (sporizid)' },
-                { id: 'iso-c3', text: 'PSA für Reinigung anlegen: Feste Schutzhandschuhe & Schutzkittel' }
-              ]
-            },
-            {
-              name: 'Phase 2: Scheuer-Wisch-Desinfektion & Einwirkzeit',
-              icon: 'bi-droplet-half',
-              hasTimer: true,
-              items: [
-                { id: 'iso-c4', text: 'Patientennahe Flächen mit getränktem Einmaltuch nass wischen (Bett, Nachttisch, Ruftaster, Sanitärbereich)' },
-                { id: 'iso-c5', text: 'Medizinische Geräte: Monitore, Spritzenpumpen & Infusomaten herstellerkonform desinfizieren' },
-                { id: 'iso-c6', text: 'Nassfilm sichtbar auf der Fläche belassen & vollständige Einwirkzeit abwarten (nicht trockenreiben!)' },
-                { id: 'iso-c7', text: 'Nach Verlegung / Entlassung: Schlussdesinfektion durchführen & Bettvorhänge tauschen' }
-              ]
-            }
-          ]
         }
       ]
     }
