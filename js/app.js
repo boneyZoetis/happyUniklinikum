@@ -2830,7 +2830,7 @@ function UniversalCardInteractiveCard({ isAtm = false, onSelectStandard }) {
     <div className={`universal-card-interactive-box ${isAtm ? 'atm-size' : ''} mx-auto position-relative`}>
       <div className="universal-card-inner position-relative w-100">
         <img
-          src={isAtm ? "assets/universal-card-12x8.jpg?v=20261019-16" : "assets/universal-card-umf.jpg?v=20261019-16"}
+          src={isAtm ? "assets/universal-card-12x8.jpg?v=20261020-01" : "assets/universal-card-umf.jpg?v=20261020-01"}
           alt="Universitätsmedizin Frankfurt - Klinische Pflegestandards Universal-Pocketcard"
           className="universal-card-img"
         />
@@ -2888,7 +2888,7 @@ function UniversalCardInteractiveCard({ isAtm = false, onSelectStandard }) {
           className="universal-card-hotspot"
           style={{ left: '61.5%', top: '30.5%', width: '28.0%', height: '53.0%', borderRadius: '24px' }}
           onClick={() => onSelectStandard('quick-hub')}
-          title="Hier scannen / Schnellzugriff für alle 6 Standards öffnen"
+          title="Hier scannen / Schnellzugriff für Pflegestandards & SOPs öffnen"
         />
       </div>
     </div>
@@ -2902,7 +2902,7 @@ function UniversalCardA4Native({ onSelectStandard }) {
   return (
     <div className="a4-native-card mx-auto position-relative overflow-hidden" id="universal-card-a4-sheet">
       <img
-        src="assets/universal-card-a4.jpg?v=20261019-16"
+        src="assets/universal-card-a4.jpg?v=20261020-01"
         alt="Universitätsklinikum Frankfurt - Klinische Pflegestandards Universal-Pocketcard DIN A4"
         className="w-100 h-auto d-block"
       />
@@ -2972,8 +2972,8 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
   const cardUrl = (typeof window !== 'undefined' && window.location)
     ? `${window.location.origin}${window.location.pathname}#/quick-hub`
     : 'https://umf-nursing-standards.web.app/#/quick-hub';
-  const shareTitle = 'Universitätsmedizin Frankfurt – Universal-Pocketcard (6 Expertenstandards & SOPs)';
-  const shareText = `Universitätsmedizin Frankfurt – Universal-Pocketcard (Alle 6 Expertenstandards & SOPs direkt öffnen): ${cardUrl}`;
+  const shareTitle = 'Universitätsmedizin Frankfurt – Universal-Pocketcard (Pflegestandards & SOPs)';
+  const shareText = `Universitätsmedizin Frankfurt – Universal-Pocketcard (Pflegestandards & SOPs direkt öffnen): ${cardUrl}`;
 
   const handleShareCard = async () => {
     if (navigator.share) {
@@ -2997,7 +2997,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
         }
         await navigator.share({
           title: shareTitle,
-          text: 'Universitätsmedizin Frankfurt – Alle 6 Pflege-Expertenstandards & SOPs:',
+          text: 'Universitätsmedizin Frankfurt – Alle Pflege-Expertenstandards & SOPs:',
           url: cardUrl
         });
       } catch (err) {
