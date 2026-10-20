@@ -2205,20 +2205,6 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                   <span>Drucken</span>
                 </button>
               </div>
-
-              {standard.sopPdfUrl && standard.id !== 'zvk' && (
-                <a
-                  href={pdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-danger btn-sm rounded-pill px-3 py-2 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-1.5 w-100 w-sm-auto"
-                  style={{ minHeight: '44px' }}
-                  title="Vollständiges Dokument als Original-PDF öffnen"
-                >
-                  <i className="bi bi-file-earmark-pdf-fill"></i>
-                  <span>PDF öffnen ({activeDoc ? `${activeDoc.pageCount} S.` : '4 S.'})</span>
-                </a>
-              )}
             </div>
 
             {/* Secondary Utilities: QR PNG (only for video standards) & Link */}
@@ -2729,27 +2715,6 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                     </span>
                     <span>Verfahrensanweisungen &amp; Hygienepläne</span>
                   </h5>
-                  <div className="d-flex align-items-center gap-1.5 flex-wrap">
-                    <a
-                      href="assets/isolation-sop-verfahrensanweisung.pdf"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-2xs fw-semibold"
-                      title="SOP Isolation (ID 239411) als PDF öffnen"
-                    >
-                      <i className="bi bi-file-earmark-medical me-1"></i> SOP Isolation (4 S.)
-                    </a>
-                    <a
-                      href="assets/hygieneplan-multiresistente-erreger.pdf"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-sm text-white rounded-pill px-3 shadow-sm fw-semibold"
-                      style={{ background: 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)', borderColor: '#0d9488' }}
-                      title="Hygieneplan MRE (ID 361678) als PDF öffnen"
-                    >
-                      <i className="bi bi-file-earmark-pdf-fill me-1"></i> Hygieneplan MRE (5 S.)
-                    </a>
-                  </div>
                 </div>
 
                 {/* 1. Official QM Documents List */}
