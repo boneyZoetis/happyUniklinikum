@@ -907,10 +907,14 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   width: 100%;
 }
 
-.universal-card-img {
+.universal-card-img,
+.a4-card-main-img {
   width: 100%;
   height: auto;
   display: block;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  transform: translateZ(0);
 }
 
 .universal-card-hotspot {

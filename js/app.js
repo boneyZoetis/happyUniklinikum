@@ -2830,7 +2830,7 @@ function UniversalCardInteractiveCard({ isAtm = false, onSelectStandard }) {
     <div className={`universal-card-interactive-box ${isAtm ? 'atm-size' : ''} mx-auto position-relative`}>
       <div className="universal-card-inner position-relative w-100">
         <img
-          src={isAtm ? "assets/universal-card-12x8.jpg?v=20261020-01" : "assets/universal-card-umf.jpg?v=20261020-01"}
+          src={isAtm ? "assets/universal-card-12x8.jpg?v=20261020-02" : "assets/universal-card-umf.jpg?v=20261020-02"}
           alt="Universitätsmedizin Frankfurt - Klinische Pflegestandards Universal-Pocketcard"
           className="universal-card-img"
         />
@@ -2902,9 +2902,9 @@ function UniversalCardA4Native({ onSelectStandard }) {
   return (
     <div className="a4-native-card mx-auto position-relative overflow-hidden" id="universal-card-a4-sheet">
       <img
-        src="assets/universal-card-a4.jpg?v=20261020-01"
+        src="assets/universal-card-a4.jpg?v=20261020-02"
         alt="Universitätsklinikum Frankfurt - Klinische Pflegestandards Universal-Pocketcard DIN A4"
-        className="w-100 h-auto d-block"
+        className="w-100 h-auto d-block a4-card-main-img"
       />
 
       {/* 1. Dekubitusprophylaxe Hotspot */}
@@ -3097,9 +3097,9 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
       const opt = {
         margin: isAtm ? [10, 10, 10, 10] : [0, 0, 0, 0],
         filename: isAtm ? 'UMF-Universal-Pocketcard-12x8cm.pdf' : 'UMF-Universal-Pocketcard-A4.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
+        image: { type: 'jpeg', quality: 1.0 },
         pagebreak: { mode: [] },
-        html2canvas: { scale: 2.5, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+        html2canvas: { scale: 3.0, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
         jsPDF: {
           unit: 'mm',
           format: 'a4',
