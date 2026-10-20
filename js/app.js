@@ -1889,17 +1889,34 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                     <div className="d-flex align-items-center gap-2 flex-wrap">
                       {activeDoc && activeDoc.date && (
                         <span
-                          className="badge bg-white px-2.5 py-1.5 small d-inline-flex align-items-center gap-1.5 rounded-pill shadow-2xs"
-                          style={{ border: '1px solid #bae6fd', color: '#0369a1' }}
+                          className="badge px-3 py-1.5 small d-inline-flex align-items-center gap-1.5 rounded-pill shadow-sm fw-bold"
+                          style={{
+                            background: selectedDocIndex === 0
+                              ? 'linear-gradient(135deg, #fef08a 0%, #fde047 100%)'
+                              : 'linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%)',
+                            color: selectedDocIndex === 0 ? '#713f12' : '#064e3b',
+                            border: selectedDocIndex === 0 ? '1.5px solid #eab308' : '1.5px solid #10b981',
+                            fontSize: '0.82rem',
+                            letterSpacing: '0.2px'
+                          }}
                         >
-                          <i className="bi bi-calendar3 text-primary"></i>
-                          <span>Stand: <strong>{activeDoc.date}</strong>{activeDoc.version ? ` (Ver. ${activeDoc.version})` : ''}</span>
+                          <i className={`bi ${selectedDocIndex === 0 ? 'bi-calendar-check-fill text-warning' : 'bi-calendar-check-fill text-success'}`}></i>
+                          <span>
+                            Gültig ab: <span className="text-decoration-underline">{activeDoc.date}</span>
+                            {activeDoc.version ? ` (Ver. ${activeDoc.version})` : ''}
+                          </span>
                         </span>
                       )}
                       <span
-                        className="badge bg-white px-2.5 py-1.5 small font-monospace rounded-pill shadow-2xs"
-                        style={{ border: '1px solid #cbd5e1', color: '#334155' }}
+                        className="badge bg-white px-3 py-1.5 small font-monospace rounded-pill shadow-2xs"
+                        style={{
+                          border: '1.5px solid #94a3b8',
+                          color: '#1e293b',
+                          fontSize: '0.8rem',
+                          fontWeight: '600'
+                        }}
                       >
+                        <i className="bi bi-file-earmark-medical me-1 text-primary"></i>
                         roXtra ID: <strong>{activeDoc ? activeDoc.roXtraId : standard.roXtraIds.join(' / ')}</strong>
                       </span>
                     </div>
@@ -1927,7 +1944,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                               padding: '5px 10px'
                             }}
                           >
-                            <i className="bi bi-collection-fill"></i> Verfügbare QM-Dokumente ({documents.length})
+                            <i className="bi bi-collection-fill"></i> Dokumenten-Auswahl ({documents.length})
                           </span>
                           <span className="text-secondary small d-none d-sm-inline" style={{ fontSize: '0.74rem' }}>
                             Umschalten per Klick
@@ -1943,31 +1960,31 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                           const isSelected = selectedDocIndex === idx;
                           const activeGradient = idx === 0
                             ? 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)'
-                            : 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)';
+                            : 'linear-gradient(135deg, #0d9488 0%, #047857 100%)';
                           const glowShadow = isSelected
                             ? (idx === 0
-                                ? '0 4px 14px rgba(2, 132, 199, 0.35)'
-                                : '0 4px 14px rgba(13, 148, 136, 0.35)')
-                            : '0 1px 3px rgba(0,0,0,0.05)';
-                          const iconColor = isSelected
-                            ? '#ffffff'
-                            : (idx === 0 ? '#0284c7' : '#0d9488');
+                                ? '0 5px 16px rgba(2, 132, 199, 0.4)'
+                                : '0 5px 16px rgba(13, 148, 136, 0.4)')
+                            : '0 2px 6px rgba(0,0,0,0.06)';
+                          const inactiveBg = idx === 0 ? '#f0f9ff' : '#f0fdf4';
+                          const inactiveBorder = idx === 0 ? '#7dd3fc' : '#86efac';
+                          const inactiveText = idx === 0 ? '#0369a1' : '#047857';
 
                           return (
                             <button
                               key={doc.id}
                               type="button"
                               className={`btn btn-sm rounded-pill px-3 py-2 fw-semibold d-flex align-items-center gap-2.5 transition-all flex-grow-1 flex-sm-grow-0 justify-content-between justify-content-sm-center ${
-                                isSelected
-                                  ? 'text-white'
-                                  : 'bg-white text-dark border hover-shadow'
+                                isSelected ? 'text-white' : 'hover-shadow'
                               }`}
                               style={{
                                 fontSize: '0.84rem',
-                                background: isSelected ? activeGradient : '#ffffff',
-                                borderColor: isSelected ? 'transparent' : '#cbd5e1',
+                                background: isSelected ? activeGradient : inactiveBg,
+                                borderColor: isSelected ? 'transparent' : inactiveBorder,
+                                color: isSelected ? '#ffffff' : inactiveText,
                                 boxShadow: glowShadow,
-                                minHeight: '40px'
+                                minHeight: '44px',
+                                border: '1.5px solid'
                               }}
                               onClick={() => setSelectedDocIndex(idx)}
                             >
@@ -1975,27 +1992,41 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                                 <span
                                   className="rounded-circle d-inline-flex align-items-center justify-content-center flex-shrink-0"
                                   style={{
-                                    width: '24px',
-                                    height: '24px',
-                                    backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : (idx === 0 ? 'rgba(2, 132, 199, 0.1)' : 'rgba(13, 148, 136, 0.1)'),
-                                    color: iconColor
+                                    width: '26px',
+                                    height: '26px',
+                                    backgroundColor: isSelected ? 'rgba(255,255,255,0.25)' : '#ffffff',
+                                    color: isSelected ? '#ffffff' : (idx === 0 ? '#0284c7' : '#0d9488'),
+                                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
                                   }}
                                 >
                                   <i className={`bi ${idx === 0 ? 'bi-file-earmark-medical-fill' : 'bi-shield-check'}`}></i>
                                 </span>
-                                <span>{doc.shortTitle}</span>
+                                <span className="fw-bold">{doc.shortTitle}</span>
                               </div>
-                              <span
-                                className="badge rounded-pill fw-semibold"
-                                style={{
-                                  fontSize: '0.72rem',
-                                  backgroundColor: isSelected ? 'rgba(255, 255, 255, 0.22)' : '#f1f5f9',
-                                  color: isSelected ? '#ffffff' : '#334155',
-                                  border: isSelected ? '1px solid rgba(255, 255, 255, 0.35)' : '1px solid #e2e8f0'
-                                }}
-                              >
-                                <i className="bi bi-calendar3 me-1"></i>{doc.date} &bull; {doc.pageCount} S.
-                              </span>
+                              <div className="d-flex align-items-center gap-1.5">
+                                <span
+                                  className="badge rounded-pill fw-bold shadow-2xs"
+                                  style={{
+                                    fontSize: '0.74rem',
+                                    backgroundColor: idx === 0 ? '#fef08a' : '#a7f3d0',
+                                    color: idx === 0 ? '#854d0e' : '#064e3b',
+                                    border: idx === 0 ? '1px solid #facc15' : '1px solid #34d399'
+                                  }}
+                                >
+                                  <i className="bi bi-calendar3 me-1"></i>{doc.date}
+                                </span>
+                                <span
+                                  className="badge rounded-pill fw-semibold"
+                                  style={{
+                                    fontSize: '0.7rem',
+                                    backgroundColor: isSelected ? 'rgba(255, 255, 255, 0.22)' : '#ffffff',
+                                    color: isSelected ? '#ffffff' : '#475569',
+                                    border: isSelected ? '1px solid rgba(255, 255, 255, 0.35)' : '1px solid #cbd5e1'
+                                  }}
+                                >
+                                  {doc.pageCount} S.
+                                </span>
+                              </div>
                             </button>
                           );
                         })}
@@ -2037,9 +2068,25 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                           {activeDoc ? activeDoc.title : standard.topic}
                         </h6>
                         {activeDoc && activeDoc.date && (
-                          <div className="d-inline-flex align-items-center gap-1.5 px-2.5 py-1 rounded-pill bg-light border text-dark small mb-2 fw-semibold" style={{ fontSize: '0.78rem' }}>
-                            <i className="bi bi-calendar-check text-primary"></i>
-                            <span>Stand: {activeDoc.date} {activeDoc.version ? `(Version ${activeDoc.version})` : ''}</span>
+                          <div
+                            className="d-inline-flex align-items-center gap-1.5 px-3 py-1.5 rounded-pill mb-2 fw-bold shadow-2xs"
+                            style={{
+                              background: standard.id === 'isolation'
+                                ? (selectedDocIndex === 0
+                                    ? 'linear-gradient(135deg, #fef08a 0%, #fde047 100%)'
+                                    : 'linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%)')
+                                : undefined,
+                              color: standard.id === 'isolation'
+                                ? (selectedDocIndex === 0 ? '#713f12' : '#064e3b')
+                                : undefined,
+                              border: standard.id === 'isolation'
+                                ? (selectedDocIndex === 0 ? '1.5px solid #eab308' : '1.5px solid #10b981')
+                                : '1px solid #cbd5e1',
+                              fontSize: '0.8rem'
+                            }}
+                          >
+                            <i className={`bi ${standard.id === 'isolation' ? 'bi-calendar-check-fill' : 'bi-calendar-check text-primary'}`}></i>
+                            <span>Gültiger Stand: {activeDoc.date} {activeDoc.version ? `(Ver. ${activeDoc.version})` : ''}</span>
                           </div>
                         )}
                         <div className="text-muted small mb-3">
@@ -2086,13 +2133,42 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                   />
 
                   {/* Bottom Action Strip (Desktop/Tablet Only, hidden on mobile) */}
-                  <div className="px-3 py-2 bg-light border-top d-none d-md-flex flex-wrap justify-content-between align-items-center gap-2">
-                    <div className="d-flex align-items-center gap-2 small text-muted">
-                      <i className="bi bi-file-earmark-check text-success"></i>
-                      <span>
+                  <div
+                    className="px-3 py-2 border-top d-none d-md-flex flex-wrap justify-content-between align-items-center gap-2"
+                    style={{
+                      background: standard.id === 'isolation'
+                        ? 'linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%)'
+                        : undefined,
+                      backgroundColor: standard.id !== 'isolation' ? '#f8f9fa' : undefined,
+                      borderColor: standard.id === 'isolation' ? '#bae6fd' : '#dee2e6'
+                    }}
+                  >
+                    <div className="d-flex align-items-center gap-2 small">
+                      <i className="bi bi-file-earmark-check-fill text-success fs-6"></i>
+                      <span className="text-secondary">
                         Gültige Version im roXtra QM-System (ID {activeDoc ? activeDoc.roXtraId : standard.roXtraIds.join(' / ')})
-                        {activeDoc && activeDoc.date ? ` • Stand: ${activeDoc.date}` : ''}
                       </span>
+                      {activeDoc && activeDoc.date && (
+                        <span
+                          className="badge px-2.5 py-1 rounded-pill fw-bold shadow-2xs ms-1"
+                          style={{
+                            background: standard.id === 'isolation'
+                              ? (selectedDocIndex === 0
+                                  ? 'linear-gradient(135deg, #fef08a 0%, #fde047 100%)'
+                                  : 'linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%)')
+                              : '#e2e8f0',
+                            color: standard.id === 'isolation'
+                              ? (selectedDocIndex === 0 ? '#713f12' : '#064e3b')
+                              : '#334155',
+                            border: standard.id === 'isolation'
+                              ? (selectedDocIndex === 0 ? '1px solid #eab308' : '1px solid #10b981')
+                              : '1px solid #cbd5e1',
+                            fontSize: '0.76rem'
+                          }}
+                        >
+                          <i className="bi bi-calendar-check-fill me-1"></i>Stand: {activeDoc.date}
+                        </span>
+                      )}
                     </div>
                     <div className="d-flex align-items-center gap-2">
                       <button
@@ -2107,8 +2183,12 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                         href={pdfUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn btn-sm btn-outline-danger rounded-pill px-2.5 py-1 fw-semibold"
-                        style={{ fontSize: '0.76rem' }}
+                        className="btn btn-sm rounded-pill px-3 py-1 fw-bold text-white shadow-2xs"
+                        style={{
+                          fontSize: '0.78rem',
+                          background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+                          border: 'none'
+                        }}
                       >
                         <i className="bi bi-file-earmark-pdf-fill me-1"></i>PDF öffnen ({activeDoc ? `${activeDoc.pageCount} S.` : (standard.id === 'zvk' ? '10 S.' : '4 S.')})
                       </a>
@@ -2170,14 +2250,39 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                         <i className="bi bi-shield-check"></i>
                         <span>Warum ist das wichtig?</span>
                       </div>
-                      <div className="row g-1 small text-secondary">
-                        {standard.whyImportant.map((why, wi) => (
-                          <div key={wi} className="col-sm-6 d-flex align-items-center gap-1">
-                            <i className="bi bi-check2 text-success flex-shrink-0"></i>
-                            <span style={{ fontSize: '0.8rem' }}>{why}</span>
-                          </div>
-                        ))}
-                      </div>
+                      {standard.id === 'isolation' ? (
+                        <div className="row g-1.5 small mt-1">
+                          {standard.whyImportant.map((why, wi) => {
+                            const whyStyles = [
+                              { bg: '#eff6ff', border: '#bfdbfe', text: '#1e40af', icon: 'bi-shield-fill-x', iconColor: '#2563eb' },
+                              { bg: '#f0fdf4', border: '#bbf7d0', text: '#166534', icon: 'bi-heart-pulse-fill', iconColor: '#16a34a' },
+                              { bg: '#fffbeb', border: '#fef3c7', text: '#92400e', icon: 'bi-people-fill', iconColor: '#d97706' },
+                              { bg: '#faf5ff', border: '#e9d5ff', text: '#6b21a8', icon: 'bi-stars', iconColor: '#9333ea' }
+                            ];
+                            const s = whyStyles[wi] || { bg: '#f8fafc', border: '#e2e8f0', text: '#334155', icon: 'bi-check-circle-fill', iconColor: '#10b981' };
+                            return (
+                              <div key={wi} className="col-sm-6">
+                                <div
+                                  className="p-1.5 rounded-2 d-flex align-items-center gap-1.5 h-100"
+                                  style={{ backgroundColor: s.bg, border: `1px solid ${s.border}` }}
+                                >
+                                  <i className={`bi ${s.icon} flex-shrink-0`} style={{ color: s.iconColor, fontSize: '0.85rem' }}></i>
+                                  <span style={{ fontSize: '0.78rem', color: s.text, fontWeight: '500', lineHeight: 1.25 }}>{why}</span>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="row g-1 small text-secondary">
+                          {standard.whyImportant.map((why, wi) => (
+                            <div key={wi} className="col-sm-6 d-flex align-items-center gap-1">
+                              <i className="bi bi-check2 text-success flex-shrink-0"></i>
+                              <span style={{ fontSize: '0.8rem' }}>{why}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -2198,17 +2303,21 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                         ];
                         const meta = isoIcons[i] || { icon: 'bi-check-circle', color: standard.accentColor };
                         return (
-                          <div key={i} className="keypoint-item d-flex align-items-start gap-2 p-1.5 rounded-2 bg-white border border-opacity-50">
+                          <div
+                            key={i}
+                            className="keypoint-item d-flex align-items-start gap-2 p-2 rounded-2 bg-white border shadow-2xs"
+                            style={{ borderLeft: `3.5px solid ${meta.color}` }}
+                          >
                             <span
                               className="badge rounded-circle d-inline-flex align-items-center justify-content-center flex-shrink-0"
-                              style={{ width: '22px', height: '22px', backgroundColor: meta.color, color: '#fff', fontSize: '0.72rem' }}
+                              style={{ width: '24px', height: '24px', backgroundColor: meta.color, color: '#fff', fontSize: '0.74rem' }}
                             >
                               <i className={`bi ${meta.icon}`}></i>
                             </span>
-                            <div className="flex-grow-1" style={{ fontSize: '0.84rem' }}>
+                            <div className="flex-grow-1" style={{ fontSize: '0.83rem', lineHeight: '1.35' }}>
                               <span>{pt}</span>
                               {meta.alert && (
-                                <span className="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 ms-1.5" style={{ fontSize: '0.7rem' }}>
+                                <span className="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 ms-1.5 fw-bold" style={{ fontSize: '0.7rem' }}>
                                   <i className="bi bi-exclamation-triangle-fill me-1"></i>{meta.alert}
                                 </span>
                               )}
@@ -2247,12 +2356,34 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
             <div className="col-lg-5 col-md-6">
               {standard.id === 'zvk' || standard.id === 'isolation' ? (
                 <div className="p-3 rounded-4 border bg-white h-100 text-center d-flex flex-column align-items-center justify-content-between shadow-sm">
-                  <div className="d-flex justify-content-between align-items-center w-100 mb-2 border-bottom pb-2">
-                    <span className="fw-bold text-dark d-flex align-items-center gap-2 text-start" style={{ fontSize: '0.85rem' }}>
-                      <i className={`bi ${standard.id === 'isolation' ? 'bi-shield-check text-primary' : 'bi-heart-pulse-fill text-danger'} fs-5 flex-shrink-0`}></i>
-                      <span>Klinische Praxis &amp; Handlungsschritte: {standard.shortTitle}</span>
+                  <div
+                    className="d-flex justify-content-between align-items-center w-100 mb-2 pb-2 px-1"
+                    style={{ borderBottom: standard.id === 'isolation' ? '1.5px solid #e0f2fe' : '1px solid #dee2e6' }}
+                  >
+                    <span className="fw-bold text-dark d-flex align-items-center gap-2 text-start" style={{ fontSize: '0.86rem' }}>
+                      <span
+                        className="rounded-circle d-inline-flex align-items-center justify-content-center flex-shrink-0"
+                        style={{
+                          width: '26px',
+                          height: '26px',
+                          backgroundColor: standard.id === 'isolation' ? 'rgba(2, 132, 199, 0.12)' : 'rgba(220, 38, 38, 0.1)',
+                          color: standard.id === 'isolation' ? '#0284c7' : '#dc2626'
+                        }}
+                      >
+                        <i className={`bi ${standard.id === 'isolation' ? 'bi-shield-fill-check' : 'bi-heart-pulse-fill'}`}></i>
+                      </span>
+                      <span style={{ color: standard.id === 'isolation' ? '#0c4a6e' : '#212529' }}>
+                        Klinische Praxis &amp; Handlungsschritte
+                      </span>
                     </span>
-                    <span className="badge bg-light text-secondary border px-2 py-1 small flex-shrink-0">
+                    <span
+                      className="badge rounded-pill px-2.5 py-1 small flex-shrink-0 fw-semibold"
+                      style={{
+                        backgroundColor: standard.id === 'isolation' ? '#e0f2fe' : '#f8f9fa',
+                        color: standard.id === 'isolation' ? '#0369a1' : '#64748b',
+                        border: standard.id === 'isolation' ? '1px solid #bae6fd' : '1px solid #dee2e6'
+                      }}
+                    >
                       <i className="bi bi-zoom-in me-1"></i>Vergrößern
                     </span>
                   </div>
@@ -2280,11 +2411,21 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                     </div>
                   </div>
 
-                  <div className="small text-muted mt-2 border-top pt-2 w-100" style={{ fontSize: '0.74rem' }}>
-                    <i className="bi bi-shield-check text-success me-1"></i>
-                    {standard.id === 'isolation'
-                      ? 'Hygienemaßnahmen • Vorgehen bei MRE, VRE, MRGN, MRSA & C. diff.'
-                      : 'Aseptische Durchführung • Checkliste Verbandswechsel & Spülen'}
+                  <div
+                    className="small mt-2 border-top pt-2 w-100 d-flex align-items-center justify-content-center gap-1.5"
+                    style={{
+                      fontSize: '0.76rem',
+                      borderColor: standard.id === 'isolation' ? '#e0f2fe' : '#e2e8f0',
+                      color: standard.id === 'isolation' ? '#0369a1' : '#64748b',
+                      fontWeight: standard.id === 'isolation' ? '600' : 'normal'
+                    }}
+                  >
+                    <i className={`bi ${standard.id === 'isolation' ? 'bi-shield-check text-success fs-6' : 'bi-shield-check text-success'}`}></i>
+                    <span>
+                      {standard.id === 'isolation'
+                        ? 'Hygienemaßnahmen • Vorgehen bei MRE, VRE, MRGN, MRSA & C. diff.'
+                        : 'Aseptische Durchführung • Checkliste Verbandswechsel & Spülen'}
+                    </span>
                   </div>
                 </div>
               ) : (
@@ -2860,88 +3001,164 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                     <i className="bi bi-folder2-open text-primary"></i>
                     <span>QM-Dokumente im Universitätsklinikum Frankfurt:</span>
                   </div>
-                  <div className="d-flex flex-column gap-2">
-                    <div className="d-flex justify-content-between align-items-center bg-white p-2.5 rounded-3 border-start border-4 border-primary shadow-2xs small">
-                      <div className="d-flex align-items-start gap-2">
-                        <span className="p-1.5 rounded-circle bg-primary bg-opacity-10 text-primary mt-0.5 d-inline-flex flex-shrink-0">
-                          <i className="bi bi-file-earmark-medical-fill"></i>
+                  <div className="d-flex flex-column gap-2.5">
+                    <div
+                      className="d-flex justify-content-between align-items-center p-3 rounded-3 shadow-2xs small"
+                      style={{
+                        background: 'linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%)',
+                        border: '1.5px solid #bae6fd',
+                        borderLeft: '4.5px solid #0284c7'
+                      }}
+                    >
+                      <div className="d-flex align-items-start gap-2.5">
+                        <span
+                          className="p-2 rounded-circle mt-0.5 d-inline-flex flex-shrink-0 shadow-2xs"
+                          style={{ backgroundColor: '#e0f2fe', color: '#0284c7' }}
+                        >
+                          <i className="bi bi-file-earmark-medical-fill fs-6"></i>
                         </span>
                         <div>
-                          <div className="fw-bold text-dark">Dokument 1: Allgemeines Vorgehen bei Isolation und Reinigung</div>
-                          <div className="text-muted" style={{ fontSize: '0.76rem' }}>
-                            roXtra ID: <strong>239411</strong> &bull; Freigabe: Kempf, Volkhard &bull; AutorInnen: Bayer, Comoli, Hiller, Lerche
+                          <div className="fw-bold text-dark" style={{ fontSize: '0.9rem' }}>
+                            Dokument 1: Allgemeines Vorgehen bei Isolation und Reinigung
+                          </div>
+                          <div className="text-muted mt-0.5" style={{ fontSize: '0.78rem' }}>
+                            roXtra ID: <strong className="text-dark">239411</strong> &bull; Freigabe: Kempf, Volkhard &bull; AutorInnen: Bayer, Comoli, Hiller, Lerche
                           </div>
                         </div>
                       </div>
-                      <div className="text-end flex-shrink-0 ms-2">
-                        <span className="badge bg-secondary mb-1">Ver. 003 &bull; 4 Seiten</span>
-                        <div className="text-dark small fw-semibold" style={{ fontSize: '0.76rem' }}>
-                          <i className="bi bi-calendar3 text-primary me-1"></i>19.08.2019
-                        </div>
+                      <div className="text-end flex-shrink-0 ms-2 d-flex flex-column align-items-end gap-1">
+                        <span
+                          className="badge rounded-pill fw-semibold"
+                          style={{ backgroundColor: '#e0f2fe', color: '#0369a1', border: '1px solid #bae6fd', fontSize: '0.73rem' }}
+                        >
+                          Ver. 003 &bull; 4 Seiten
+                        </span>
+                        <span
+                          className="badge px-2.5 py-1 rounded-pill fw-bold shadow-2xs d-inline-flex align-items-center gap-1"
+                          style={{
+                            background: 'linear-gradient(135deg, #fef08a 0%, #fde047 100%)',
+                            color: '#713f12',
+                            border: '1px solid #eab308',
+                            fontSize: '0.78rem'
+                          }}
+                        >
+                          <i className="bi bi-calendar-check-fill text-warning"></i>19.08.2019
+                        </span>
                       </div>
                     </div>
-                    <div className="d-flex justify-content-between align-items-center bg-white p-2.5 rounded-3 border-start border-4 shadow-2xs small" style={{ borderLeftColor: '#0d9488' }}>
-                      <div className="d-flex align-items-start gap-2">
-                        <span className="p-1.5 rounded-circle mt-0.5 d-inline-flex flex-shrink-0" style={{ backgroundColor: 'rgba(13, 148, 136, 0.12)', color: '#0d9488' }}>
-                          <i className="bi bi-shield-fill-check"></i>
+                    <div
+                      className="d-flex justify-content-between align-items-center p-3 rounded-3 shadow-2xs small"
+                      style={{
+                        background: 'linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%)',
+                        border: '1.5px solid #a7f3d0',
+                        borderLeft: '4.5px solid #0d9488'
+                      }}
+                    >
+                      <div className="d-flex align-items-start gap-2.5">
+                        <span
+                          className="p-2 rounded-circle mt-0.5 d-inline-flex flex-shrink-0 shadow-2xs"
+                          style={{ backgroundColor: '#ccfbf1', color: '#0d9488' }}
+                        >
+                          <i className="bi bi-shield-fill-check fs-6"></i>
                         </span>
                         <div>
-                          <div className="fw-bold text-dark">Dokument 2: Hygieneplan: Umgang mit multiresistenten Erregern (MRE)</div>
-                          <div className="text-muted" style={{ fontSize: '0.76rem' }}>
-                            roXtra ID: <strong>361678</strong> &bull; Häma-Onko (Station+TK), ITS/IMC, Neonatologie
+                          <div className="fw-bold text-dark" style={{ fontSize: '0.9rem' }}>
+                            Dokument 2: Hygieneplan: Umgang mit multiresistenten Erregern (MRE)
+                          </div>
+                          <div className="text-muted mt-0.5" style={{ fontSize: '0.78rem' }}>
+                            roXtra ID: <strong className="text-dark">361678</strong> &bull; Häma-Onko (Station+TK), ITS/IMC, Neonatologie
                           </div>
                         </div>
                       </div>
-                      <div className="text-end flex-shrink-0 ms-2">
-                        <span className="badge text-white mb-1" style={{ backgroundColor: '#0d9488' }}>Ver. 012 &bull; 5 Seiten</span>
-                        <div className="small fw-bold" style={{ fontSize: '0.76rem', color: '#0d9488' }}>
-                          <i className="bi bi-calendar-check me-1"></i>02.2026
-                        </div>
+                      <div className="text-end flex-shrink-0 ms-2 d-flex flex-column align-items-end gap-1">
+                        <span
+                          className="badge rounded-pill fw-semibold"
+                          style={{ backgroundColor: '#ccfbf1', color: '#0f766e', border: '1px solid #99f6e4', fontSize: '0.73rem' }}
+                        >
+                          Ver. 012 &bull; 5 Seiten
+                        </span>
+                        <span
+                          className="badge px-2.5 py-1 rounded-pill fw-bold shadow-2xs d-inline-flex align-items-center gap-1"
+                          style={{
+                            background: 'linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%)',
+                            color: '#064e3b',
+                            border: '1px solid #10b981',
+                            fontSize: '0.78rem'
+                          }}
+                        >
+                          <i className="bi bi-calendar-check-fill text-success"></i>02.2026
+                        </span>
                       </div>
                     </div>
-                    <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded-3 border small">
+                    <div
+                      className="d-flex justify-content-between align-items-center p-2 rounded-3 small"
+                      style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}
+                    >
                       <span className="d-flex align-items-center gap-1.5 text-secondary">
-                        <i className="bi bi-hospital text-info"></i>
+                        <i className="bi bi-hospital text-primary"></i>
                         <span><strong>Gültigkeitsbereich:</strong> Häma-Onkologie &bull; ITS / IMC &bull; Neonatologie &bull; Klinikweit</span>
                       </span>
-                      <span className="badge bg-info text-dark">Klinikweit</span>
+                      <span className="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill">
+                        Klinikweit
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 {/* 2. Visual Farbleitsystem & Door Signage Guidance */}
-                <div className="p-3 rounded-4 border mb-3" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
-                  <div className="fw-bold text-dark small text-uppercase mb-2 d-flex align-items-center justify-content-between">
+                <div
+                  className="p-3 rounded-4 border mb-3 shadow-2xs"
+                  style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', borderColor: '#e2e8f0' }}
+                >
+                  <div className="fw-bold text-dark small text-uppercase mb-2.5 d-flex align-items-center justify-content-between">
                     <span className="d-flex align-items-center gap-1.5">
                       <i className="bi bi-signpost-split-fill text-primary"></i>
                       <span>Offizielles UKF-Farbleitsystem (Türbeschilderung):</span>
                     </span>
-                    <span className="badge bg-white text-secondary border small">UKF Standard</span>
+                    <span className="badge bg-white text-secondary border px-2 py-1 small rounded-pill shadow-2xs">UKF Standard</span>
                   </div>
-                  <div className="row g-2">
+                  <div className="row g-2.5">
                     <div className="col-sm-6">
-                      <div className="p-2.5 rounded-3 border h-100 shadow-2xs" style={{ backgroundColor: '#fefce8', borderColor: '#fef08a' }}>
-                        <div className="d-flex align-items-center gap-1.5 mb-1">
-                          <span className="badge rounded-pill fw-bold text-dark px-2 py-0.5 shadow-2xs" style={{ backgroundColor: '#facc15' }}>
-                            <i className="bi bi-door-closed me-1"></i>Außen: Gelb
+                      <div
+                        className="p-2.5 rounded-3 h-100 shadow-2xs"
+                        style={{
+                          background: 'linear-gradient(135deg, #fefce8 0%, #fef9c3 100%)',
+                          border: '1.5px solid #fef08a'
+                        }}
+                      >
+                        <div className="d-flex align-items-center gap-1.5 mb-1.5">
+                          <span
+                            className="badge rounded-pill fw-bold text-dark px-2.5 py-1 shadow-2xs"
+                            style={{ backgroundColor: '#facc15', border: '1px solid #eab308' }}
+                          >
+                            <i className="bi bi-door-closed-fill me-1"></i>Außen: Gelb
                           </span>
                           <span className="small fw-bold text-dark">Vor dem Betreten</span>
                         </div>
-                        <p className="text-secondary small mb-0" style={{ fontSize: '0.79rem', lineHeight: 1.35 }}>
-                          Schutzkleidung (PSA) <strong>vor Betreten des Zimmers</strong> anlegen. Schutzkittel, Handschuhe, ggf. FFP2/MNS.
+                        <p className="text-secondary small mb-0" style={{ fontSize: '0.8rem', lineHeight: 1.4 }}>
+                          Schutzkleidung (PSA) <strong>vor Betreten des Zimmers</strong> anlegen: Schutzkittel, Handschuhe, ggf. FFP2/MNS.
                         </p>
                       </div>
                     </div>
                     <div className="col-sm-6">
-                      <div className="p-2.5 rounded-3 border h-100 shadow-2xs" style={{ backgroundColor: '#fdf2f8', borderColor: '#fbcfe8' }}>
-                        <div className="d-flex align-items-center gap-1.5 mb-1">
-                          <span className="badge rounded-pill fw-bold text-white px-2 py-0.5 shadow-2xs" style={{ backgroundColor: '#ec4899' }}>
+                      <div
+                        className="p-2.5 rounded-3 h-100 shadow-2xs"
+                        style={{
+                          background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)',
+                          border: '1.5px solid #fbcfe8'
+                        }}
+                      >
+                        <div className="d-flex align-items-center gap-1.5 mb-1.5">
+                          <span
+                            className="badge rounded-pill fw-bold text-white px-2.5 py-1 shadow-2xs"
+                            style={{ backgroundColor: '#ec4899', border: '1px solid #db2777' }}
+                          >
                             <i className="bi bi-box-arrow-right me-1"></i>Innen: Pink
                           </span>
                           <span className="small fw-bold text-dark">Vor dem Verlassen</span>
                         </div>
-                        <p className="text-secondary small mb-0" style={{ fontSize: '0.79rem', lineHeight: 1.35 }}>
-                          Schutzkleidung <strong>im Zimmer ablegen</strong> und verwerfen. Gründliche Händedesinfektion vor Verlassen!
+                        <p className="text-secondary small mb-0" style={{ fontSize: '0.8rem', lineHeight: 1.4 }}>
+                          Schutzkleidung <strong>im Zimmer ablegen</strong> und sofort verwerfen. Gründliche Händedesinfektion vor Verlassen!
                         </p>
                       </div>
                     </div>
@@ -2956,12 +3173,15 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                   </div>
                   <div className="row g-2">
                     <div className="col-sm-6">
-                      <div className="p-2.5 bg-white rounded-3 border shadow-2xs h-100 border-start border-4 border-primary">
+                      <div
+                        className="p-2.5 rounded-3 shadow-2xs h-100 border-start border-4 border-primary"
+                        style={{ background: 'linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%)', border: '1px solid #bae6fd' }}
+                      >
                         <div className="d-flex align-items-center justify-content-between mb-1">
                           <strong className="text-primary small d-flex align-items-center gap-1">
                             <i className="bi bi-virus"></i> VRE &amp; MRSA
                           </strong>
-                          <span className="badge bg-primary bg-opacity-10 text-primary" style={{ fontSize: '0.7rem' }}>Kontaktisolation</span>
+                          <span className="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2" style={{ fontSize: '0.7rem' }}>Kontaktisolation</span>
                         </div>
                         <div className="text-secondary small" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
                           Einzelzimmer (oder Kohorte). Schutzkittel &amp; Handschuhe. MRSA: 5 Tage gezielte Dekolonisation nach Schema.
@@ -2969,12 +3189,15 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                       </div>
                     </div>
                     <div className="col-sm-6">
-                      <div className="p-2.5 bg-white rounded-3 border shadow-2xs h-100 border-start border-4" style={{ borderLeftColor: '#0d9488' }}>
+                      <div
+                        className="p-2.5 rounded-3 shadow-2xs h-100 border-start border-4"
+                        style={{ background: 'linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%)', border: '1px solid #bbf7d0', borderLeftColor: '#0d9488' }}
+                      >
                         <div className="d-flex align-items-center justify-content-between mb-1">
                           <strong className="small d-flex align-items-center gap-1" style={{ color: '#0d9488' }}>
                             <i className="bi bi-bug-fill"></i> 3MRGN &amp; 4MRGN
                           </strong>
-                          <span className="badge text-white" style={{ backgroundColor: '#0d9488', fontSize: '0.7rem' }}>Erregerstatus</span>
+                          <span className="badge text-white rounded-pill px-2" style={{ backgroundColor: '#0d9488', fontSize: '0.7rem' }}>Erregerstatus</span>
                         </div>
                         <div className="text-secondary small" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
                           3MRGN: Bereichsabhängig. 4MRGN: Strikte Einzelzimmer-Isolation! Alles patientennahe Material nach Verlegung verwerfen.
@@ -2982,12 +3205,15 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                       </div>
                     </div>
                     <div className="col-sm-6">
-                      <div className="p-2.5 rounded-3 border shadow-2xs h-100 border-start border-4 border-danger" style={{ backgroundColor: '#fff5f5' }}>
+                      <div
+                        className="p-2.5 rounded-3 shadow-2xs h-100 border-start border-4 border-danger"
+                        style={{ background: 'linear-gradient(135deg, #fef2f2 0%, #ffffff 100%)', border: '1px solid #fecaca', borderLeftColor: '#dc2626' }}
+                      >
                         <div className="d-flex align-items-center justify-content-between mb-1">
                           <strong className="text-danger small d-flex align-items-center gap-1">
                             <i className="bi bi-exclamation-triangle-fill"></i> Clostridioides difficile
                           </strong>
-                          <span className="badge bg-danger text-white" style={{ fontSize: '0.7rem' }}>⚠️ SPOREN!</span>
+                          <span className="badge bg-danger text-white rounded-pill px-2" style={{ fontSize: '0.7rem' }}>⚠️ SPOREN!</span>
                         </div>
                         <div className="text-dark small fw-medium" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
                           Sporen sind <strong>alkoholfest</strong>: Zwingend <strong>1. Händewaschen mit Seife</strong>, danach <strong>2. Händedesinfektion</strong>!
@@ -2995,12 +3221,15 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                       </div>
                     </div>
                     <div className="col-sm-6">
-                      <div className="p-2.5 bg-white rounded-3 border shadow-2xs h-100 border-start border-4 border-info">
+                      <div
+                        className="p-2.5 rounded-3 shadow-2xs h-100 border-start border-4"
+                        style={{ background: 'linear-gradient(135deg, #faf5ff 0%, #ffffff 100%)', border: '1px solid #e9d5ff', borderLeftColor: '#7c3aed' }}
+                      >
                         <div className="d-flex align-items-center justify-content-between mb-1">
-                          <strong className="text-info-emphasis small d-flex align-items-center gap-1">
-                            <i className="bi bi-lungs-fill text-info"></i> Viren (Noro, Rota, TBC, RSV)
+                          <strong className="small d-flex align-items-center gap-1" style={{ color: '#7c3aed' }}>
+                            <i className="bi bi-lungs-fill" style={{ color: '#7c3aed' }}></i> Viren (Noro, Rota, TBC, RSV)
                           </strong>
-                          <span className="badge bg-info bg-opacity-10 text-info" style={{ fontSize: '0.7rem' }}>Aerosol &amp; Schmiere</span>
+                          <span className="badge rounded-pill px-2" style={{ backgroundColor: '#f3e8ff', color: '#6d28d9', fontSize: '0.7rem' }}>Aerosol &amp; Schmiere</span>
                         </div>
                         <div className="text-secondary small" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
                           FFP2-/MNS-Maske vor Betreten. Schutzkittel &amp; Handschuhe. Viruzides Hände- &amp; Flächendesinfektionsmittel.
@@ -3012,26 +3241,34 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
 
                 {/* 4. Why is this important? */}
                 <div className="p-3 bg-white rounded-4 border shadow-2xs">
-                  <div className="fw-bold text-success small mb-2 d-flex align-items-center gap-1.5">
+                  <div className="fw-bold text-success small mb-2.5 d-flex align-items-center gap-1.5">
                     <i className="bi bi-shield-check fs-6"></i>
                     <span>Warum ist das wichtig? (Patienten- &amp; Personalschutz)</span>
                   </div>
-                  <div className="row g-2 small text-secondary">
-                    <div className="col-sm-6 d-flex align-items-center gap-2">
-                      <i className="bi bi-check-circle-fill text-success flex-shrink-0"></i>
-                      <span>Nosokomiale Infektionen stoppen</span>
+                  <div className="row g-2 small">
+                    <div className="col-sm-6">
+                      <div className="p-2 rounded-2 d-flex align-items-center gap-2" style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe' }}>
+                        <i className="bi bi-shield-fill-x text-primary fs-6 flex-shrink-0"></i>
+                        <span className="fw-semibold" style={{ color: '#1e40af', fontSize: '0.8rem' }}>Nosokomiale Infektionen stoppen</span>
+                      </div>
                     </div>
-                    <div className="col-sm-6 d-flex align-items-center gap-2">
-                      <i className="bi bi-check-circle-fill text-success flex-shrink-0"></i>
-                      <span>Patient &amp; Personal wirksam schützen</span>
+                    <div className="col-sm-6">
+                      <div className="p-2 rounded-2 d-flex align-items-center gap-2" style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}>
+                        <i className="bi bi-heart-pulse-fill text-success fs-6 flex-shrink-0"></i>
+                        <span className="fw-semibold" style={{ color: '#166534', fontSize: '0.8rem' }}>Patient &amp; Personal wirksam schützen</span>
+                      </div>
                     </div>
-                    <div className="col-sm-6 d-flex align-items-center gap-2">
-                      <i className="bi bi-check-circle-fill text-success flex-shrink-0"></i>
-                      <span>MRE-Übertragungsketten unterbrechen</span>
+                    <div className="col-sm-6">
+                      <div className="p-2 rounded-2 d-flex align-items-center gap-2" style={{ backgroundColor: '#fffbeb', border: '1px solid #fef3c7' }}>
+                        <i className="bi bi-link-45deg text-warning fs-6 flex-shrink-0"></i>
+                        <span className="fw-semibold" style={{ color: '#92400e', fontSize: '0.8rem' }}>MRE-Übertragungsketten unterbrechen</span>
+                      </div>
                     </div>
-                    <div className="col-sm-6 d-flex align-items-center gap-2">
-                      <i className="bi bi-check-circle-fill text-success flex-shrink-0"></i>
-                      <span>Schnelle Handlungssicherheit im Dienst</span>
+                    <div className="col-sm-6">
+                      <div className="p-2 rounded-2 d-flex align-items-center gap-2" style={{ backgroundColor: '#faf5ff', border: '1px solid #e9d5ff' }}>
+                        <i className="bi bi-lightning-charge-fill fs-6 flex-shrink-0" style={{ color: '#7c3aed' }}></i>
+                        <span className="fw-semibold" style={{ color: '#6b21a8', fontSize: '0.8rem' }}>Schnelle Handlungssicherheit im Dienst</span>
+                      </div>
                     </div>
                   </div>
                 </div>
