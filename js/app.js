@@ -2325,8 +2325,9 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf, s
           {activeViewMode === 'checklist' ? (
             <BedsideChecklistView standard={standard} showToast={showToast || onCopy} />
           ) : (
-            /* 3. The Pictures / SOP PDF Viewer Section */
-            <div className="row g-3 mb-3">
+            <>
+              {/* 3. The Pictures / SOP PDF Viewer Section */}
+              <div className="row g-3 mb-3">
             {standard.id === 'zvk' || standard.id === 'isolation' ? (
               /* ZVK & Isolation: Direct SOP PDF Viewer with Multi-Document Switcher */
               <div className="col-12">
@@ -2951,6 +2952,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf, s
               )}
             </div>
           </div>
+            </>
           )}
 
           {/* 5. Pocketcard QM Footer */}
