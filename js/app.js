@@ -1803,7 +1803,13 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                       </span>
                     </div>
 
-                    <div className="d-flex align-items-center gap-2">
+                    <div className="d-flex align-items-center gap-2 flex-wrap">
+                      {activeDoc && activeDoc.date && (
+                        <span className="badge bg-white text-dark border px-2.5 py-1 small d-inline-flex align-items-center gap-1">
+                          <i className="bi bi-calendar3 text-primary"></i>
+                          <span>Stand: <strong>{activeDoc.date}</strong>{activeDoc.version ? ` (Ver. ${activeDoc.version})` : ''}</span>
+                        </span>
+                      )}
                       <span className="badge bg-white text-secondary border px-2.5 py-1 small font-monospace">
                         roXtra ID: <strong>{activeDoc ? activeDoc.roXtraId : standard.roXtraIds.join(' / ')}</strong>
                       </span>
@@ -1840,8 +1846,8 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                                 <i className={`bi ${idx === 0 ? 'bi-file-earmark-text' : 'bi-shield-check'} ${isSelected ? 'text-white' : 'text-primary'}`}></i>
                                 <span>{doc.shortTitle}</span>
                               </div>
-                              <span className={`badge rounded-pill ${isSelected ? 'bg-white text-primary' : 'bg-light text-muted border'}`} style={{ fontSize: '0.7rem' }}>
-                                {doc.pageCount} S. &bull; ID: {doc.roXtraId}
+                              <span className={`badge rounded-pill ${isSelected ? 'bg-white text-primary' : 'bg-light text-muted border'}`} style={{ fontSize: '0.72rem' }}>
+                                <i className="bi bi-calendar3 me-1"></i>{doc.date} &bull; {doc.pageCount} S.
                               </span>
                             </button>
                           );
@@ -1883,6 +1889,12 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                         <h6 className="fw-bold text-dark mb-1">
                           {activeDoc ? activeDoc.title : standard.topic}
                         </h6>
+                        {activeDoc && activeDoc.date && (
+                          <div className="d-inline-flex align-items-center gap-1.5 px-2.5 py-1 rounded-pill bg-light border text-dark small mb-2 fw-semibold" style={{ fontSize: '0.78rem' }}>
+                            <i className="bi bi-calendar-check text-primary"></i>
+                            <span>Stand: {activeDoc.date} {activeDoc.version ? `(Version ${activeDoc.version})` : ''}</span>
+                          </div>
+                        )}
                         <div className="text-muted small mb-3">
                           {activeDoc
                             ? `${activeDoc.lead} • roXtra ID: ${activeDoc.roXtraId}`
@@ -1930,7 +1942,10 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                   <div className="px-3 py-2 bg-light border-top d-none d-md-flex flex-wrap justify-content-between align-items-center gap-2">
                     <div className="d-flex align-items-center gap-2 small text-muted">
                       <i className="bi bi-file-earmark-check text-success"></i>
-                      <span>Gültige Version im roXtra QM-System (ID {activeDoc ? activeDoc.roXtraId : standard.roXtraIds.join(' / ')})</span>
+                      <span>
+                        Gültige Version im roXtra QM-System (ID {activeDoc ? activeDoc.roXtraId : standard.roXtraIds.join(' / ')})
+                        {activeDoc && activeDoc.date ? ` • Stand: ${activeDoc.date}` : ''}
+                      </span>
                     </div>
                     <div className="d-flex align-items-center gap-2">
                       <button
@@ -2224,7 +2239,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                       {activeDoc ? activeDoc.title : (standard.title || standard.topic)}
                     </h6>
                     <div className="text-white-50 small" style={{ fontSize: '0.72rem' }}>
-                      Universitätsmedizin Frankfurt &bull; roXtra ID: {activeDoc ? activeDoc.roXtraId : standard.roXtraIds.join(' / ')} &bull; Scrolling &amp; Vollbild
+                      Universitätsmedizin Frankfurt &bull; roXtra ID: {activeDoc ? activeDoc.roXtraId : standard.roXtraIds.join(' / ')} {activeDoc && activeDoc.date ? `• Stand: ${activeDoc.date} (Ver. ${activeDoc.version})` : ''} &bull; Scrolling &amp; Vollbild
                     </div>
                   </div>
                 </div>
@@ -2297,7 +2312,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                         style={{ fontSize: '0.75rem' }}
                         onClick={() => setSelectedDocIndex(idx)}
                       >
-                        {doc.shortTitle} ({doc.pageCount} S.)
+                        {doc.shortTitle} &bull; {doc.date} ({doc.pageCount} S.)
                       </button>
                     );
                   })}
@@ -2675,13 +2690,33 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                     <i className="bi bi-folder2-open me-1 text-primary"></i> QM-Dokumente im Universitätsklinikum Frankfurt:
                   </div>
                   <div className="d-flex flex-column gap-2">
-                    <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
-                      <span><strong>Dokument 1 (ID 239411):</strong> Allgemeines Vorgehen bei Isolation und Reinigung</span>
-                      <span className="badge bg-secondary">Ver. 003 &bull; 4 Seiten</span>
+                    <div className="d-flex justify-content-between align-items-center bg-white p-2.5 rounded border small">
+                      <div>
+                        <div className="fw-bold text-dark">Dokument 1: Allgemeines Vorgehen bei Isolation und Reinigung</div>
+                        <div className="text-muted" style={{ fontSize: '0.76rem' }}>
+                          <i className="bi bi-file-earmark-medical me-1"></i>roXtra ID: <strong>239411</strong> &bull; Freigabe durch: Kempf, Volkhard
+                        </div>
+                      </div>
+                      <div className="text-end flex-shrink-0 ms-2">
+                        <span className="badge bg-secondary mb-1">Ver. 003 &bull; 4 Seiten</span>
+                        <div className="text-dark small fw-semibold" style={{ fontSize: '0.76rem' }}>
+                          <i className="bi bi-calendar3 text-primary me-1"></i>19.08.2019
+                        </div>
+                      </div>
                     </div>
-                    <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
-                      <span><strong>Dokument 2 (ID 361678):</strong> Hygieneplan: Umgang mit MRE (Häma-Onko, ITS/IMC)</span>
-                      <span className="badge bg-primary">Ver. 012 &bull; 5 Seiten</span>
+                    <div className="d-flex justify-content-between align-items-center bg-white p-2.5 rounded border small">
+                      <div>
+                        <div className="fw-bold text-dark">Dokument 2: Hygieneplan: Umgang mit MRE (Häma-Onko, ITS/IMC)</div>
+                        <div className="text-muted" style={{ fontSize: '0.76rem' }}>
+                          <i className="bi bi-shield-check me-1"></i>roXtra ID: <strong>361678</strong> &bull; Häma-Onkologie, ITS/IMC, Neonatologie
+                        </div>
+                      </div>
+                      <div className="text-end flex-shrink-0 ms-2">
+                        <span className="badge bg-primary mb-1">Ver. 012 &bull; 5 Seiten</span>
+                        <div className="text-primary small fw-bold" style={{ fontSize: '0.76rem' }}>
+                          <i className="bi bi-calendar-check me-1"></i>02.2026
+                        </div>
+                      </div>
                     </div>
                     <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
                       <span><strong>Gültigkeitsbereich:</strong> Häma-Onkologie &bull; ITS / IMC &bull; Neonatologie &bull; Klinikweit</span>

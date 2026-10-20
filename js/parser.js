@@ -322,18 +322,24 @@ root.QRParser = (function () {
           title: 'Verfahrensanweisung: Allgemeines Vorgehen bei Isolation und Reinigung',
           shortTitle: '1. SOP Isolation & Reinigung',
           roXtraId: '239411',
+          version: '003',
+          date: '19.08.2019',
+          dateLabel: 'Stand: 19.08.2019',
           pageCount: 4,
           pdfUrl: 'assets/isolation-sop-verfahrensanweisung.pdf',
-          lead: 'Offizielle UKF Verfahrensanweisung (ID 239411) – 4 Seiten. Isolationsformen, PSA-Vorgaben, Meldewege und Schlussdesinfektion.'
+          lead: 'Offizielle UKF Verfahrensanweisung (ID 239411 • Freigabe: 19.08.2019 • Ver. 003) – 4 Seiten. Isolationsformen, PSA-Vorgaben, Meldewege und Schlussdesinfektion.'
         },
         {
           id: 'iso-hygieneplan',
           title: 'Hygieneplan: Umgang mit multiresistenten & hygienerelevanten Erregern',
           shortTitle: '2. Hygieneplan MRE (ITS/IMC)',
           roXtraId: '361678',
+          version: '012',
+          date: '02.2026',
+          dateLabel: 'Stand: 02.2026',
           pageCount: 5,
           pdfUrl: 'assets/hygieneplan-multiresistente-erreger.pdf',
-          lead: 'Offizieller UKF Hygieneplan (ID 361678, Ver. 012/02.2026) – 5 Seiten. Häma-Onko (Station+TK), ITS/IMC, Neonatologie.'
+          lead: 'Offizieller UKF Hygieneplan (ID 361678 • Stand: 02.2026 • Ver. 012) – 5 Seiten. Häma-Onko (Station+TK), ITS/IMC, Neonatologie.'
         }
       ],
       image: 'assets/isolation-poster.jpg',
