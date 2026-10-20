@@ -1731,9 +1731,14 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
   const [isModalMaximized, setIsModalMaximized] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [selectedDocIndex, setSelectedDocIndex] = useState(0);
+  const [selectedPage, setSelectedPage] = useState(1);
+  const [selectedPathogen, setSelectedPathogen] = useState(null);
 
   const documents = standard.sopDocuments || null;
   const activeDoc = (documents && documents[selectedDocIndex]) ? documents[selectedDocIndex] : null;
+  const docPages = activeDoc && activeDoc.pages ? activeDoc.pages : null;
+  const activePageObj = docPages ? (docPages.find(p => p.pageNum === selectedPage) || docPages[0]) : null;
+  const pathogens = activeDoc && activeDoc.pathogens ? activeDoc.pathogens : null;
 
   const isPdfPopupStandard = standard.id === 'zvk' || standard.id === 'isolation';
   const rawPdfUrl = activeDoc ? activeDoc.pdfUrl : (standard.pdfUrl || (standard.id === 'zvk' ? 'assets/zvk-sop-verfahrensanweisung.pdf' : (standard.id === 'isolation' ? 'assets/isolation-sop-verfahrensanweisung.pdf' : 'assets/umf-expertenstandards-folien.pdf')));
@@ -1796,80 +1801,122 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                 {/* Multi-Document SOP Switcher Bar for ZVK & Isolation */}
                 {documents && documents.length > 1 && (
                   <div className="mb-3">
-                    <div className="d-flex flex-wrap align-items-center justify-content-between mb-2 gap-2">
-                      <div className="d-flex align-items-center gap-2">
-                        <span className="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2.5 py-1 fw-bold font-monospace small">
-                          <i className="bi bi-collection-fill me-1"></i> VERFÜGBARE DOKUMENTE ({documents.length})
+                    {/* MOBILE SEGMENTED CONTROL (< 768px): Thumb-friendly, compact, full-width */}
+                    <div className="d-block d-md-none mb-2.5">
+                      <div className="d-flex align-items-center justify-content-between mb-1.5 px-1">
+                        <span className="text-muted fw-bold text-uppercase" style={{ fontSize: '0.70rem', letterSpacing: '0.4px' }}>
+                          <i className="bi bi-file-earmark-diff text-danger me-1"></i> SOP DOKUMENT WÄHLEN:
                         </span>
-                        <span className="text-secondary small fw-medium d-none d-md-inline">
-                          Wählen Sie das gewünschte SOP-Dokument zum direkten Lesen oder Downloaden:
+                        <span className="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 small" style={{ fontSize: '0.68rem' }}>
+                          {activeDoc ? activeDoc.badge : ''}
                         </span>
                       </div>
-                      <span className="badge bg-light text-muted border small d-none d-sm-inline">
-                        Aktive Ansicht: <strong className="text-dark">{activeDoc ? activeDoc.shortTitle : ''}</strong>
-                      </span>
+                      <div className="mobile-sop-segmented p-1 bg-light rounded-pill border d-flex gap-1 shadow-xs">
+                        {documents.map((doc, idx) => {
+                          const isActive = selectedDocIndex === idx;
+                          const isHygiene = doc.id.includes('hygiene');
+                          return (
+                            <button
+                              key={doc.id}
+                              type="button"
+                              className={`btn btn-sm rounded-pill flex-fill d-flex align-items-center justify-content-center gap-1.5 py-2 ${
+                                isActive
+                                  ? (isHygiene ? 'btn-info text-dark fw-bold shadow-sm' : 'btn-danger text-white fw-bold shadow-sm')
+                                  : 'btn-light text-secondary border-0'
+                              }`}
+                              style={{ minHeight: '44px', fontSize: '0.82rem' }}
+                              onClick={() => {
+                                setSelectedDocIndex(idx);
+                                setSelectedPage(1);
+                                setSelectedPathogen(null);
+                              }}
+                            >
+                              <i className={`bi ${doc.icon || 'bi-file-earmark-pdf-fill'}`}></i>
+                              <span className="text-truncate">{idx === 0 ? '1. ZVK SOP (10 S.)' : '2. Hygieneplan (5 S.)'}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
 
-                    <div className="row g-2">
-                      {documents.map((doc, idx) => {
-                        const isActive = selectedDocIndex === idx;
-                        const isHygiene = doc.id.includes('hygiene');
-                        return (
-                          <div key={doc.id} className="col-12 col-md-6">
-                            <div
-                              className={`p-2.5 p-sm-3 rounded-4 border transition-all h-100 d-flex align-items-center gap-2.5 ${
-                                isActive
-                                  ? (isHygiene ? 'bg-info bg-opacity-10 border-info border-2 shadow-sm' : 'bg-danger bg-opacity-10 border-danger border-2 shadow-sm')
-                                  : 'bg-white border-light-subtle shadow-xs hover-lift'
-                              }`}
-                              style={{ cursor: 'pointer', transition: 'all 0.2s ease-in-out' }}
-                              onClick={() => setSelectedDocIndex(idx)}
-                              role="button"
-                              tabIndex={0}
-                            >
-                              {/* Thumbnail or Icon */}
+                    {/* DESKTOP / TABLET (>= 768px): Detailed Side-by-Side Cards */}
+                    <div className="d-none d-md-block">
+                      <div className="d-flex flex-wrap align-items-center justify-content-between mb-2 gap-2">
+                        <div className="d-flex align-items-center gap-2">
+                          <span className="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2.5 py-1 fw-bold font-monospace small">
+                            <i className="bi bi-collection-fill me-1"></i> VERFÜGBARE DOKUMENTE ({documents.length})
+                          </span>
+                          <span className="text-secondary small fw-medium">
+                            Wählen Sie das gewünschte SOP-Dokument zum direkten Lesen oder Downloaden:
+                          </span>
+                        </div>
+                        <span className="badge bg-light text-muted border small">
+                          Aktive Ansicht: <strong className="text-dark">{activeDoc ? activeDoc.shortTitle : ''}</strong>
+                        </span>
+                      </div>
+
+                      <div className="row g-2">
+                        {documents.map((doc, idx) => {
+                          const isActive = selectedDocIndex === idx;
+                          const isHygiene = doc.id.includes('hygiene');
+                          return (
+                            <div key={doc.id} className="col-12 col-md-6">
                               <div
-                                className={`rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 ${
+                                className={`p-2.5 p-sm-3 rounded-4 border transition-all h-100 d-flex align-items-center gap-2.5 ${
                                   isActive
-                                    ? (isHygiene ? 'bg-info text-white' : 'bg-danger text-white')
-                                    : 'bg-light text-secondary border'
+                                    ? (isHygiene ? 'bg-info bg-opacity-10 border-info border-2 shadow-sm' : 'bg-danger bg-opacity-10 border-danger border-2 shadow-sm')
+                                    : 'bg-white border-light-subtle shadow-xs hover-lift'
                                 }`}
-                                style={{ width: '46px', height: '46px', fontSize: '1.35rem' }}
+                                style={{ cursor: 'pointer', transition: 'all 0.2s ease-in-out' }}
+                                onClick={() => {
+                                  setSelectedDocIndex(idx);
+                                  setSelectedPage(1);
+                                  setSelectedPathogen(null);
+                                }}
+                                role="button"
+                                tabIndex={0}
                               >
-                                <i className={`bi ${doc.icon || 'bi-file-earmark-pdf-fill'}`}></i>
-                              </div>
-
-                              {/* Text Info */}
-                              <div className="flex-grow-1 min-w-0">
-                                <div className="d-flex align-items-center justify-content-between gap-1 mb-0.5">
-                                  <span className={`fw-bold text-truncate ${isActive ? (isHygiene ? 'text-primary' : 'text-danger') : 'text-dark'}`} style={{ fontSize: '0.90rem' }}>
-                                    {doc.shortTitle || doc.title}
-                                  </span>
-                                  <span className={`badge rounded-pill ${isActive ? (isHygiene ? 'bg-info text-dark' : 'bg-danger text-white') : 'bg-secondary bg-opacity-10 text-secondary'} small`} style={{ fontSize: '0.67rem' }}>
-                                    {doc.badge || `${doc.pageCount} S.`}
-                                  </span>
+                                <div
+                                  className={`rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 ${
+                                    isActive
+                                      ? (isHygiene ? 'bg-info text-white' : 'bg-danger text-white')
+                                      : 'bg-light text-secondary border'
+                                  }`}
+                                  style={{ width: '46px', height: '46px', fontSize: '1.35rem' }}
+                                >
+                                  <i className={`bi ${doc.icon || 'bi-file-earmark-pdf-fill'}`}></i>
                                 </div>
-                                <div className="text-muted small text-truncate" style={{ fontSize: '0.73rem' }}>
-                                  roXtra ID: <strong>{doc.roXtraId}</strong> &bull; {doc.version}
-                                </div>
-                              </div>
 
-                              {/* Active Indicator Radio/Check */}
-                              <div className="flex-shrink-0 ms-1">
-                                {isActive ? (
-                                  <span className={`badge rounded-circle p-1.5 ${isHygiene ? 'bg-info text-white' : 'bg-danger text-white'} shadow-xs`}>
-                                    <i className="bi bi-check-lg fw-bold" style={{ fontSize: '0.85rem' }}></i>
-                                  </span>
-                                ) : (
-                                  <span className="badge rounded-circle p-1.5 bg-light text-muted border">
-                                    <i className="bi bi-circle" style={{ fontSize: '0.85rem' }}></i>
-                                  </span>
-                                )}
+                                <div className="flex-grow-1 min-w-0">
+                                  <div className="d-flex align-items-center justify-content-between gap-1 mb-0.5">
+                                    <span className={`fw-bold text-truncate ${isActive ? (isHygiene ? 'text-primary' : 'text-danger') : 'text-dark'}`} style={{ fontSize: '0.90rem' }}>
+                                      {doc.shortTitle || doc.title}
+                                    </span>
+                                    <span className={`badge rounded-pill ${isActive ? (isHygiene ? 'bg-info text-dark' : 'bg-danger text-white') : 'bg-secondary bg-opacity-10 text-secondary'} small`} style={{ fontSize: '0.67rem' }}>
+                                      {doc.badge || `${doc.pageCount} S.`}
+                                    </span>
+                                  </div>
+                                  <div className="text-muted small text-truncate" style={{ fontSize: '0.73rem' }}>
+                                    roXtra ID: <strong>{doc.roXtraId}</strong> &bull; {doc.version}
+                                  </div>
+                                </div>
+
+                                <div className="flex-shrink-0 ms-1">
+                                  {isActive ? (
+                                    <span className={`badge rounded-circle p-1.5 ${isHygiene ? 'bg-info text-white' : 'bg-danger text-white'} shadow-xs`}>
+                                      <i className="bi bi-check-lg fw-bold" style={{ fontSize: '0.85rem' }}></i>
+                                    </span>
+                                  ) : (
+                                    <span className="badge rounded-circle p-1.5 bg-light text-muted border">
+                                      <i className="bi bi-circle" style={{ fontSize: '0.85rem' }}></i>
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1941,58 +1988,233 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                       </div>
                     </div>
 
-                    {/* Mobile Smartphone: High-Performance, Touch-Friendly Native PDF Card */}
-                    <div className="d-block d-md-none p-3 text-center bg-light">
-                      <div className="bg-white p-3 rounded-4 shadow-sm border mb-2 text-start">
-                        <div className="d-flex align-items-center gap-3 mb-3">
-                          {activeDoc && activeDoc.thumb ? (
-                            <img
-                              src={activeDoc.thumb}
-                              alt={activeDoc.title}
-                              className="rounded-3 border shadow-xs flex-shrink-0"
-                              style={{ width: '64px', height: '80px', objectFit: 'cover' }}
-                            />
-                          ) : (
-                            <div className="d-inline-flex p-3 rounded-circle bg-danger bg-opacity-10 text-danger flex-shrink-0">
-                              <i className="bi bi-file-earmark-pdf-fill fs-1"></i>
+                    {/* Mobile Smartphone (< 768px): Optimized Bedside Touch Experience with Erreger-Finder & Page Carousel */}
+                    <div className="d-block d-md-none p-2.5 bg-light">
+                      {/* BEDSIDE ERREGER QUICK-FINDER (Active when Hygieneplan is selected) */}
+                      {pathogens && pathogens.length > 0 && (
+                        <div className="mb-3 bg-white p-2.5 rounded-4 border shadow-xs">
+                          <div className="d-flex align-items-center justify-content-between mb-2">
+                            <span className="fw-bold text-dark d-flex align-items-center gap-1.5" style={{ fontSize: '0.82rem' }}>
+                              <i className="bi bi-lightning-charge-fill text-warning"></i>
+                              <span>Erreger Schnell-Check am Bett:</span>
+                            </span>
+                            {selectedPathogen && (
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-link p-0 text-secondary text-decoration-none small"
+                                style={{ fontSize: '0.74rem' }}
+                                onClick={() => setSelectedPathogen(null)}
+                              >
+                                Zurücksetzen &times;
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Horizontal Scrollable Pathogen Chips */}
+                          <div className="d-flex gap-1.5 overflow-x-auto pb-1.5 mb-2 no-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
+                            {pathogens.map((p) => {
+                              const isSelected = selectedPathogen && selectedPathogen.id === p.id;
+                              return (
+                                <button
+                                  key={p.id}
+                                  type="button"
+                                  className={`btn btn-sm rounded-pill text-nowrap px-2.5 py-1 d-flex align-items-center gap-1 ${
+                                    isSelected
+                                      ? 'btn-danger text-white shadow-xs fw-bold'
+                                      : 'btn-outline-secondary bg-light text-dark border-secondary border-opacity-25'
+                                  }`}
+                                  style={{ minHeight: '36px', fontSize: '0.78rem' }}
+                                  onClick={() => {
+                                    setSelectedPathogen(isSelected ? null : p);
+                                    if (!isSelected && p.sheetPage) {
+                                      setSelectedPage(p.sheetPage);
+                                    }
+                                  }}
+                                >
+                                  <i className="bi bi-virus2"></i>
+                                  <span>{p.name}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+
+                          {/* Instant Bedside Action Sheet for Selected Pathogen */}
+                          {selectedPathogen && (
+                            <div className="p-3 bg-danger bg-opacity-10 border border-danger border-opacity-25 rounded-3 animate-fade-in">
+                              <div className="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                  <span className="fw-black text-danger text-uppercase" style={{ fontSize: '0.90rem' }}>
+                                    {selectedPathogen.name}
+                                  </span>
+                                  <div className="text-secondary small" style={{ fontSize: '0.72rem' }}>
+                                    {selectedPathogen.sub}
+                                  </div>
+                                </div>
+                                <span className="badge bg-danger text-white rounded-pill px-2 py-1 small">
+                                  S. {selectedPathogen.sheetPage}
+                                </span>
+                              </div>
+
+                              <div className="d-flex flex-column gap-1.5 small text-dark mb-2.5" style={{ fontSize: '0.80rem' }}>
+                                <div className="d-flex align-items-start gap-1.5 bg-white p-1.5 rounded border">
+                                  <i className="bi bi-door-closed-fill text-danger flex-shrink-0 mt-0.5"></i>
+                                  <div><strong>Isolation:</strong> {selectedPathogen.iso}</div>
+                                </div>
+                                <div className="d-flex align-items-start gap-1.5 bg-white p-1.5 rounded border">
+                                  <i className="bi bi-shield-fill-check text-primary flex-shrink-0 mt-0.5"></i>
+                                  <div><strong>Schutzkleidung:</strong> {selectedPathogen.ppe}</div>
+                                </div>
+                                <div className="d-flex align-items-start gap-1.5 bg-white p-1.5 rounded border">
+                                  <i className="bi bi-droplet-half text-info flex-shrink-0 mt-0.5"></i>
+                                  <div><strong>Flächendesinfektion:</strong> {selectedPathogen.cleaning}</div>
+                                </div>
+                                <div className="d-flex align-items-start gap-1.5 bg-white p-1.5 rounded border">
+                                  <i className="bi bi-clipboard2-pulse-fill text-success flex-shrink-0 mt-0.5"></i>
+                                  <div><strong>Entisolation:</strong> {selectedPathogen.swab}</div>
+                                </div>
+                              </div>
+
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-danger w-100 rounded-pill py-1.5 fw-bold d-flex align-items-center justify-content-center gap-1 shadow-xs"
+                                style={{ fontSize: '0.78rem' }}
+                                onClick={() => setSelectedPage(selectedPathogen.sheetPage)}
+                              >
+                                <i className="bi bi-file-earmark-image"></i>
+                                <span>Originaltabelle (Seite {selectedPathogen.sheetPage}) anzeigen</span>
+                              </button>
                             </div>
                           )}
-                          <div className="min-w-0">
-                            <span className={`badge rounded-pill ${activeDoc && activeDoc.id.includes('hygiene') ? 'bg-info bg-opacity-15 text-primary border border-info border-opacity-25' : 'bg-danger bg-opacity-15 text-danger border border-danger border-opacity-25'} px-2 py-0.5 small mb-1`}>
-                              {activeDoc ? activeDoc.badge : 'SOP DOKUMENT'}
-                            </span>
-                            <h6 className="fw-bold text-dark mb-1 text-truncate" style={{ fontSize: '0.92rem' }}>
-                              {activeDoc ? activeDoc.title : standard.topic}
-                            </h6>
-                            <div className="text-muted small" style={{ fontSize: '0.74rem' }}>
-                              ID: <strong>{activeDoc ? activeDoc.roXtraId : standard.roXtraIds[0]}</strong> &bull; {activeDoc?.version || 'Gültig'}
+                        </div>
+                      )}
+
+                      {/* IN-APP MOBILE RETINA PAGE VIEWER */}
+                      <div className="bg-white p-2.5 rounded-4 shadow-sm border mb-2.5 text-start">
+                        {/* Page Selector Chips (if document has multiple pages) */}
+                        {docPages && docPages.length > 1 && (
+                          <div className="mb-2.5">
+                            <div className="d-flex align-items-center justify-content-between mb-1.5 px-0.5">
+                              <span className="text-muted fw-bold small" style={{ fontSize: '0.72rem' }}>
+                                SEITE WÄHLEN ({docPages.length} SEITEN):
+                              </span>
+                              <span className="badge bg-light text-dark border small" style={{ fontSize: '0.68rem' }}>
+                                Seite {selectedPage} von {activeDoc.pageCount}
+                              </span>
                             </div>
+                            <div className="d-flex gap-1 overflow-x-auto pb-1 no-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
+                              {docPages.map((pg) => {
+                                const isCur = selectedPage === pg.pageNum;
+                                return (
+                                  <button
+                                    key={pg.pageNum}
+                                    type="button"
+                                    className={`btn btn-sm rounded-pill text-nowrap px-2.5 py-1 d-flex align-items-center gap-1 ${
+                                      isCur
+                                        ? 'btn-dark text-white fw-bold shadow-xs'
+                                        : 'btn-outline-secondary bg-white text-secondary border-light-subtle'
+                                    }`}
+                                    style={{ minHeight: '34px', fontSize: '0.76rem' }}
+                                    onClick={() => setSelectedPage(pg.pageNum)}
+                                  >
+                                    <i className="bi bi-file-text"></i>
+                                    <span>{pg.label || `Seite ${pg.pageNum}`}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* High-Resolution Page Canvas with Tap-to-Zoom */}
+                        <div
+                          className="position-relative text-center bg-dark bg-opacity-5 rounded-3 p-1 border overflow-hidden"
+                          style={{ cursor: 'pointer', minHeight: '260px' }}
+                          onClick={() => setPreviewImage({
+                            src: activePageObj ? activePageObj.image : (activeDoc?.thumb || standard.image),
+                            title: activeDoc ? `${activeDoc.title} (Seite ${selectedPage})` : standard.title,
+                            subtitle: 'Tippen für Vollbildansicht • Pinch-to-Zoom am Smartphone'
+                          })}
+                        >
+                          <img
+                            src={activePageObj ? activePageObj.image : (activeDoc?.thumb || standard.image)}
+                            alt={activeDoc ? activeDoc.title : standard.shortTitle}
+                            className="img-fluid rounded-2 shadow-xs"
+                            style={{ maxHeight: '52vh', width: '100%', objectFit: 'contain' }}
+                          />
+                          <div className="position-absolute bottom-0 end-0 m-2">
+                            <span className="badge bg-dark bg-opacity-75 text-white rounded-pill px-2.5 py-1 shadow-sm small" style={{ fontSize: '0.72rem' }}>
+                              <i className="bi bi-zoom-in me-1"></i>Tippen zum Vergrößern
+                            </span>
                           </div>
                         </div>
 
-                        <div className="alert alert-info py-2 px-3 small d-flex align-items-center gap-2 mb-3">
-                          <i className="bi bi-phone text-info fs-5 flex-shrink-0"></i>
-                          <span style={{ fontSize: '0.8rem' }}>Für flüssiges Scrollen &amp; Zoom am Smartphone tippen Sie auf den Button, um die SOP im systemeigenen PDF-Viewer zu öffnen.</span>
-                        </div>
+                        {/* Page Navigator Prev / Next Bar */}
+                        {docPages && docPages.length > 1 && (
+                          <div className="d-flex align-items-center justify-content-between mt-2 pt-1 border-top gap-2">
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 d-flex align-items-center gap-1"
+                              style={{ minHeight: '36px', fontSize: '0.78rem' }}
+                              disabled={selectedPage <= 1}
+                              onClick={() => {
+                                const prev = docPages.find(p => p.pageNum < selectedPage);
+                                if (prev) setSelectedPage(prev.pageNum);
+                              }}
+                            >
+                              <i className="bi bi-chevron-left"></i>
+                              <span>Zurück</span>
+                            </button>
+                            <span className="small text-muted fw-bold">
+                              Seite {selectedPage} / {activeDoc.pageCount}
+                            </span>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 d-flex align-items-center gap-1"
+                              style={{ minHeight: '36px', fontSize: '0.78rem' }}
+                              disabled={selectedPage >= activeDoc.pageCount}
+                              onClick={() => {
+                                const next = docPages.find(p => p.pageNum > selectedPage);
+                                if (next) setSelectedPage(next.pageNum);
+                              }}
+                            >
+                              <span>Weiter</span>
+                              <i className="bi bi-chevron-right"></i>
+                            </button>
+                          </div>
+                        )}
 
-                        <div className="d-grid gap-2">
+                        {/* Mobile Action Buttons (Full-width, large touch targets) */}
+                        <div className="d-grid gap-2 mt-3 pt-2 border-top">
                           <a
                             href={pdfUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="btn btn-danger rounded-pill py-2.5 d-flex align-items-center justify-content-center gap-2 fw-bold shadow-sm"
+                            style={{ minHeight: '48px', fontSize: '0.90rem' }}
                           >
-                            <i className="bi bi-box-arrow-up-right fs-5"></i>
-                            <span>{activeDoc ? activeDoc.shortTitle : 'SOP PDF'} im Reader öffnen</span>
+                            <i className="bi bi-file-earmark-pdf-fill fs-5"></i>
+                            <span>Vollständige PDF im Reader öffnen</span>
                           </a>
-                          <a
-                            href={pdfUrl}
-                            download
-                            className="btn btn-outline-secondary rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-semibold small"
-                          >
-                            <i className="bi bi-download"></i>
-                            <span>PDF herunterladen ({activeDoc?.pageCount || 10} Seiten)</span>
-                          </a>
+                          <div className="d-flex gap-2">
+                            <button
+                              type="button"
+                              className="btn btn-outline-dark rounded-pill py-2 flex-fill d-flex align-items-center justify-content-center gap-1.5 fw-semibold small"
+                              style={{ minHeight: '40px', fontSize: '0.80rem' }}
+                              onClick={() => setIsPdfModalOpen(true)}
+                            >
+                              <i className="bi bi-arrows-fullscreen"></i>
+                              <span>Vollbild</span>
+                            </button>
+                            <a
+                              href={pdfUrl}
+                              download
+                              className="btn btn-outline-secondary rounded-pill py-2 flex-fill d-flex align-items-center justify-content-center gap-1.5 fw-semibold small"
+                              style={{ minHeight: '40px', fontSize: '0.80rem' }}
+                            >
+                              <i className="bi bi-download"></i>
+                              <span>Download</span>
+                            </a>
+                          </div>
                         </div>
                       </div>
                     </div>

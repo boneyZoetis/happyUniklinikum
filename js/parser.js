@@ -254,7 +254,11 @@ root.QRParser = (function () {
           pdfUrl: 'assets/zvk-sop-verfahrensanweisung.pdf',
           thumb: 'assets/zvk-sop-thumb.jpg',
           scope: 'Intensivstationen (ITS / IMC) • Zentrum der Chirurgie & Innere Medizin',
-          description: 'Standardisierte Verfahrensanweisung für Aseptik, Verbandswechsel, Spültechnik und Infusionsfilter.'
+          description: 'Standardisierte Verfahrensanweisung für Aseptik, Verbandswechsel, Spültechnik und Infusionsfilter.',
+          pages: [
+            { pageNum: 1, label: 'S. 1: Deckblatt & SOP Übersicht', image: 'assets/zvk-sop-page-1.jpg' },
+            { pageNum: 10, label: 'S. 10: Standard-Infusionsschema ITS', image: 'assets/zvk-sop-page-10.jpg' }
+          ]
         },
         {
           id: 'zvk-hygieneplan',
@@ -269,7 +273,93 @@ root.QRParser = (function () {
           pdfUrl: 'assets/zvk-hygieneplan-multiresistente-erreger.pdf',
           thumb: 'assets/zvk-hygieneplan-thumb.jpg',
           scope: 'Häma-Onko (Station+TK) • ITS / IMC • Neonatologie',
-          description: 'Umgang mit multiresistenten Erregern (VRE+, 2/3/4MRGN, MRSA, C. diff, Noro, TBC, Covid-19, Auslands-Iso).'
+          description: 'Umgang mit multiresistenten Erregern (VRE+, 2/3/4MRGN, MRSA, C. diff, Noro, TBC, Covid-19, Auslands-Iso).',
+          pages: [
+            { pageNum: 1, label: 'S. 1: VRE / MRGN / Candida', image: 'assets/zvk-hygieneplan-page-1.jpg' },
+            { pageNum: 2, label: 'S. 2: MRSA / C. diff / Noro', image: 'assets/zvk-hygieneplan-page-2.jpg' },
+            { pageNum: 3, label: 'S. 3: Rota / TBC / Influenza', image: 'assets/zvk-hygieneplan-page-3.jpg' },
+            { pageNum: 4, label: 'S. 4: Hep / Covid-19 / Auslands I', image: 'assets/zvk-hygieneplan-page-4.jpg' },
+            { pageNum: 5, label: 'S. 5: Auslands-Iso II/III & Hinweise', image: 'assets/zvk-hygieneplan-page-5.jpg' }
+          ],
+          pathogens: [
+            {
+              id: 'vre',
+              name: 'VRE (VRE+)',
+              sub: 'Resistenz gg. Linezolid, Tigecyclin, Daptomycin',
+              iso: 'Iso- / Einzelzimmer',
+              ppe: 'Schutzkittel, Handschuhe am Patienten',
+              cleaning: 'Perform Pro 2% Schlussdesinfektion',
+              swab: 'Index: keine Entisolation; Kontakt: Entiso wenn 1x neg.',
+              sheetPage: 1,
+              badgeColor: '#db2777'
+            },
+            {
+              id: 'mrgn',
+              name: '3MRGN / 4MRGN',
+              sub: 'Multiresistente gramnegative Stäbchen',
+              iso: 'Iso- / Einzelzimmer',
+              ppe: 'Schutzkittel, Handschuhe am Patienten',
+              cleaning: 'Incidin Pro 0,5% (3 MRGN ACBA mit Perform Pro 2%)',
+              swab: '3MRGN: 3x neg. (Abst. 1 Wo.) | 4MRGN: 3x neg. (Abst. 1 Mo.)',
+              sheetPage: 1,
+              badgeColor: '#dc2626'
+            },
+            {
+              id: 'mrsa',
+              name: 'MRSA',
+              sub: 'Methicillin-resistenter S. aureus',
+              iso: 'Iso- / Einzelzimmer, gelber Infektionswäsche-Sack',
+              ppe: 'Schutzkittel, Handschuhe, MNS am Patienten',
+              cleaning: 'Schlussdesinfektion Incidin Pro 0,5%',
+              swab: 'Dekolonisation 5 Tage. Entisolation wenn 3x neg. (Abstand ≥ 24 h)',
+              sheetPage: 2,
+              badgeColor: '#ea580c'
+            },
+            {
+              id: 'cdiff',
+              name: 'C. diff',
+              sub: 'Clostridioides difficile (Sporenbildner)',
+              iso: 'Iso- / Einzelzimmer',
+              ppe: 'Erst Hände waschen, dann desinfizieren! Schutzkittel, Handschuhe',
+              cleaning: 'Schlussdesinfektion Perform Pro 2%',
+              swab: 'Entisolation: > 48 h Symptomfreiheit',
+              sheetPage: 2,
+              badgeColor: '#b45309'
+            },
+            {
+              id: 'noro',
+              name: 'Norovirus',
+              sub: 'Gastroenteritis (mit/ohne Erbrechen/Diarrhoe)',
+              iso: 'Iso- / Einzelzimmer',
+              ppe: 'Schutzkittel, Handschuhe, MNS vor Betreten des Zimmers',
+              cleaning: 'Schlussdesinfektion Perform Pro 2%',
+              swab: 'Entisolation: Bis 3 Tage nach Symptomfreiheit',
+              sheetPage: 2,
+              badgeColor: '#7c3aed'
+            },
+            {
+              id: 'tbc',
+              name: 'Offene TBC',
+              sub: 'Tuberkulose (Aerosol-Übertragung)',
+              iso: 'Iso- / Einzelzimmer, gelber Wäsche-Sack',
+              ppe: 'Schutzkittel, Handschuhe, FFP2 vor Betreten des Zimmers!',
+              cleaning: 'Schlussdesinfektion Perform Pro 2%',
+              swab: 'Untersuchung von Kontaktpersonen gem. Leitlinie 03.2',
+              sheetPage: 3,
+              badgeColor: '#0284c7'
+            },
+            {
+              id: 'covid',
+              name: 'SARS-CoV-2',
+              sub: 'Covid-19 Tröpfchen / Aerosol',
+              iso: 'Iso- / Einzelzimmer',
+              ppe: 'FFP2, Schutzbrille, Haube, Schutzkittel, Handschuhe vor Betreten',
+              cleaning: 'Schlussdesinfektion Incidin Pro 0,5%',
+              swab: 'Entisolation gem. 05.8 Isolationsmaßnahme',
+              sheetPage: 4,
+              badgeColor: '#059669'
+            }
+          ]
         }
       ],
       roXtraIds: ['391904', '361678', '484866', '456904', '414354', '414362'],
