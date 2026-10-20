@@ -2270,7 +2270,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf, s
           <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 pb-2 border-bottom gap-2">
             <div>
               <span className="text-muted small text-uppercase fw-bold" style={{ letterSpacing: '0.5px', fontSize: '0.72rem' }}>
-                {standard.id === 'zvk' || standard.id === 'isolation' ? 'Klinische Verfahrensanweisung (SOP) & Hygieneplan' : 'Expertenstandard in der Pflege'}
+                {standard.id === 'zvk' ? 'Klinische Verfahrensanweisung (SOP) & Hygieneplan' : (standard.id === 'isolation' ? 'Klinische Verfahrensanweisung (SOP)' : 'Expertenstandard in der Pflege')}
               </span>
               <h4 className="fw-bold text-dark mb-0 mt-1" style={{ fontSize: 'clamp(1.05rem, 3vw, 1.35rem)' }}>{standard.topic}</h4>
             </div>
@@ -2296,7 +2296,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf, s
                 onClick={() => setActiveViewMode('documents')}
               >
                 <i className="bi bi-file-earmark-pdf-fill"></i>
-                <span className="text-truncate">{standard.id === 'zvk' || standard.id === 'isolation' ? 'SOP & Dokumente' : 'Standard & Folien'}</span>
+                <span className="text-truncate">{standard.id === 'zvk' ? 'SOP & Dokumente' : (standard.id === 'isolation' ? 'SOP Dokument' : 'Standard & Folien')}</span>
               </button>
               <button
                 type="button"
@@ -3265,10 +3265,6 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                     <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
                       <span><strong>ID-Nr.: 239411</strong> &bull; Allgemeines Vorgehen bei Isolation und Reinigung</span>
                       <span className="badge bg-secondary">Ver. 003 / 08.2019</span>
-                    </div>
-                    <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
-                      <span><strong>ID-Nr.: 361678</strong> &bull; Hygieneplan: Multiresistente Erreger (Häma-Onko, ITS/IMC, Neonat.)</span>
-                      <span className="badge bg-success">Ver. 012 / 02.2026 (5 S.)</span>
                     </div>
                     <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
                       <span><strong>Gültigkeitsbereich:</strong> Zentrum der Chirurgie &bull; Innere Medizin &bull; ITS / IMC</span>

@@ -701,46 +701,9 @@ root.QRParser = (function () {
       videoUrl: (typeof window !== 'undefined' && window.location ? window.location.origin + window.location.pathname + '#/isolation' : 'http://localhost:3000/#/isolation'),
       videoId: 'isolation_poster',
       sopPdfUrl: 'assets/isolation-sop-verfahrensanweisung.pdf',
-      sopDocuments: [
-        {
-          id: 'iso-sop',
-          title: 'Verfahrensanweisung: Allgemeines Vorgehen bei Isolation und Reinigung',
-          shortTitle: '1. SOP Isolation & Reinigung',
-          roXtraId: '239411',
-          version: 'Ver. 003 / 08.2019',
-          pageCount: 4,
-          badge: 'SOP • 4 Seiten',
-          icon: 'bi-shield-check',
-          themeColor: '#0284c7',
-          pdfUrl: 'assets/isolation-sop-verfahrensanweisung.pdf',
-          thumb: 'assets/isolation-sop-thumb.jpg',
-          scope: 'Klinikweit • Alle Pflegebereiche & Zentren',
-          description: 'Allgemeine Isolationsformen, Desinfektion, Barrieremaßnahmen & Schutzkleidung.',
-          pages: [
-            { pageNum: 1, label: 'S. 1: Allgemeine Isolierungsformen & Farbleitsystem', image: 'assets/isolation-sop-page-1.jpg' },
-            { pageNum: 2, label: 'S. 2: Schutzkleidung (PSA) & Desinfektionsmaßnahmen', image: 'assets/isolation-sop-page-2.jpg' }
-          ]
-        },
-        {
-          id: 'iso-hygieneplan',
-          title: 'Hygieneplan: Umgang mit multiresistenten & hygienerelevanten Erregern',
-          shortTitle: '2. Hygieneplan MRE (ITS/IMC)',
-          roXtraId: '361678',
-          version: 'Ver. 012 / 02.2026',
-          pageCount: 5,
-          badge: 'Hygieneplan • 5 Seiten • Neu',
-          icon: 'bi-shield-shaded',
-          themeColor: '#7c3aed',
-          pdfUrl: 'assets/zvk-hygieneplan-multiresistente-erreger.pdf',
-          thumb: 'assets/zvk-hygieneplan-thumb.jpg',
-          scope: 'Häma-Onko (Station+TK) • ITS / IMC • Neonatologie',
-          description: 'Detaillierter Leitfaden nach Erreger: VRE, MRGN, MRSA, C. diff, Norovirus, TBC, etc.'
-        }
-      ],
-      roXtraIds: ['239411', '361678'],
+      roXtraIds: ['239411'],
       roXtraDetails: {
-        '239411': 'Verfahrensanweisung Allgemeines Vorgehen bei Isolation und Reinigung (Ver. 003/08.2019)',
-        '361678': 'Hygieneplan: Umgang mit multiresistenten Erregern (Ver. 012/02.2026)'
+        '239411': 'Verfahrensanweisung Allgemeines Vorgehen bei Isolation und Reinigung (Ver. 003/08.2019)'
       },
       image: 'assets/isolation-poster.jpg',
       pdfUrl: 'assets/isolation-sop-verfahrensanweisung.pdf#page=1',
@@ -749,18 +712,18 @@ root.QRParser = (function () {
       leadText: 'Hygiene schützt – Gemeinsam für Patienten und Mitarbeitende. Schneller Zugriff auf den aktuellen Hygieneplan und alle wichtigen Handlungsleitfäden bei MRE- und Infektionsnachweis.',
       instructions: 'Scannen Sie den QR-Code, um die vollständige Verfahrensanweisung (SOP) sowie Hygienerichtlinien zur Isolation aufzurufen. Weiterführende Dokumente im QM-System unter ID-Nr.: 239411.',
       whyImportant: [
-        'Übertragung verhindern (Infektionsketten konsequent unterbrechen)',
-        'Patienten schützen (Schutz vor nosokomialen Infektionen & MRE)',
-        'Team sicher arbeiten lassen (Konsequente PSA & Händehygiene)',
-        'Zielgerichtete Flächendesinfektion & sachgerechte Entsorgung'
+        'Prävention von nosokomialen Kreuzinfektionen (MRE-Übertragung)',
+        'Schutz von Mitpatienten, Besuchern und medizinischem Fachpersonal',
+        'Standardisierte Barriere- & Schutzmaßnahmen (PSA / Schutzkleidung)',
+        'Zielgerichtete Flächendesinfektion & fachgerechte Schlussdesinfektion'
       ],
       keyPoints: [
-        'Indikation zur Isolation prüfen: Bei Nachweis oder begründetem Verdacht auf übertragbare Erreger (VRE, MRGN, MRSA, C. diff.) Schutzmaßnahmen sofort einleiten.',
-        'Schutzkleidung richtig anlegen: Je nach Übertragungsweg Schutzkittel, Handschuhe, Mund-Nasen-Schutz / FFP2 bei Bedarf und ggf. Schutzbrille tragen.',
-        'Händedesinfektion konsequent durchführen: Vor und nach Patientenkontakt, nach Kontakt mit kontaminierten Flächen sowie nach dem Ablegen der Schutzkleidung.',
-        'Patientennahe Flächen desinfizieren: Bett, Nachttisch, Türgriffe, Rufanlage und häufig berührte Flächen regelmäßig nach Hygieneplan aufbereiten.',
-        'Material patientenbezogen verwenden: Pflegeutensilien und Medizinprodukte möglichst nur für diesen Patienten nutzen oder direkt sachgerecht aufbereiten.',
-        'Abfall und Wäsche korrekt entsorgen: Kontaminierte Materialien und Wäsche im Zimmer nach den geltenden Hygienevorgaben sicher sammeln und entsorgen.'
+        'VRE: Zimmer-Isolation; Abrüsten: Materialien mit direktem Kontakt entsorgen; Schlussdesinfektion; Basishygiene + HD-Mittel begrenzt viruzid.',
+        '3MRGN: Bettplatz-Isolation; Bettplatz-Reinigung; Materialien mit direktem Patientenkontakt entsorgen; Basishygiene + HD-Mittel.',
+        '4MRGN & ACBA: Strikte Zimmer-Isolation; Alles verwerfen (ACBA); Schlussdesinfektion; Info an Hygienefachkraft für Umweltabstriche.',
+        'MRSA: Zimmer-Isolation; Materialien mit direktem Kontakt verwerfen; Schlussdesinfektion nach Verlegung; Basishygiene.',
+        'C. difficile: Zimmer-Isolation; Wichtig: ERST Hände mit Seife gründlich waschen, dann Händedesinfektion mit HD-Mittel begrenzt viruzid.',
+        'Türbeschilderung: Farbleitsystem beachten (gelb außen / pink innen) – Schutzkittel & Handschuhe vor Betreten anlegen.'
       ],
       clinicalFocus: [
         {
@@ -794,11 +757,11 @@ root.QRParser = (function () {
           id: 'iso-ppe',
           title: 'MRE & Isolation: PSA An- und Ablegen',
           shortTitle: 'PSA An- & Ablegen',
-          subtitle: 'Vermeidung von Eigenkontamination (ID: 361678 & 239411)',
+          subtitle: 'Vermeidung von Eigenkontamination (ID: 239411)',
           badge: 'Infektionsschutz',
           timerSeconds: 30,
           timerLabel: 'Händedesinfektion (mind. 30 Sek.)',
-          docuSnippet: 'Isolationsmaßnahmen nach Hygieneplan ID: 361678 / 239411 umgesetzt: Schutzkleidung vor Betreten vollständig angelegt. Kontaminationsfreies Ablegen im Zimmer/Schleuse durchgeführt. Händedesinfektion vor/nach Patientenkontakt sowie nach PSA-Ablegen.',
+          docuSnippet: 'Isolationsmaßnahmen nach Verfahrensanweisung ID: 239411 umgesetzt: Schutzkleidung vor Betreten vollständig angelegt. Kontaminationsfreies Ablegen im Zimmer/Schleuse durchgeführt. Händedesinfektion vor/nach Patientenkontakt sowie nach PSA-Ablegen.',
           phases: [
             {
               name: 'Ablauf 1: Kontaminationsfreies Anlegen (VOR dem Zimmer)',
