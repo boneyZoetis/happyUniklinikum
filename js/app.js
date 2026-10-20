@@ -1727,11 +1727,16 @@ function StandardA4PrintSheet({ standard }) {
 // Component: Beautified Pocketcard (Minimal Info + Great Pictures + Scannable QR)
 // -------------------------------------------------------------
 function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf }) {
+  const [selectedDocIndex, setSelectedDocIndex] = useState(0);
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [isModalMaximized, setIsModalMaximized] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const isPdfPopupStandard = standard.id === 'zvk' || standard.id === 'isolation';
-  const rawPdfUrl = standard.pdfUrl || (standard.id === 'zvk' ? 'assets/zvk-sop-verfahrensanweisung.pdf' : (standard.id === 'isolation' ? 'assets/isolation-sop-verfahrensanweisung.pdf' : 'assets/umf-expertenstandards-folien.pdf'));
+  const documents = standard.sopDocuments || null;
+  const activeDoc = (documents && documents[selectedDocIndex]) ? documents[selectedDocIndex] : null;
+  const rawPdfUrl = activeDoc
+    ? activeDoc.pdfUrl
+    : (standard.pdfUrl || (standard.id === 'zvk' ? 'assets/zvk-sop-verfahrensanweisung.pdf' : (standard.id === 'isolation' ? 'assets/isolation-sop-verfahrensanweisung.pdf' : 'assets/umf-expertenstandards-folien.pdf')));
   const pdfBaseUrl = rawPdfUrl.split('#')[0];
   const pdfUrl = rawPdfUrl;
 
@@ -1794,24 +1799,65 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                     <div className="d-flex align-items-center gap-2">
                       <i className="bi bi-file-earmark-pdf-fill text-danger fs-5"></i>
                       <span className="fw-bold text-dark" style={{ fontSize: '0.92rem' }}>
-                        Verfahrensanweisung &amp; SOP: {standard.shortTitle}
+                        {activeDoc ? activeDoc.title : `Verfahrensanweisung & SOP: ${standard.shortTitle}`}
                       </span>
                     </div>
 
                     <div className="d-flex align-items-center gap-2">
                       <span className="badge bg-white text-secondary border px-2.5 py-1 small font-monospace">
-                        roXtra ID: <strong>{standard.roXtraIds.join(' / ')}</strong>
+                        roXtra ID: <strong>{activeDoc ? activeDoc.roXtraId : standard.roXtraIds.join(' / ')}</strong>
                       </span>
                     </div>
                   </div>
+
+                  {/* Document Switcher: ONLY for standards with multiple documents (e.g. Hygiene) */}
+                  {documents && documents.length > 1 && (
+                    <div className="bg-light px-3 py-2 border-bottom">
+                      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-1.5">
+                        <span className="text-muted small fw-bold text-uppercase" style={{ fontSize: '0.72rem', letterSpacing: '0.4px' }}>
+                          <i className="bi bi-collection me-1 text-primary"></i>Verfügbare QM-Dokumente ({documents.length}):
+                        </span>
+                        <span className="text-muted small" style={{ fontSize: '0.72rem' }}>
+                          Klicken zum Umschalten
+                        </span>
+                      </div>
+                      <div className="d-flex flex-wrap gap-2">
+                        {documents.map((doc, idx) => {
+                          const isSelected = selectedDocIndex === idx;
+                          return (
+                            <button
+                              key={doc.id}
+                              type="button"
+                              className={`btn btn-sm rounded-pill px-3 py-1.5 fw-semibold d-flex align-items-center gap-2 transition-all flex-grow-1 flex-sm-grow-0 justify-content-between justify-content-sm-center ${
+                                isSelected
+                                  ? 'btn-primary text-white shadow-sm'
+                                  : 'btn-white bg-white text-dark border hover-shadow'
+                              }`}
+                              style={{ fontSize: '0.82rem' }}
+                              onClick={() => setSelectedDocIndex(idx)}
+                            >
+                              <div className="d-flex align-items-center gap-1.5">
+                                <i className={`bi ${idx === 0 ? 'bi-file-earmark-text' : 'bi-shield-check'} ${isSelected ? 'text-white' : 'text-primary'}`}></i>
+                                <span>{doc.shortTitle}</span>
+                              </div>
+                              <span className={`badge rounded-pill ${isSelected ? 'bg-white text-primary' : 'bg-light text-muted border'}`} style={{ fontSize: '0.7rem' }}>
+                                {doc.pageCount} S. &bull; ID: {doc.roXtraId}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Body: Direct SOP PDF Viewer */}
                   <div>
                     {/* Desktop / Tablet: Interactive PDF iframe embed */}
                     <div className="d-none d-md-block position-relative bg-white" style={{ minHeight: '520px', height: '520px' }}>
                       <iframe
+                        key={pdfBaseUrl}
                         src={`${pdfBaseUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
-                        title={`PDF Schulungsillustration ${standard.shortTitle}`}
+                        title={`PDF Schulungsillustration ${activeDoc ? activeDoc.title : standard.shortTitle}`}
                         className="w-100 h-100 border-0 d-block"
                         style={{ minHeight: '520px', overflowY: 'auto' }}
                       />
@@ -1835,31 +1881,33 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                           <i className="bi bi-file-earmark-pdf-fill fs-1"></i>
                         </div>
                         <h6 className="fw-bold text-dark mb-1">
-                          {standard.topic}
+                          {activeDoc ? activeDoc.title : standard.topic}
                         </h6>
                         <div className="text-muted small mb-3">
-                          {standard.id === 'zvk'
-                            ? 'Offizielle Verfahrensanweisung ZVK (10 Seiten) • roXtra ID: 391904'
-                            : 'Allgemeines Vorgehen bei Isolation und Reinigung (4 Seiten) • roXtra ID: 239411'}
+                          {activeDoc
+                            ? `${activeDoc.lead} • roXtra ID: ${activeDoc.roXtraId}`
+                            : (standard.id === 'zvk'
+                              ? 'Offizielle Verfahrensanweisung ZVK (10 Seiten) • roXtra ID: 391904'
+                              : 'Allgemeines Vorgehen bei Isolation und Reinigung (4 Seiten) • roXtra ID: 239411')}
                         </div>
 
                         <div className="alert alert-info py-2 px-3 small text-start d-flex align-items-center gap-2 mb-3">
                           <i className="bi bi-phone text-info fs-5 flex-shrink-0"></i>
-                          <span style={{ fontSize: '0.8rem' }}>Für flüssiges Scrollen &amp; Zoom am Smartphone tippen Sie auf den Button, um die SOP im systemeigenen PDF-Viewer zu öffnen.</span>
+                          <span style={{ fontSize: '0.8rem' }}>Für flüssiges Scrollen &amp; Zoom am Smartphone tippen Sie auf den Button, um das PDF im systemeigenen PDF-Viewer zu öffnen.</span>
                         </div>
 
                         <div className="d-grid gap-2">
                           <a
-                            href={standard.sopPdfUrl}
+                            href={pdfUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="btn btn-danger rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-bold shadow-sm"
                           >
                             <i className="bi bi-box-arrow-up-right fs-5"></i>
-                            <span>SOP PDF im Vollbild öffnen</span>
+                            <span>PDF im Vollbild öffnen ({activeDoc ? `${activeDoc.pageCount} S.` : (standard.id === 'zvk' ? '10 S.' : '4 S.')})</span>
                           </a>
                           <a
-                            href={standard.sopPdfUrl}
+                            href={pdfUrl}
                             download
                             className="btn btn-outline-secondary rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-semibold small"
                           >
@@ -1882,7 +1930,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                   <div className="px-3 py-2 bg-light border-top d-none d-md-flex flex-wrap justify-content-between align-items-center gap-2">
                     <div className="d-flex align-items-center gap-2 small text-muted">
                       <i className="bi bi-file-earmark-check text-success"></i>
-                      <span>Gültige Version im roXtra QM-System</span>
+                      <span>Gültige Version im roXtra QM-System (ID {activeDoc ? activeDoc.roXtraId : standard.roXtraIds.join(' / ')})</span>
                     </div>
                     <div className="d-flex align-items-center gap-2">
                       <button
@@ -1894,13 +1942,13 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                         <i className="bi bi-arrows-fullscreen me-1"></i>Vollbild
                       </button>
                       <a
-                        href={standard.sopPdfUrl}
+                        href={pdfUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-sm btn-outline-danger rounded-pill px-2.5 py-1 fw-semibold"
                         style={{ fontSize: '0.76rem' }}
                       >
-                        <i className="bi bi-file-earmark-pdf-fill me-1"></i>SOP PDF ({standard.id === 'zvk' ? '10 S.' : '4 S.'})
+                        <i className="bi bi-file-earmark-pdf-fill me-1"></i>PDF öffnen ({activeDoc ? `${activeDoc.pageCount} S.` : (standard.id === 'zvk' ? '10 S.' : '4 S.')})
                       </a>
                     </div>
                   </div>
@@ -2104,15 +2152,15 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
 
               {standard.sopPdfUrl && standard.id !== 'zvk' && (
                 <a
-                  href={standard.sopPdfUrl}
+                  href={pdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-danger btn-sm rounded-pill px-3 py-2 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-1.5 w-100 w-sm-auto"
                   style={{ minHeight: '44px' }}
-                  title="Vollständige Verfahrensanweisung (SOP) als Original-PDF öffnen"
+                  title="Vollständiges Dokument als Original-PDF öffnen"
                 >
                   <i className="bi bi-file-earmark-pdf-fill"></i>
-                  <span>Original SOP öffnen (4 S.)</span>
+                  <span>PDF öffnen ({activeDoc ? `${activeDoc.pageCount} S.` : '4 S.'})</span>
                 </a>
               )}
             </div>
@@ -2173,10 +2221,10 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                   <i className="bi bi-file-earmark-pdf-fill text-danger fs-5"></i>
                   <div>
                     <h6 className="modal-title fw-bold mb-0 text-truncate" style={{ fontSize: '0.95rem' }}>
-                      {standard.title || standard.topic}
+                      {activeDoc ? activeDoc.title : (standard.title || standard.topic)}
                     </h6>
                     <div className="text-white-50 small" style={{ fontSize: '0.72rem' }}>
-                      Universitätsmedizin Frankfurt &bull; Schulungsillustration &amp; SOP &bull; Scrolling &amp; Vollbild
+                      Universitätsmedizin Frankfurt &bull; roXtra ID: {activeDoc ? activeDoc.roXtraId : standard.roXtraIds.join(' / ')} &bull; Scrolling &amp; Vollbild
                     </div>
                   </div>
                 </div>
@@ -2229,12 +2277,40 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                 </div>
               </div>
 
+              {/* Modal Document Switcher (if multiple docs available) */}
+              {documents && documents.length > 1 && (
+                <div className="bg-black bg-opacity-75 px-3 py-1.5 border-bottom border-secondary d-flex align-items-center gap-2 flex-wrap">
+                  <span className="text-white-50 small fw-bold text-uppercase" style={{ fontSize: '0.7rem' }}>
+                    Dokument:
+                  </span>
+                  {documents.map((doc, idx) => {
+                    const isSelected = selectedDocIndex === idx;
+                    return (
+                      <button
+                        key={doc.id}
+                        type="button"
+                        className={`btn btn-xs rounded-pill px-2.5 py-0.5 fw-semibold ${
+                          isSelected
+                            ? 'btn-primary text-white'
+                            : 'btn-outline-light'
+                        }`}
+                        style={{ fontSize: '0.75rem' }}
+                        onClick={() => setSelectedDocIndex(idx)}
+                      >
+                        {doc.shortTitle} ({doc.pageCount} S.)
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
               {/* Modal Body with Scrolling PDF Viewport on Desktop & Mobile Native View on Phones */}
               <div className="modal-body p-0 flex-grow-1 bg-secondary bg-opacity-10 position-relative d-flex flex-column overflow-hidden">
                 {/* Desktop: Interactive PDF iframe */}
                 <iframe
+                  key={pdfBaseUrl}
                   src={`${pdfBaseUrl}#page=${standard.pdfPage || 1}&toolbar=1&navpanes=1&scrollbar=1&view=FitH`}
-                  title={`PDF Dokument ${standard.shortTitle}`}
+                  title={`PDF Dokument ${activeDoc ? activeDoc.title : standard.shortTitle}`}
                   className="w-100 h-100 border-0 flex-grow-1 d-none d-md-block"
                   style={{ minHeight: '100%', overflowY: 'auto' }}
                 />
@@ -2251,7 +2327,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                   </div>
                   <div className="d-grid gap-2 mb-2">
                     <a
-                      href={standard.sopPdfUrl || pdfUrl}
+                      href={pdfUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-danger rounded-pill py-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2"
@@ -2260,7 +2336,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                       <span>PDF im mobilen Reader öffnen</span>
                     </a>
                     <a
-                      href={standard.sopPdfUrl || pdfUrl}
+                      href={pdfUrl}
                       download
                       className="btn btn-outline-secondary rounded-pill py-2 fw-semibold d-flex align-items-center justify-content-center gap-2 small"
                     >
@@ -2582,15 +2658,15 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                 <div className="d-flex justify-content-between align-items-center mb-3">
                   <h5 className="fw-bold mb-0 text-dark">
                     <i className="bi bi-file-earmark-medical-fill text-primary me-2"></i>
-                    Verfahrensanweisung &amp; SOP (4 Seiten)
+                    Verfahrensanweisungen &amp; Hygienepläne (2 Dokumente)
                   </h5>
                   <a
-                    href={standard.sopPdfUrl}
+                    href="assets/hygieneplan-multiresistente-erreger.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn btn-sm btn-primary rounded-pill px-3 shadow-sm"
                   >
-                    <i className="bi bi-file-earmark-pdf-fill me-1"></i> SOP PDF öffnen
+                    <i className="bi bi-file-earmark-pdf-fill me-1"></i> Hygieneplan MRE öffnen
                   </a>
                 </div>
 
@@ -2600,11 +2676,15 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                   </div>
                   <div className="d-flex flex-column gap-2">
                     <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
-                      <span><strong>ID-Nr.: 239411</strong> &bull; Allgemeines Vorgehen bei Isolation und Reinigung</span>
-                      <span className="badge bg-secondary">Ver. 003 / 08.2019</span>
+                      <span><strong>Dokument 1 (ID 239411):</strong> Allgemeines Vorgehen bei Isolation und Reinigung</span>
+                      <span className="badge bg-secondary">Ver. 003 &bull; 4 Seiten</span>
                     </div>
                     <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
-                      <span><strong>Gültigkeitsbereich:</strong> Zentrum der Chirurgie &bull; Innere Medizin &bull; ITS / IMC</span>
+                      <span><strong>Dokument 2 (ID 361678):</strong> Hygieneplan: Umgang mit MRE (Häma-Onko, ITS/IMC)</span>
+                      <span className="badge bg-primary">Ver. 012 &bull; 5 Seiten</span>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
+                      <span><strong>Gültigkeitsbereich:</strong> Häma-Onkologie &bull; ITS / IMC &bull; Neonatologie &bull; Klinikweit</span>
                       <span className="badge bg-info text-dark">Klinikweit</span>
                     </div>
                   </div>

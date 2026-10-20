@@ -311,16 +311,37 @@ root.QRParser = (function () {
       videoUrl: (typeof window !== 'undefined' && window.location ? window.location.origin + window.location.pathname + '#/isolation' : 'http://localhost:3000/#/isolation'),
       videoId: 'isolation_poster',
       sopPdfUrl: 'assets/isolation-sop-verfahrensanweisung.pdf',
-      roXtraIds: ['239411'],
+      roXtraIds: ['239411', '361678'],
       roXtraDetails: {
-        '239411': 'Verfahrensanweisung Allgemeines Vorgehen bei Isolation und Reinigung (Ver. 003/08.2019)'
+        '239411': 'Verfahrensanweisung Allgemeines Vorgehen bei Isolation und Reinigung (Ver. 003/08.2019, 4 Seiten)',
+        '361678': 'Hygieneplan: Umgang mit multiresistenten und anderen hygienerelevanten Erregern (Häma-Onko, ITS/IMC, Neonat., Ver. 012/02.2026, 5 Seiten)'
       },
+      sopDocuments: [
+        {
+          id: 'iso-sop',
+          title: 'Verfahrensanweisung: Allgemeines Vorgehen bei Isolation und Reinigung',
+          shortTitle: '1. SOP Isolation & Reinigung',
+          roXtraId: '239411',
+          pageCount: 4,
+          pdfUrl: 'assets/isolation-sop-verfahrensanweisung.pdf',
+          lead: 'Offizielle UKF Verfahrensanweisung (ID 239411) – 4 Seiten. Isolationsformen, PSA-Vorgaben, Meldewege und Schlussdesinfektion.'
+        },
+        {
+          id: 'iso-hygieneplan',
+          title: 'Hygieneplan: Umgang mit multiresistenten & hygienerelevanten Erregern',
+          shortTitle: '2. Hygieneplan MRE (ITS/IMC)',
+          roXtraId: '361678',
+          pageCount: 5,
+          pdfUrl: 'assets/hygieneplan-multiresistente-erreger.pdf',
+          lead: 'Offizieller UKF Hygieneplan (ID 361678, Ver. 012/02.2026) – 5 Seiten. Häma-Onko (Station+TK), ITS/IMC, Neonatologie.'
+        }
+      ],
       image: 'assets/isolation-poster.jpg',
       pdfUrl: 'assets/isolation-sop-verfahrensanweisung.pdf#page=1',
       pdfPage: 1,
       graphicImage: 'assets/graphic-isolation.jpg',
       leadText: 'Hygiene schützt – Gemeinsam für Patienten und Mitarbeitende. Schneller Zugriff auf den aktuellen Hygieneplan und alle wichtigen Handlungsleitfäden bei MRE- und Infektionsnachweis.',
-      instructions: 'Scannen Sie den QR-Code, um die vollständige Verfahrensanweisung (SOP) sowie Hygienerichtlinien zur Isolation aufzurufen. Weiterführende Dokumente im QM-System unter ID-Nr.: 239411.',
+      instructions: 'Scannen Sie den QR-Code, um die vollständige Verfahrensanweisung (SOP) sowie Hygienerichtlinien zur Isolation aufzurufen. Weiterführende Dokumente im QM-System unter ID-Nr.: 239411 und ID-Nr.: 361678.',
       whyImportant: [
         'Übertragung verhindern (Infektionsketten konsequent unterbrechen)',
         'Patienten schützen (Schutz vor nosokomialen Infektionen & MRE)',
@@ -384,7 +405,7 @@ root.QRParser = (function () {
     if (lower.includes('391904') || lower.includes('484866') || lower.includes('456904') || lower.includes('414354') || lower.includes('zvk') || lower.includes('katheter') || lower.includes('venenkatheter') || lower.includes('zentraler')) {
       return UMF_STANDARDS.zvk;
     }
-    if (lower.includes('239411') || lower.includes('isolation') || lower.includes('hygiene') || lower.includes('mre') || lower.includes('mrsa') || lower.includes('mrgn') || lower.includes('vre') || lower.includes('difficile')) {
+    if (lower.includes('239411') || lower.includes('361678') || lower.includes('isolation') || lower.includes('hygiene') || lower.includes('mre') || lower.includes('mrsa') || lower.includes('mrgn') || lower.includes('vre') || lower.includes('difficile')) {
       return UMF_STANDARDS.isolation;
     }
 
