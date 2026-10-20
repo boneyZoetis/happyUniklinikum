@@ -2043,3 +2043,22 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   animation: pulseTimer 1.5s infinite;
 }
 
+/* =========================================================
+   CONTINUOUS SCROLL PDF FEED & RETINA PAGE SHEETS
+   ========================================================= */
+
+.pdf-continuous-scroll-feed {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.pdf-page-sheet {
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+  transition: transform 0.18s ease-in-out, box-shadow 0.18s ease-in-out;
+}
+
+.pdf-page-sheet:hover {
+  box-shadow: 0 8px 26px rgba(15, 23, 42, 0.12);
+}
+
+

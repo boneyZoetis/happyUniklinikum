@@ -420,6 +420,14 @@ root.QRParser = (function () {
           description: 'Standardisierte Verfahrensanweisung für Aseptik, Verbandswechsel, Spültechnik und Infusionsfilter.',
           pages: [
             { pageNum: 1, label: 'S. 1: Deckblatt & SOP Übersicht', image: 'assets/zvk-sop-page-1.jpg' },
+            { pageNum: 2, label: 'S. 2: Indikationen & Gefäßwahl', image: 'assets/zvk-sop-page-2.jpg' },
+            { pageNum: 3, label: 'S. 3: Hygiene & Vorbereitung', image: 'assets/zvk-sop-page-3.jpg' },
+            { pageNum: 4, label: 'S. 4: Aseptischer Verbandswechsel', image: 'assets/zvk-sop-page-4.jpg' },
+            { pageNum: 5, label: 'S. 5: Konnektoren & Diskonnektion', image: 'assets/zvk-sop-page-5.jpg' },
+            { pageNum: 6, label: 'S. 6: Spültechnik (Push-Pause)', image: 'assets/zvk-sop-page-6.jpg' },
+            { pageNum: 7, label: 'S. 7: Infusionsfilter (0,2µm / 1,2µm)', image: 'assets/zvk-sop-page-7.jpg' },
+            { pageNum: 8, label: 'S. 8: Blutentnahme & Katheterstilllegung', image: 'assets/zvk-sop-page-8.jpg' },
+            { pageNum: 9, label: 'S. 9: Komplikationen & Entfernung', image: 'assets/zvk-sop-page-9.jpg' },
             { pageNum: 10, label: 'S. 10: Standard-Infusionsschema ITS', image: 'assets/zvk-sop-page-10.jpg' }
           ]
         },
@@ -707,7 +715,11 @@ root.QRParser = (function () {
           pdfUrl: 'assets/isolation-sop-verfahrensanweisung.pdf',
           thumb: 'assets/isolation-sop-thumb.jpg',
           scope: 'Klinikweit • Alle Pflegebereiche & Zentren',
-          description: 'Allgemeine Isolationsformen, Desinfektion, Barrieremaßnahmen & Schutzkleidung.'
+          description: 'Allgemeine Isolationsformen, Desinfektion, Barrieremaßnahmen & Schutzkleidung.',
+          pages: [
+            { pageNum: 1, label: 'S. 1: Allgemeine Isolierungsformen & Farbleitsystem', image: 'assets/isolation-sop-page-1.jpg' },
+            { pageNum: 2, label: 'S. 2: Schutzkleidung (PSA) & Desinfektionsmaßnahmen', image: 'assets/isolation-sop-page-2.jpg' }
+          ]
         },
         {
           id: 'iso-hygieneplan',

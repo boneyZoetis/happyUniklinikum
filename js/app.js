@@ -2227,6 +2227,8 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf, s
   const [selectedDocIndex, setSelectedDocIndex] = useState(0);
   const [selectedPage, setSelectedPage] = useState(1);
   const [selectedPathogen, setSelectedPathogen] = useState(null);
+  const [pdfDisplayMode, setPdfDisplayMode] = useState('scroll'); // 'scroll' | 'single' | 'iframe'
+  const [pdfZoom, setPdfZoom] = useState(100);
 
   const documents = standard.sopDocuments || null;
   const activeDoc = (documents && documents[selectedDocIndex]) ? documents[selectedDocIndex] : null;
@@ -2483,147 +2485,263 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf, s
                     </div>
                   </div>
 
-                  {/* Body: Direct SOP PDF Viewer */}
-                  <div>
-                    {/* Desktop / Tablet: Interactive PDF iframe embed */}
-                    <div className="d-none d-md-block position-relative bg-white" style={{ minHeight: '560px', height: '560px' }}>
-                      <iframe
-                        key={pdfBaseUrl}
-                        src={`${pdfBaseUrl}#toolbar=1&navpanes=1&scrollbar=1&view=FitH`}
-                        title={activeDoc ? activeDoc.title : `PDF Schulungsillustration ${standard.shortTitle}`}
-                        className="w-100 h-100 border-0 d-block"
-                        style={{ minHeight: '560px', overflowY: 'auto' }}
-                      />
-                      <div className="position-absolute bottom-0 end-0 m-3 no-print" data-html2canvas-ignore="true">
-                        <div className="d-flex align-items-center gap-2">
-                          <a
-                            href={pdfUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-sm btn-light border text-dark shadow-sm rounded-pill py-1 px-3 d-flex align-items-center gap-1 hover-lift"
-                            style={{ fontSize: '0.78rem' }}
-                            title="In neuem Browser-Fenster öffnen"
-                          >
-                            <i className="bi bi-box-arrow-up-right"></i>
-                            <span>Neuer Tab</span>
-                          </a>
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-dark bg-opacity-90 backdrop-blur text-white shadow rounded-pill py-1 px-3 d-flex align-items-center gap-1 hover-lift"
-                            style={{ fontSize: '0.78rem' }}
-                            onClick={() => setIsPdfModalOpen(true)}
-                            title="Vollbild-Modus öffnen"
-                          >
-                            <i className="bi bi-arrows-fullscreen"></i>
-                            <span>Vollbild</span>
-                          </button>
-                        </div>
+                  {/* View Mode & Zoom Toolbar for PDF */}
+                  <div className="d-flex flex-wrap justify-content-between align-items-center px-3 py-2 bg-white border-bottom gap-2">
+                    <div className="d-flex align-items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                      <span className="text-muted fw-bold small text-uppercase d-none d-sm-inline me-1" style={{ fontSize: '0.70rem', letterSpacing: '0.4px' }}>
+                        Ansicht:
+                      </span>
+                      <div className="btn-group btn-group-sm bg-light rounded-pill p-0.5 border shadow-2xs" role="group">
+                        <button
+                          type="button"
+                          className={`btn btn-sm rounded-pill px-3 py-1 fw-bold d-flex align-items-center gap-1 ${
+                            pdfDisplayMode === 'scroll' ? 'btn-danger text-white shadow-xs' : 'btn-light text-secondary border-0'
+                          }`}
+                          style={{ minHeight: '34px', fontSize: '0.78rem' }}
+                          onClick={() => setPdfDisplayMode('scroll')}
+                          title="Alle Seiten fortlaufend untereinander scrollen"
+                        >
+                          <i className="bi bi-file-earmark-text-fill"></i>
+                          <span>Alle Seiten ({docPages ? docPages.length : activeDoc?.pageCount || 1})</span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`btn btn-sm rounded-pill px-3 py-1 fw-bold d-flex align-items-center gap-1 ${
+                            pdfDisplayMode === 'single' ? 'btn-danger text-white shadow-xs' : 'btn-light text-secondary border-0'
+                          }`}
+                          style={{ minHeight: '34px', fontSize: '0.78rem' }}
+                          onClick={() => setPdfDisplayMode('single')}
+                          title="Einzelseiten mit Vor/Zurück-Navigation"
+                        >
+                          <i className="bi bi-file-earmark-image"></i>
+                          <span>Einzelseite</span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`btn btn-sm rounded-pill px-3 py-1 fw-bold d-flex align-items-center gap-1 ${
+                            pdfDisplayMode === 'iframe' ? 'btn-danger text-white shadow-xs' : 'btn-light text-secondary border-0'
+                          }`}
+                          style={{ minHeight: '34px', fontSize: '0.78rem' }}
+                          onClick={() => setPdfDisplayMode('iframe')}
+                          title="Originales Browser-PDF öffnen"
+                        >
+                          <i className="bi bi-file-earmark-pdf"></i>
+                          <span>Browser PDF</span>
+                        </button>
                       </div>
                     </div>
 
-                    {/* Mobile Smartphone (< 768px): Optimized Bedside Touch Experience with Erreger-Finder & Page Carousel */}
-                    <div className="d-block d-md-none p-2.5 bg-light">
-                      {/* BEDSIDE ERREGER QUICK-FINDER (Active when Hygieneplan is selected) */}
-                      {pathogens && pathogens.length > 0 && (
-                        <div className="mb-3 bg-white p-2.5 rounded-4 border shadow-xs">
-                          <div className="d-flex align-items-center justify-content-between mb-2">
-                            <span className="fw-bold text-dark d-flex align-items-center gap-1.5" style={{ fontSize: '0.82rem' }}>
-                              <i className="bi bi-lightning-charge-fill text-warning"></i>
-                              <span>Erreger Schnell-Check am Bett:</span>
-                            </span>
-                            {selectedPathogen && (
-                              <button
-                                type="button"
-                                className="btn btn-sm btn-link p-0 text-secondary text-decoration-none small"
-                                style={{ fontSize: '0.74rem' }}
-                                onClick={() => setSelectedPathogen(null)}
-                              >
-                                Zurücksetzen &times;
-                              </button>
-                            )}
-                          </div>
-
-                          {/* Horizontal Scrollable Pathogen Chips */}
-                          <div className="d-flex gap-1.5 overflow-x-auto pb-1.5 mb-2 no-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
-                            {pathogens.map((p) => {
-                              const isSelected = selectedPathogen && selectedPathogen.id === p.id;
-                              return (
-                                <button
-                                  key={p.id}
-                                  type="button"
-                                  className={`btn btn-sm rounded-pill text-nowrap px-2.5 py-1 d-flex align-items-center gap-1 ${
-                                    isSelected
-                                      ? 'btn-danger text-white shadow-xs fw-bold'
-                                      : 'btn-outline-secondary bg-light text-dark border-secondary border-opacity-25'
-                                  }`}
-                                  style={{ minHeight: '36px', fontSize: '0.78rem' }}
-                                  onClick={() => {
-                                    setSelectedPathogen(isSelected ? null : p);
-                                    if (!isSelected && p.sheetPage) {
-                                      setSelectedPage(p.sheetPage);
-                                    }
-                                  }}
-                                >
-                                  <i className="bi bi-virus2"></i>
-                                  <span>{p.name}</span>
-                                </button>
-                              );
-                            })}
-                          </div>
-
-                          {/* Instant Bedside Action Sheet for Selected Pathogen */}
-                          {selectedPathogen && (
-                            <div className="p-3 bg-danger bg-opacity-10 border border-danger border-opacity-25 rounded-3 animate-fade-in">
-                              <div className="d-flex justify-content-between align-items-start mb-2">
-                                <div>
-                                  <span className="fw-black text-danger text-uppercase" style={{ fontSize: '0.90rem' }}>
-                                    {selectedPathogen.name}
-                                  </span>
-                                  <div className="text-secondary small" style={{ fontSize: '0.72rem' }}>
-                                    {selectedPathogen.sub}
-                                  </div>
-                                </div>
-                                <span className="badge bg-danger text-white rounded-pill px-2 py-1 small">
-                                  S. {selectedPathogen.sheetPage}
-                                </span>
-                              </div>
-
-                              <div className="d-flex flex-column gap-1.5 small text-dark mb-2.5" style={{ fontSize: '0.80rem' }}>
-                                <div className="d-flex align-items-start gap-1.5 bg-white p-1.5 rounded border">
-                                  <i className="bi bi-door-closed-fill text-danger flex-shrink-0 mt-0.5"></i>
-                                  <div><strong>Isolation:</strong> {selectedPathogen.iso}</div>
-                                </div>
-                                <div className="d-flex align-items-start gap-1.5 bg-white p-1.5 rounded border">
-                                  <i className="bi bi-shield-fill-check text-primary flex-shrink-0 mt-0.5"></i>
-                                  <div><strong>Schutzkleidung:</strong> {selectedPathogen.ppe}</div>
-                                </div>
-                                <div className="d-flex align-items-start gap-1.5 bg-white p-1.5 rounded border">
-                                  <i className="bi bi-droplet-half text-info flex-shrink-0 mt-0.5"></i>
-                                  <div><strong>Flächendesinfektion:</strong> {selectedPathogen.cleaning}</div>
-                                </div>
-                                <div className="d-flex align-items-start gap-1.5 bg-white p-1.5 rounded border">
-                                  <i className="bi bi-clipboard2-pulse-fill text-success flex-shrink-0 mt-0.5"></i>
-                                  <div><strong>Entisolation:</strong> {selectedPathogen.swab}</div>
-                                </div>
-                              </div>
-
-                              <button
-                                type="button"
-                                className="btn btn-sm btn-danger w-100 rounded-pill py-1.5 fw-bold d-flex align-items-center justify-content-center gap-1 shadow-xs"
-                                style={{ fontSize: '0.78rem' }}
-                                onClick={() => setSelectedPage(selectedPathogen.sheetPage)}
-                              >
-                                <i className="bi bi-file-earmark-image"></i>
-                                <span>Originaltabelle (Seite {selectedPathogen.sheetPage}) anzeigen</span>
-                              </button>
-                            </div>
-                          )}
+                    {/* Actions: Zoom & Fullscreen */}
+                    <div className="d-flex align-items-center gap-1.5 ms-auto">
+                      {pdfDisplayMode === 'scroll' && (
+                        <div className="d-flex align-items-center gap-1 bg-light rounded-pill px-2 py-0.5 border shadow-2xs">
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-white bg-white rounded-circle p-1 d-flex align-items-center justify-content-center shadow-xs"
+                            style={{ width: '26px', height: '26px' }}
+                            onClick={() => setPdfZoom((prev) => Math.max(65, prev - 15))}
+                            title="Verkleinern"
+                          >
+                            <i className="bi bi-zoom-out"></i>
+                          </button>
+                          <span className="small text-muted font-monospace px-1" style={{ fontSize: '0.72rem' }}>
+                            {pdfZoom}%
+                          </span>
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-white bg-white rounded-circle p-1 d-flex align-items-center justify-content-center shadow-xs"
+                            style={{ width: '26px', height: '26px' }}
+                            onClick={() => setPdfZoom((prev) => Math.min(135, prev + 15))}
+                            title="Vergrößern"
+                          >
+                            <i className="bi bi-zoom-in"></i>
+                          </button>
                         </div>
                       )}
 
-                      {/* IN-APP MOBILE RETINA PAGE VIEWER */}
-                      <div className="bg-white p-2.5 rounded-4 shadow-sm border mb-2.5 text-start">
-                        {/* Page Selector Chips (if document has multiple pages) */}
+                      <a
+                        href={pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-sm btn-light border rounded-pill px-2.5 py-1 text-dark shadow-2xs d-flex align-items-center gap-1"
+                        style={{ minHeight: '32px', fontSize: '0.75rem' }}
+                        title="In neuem Tab öffnen"
+                      >
+                        <i className="bi bi-box-arrow-up-right"></i>
+                        <span className="d-none d-sm-inline">Neuer Tab</span>
+                      </a>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-dark rounded-pill px-2.5 py-1 text-white shadow-2xs d-flex align-items-center gap-1"
+                        style={{ minHeight: '32px', fontSize: '0.75rem' }}
+                        onClick={() => setIsPdfModalOpen(true)}
+                        title="Vollbildansicht öffnen"
+                      >
+                        <i className="bi bi-arrows-fullscreen"></i>
+                        <span>Vollbild</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Body: Direct SOP PDF Viewer */}
+                  <div className="p-2 p-md-3 bg-light">
+                    {/* BEDSIDE ERREGER QUICK-FINDER (Active when Hygieneplan is selected) */}
+                    {pathogens && pathogens.length > 0 && (
+                      <div className="mb-3 bg-white p-2.5 rounded-4 border shadow-xs">
+                        <div className="d-flex align-items-center justify-content-between mb-2">
+                          <span className="fw-bold text-dark d-flex align-items-center gap-1.5" style={{ fontSize: '0.82rem' }}>
+                            <i className="bi bi-lightning-charge-fill text-warning"></i>
+                            <span>Erreger Schnell-Check am Bett:</span>
+                          </span>
+                          {selectedPathogen && (
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-link p-0 text-secondary text-decoration-none small"
+                              style={{ fontSize: '0.74rem' }}
+                              onClick={() => setSelectedPathogen(null)}
+                            >
+                              Zurücksetzen &times;
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Horizontal Scrollable Pathogen Chips */}
+                        <div className="d-flex gap-1.5 overflow-x-auto pb-1.5 mb-2 no-scrollbar" style={{ WebkitOverflowScrolling: 'touch' }}>
+                          {pathogens.map((p) => {
+                            const isSelected = selectedPathogen && selectedPathogen.id === p.id;
+                            return (
+                              <button
+                                key={p.id}
+                                type="button"
+                                className={`btn btn-sm rounded-pill text-nowrap px-2.5 py-1 d-flex align-items-center gap-1 ${
+                                  isSelected
+                                    ? 'btn-danger text-white shadow-xs fw-bold'
+                                    : 'btn-outline-secondary bg-light text-dark border-secondary border-opacity-25'
+                                }`}
+                                style={{ minHeight: '36px', fontSize: '0.78rem' }}
+                                onClick={() => {
+                                  setSelectedPathogen(isSelected ? null : p);
+                                  if (!isSelected && p.sheetPage) {
+                                    setSelectedPage(p.sheetPage);
+                                  }
+                                }}
+                              >
+                                <i className="bi bi-virus2"></i>
+                                <span>{p.name}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* Instant Bedside Action Sheet for Selected Pathogen */}
+                        {selectedPathogen && (
+                          <div className="p-3 bg-danger bg-opacity-10 border border-danger border-opacity-25 rounded-3 animate-fade-in">
+                            <div className="d-flex justify-content-between align-items-start mb-2">
+                              <div>
+                                <span className="fw-black text-danger text-uppercase" style={{ fontSize: '0.90rem' }}>
+                                  {selectedPathogen.name}
+                                </span>
+                                <div className="text-secondary small" style={{ fontSize: '0.72rem' }}>
+                                  {selectedPathogen.sub}
+                                </div>
+                              </div>
+                              <span className="badge bg-danger text-white rounded-pill px-2 py-1 small">
+                                S. {selectedPathogen.sheetPage}
+                              </span>
+                            </div>
+
+                            <div className="d-flex flex-column gap-1.5 small text-dark mb-2.5" style={{ fontSize: '0.80rem' }}>
+                              <div className="d-flex align-items-start gap-1.5 bg-white p-1.5 rounded border">
+                                <i className="bi bi-door-closed-fill text-danger flex-shrink-0 mt-0.5"></i>
+                                <div><strong>Isolation:</strong> {selectedPathogen.iso}</div>
+                              </div>
+                              <div className="d-flex align-items-start gap-1.5 bg-white p-1.5 rounded border">
+                                <i className="bi bi-shield-fill-check text-primary flex-shrink-0 mt-0.5"></i>
+                                <div><strong>Schutzkleidung:</strong> {selectedPathogen.ppe}</div>
+                              </div>
+                              <div className="d-flex align-items-start gap-1.5 bg-white p-1.5 rounded border">
+                                <i className="bi bi-droplet-half text-info flex-shrink-0 mt-0.5"></i>
+                                <div><strong>Flächendesinfektion:</strong> {selectedPathogen.cleaning}</div>
+                              </div>
+                              <div className="d-flex align-items-start gap-1.5 bg-white p-1.5 rounded border">
+                                <i className="bi bi-clipboard2-pulse-fill text-success flex-shrink-0 mt-0.5"></i>
+                                <div><strong>Entisolation:</strong> {selectedPathogen.swab}</div>
+                              </div>
+                            </div>
+
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-danger w-100 rounded-pill py-1.5 fw-bold d-flex align-items-center justify-content-center gap-1 shadow-xs"
+                              style={{ fontSize: '0.78rem' }}
+                              onClick={() => {
+                                setPdfDisplayMode('single');
+                                setSelectedPage(selectedPathogen.sheetPage);
+                              }}
+                            >
+                              <i className="bi bi-file-earmark-image"></i>
+                              <span>Originaltabelle (Seite {selectedPathogen.sheetPage}) anzeigen</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* 1. CONTINUOUS VERTICAL SCROLL MODE (Default, highly responsive, zero iframe traps) */}
+                    {pdfDisplayMode === 'scroll' && docPages && docPages.length > 0 && (
+                      <div
+                        className="pdf-continuous-scroll-feed d-flex flex-column align-items-center gap-3 overflow-y-auto p-1 p-md-2"
+                        style={{ maxHeight: '76vh' }}
+                      >
+                        {docPages.map((pg) => (
+                          <div
+                            key={pg.pageNum}
+                            className="pdf-page-sheet bg-white rounded-3 shadow-sm border overflow-hidden position-relative w-100"
+                            style={{
+                              maxWidth: `${pdfZoom}%`,
+                              transition: 'max-width 0.2s ease-in-out'
+                            }}
+                          >
+                            <div className="d-flex justify-content-between align-items-center px-3 py-1.5 bg-light border-bottom small text-muted">
+                              <span className="fw-bold text-dark font-monospace" style={{ fontSize: '0.78rem' }}>
+                                <i className="bi bi-file-earmark-text text-danger me-1"></i>
+                                {pg.label || `Seite ${pg.pageNum}`}
+                              </span>
+                              <span className="badge bg-white text-secondary border small">
+                                Seite {pg.pageNum} von {docPages.length}
+                              </span>
+                            </div>
+
+                            <div
+                              className="p-1 text-center position-relative bg-white"
+                              style={{ cursor: 'zoom-in' }}
+                              onClick={() => setPreviewImage({
+                                src: pg.image,
+                                title: `${activeDoc ? activeDoc.title : standard.title} (Seite ${pg.pageNum})`,
+                                subtitle: pg.label || 'Tippen für Vollbild • Pinch-to-Zoom'
+                              })}
+                            >
+                              <img
+                                src={pg.image}
+                                alt={pg.label || `Seite ${pg.pageNum}`}
+                                className="img-fluid rounded-1 d-block w-100"
+                                loading="lazy"
+                                style={{ objectFit: 'contain' }}
+                              />
+                              <div className="position-absolute bottom-0 end-0 m-2">
+                                <span className="badge bg-dark bg-opacity-75 text-white rounded-pill px-2.5 py-1 small shadow-xs">
+                                  <i className="bi bi-zoom-in me-1"></i>Vergrößern
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* 2. SINGLE PAGE SLIDER MODE */}
+                    {pdfDisplayMode === 'single' && (
+                      <div className="bg-white p-2.5 p-md-3 rounded-4 shadow-sm border text-start">
+                        {/* Page Selector Chips */}
                         {docPages && docPages.length > 1 && (
                           <div className="mb-2.5">
                             <div className="d-flex align-items-center justify-content-between mb-1.5 px-0.5">
@@ -2665,14 +2783,14 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf, s
                           onClick={() => setPreviewImage({
                             src: activePageObj ? activePageObj.image : (activeDoc?.thumb || standard.image),
                             title: activeDoc ? `${activeDoc.title} (Seite ${selectedPage})` : standard.title,
-                            subtitle: 'Tippen für Vollbildansicht • Pinch-to-Zoom am Smartphone'
+                            subtitle: 'Tippen für Vollbildansicht • Pinch-to-Zoom'
                           })}
                         >
                           <img
                             src={activePageObj ? activePageObj.image : (activeDoc?.thumb || standard.image)}
                             alt={activeDoc ? activeDoc.title : standard.shortTitle}
                             className="img-fluid rounded-2 shadow-xs"
-                            style={{ maxHeight: '52vh', width: '100%', objectFit: 'contain' }}
+                            style={{ maxHeight: '68vh', width: '100%', objectFit: 'contain' }}
                           />
                           <div className="position-absolute bottom-0 end-0 m-2">
                             <span className="badge bg-dark bg-opacity-75 text-white rounded-pill px-2.5 py-1 shadow-sm small" style={{ fontSize: '0.72rem' }}>
@@ -2683,11 +2801,11 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf, s
 
                         {/* Page Navigator Prev / Next Bar */}
                         {docPages && docPages.length > 1 && (
-                          <div className="d-flex align-items-center justify-content-between mt-2 pt-1 border-top gap-2">
+                          <div className="d-flex align-items-center justify-content-between mt-2.5 pt-2 border-top gap-2">
                             <button
                               type="button"
-                              className="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 d-flex align-items-center gap-1"
-                              style={{ minHeight: '36px', fontSize: '0.78rem' }}
+                              className="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1.5 d-flex align-items-center gap-1"
+                              style={{ minHeight: '38px', fontSize: '0.80rem' }}
                               disabled={selectedPage <= 1}
                               onClick={() => {
                                 const prev = docPages.find(p => p.pageNum < selectedPage);
@@ -2702,8 +2820,8 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf, s
                             </span>
                             <button
                               type="button"
-                              className="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 d-flex align-items-center gap-1"
-                              style={{ minHeight: '36px', fontSize: '0.78rem' }}
+                              className="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1.5 d-flex align-items-center gap-1"
+                              style={{ minHeight: '38px', fontSize: '0.80rem' }}
                               disabled={selectedPage >= activeDoc.pageCount}
                               onClick={() => {
                                 const next = docPages.find(p => p.pageNum > selectedPage);
@@ -2715,75 +2833,50 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf, s
                             </button>
                           </div>
                         )}
-
-                        {/* Mobile Action Buttons (Full-width, large touch targets) */}
-                        <div className="d-grid gap-2 mt-3 pt-2 border-top">
-                          <a
-                            href={pdfUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-danger rounded-pill py-2.5 d-flex align-items-center justify-content-center gap-2 fw-bold shadow-sm"
-                            style={{ minHeight: '48px', fontSize: '0.90rem' }}
-                          >
-                            <i className="bi bi-file-earmark-pdf-fill fs-5"></i>
-                            <span>Vollständige PDF im Reader öffnen</span>
-                          </a>
-                          <div className="d-flex gap-2">
-                            <button
-                              type="button"
-                              className="btn btn-outline-dark rounded-pill py-2 flex-fill d-flex align-items-center justify-content-center gap-1.5 fw-semibold small"
-                              style={{ minHeight: '40px', fontSize: '0.80rem' }}
-                              onClick={() => setIsPdfModalOpen(true)}
-                            >
-                              <i className="bi bi-arrows-fullscreen"></i>
-                              <span>Vollbild</span>
-                            </button>
-                            <a
-                              href={pdfUrl}
-                              download
-                              className="btn btn-outline-secondary rounded-pill py-2 flex-fill d-flex align-items-center justify-content-center gap-1.5 fw-semibold small"
-                              style={{ minHeight: '40px', fontSize: '0.80rem' }}
-                            >
-                              <i className="bi bi-download"></i>
-                              <span>Download</span>
-                            </a>
-                          </div>
-                        </div>
                       </div>
-                    </div>
-                  </div>
+                    )}
 
-                  {/* Fallback image for html2pdf / print */}
-                  <img
-                    src={activeDoc?.thumb || standard.image}
-                    alt={`Illustration ${standard.shortTitle}`}
-                    className="clinical-picture-img print-only-preview d-none"
-                  />
+                    {/* 3. BROWSER PDF IFRAME READER MODE */}
+                    {pdfDisplayMode === 'iframe' && (
+                      <div className="position-relative bg-white rounded-3 overflow-hidden border" style={{ minHeight: '620px', height: '620px' }}>
+                        <iframe
+                          key={pdfBaseUrl}
+                          src={`${pdfBaseUrl}#toolbar=1&navpanes=1&scrollbar=1&view=FitH`}
+                          title={activeDoc ? activeDoc.title : `PDF ${standard.shortTitle}`}
+                          className="w-100 h-100 border-0 d-block"
+                          style={{ minHeight: '620px', overflowY: 'auto' }}
+                        />
+                      </div>
+                    )}
 
-                  {/* Bottom Action Strip (Desktop/Tablet Only, hidden on mobile) */}
-                  <div className="px-3 py-2 bg-light border-top d-none d-md-flex flex-wrap justify-content-between align-items-center gap-2">
-                    <div className="d-flex align-items-center gap-2 small text-muted">
-                      <i className="bi bi-file-earmark-check text-success"></i>
-                      <span>Gültige Version im QM-System &bull; {activeDoc ? activeDoc.description : 'Geprüfter Standard'}</span>
-                    </div>
-                    <div className="d-flex align-items-center gap-2">
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-outline-dark rounded-pill px-2.5 py-1"
-                        style={{ fontSize: '0.76rem' }}
-                        onClick={() => setIsPdfModalOpen(true)}
-                      >
-                        <i className="bi bi-arrows-fullscreen me-1"></i>Vollbild
-                      </button>
-                      <a
-                        href={pdfUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-sm btn-outline-danger rounded-pill px-2.5 py-1 fw-semibold"
-                        style={{ fontSize: '0.76rem' }}
-                      >
-                        <i className="bi bi-file-earmark-pdf-fill me-1"></i>{activeDoc ? activeDoc.badge : `SOP PDF (${standard.id === 'zvk' ? '10 S.' : '4 S.'})`}
-                      </a>
+                    {/* Quick Launch & Download Strip */}
+                    <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-2 pt-2 border-top">
+                      <div className="d-flex align-items-center gap-2 small text-muted">
+                        <i className="bi bi-file-earmark-check text-success"></i>
+                        <span className="text-truncate">{activeDoc?.description || 'Geprüfter QM-Standard'}</span>
+                      </div>
+                      <div className="d-flex align-items-center gap-1.5">
+                        <a
+                          href={pdfUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-sm btn-outline-danger rounded-pill px-3 py-1 fw-bold d-flex align-items-center gap-1"
+                          style={{ fontSize: '0.78rem' }}
+                        >
+                          <i className="bi bi-file-earmark-pdf-fill"></i>
+                          <span>PDF öffnen ({activeDoc ? activeDoc.pageCount : 1} S.)</span>
+                        </a>
+                        <a
+                          href={pdfUrl}
+                          download
+                          className="btn btn-sm btn-outline-secondary rounded-pill px-2.5 py-1 d-flex align-items-center gap-1"
+                          style={{ fontSize: '0.78rem' }}
+                          title="PDF herunterladen"
+                        >
+                          <i className="bi bi-download"></i>
+                          <span className="d-none d-sm-inline">Download</span>
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
