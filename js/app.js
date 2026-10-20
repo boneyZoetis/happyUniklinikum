@@ -1830,23 +1830,33 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                       <div className="d-flex flex-wrap gap-2">
                         {documents.map((doc, idx) => {
                           const isSelected = selectedDocIndex === idx;
+                          const activeGradient = idx === 0
+                            ? 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)'
+                            : 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)';
                           return (
                             <button
                               key={doc.id}
                               type="button"
                               className={`btn btn-sm rounded-pill px-3 py-1.5 fw-semibold d-flex align-items-center gap-2 transition-all flex-grow-1 flex-sm-grow-0 justify-content-between justify-content-sm-center ${
                                 isSelected
-                                  ? 'btn-primary text-white shadow-sm'
+                                  ? 'text-white shadow-sm'
                                   : 'btn-white bg-white text-dark border hover-shadow'
                               }`}
-                              style={{ fontSize: '0.82rem' }}
+                              style={{
+                                fontSize: '0.82rem',
+                                background: isSelected ? activeGradient : '#fff',
+                                borderColor: isSelected ? 'transparent' : '#cbd5e1'
+                              }}
                               onClick={() => setSelectedDocIndex(idx)}
                             >
                               <div className="d-flex align-items-center gap-1.5">
-                                <i className={`bi ${idx === 0 ? 'bi-file-earmark-text' : 'bi-shield-check'} ${isSelected ? 'text-white' : 'text-primary'}`}></i>
+                                <i
+                                  className={`bi ${idx === 0 ? 'bi-file-earmark-medical-fill' : 'bi-shield-check'}`}
+                                  style={{ color: isSelected ? '#ffffff' : (idx === 0 ? '#0284c7' : '#0d9488') }}
+                                ></i>
                                 <span>{doc.shortTitle}</span>
                               </div>
-                              <span className={`badge rounded-pill ${isSelected ? 'bg-white text-primary' : 'bg-light text-muted border'}`} style={{ fontSize: '0.72rem' }}>
+                              <span className={`badge rounded-pill ${isSelected ? 'bg-white text-dark' : 'bg-light text-muted border'}`} style={{ fontSize: '0.72rem' }}>
                                 <i className="bi bi-calendar3 me-1"></i>{doc.date} &bull; {doc.pageCount} S.
                               </span>
                             </button>
@@ -2039,17 +2049,48 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                     <span>Wichtigste Handlungsschritte ({standard.id === 'zvk' ? 'DAS IST WICHTIG' : 'Minimal-Info'}):</span>
                   </div>
                   <div className="d-flex flex-column gap-2 mb-2">
-                    {standard.keyPoints && standard.keyPoints.map((pt, i) => (
-                      <div key={i} className="keypoint-item">
-                        <span
-                          className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0"
-                          style={{ width: '22px', height: '22px', backgroundColor: standard.accentColor, fontSize: '0.75rem' }}
-                        >
-                          {i + 1}
-                        </span>
-                        <span style={{ fontSize: '0.85rem' }}>{pt}</span>
-                      </div>
-                    ))}
+                    {standard.keyPoints && standard.keyPoints.map((pt, i) => {
+                      if (standard.id === 'isolation') {
+                        const isoIcons = [
+                          { icon: 'bi-search', color: '#0284c7' },
+                          { icon: 'bi-person-badge-fill', color: '#0369a1' },
+                          { icon: 'bi-hand-index-thumb-fill', color: '#dc2626', alert: 'C. diff: Zuerst Seife!' },
+                          { icon: 'bi-shield-check', color: '#0d9488' },
+                          { icon: 'bi-box-seam-fill', color: '#8b5cf6' },
+                          { icon: 'bi-trash3-fill', color: '#64748b' }
+                        ];
+                        const meta = isoIcons[i] || { icon: 'bi-check-circle', color: standard.accentColor };
+                        return (
+                          <div key={i} className="keypoint-item d-flex align-items-start gap-2 p-1.5 rounded-2 bg-white border border-opacity-50">
+                            <span
+                              className="badge rounded-circle d-inline-flex align-items-center justify-content-center flex-shrink-0"
+                              style={{ width: '22px', height: '22px', backgroundColor: meta.color, color: '#fff', fontSize: '0.72rem' }}
+                            >
+                              <i className={`bi ${meta.icon}`}></i>
+                            </span>
+                            <div className="flex-grow-1" style={{ fontSize: '0.84rem' }}>
+                              <span>{pt}</span>
+                              {meta.alert && (
+                                <span className="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 ms-1.5" style={{ fontSize: '0.7rem' }}>
+                                  <i className="bi bi-exclamation-triangle-fill me-1"></i>{meta.alert}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      }
+                      return (
+                        <div key={i} className="keypoint-item">
+                          <span
+                            className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0"
+                            style={{ width: '22px', height: '22px', backgroundColor: standard.accentColor, fontSize: '0.75rem' }}
+                          >
+                            {i + 1}
+                          </span>
+                          <span style={{ fontSize: '0.85rem' }}>{pt}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -2300,19 +2341,30 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                   </span>
                   {documents.map((doc, idx) => {
                     const isSelected = selectedDocIndex === idx;
+                    const activeGrad = idx === 0
+                      ? 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)'
+                      : 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)';
                     return (
                       <button
                         key={doc.id}
                         type="button"
-                        className={`btn btn-xs rounded-pill px-2.5 py-0.5 fw-semibold ${
+                        className={`btn btn-xs rounded-pill px-2.5 py-1 fw-semibold d-inline-flex align-items-center gap-1.5 ${
                           isSelected
-                            ? 'btn-primary text-white'
+                            ? 'text-white shadow-sm'
                             : 'btn-outline-light'
                         }`}
-                        style={{ fontSize: '0.75rem' }}
+                        style={{
+                          fontSize: '0.76rem',
+                          background: isSelected ? activeGrad : 'transparent',
+                          borderColor: isSelected ? 'transparent' : 'rgba(255,255,255,0.3)'
+                        }}
                         onClick={() => setSelectedDocIndex(idx)}
                       >
-                        {doc.shortTitle} &bull; {doc.date} ({doc.pageCount} S.)
+                        <i className={`bi ${idx === 0 ? 'bi-file-earmark-medical' : 'bi-shield-check'}`}></i>
+                        <span>{doc.shortTitle}</span>
+                        <span className="badge rounded-pill bg-white bg-opacity-25 text-white" style={{ fontSize: '0.68rem' }}>
+                          {doc.date} &bull; {doc.pageCount} S.
+                        </span>
                       </button>
                     );
                   })}
@@ -2670,31 +2722,53 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
           <div className="card border shadow-sm rounded-4 p-4 bg-white h-100">
             {standard.id === 'isolation' ? (
               <div>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <h5 className="fw-bold mb-0 text-dark">
-                    <i className="bi bi-file-earmark-medical-fill text-primary me-2"></i>
-                    Verfahrensanweisungen &amp; Hygienepläne (2 Dokumente)
+                <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                  <h5 className="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                    <span className="p-1.5 rounded-3 bg-primary bg-opacity-10 text-primary d-inline-flex">
+                      <i className="bi bi-shield-check fs-5"></i>
+                    </span>
+                    <span>Verfahrensanweisungen &amp; Hygienepläne</span>
                   </h5>
-                  <a
-                    href="assets/hygieneplan-multiresistente-erreger.pdf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-sm btn-primary rounded-pill px-3 shadow-sm"
-                  >
-                    <i className="bi bi-file-earmark-pdf-fill me-1"></i> Hygieneplan MRE öffnen
-                  </a>
+                  <div className="d-flex align-items-center gap-1.5 flex-wrap">
+                    <a
+                      href="assets/isolation-sop-verfahrensanweisung.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-2xs fw-semibold"
+                      title="SOP Isolation (ID 239411) als PDF öffnen"
+                    >
+                      <i className="bi bi-file-earmark-medical me-1"></i> SOP Isolation (4 S.)
+                    </a>
+                    <a
+                      href="assets/hygieneplan-multiresistente-erreger.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm text-white rounded-pill px-3 shadow-sm fw-semibold"
+                      style={{ background: 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)', borderColor: '#0d9488' }}
+                      title="Hygieneplan MRE (ID 361678) als PDF öffnen"
+                    >
+                      <i className="bi bi-file-earmark-pdf-fill me-1"></i> Hygieneplan MRE (5 S.)
+                    </a>
+                  </div>
                 </div>
 
-                <div className="p-3 bg-light rounded-3 border mb-3">
-                  <div className="fw-bold small text-uppercase text-secondary mb-2">
-                    <i className="bi bi-folder2-open me-1 text-primary"></i> QM-Dokumente im Universitätsklinikum Frankfurt:
+                {/* 1. Official QM Documents List */}
+                <div className="p-3 bg-light rounded-4 border mb-3">
+                  <div className="fw-bold small text-uppercase text-secondary mb-2 d-flex align-items-center gap-1.5">
+                    <i className="bi bi-folder2-open text-primary"></i>
+                    <span>QM-Dokumente im Universitätsklinikum Frankfurt:</span>
                   </div>
                   <div className="d-flex flex-column gap-2">
-                    <div className="d-flex justify-content-between align-items-center bg-white p-2.5 rounded border small">
-                      <div>
-                        <div className="fw-bold text-dark">Dokument 1: Allgemeines Vorgehen bei Isolation und Reinigung</div>
-                        <div className="text-muted" style={{ fontSize: '0.76rem' }}>
-                          <i className="bi bi-file-earmark-medical me-1"></i>roXtra ID: <strong>239411</strong> &bull; Freigabe durch: Kempf, Volkhard
+                    <div className="d-flex justify-content-between align-items-center bg-white p-2.5 rounded-3 border-start border-4 border-primary shadow-2xs small">
+                      <div className="d-flex align-items-start gap-2">
+                        <span className="p-1.5 rounded-circle bg-primary bg-opacity-10 text-primary mt-0.5 d-inline-flex flex-shrink-0">
+                          <i className="bi bi-file-earmark-medical-fill"></i>
+                        </span>
+                        <div>
+                          <div className="fw-bold text-dark">Dokument 1: Allgemeines Vorgehen bei Isolation und Reinigung</div>
+                          <div className="text-muted" style={{ fontSize: '0.76rem' }}>
+                            roXtra ID: <strong>239411</strong> &bull; Freigabe: Kempf, Volkhard &bull; AutorInnen: Bayer, Comoli, Hiller, Lerche
+                          </div>
                         </div>
                       </div>
                       <div className="text-end flex-shrink-0 ms-2">
@@ -2704,43 +2778,158 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                         </div>
                       </div>
                     </div>
-                    <div className="d-flex justify-content-between align-items-center bg-white p-2.5 rounded border small">
-                      <div>
-                        <div className="fw-bold text-dark">Dokument 2: Hygieneplan: Umgang mit MRE (Häma-Onko, ITS/IMC)</div>
-                        <div className="text-muted" style={{ fontSize: '0.76rem' }}>
-                          <i className="bi bi-shield-check me-1"></i>roXtra ID: <strong>361678</strong> &bull; Häma-Onkologie, ITS/IMC, Neonatologie
+                    <div className="d-flex justify-content-between align-items-center bg-white p-2.5 rounded-3 border-start border-4 shadow-2xs small" style={{ borderLeftColor: '#0d9488' }}>
+                      <div className="d-flex align-items-start gap-2">
+                        <span className="p-1.5 rounded-circle mt-0.5 d-inline-flex flex-shrink-0" style={{ backgroundColor: 'rgba(13, 148, 136, 0.12)', color: '#0d9488' }}>
+                          <i className="bi bi-shield-fill-check"></i>
+                        </span>
+                        <div>
+                          <div className="fw-bold text-dark">Dokument 2: Hygieneplan: Umgang mit multiresistenten Erregern (MRE)</div>
+                          <div className="text-muted" style={{ fontSize: '0.76rem' }}>
+                            roXtra ID: <strong>361678</strong> &bull; Häma-Onko (Station+TK), ITS/IMC, Neonatologie
+                          </div>
                         </div>
                       </div>
                       <div className="text-end flex-shrink-0 ms-2">
-                        <span className="badge bg-primary mb-1">Ver. 012 &bull; 5 Seiten</span>
-                        <div className="text-primary small fw-bold" style={{ fontSize: '0.76rem' }}>
+                        <span className="badge text-white mb-1" style={{ backgroundColor: '#0d9488' }}>Ver. 012 &bull; 5 Seiten</span>
+                        <div className="small fw-bold" style={{ fontSize: '0.76rem', color: '#0d9488' }}>
                           <i className="bi bi-calendar-check me-1"></i>02.2026
                         </div>
                       </div>
                     </div>
-                    <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
-                      <span><strong>Gültigkeitsbereich:</strong> Häma-Onkologie &bull; ITS / IMC &bull; Neonatologie &bull; Klinikweit</span>
+                    <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded-3 border small">
+                      <span className="d-flex align-items-center gap-1.5 text-secondary">
+                        <i className="bi bi-hospital text-info"></i>
+                        <span><strong>Gültigkeitsbereich:</strong> Häma-Onkologie &bull; ITS / IMC &bull; Neonatologie &bull; Klinikweit</span>
+                      </span>
                       <span className="badge bg-info text-dark">Klinikweit</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-3 bg-white rounded-3 border">
-                  <div className="fw-bold text-success small mb-2 d-flex align-items-center gap-1">
-                    <i className="bi bi-shield-check"></i> Warum ist das wichtig? (Infektionsschutz)
+                {/* 2. Visual Farbleitsystem & Door Signage Guidance */}
+                <div className="p-3 rounded-4 border mb-3" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
+                  <div className="fw-bold text-dark small text-uppercase mb-2 d-flex align-items-center justify-content-between">
+                    <span className="d-flex align-items-center gap-1.5">
+                      <i className="bi bi-signpost-split-fill text-primary"></i>
+                      <span>Offizielles UKF-Farbleitsystem (Türbeschilderung):</span>
+                    </span>
+                    <span className="badge bg-white text-secondary border small">UKF Standard</span>
+                  </div>
+                  <div className="row g-2">
+                    <div className="col-sm-6">
+                      <div className="p-2.5 rounded-3 border h-100 shadow-2xs" style={{ backgroundColor: '#fefce8', borderColor: '#fef08a' }}>
+                        <div className="d-flex align-items-center gap-1.5 mb-1">
+                          <span className="badge rounded-pill fw-bold text-dark px-2 py-0.5 shadow-2xs" style={{ backgroundColor: '#facc15' }}>
+                            <i className="bi bi-door-closed me-1"></i>Außen: Gelb
+                          </span>
+                          <span className="small fw-bold text-dark">Vor dem Betreten</span>
+                        </div>
+                        <p className="text-secondary small mb-0" style={{ fontSize: '0.79rem', lineHeight: 1.35 }}>
+                          Schutzkleidung (PSA) <strong>vor Betreten des Zimmers</strong> anlegen. Schutzkittel, Handschuhe, ggf. FFP2/MNS.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="col-sm-6">
+                      <div className="p-2.5 rounded-3 border h-100 shadow-2xs" style={{ backgroundColor: '#fdf2f8', borderColor: '#fbcfe8' }}>
+                        <div className="d-flex align-items-center gap-1.5 mb-1">
+                          <span className="badge rounded-pill fw-bold text-white px-2 py-0.5 shadow-2xs" style={{ backgroundColor: '#ec4899' }}>
+                            <i className="bi bi-box-arrow-right me-1"></i>Innen: Pink
+                          </span>
+                          <span className="small fw-bold text-dark">Vor dem Verlassen</span>
+                        </div>
+                        <p className="text-secondary small mb-0" style={{ fontSize: '0.79rem', lineHeight: 1.35 }}>
+                          Schutzkleidung <strong>im Zimmer ablegen</strong> und verwerfen. Gründliche Händedesinfektion vor Verlassen!
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Clinical Pathogen Quick-Guide (4 Erreger-Farbkarten) */}
+                <div className="mb-3">
+                  <div className="fw-bold text-dark small text-uppercase mb-2 d-flex align-items-center gap-1.5">
+                    <i className="bi bi-shield-shaded text-primary"></i>
+                    <span>Erreger-Schnellübersicht &amp; Schutzstufen (MRE-Matrix):</span>
+                  </div>
+                  <div className="row g-2">
+                    <div className="col-sm-6">
+                      <div className="p-2.5 bg-white rounded-3 border shadow-2xs h-100 border-start border-4 border-primary">
+                        <div className="d-flex align-items-center justify-content-between mb-1">
+                          <strong className="text-primary small d-flex align-items-center gap-1">
+                            <i className="bi bi-virus"></i> VRE &amp; MRSA
+                          </strong>
+                          <span className="badge bg-primary bg-opacity-10 text-primary" style={{ fontSize: '0.7rem' }}>Kontaktisolation</span>
+                        </div>
+                        <div className="text-secondary small" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
+                          Einzelzimmer (oder Kohorte). Schutzkittel &amp; Handschuhe. MRSA: 5 Tage gezielte Dekolonisation nach Schema.
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-sm-6">
+                      <div className="p-2.5 bg-white rounded-3 border shadow-2xs h-100 border-start border-4" style={{ borderLeftColor: '#0d9488' }}>
+                        <div className="d-flex align-items-center justify-content-between mb-1">
+                          <strong className="small d-flex align-items-center gap-1" style={{ color: '#0d9488' }}>
+                            <i className="bi bi-bug-fill"></i> 3MRGN &amp; 4MRGN
+                          </strong>
+                          <span className="badge text-white" style={{ backgroundColor: '#0d9488', fontSize: '0.7rem' }}>Erregerstatus</span>
+                        </div>
+                        <div className="text-secondary small" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
+                          3MRGN: Bereichsabhängig. 4MRGN: Strikte Einzelzimmer-Isolation! Alles patientennahe Material nach Verlegung verwerfen.
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-sm-6">
+                      <div className="p-2.5 rounded-3 border shadow-2xs h-100 border-start border-4 border-danger" style={{ backgroundColor: '#fff5f5' }}>
+                        <div className="d-flex align-items-center justify-content-between mb-1">
+                          <strong className="text-danger small d-flex align-items-center gap-1">
+                            <i className="bi bi-exclamation-triangle-fill"></i> Clostridioides difficile
+                          </strong>
+                          <span className="badge bg-danger text-white" style={{ fontSize: '0.7rem' }}>⚠️ SPOREN!</span>
+                        </div>
+                        <div className="text-dark small fw-medium" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
+                          Sporen sind <strong>alkoholfest</strong>: Zwingend <strong>1. Händewaschen mit Seife</strong>, danach <strong>2. Händedesinfektion</strong>!
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-sm-6">
+                      <div className="p-2.5 bg-white rounded-3 border shadow-2xs h-100 border-start border-4 border-info">
+                        <div className="d-flex align-items-center justify-content-between mb-1">
+                          <strong className="text-info-emphasis small d-flex align-items-center gap-1">
+                            <i className="bi bi-lungs-fill text-info"></i> Viren (Noro, Rota, TBC, RSV)
+                          </strong>
+                          <span className="badge bg-info bg-opacity-10 text-info" style={{ fontSize: '0.7rem' }}>Aerosol &amp; Schmiere</span>
+                        </div>
+                        <div className="text-secondary small" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
+                          FFP2-/MNS-Maske vor Betreten. Schutzkittel &amp; Handschuhe. Viruzides Hände- &amp; Flächendesinfektionsmittel.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Why is this important? */}
+                <div className="p-3 bg-white rounded-4 border shadow-2xs">
+                  <div className="fw-bold text-success small mb-2 d-flex align-items-center gap-1.5">
+                    <i className="bi bi-shield-check fs-6"></i>
+                    <span>Warum ist das wichtig? (Patienten- &amp; Personalschutz)</span>
                   </div>
                   <div className="row g-2 small text-secondary">
                     <div className="col-sm-6 d-flex align-items-center gap-2">
-                      <i className="bi bi-check-circle-fill text-success"></i> Nosokomiale Infektionen stoppen
+                      <i className="bi bi-check-circle-fill text-success flex-shrink-0"></i>
+                      <span>Nosokomiale Infektionen stoppen</span>
                     </div>
                     <div className="col-sm-6 d-flex align-items-center gap-2">
-                      <i className="bi bi-check-circle-fill text-success"></i> Patient &amp; Personal schützen
+                      <i className="bi bi-check-circle-fill text-success flex-shrink-0"></i>
+                      <span>Patient &amp; Personal wirksam schützen</span>
                     </div>
                     <div className="col-sm-6 d-flex align-items-center gap-2">
-                      <i className="bi bi-check-circle-fill text-success"></i> MRE-Übertragungen verhindern
+                      <i className="bi bi-check-circle-fill text-success flex-shrink-0"></i>
+                      <span>MRE-Übertragungsketten unterbrechen</span>
                     </div>
                     <div className="col-sm-6 d-flex align-items-center gap-2">
-                      <i className="bi bi-check-circle-fill text-success"></i> Schnelle Handlungssicherheit
+                      <i className="bi bi-check-circle-fill text-success flex-shrink-0"></i>
+                      <span>Schnelle Handlungssicherheit im Dienst</span>
                     </div>
                   </div>
                 </div>
@@ -2835,29 +3024,69 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
         {/* Right Column: Handlungsschritte im Pflegeprozess */}
         <div className="col-lg-5">
           <div className="card border shadow-sm rounded-4 p-4 bg-white h-100">
-            <h5 className="fw-bold mb-3 text-dark">
-              <i className="bi bi-check2-circle text-success me-2"></i>
-              Handlungsschritte im Pflegeprozess
+            <h5 className="fw-bold mb-3 text-dark d-flex align-items-center gap-2">
+              <i className="bi bi-check2-circle text-success fs-5"></i>
+              <span>Handlungsschritte im Pflegeprozess</span>
             </h5>
 
-            <div className="d-flex flex-column gap-2">
-              {standard.clinicalFocus.map((item, idx) => (
-                <div key={idx} className="p-3 rounded-3 bg-light border">
-                  <div className="d-flex align-items-center gap-2 mb-1">
-                    <span
-                      className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center"
-                      style={{ width: '24px', height: '24px', backgroundColor: standard.accentColor }}
+            {standard.id === 'isolation' ? (
+              <div className="d-flex flex-column gap-2.5">
+                {standard.clinicalFocus.map((item, idx) => {
+                  const stepStyles = [
+                    { border: '#f59e0b', bg: '#fffbeb', badgeBg: '#fef3c7', badgeColor: '#b45309', icon: 'bi-door-closed-fill', tag: 'UKF Farbleitsystem' },
+                    { border: '#0284c7', bg: '#f0f9ff', badgeBg: '#e0f2fe', badgeColor: '#0369a1', icon: 'bi-person-badge-fill', tag: 'Schutzkleidung (PSA)' },
+                    { border: '#dc2626', bg: '#fef2f2', badgeBg: '#fee2e2', badgeColor: '#b91c1c', icon: 'bi-hand-index-thumb-fill', tag: 'Besonderheit C. diff!' },
+                    { border: '#8b5cf6', bg: '#faf5ff', badgeBg: '#f3e8ff', badgeColor: '#6d28d9', icon: 'bi-trash3-fill', tag: 'Material & Entsorgung' },
+                    { border: '#10b981', bg: '#f0fdf4', badgeBg: '#dcfce7', badgeColor: '#15803d', icon: 'bi-stars', tag: 'Schlussdesinfektion' }
+                  ];
+                  const style = stepStyles[idx] || { border: standard.accentColor, bg: '#f8fafc', badgeBg: '#e2e8f0', badgeColor: '#334155', icon: 'bi-check-circle', tag: `Schritt ${idx + 1}` };
+                  return (
+                    <div
+                      key={idx}
+                      className="p-3 rounded-3 border-start border-4 shadow-2xs"
+                      style={{ borderLeftColor: style.border, backgroundColor: style.bg, borderTop: '1px solid #f1f5f9', borderRight: '1px solid #f1f5f9', borderBottom: '1px solid #f1f5f9' }}
                     >
-                      {idx + 1}
-                    </span>
-                    <strong className="small text-dark">{item.phase}</strong>
+                      <div className="d-flex align-items-center justify-content-between mb-1.5 flex-wrap gap-1">
+                        <div className="d-flex align-items-center gap-2">
+                          <span
+                            className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0"
+                            style={{ width: '24px', height: '24px', backgroundColor: style.border, fontSize: '0.78rem' }}
+                          >
+                            <i className={`bi ${style.icon}`}></i>
+                          </span>
+                          <strong className="small text-dark" style={{ fontSize: '0.88rem' }}>{item.phase}</strong>
+                        </div>
+                        <span className="badge rounded-pill fw-semibold" style={{ backgroundColor: style.badgeBg, color: style.badgeColor, fontSize: '0.7rem' }}>
+                          {style.tag}
+                        </span>
+                      </div>
+                      <div className="text-secondary small ps-1" style={{ fontSize: '0.82rem', lineHeight: '1.45' }}>
+                        {item.detail}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="d-flex flex-column gap-2">
+                {standard.clinicalFocus.map((item, idx) => (
+                  <div key={idx} className="p-3 rounded-3 bg-light border">
+                    <div className="d-flex align-items-center gap-2 mb-1">
+                      <span
+                        className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center"
+                        style={{ width: '24px', height: '24px', backgroundColor: standard.accentColor }}
+                      >
+                        {idx + 1}
+                      </span>
+                      <strong className="small text-dark">{item.phase}</strong>
+                    </div>
+                    <div className="text-secondary small ps-4" style={{ lineHeight: '1.45' }}>
+                      {item.detail}
+                    </div>
                   </div>
-                  <div className="text-secondary small ps-4" style={{ lineHeight: '1.45' }}>
-                    {item.detail}
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
