@@ -1775,14 +1775,63 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
           {/* Title & roXtra Identification */}
           <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 pb-2 border-bottom gap-2">
             <div>
-              <span className="text-muted small text-uppercase fw-bold" style={{ letterSpacing: '0.5px', fontSize: '0.72rem' }}>
-                {standard.id === 'zvk' || standard.id === 'isolation' ? 'Klinische Verfahrensanweisung (SOP)' : 'Expertenstandard in der Pflege'}
-              </span>
-              <h4 className="fw-bold text-dark mb-0 mt-1" style={{ fontSize: 'clamp(1.05rem, 3vw, 1.35rem)' }}>{standard.topic}</h4>
+              {standard.id === 'isolation' ? (
+                <div className="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                  <span
+                    className="badge rounded-pill fw-bold text-uppercase d-inline-flex align-items-center gap-1.5"
+                    style={{
+                      backgroundColor: 'rgba(2, 132, 199, 0.1)',
+                      color: '#0284c7',
+                      border: '1px solid rgba(2, 132, 199, 0.25)',
+                      fontSize: '0.72rem',
+                      letterSpacing: '0.4px',
+                      padding: '4px 10px'
+                    }}
+                  >
+                    <i className="bi bi-shield-check"></i> Klinische Verfahrensanweisung (SOP)
+                  </span>
+                  <span
+                    className="badge rounded-pill fw-semibold"
+                    style={{
+                      backgroundColor: '#f1f5f9',
+                      color: '#475569',
+                      fontSize: '0.7rem',
+                      border: '1px solid #e2e8f0',
+                      padding: '4px 8px'
+                    }}
+                  >
+                    Hygieneplan &bull; UKF QM
+                  </span>
+                </div>
+              ) : (
+                <span className="text-muted small text-uppercase fw-bold" style={{ letterSpacing: '0.5px', fontSize: '0.72rem' }}>
+                  {standard.id === 'zvk' ? 'Klinische Verfahrensanweisung (SOP)' : 'Expertenstandard in der Pflege'}
+                </span>
+              )}
+              <h4
+                className="fw-bold mb-0 mt-1"
+                style={{
+                  fontSize: 'clamp(1.05rem, 3vw, 1.35rem)',
+                  color: standard.id === 'isolation' ? '#0c4a6e' : '#1e293b'
+                }}
+              >
+                {standard.topic}
+              </h4>
             </div>
             <div className="d-flex align-items-center gap-2 flex-shrink-0">
-              <span className="badge bg-light text-dark border px-2.5 py-1.5 font-monospace" style={{ fontSize: '0.78rem' }}>
-                <i className="bi bi-file-earmark-medical text-primary me-1"></i>
+              <span
+                className={`badge px-3 py-1.5 font-monospace rounded-pill shadow-2xs ${
+                  standard.id === 'isolation'
+                    ? 'bg-white border'
+                    : 'bg-light text-dark border'
+                }`}
+                style={{
+                  fontSize: '0.78rem',
+                  borderColor: standard.id === 'isolation' ? '#bae6fd' : undefined,
+                  color: standard.id === 'isolation' ? '#0369a1' : undefined
+                }}
+              >
+                <i className="bi bi-file-earmark-medical me-1.5 text-primary"></i>
                 roXtra: <strong>{standard.roXtraIds.join(' / ')}</strong>
               </span>
             </div>
@@ -1795,22 +1844,62 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
               <div className="col-12">
                 <div className="clinical-picture-card h-100 d-flex flex-column shadow-sm rounded-4 overflow-hidden border">
                   {/* Card Header: Official SOP document */}
-                  <div className="d-flex flex-wrap justify-content-between align-items-center px-3 py-2 bg-light border-bottom gap-2">
-                    <div className="d-flex align-items-center gap-2">
-                      <i className="bi bi-file-earmark-pdf-fill text-danger fs-5"></i>
-                      <span className="fw-bold text-dark" style={{ fontSize: '0.92rem' }}>
-                        {activeDoc ? activeDoc.title : `Verfahrensanweisung & SOP: ${standard.shortTitle}`}
+                  <div
+                    className="d-flex flex-wrap justify-content-between align-items-center px-3 py-2.5 border-bottom gap-2"
+                    style={{
+                      background: standard.id === 'isolation'
+                        ? 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%)'
+                        : undefined,
+                      backgroundColor: standard.id !== 'isolation' ? '#f8f9fa' : undefined,
+                      borderBottomColor: standard.id === 'isolation' ? '#bae6fd' : '#dee2e6'
+                    }}
+                  >
+                    <div className="d-flex align-items-center gap-2.5">
+                      <span
+                        className="rounded-3 d-inline-flex align-items-center justify-content-center shadow-2xs"
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          backgroundColor: '#fee2e2',
+                          color: '#dc2626',
+                          border: '1px solid #fecaca'
+                        }}
+                      >
+                        <i className="bi bi-file-earmark-pdf-fill fs-5"></i>
                       </span>
+                      <div>
+                        <span
+                          className="fw-bold d-block"
+                          style={{
+                            fontSize: '0.94rem',
+                            color: standard.id === 'isolation' ? '#0c4a6e' : '#212529',
+                            lineHeight: 1.25
+                          }}
+                        >
+                          {activeDoc ? activeDoc.title : `Verfahrensanweisung & SOP: ${standard.shortTitle}`}
+                        </span>
+                        {standard.id === 'isolation' && (
+                          <span className="text-muted small" style={{ fontSize: '0.7rem' }}>
+                            Universitätsmedizin Frankfurt &bull; Pflegedirektion &bull; Gültiges QM-Dokument
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     <div className="d-flex align-items-center gap-2 flex-wrap">
                       {activeDoc && activeDoc.date && (
-                        <span className="badge bg-white text-dark border px-2.5 py-1 small d-inline-flex align-items-center gap-1">
+                        <span
+                          className="badge bg-white px-2.5 py-1.5 small d-inline-flex align-items-center gap-1.5 rounded-pill shadow-2xs"
+                          style={{ border: '1px solid #bae6fd', color: '#0369a1' }}
+                        >
                           <i className="bi bi-calendar3 text-primary"></i>
                           <span>Stand: <strong>{activeDoc.date}</strong>{activeDoc.version ? ` (Ver. ${activeDoc.version})` : ''}</span>
                         </span>
                       )}
-                      <span className="badge bg-white text-secondary border px-2.5 py-1 small font-monospace">
+                      <span
+                        className="badge bg-white px-2.5 py-1.5 small font-monospace rounded-pill shadow-2xs"
+                        style={{ border: '1px solid #cbd5e1', color: '#334155' }}
+                      >
                         roXtra ID: <strong>{activeDoc ? activeDoc.roXtraId : standard.roXtraIds.join(' / ')}</strong>
                       </span>
                     </div>
@@ -1818,45 +1907,93 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
 
                   {/* Document Switcher: ONLY for standards with multiple documents (e.g. Hygiene) */}
                   {documents && documents.length > 1 && (
-                    <div className="bg-light px-3 py-2 border-bottom">
-                      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-1.5">
-                        <span className="text-muted small fw-bold text-uppercase" style={{ fontSize: '0.72rem', letterSpacing: '0.4px' }}>
-                          <i className="bi bi-collection me-1 text-primary"></i>Verfügbare QM-Dokumente ({documents.length}):
-                        </span>
-                        <span className="text-muted small" style={{ fontSize: '0.72rem' }}>
-                          Klicken zum Umschalten
+                    <div
+                      className="px-3 py-2.5 border-bottom"
+                      style={{
+                        background: 'linear-gradient(to right, #f8fafc, #f1f5f9)',
+                        borderBottomColor: '#e2e8f0'
+                      }}
+                    >
+                      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                        <div className="d-flex align-items-center gap-2">
+                          <span
+                            className="badge rounded-pill fw-bold text-uppercase d-inline-flex align-items-center gap-1.5 shadow-2xs"
+                            style={{
+                              backgroundColor: '#ffffff',
+                              color: '#0284c7',
+                              border: '1px solid #bae6fd',
+                              fontSize: '0.72rem',
+                              letterSpacing: '0.4px',
+                              padding: '5px 10px'
+                            }}
+                          >
+                            <i className="bi bi-collection-fill"></i> Verfügbare QM-Dokumente ({documents.length})
+                          </span>
+                          <span className="text-secondary small d-none d-sm-inline" style={{ fontSize: '0.74rem' }}>
+                            Umschalten per Klick
+                          </span>
+                        </div>
+                        <span className="text-muted small d-inline-flex align-items-center gap-1" style={{ fontSize: '0.72rem' }}>
+                          <i className="bi bi-hand-index-thumb text-primary"></i>
+                          <span>Tippen zum Wechseln</span>
                         </span>
                       </div>
-                      <div className="d-flex flex-wrap gap-2">
+                      <div className="d-flex flex-wrap gap-2.5">
                         {documents.map((doc, idx) => {
                           const isSelected = selectedDocIndex === idx;
                           const activeGradient = idx === 0
                             ? 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)'
                             : 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)';
+                          const glowShadow = isSelected
+                            ? (idx === 0
+                                ? '0 4px 14px rgba(2, 132, 199, 0.35)'
+                                : '0 4px 14px rgba(13, 148, 136, 0.35)')
+                            : '0 1px 3px rgba(0,0,0,0.05)';
+                          const iconColor = isSelected
+                            ? '#ffffff'
+                            : (idx === 0 ? '#0284c7' : '#0d9488');
+
                           return (
                             <button
                               key={doc.id}
                               type="button"
-                              className={`btn btn-sm rounded-pill px-3 py-1.5 fw-semibold d-flex align-items-center gap-2 transition-all flex-grow-1 flex-sm-grow-0 justify-content-between justify-content-sm-center ${
+                              className={`btn btn-sm rounded-pill px-3 py-2 fw-semibold d-flex align-items-center gap-2.5 transition-all flex-grow-1 flex-sm-grow-0 justify-content-between justify-content-sm-center ${
                                 isSelected
-                                  ? 'text-white shadow-sm'
-                                  : 'btn-white bg-white text-dark border hover-shadow'
+                                  ? 'text-white'
+                                  : 'bg-white text-dark border hover-shadow'
                               }`}
                               style={{
-                                fontSize: '0.82rem',
-                                background: isSelected ? activeGradient : '#fff',
-                                borderColor: isSelected ? 'transparent' : '#cbd5e1'
+                                fontSize: '0.84rem',
+                                background: isSelected ? activeGradient : '#ffffff',
+                                borderColor: isSelected ? 'transparent' : '#cbd5e1',
+                                boxShadow: glowShadow,
+                                minHeight: '40px'
                               }}
                               onClick={() => setSelectedDocIndex(idx)}
                             >
-                              <div className="d-flex align-items-center gap-1.5">
-                                <i
-                                  className={`bi ${idx === 0 ? 'bi-file-earmark-medical-fill' : 'bi-shield-check'}`}
-                                  style={{ color: isSelected ? '#ffffff' : (idx === 0 ? '#0284c7' : '#0d9488') }}
-                                ></i>
+                              <div className="d-flex align-items-center gap-2">
+                                <span
+                                  className="rounded-circle d-inline-flex align-items-center justify-content-center flex-shrink-0"
+                                  style={{
+                                    width: '24px',
+                                    height: '24px',
+                                    backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : (idx === 0 ? 'rgba(2, 132, 199, 0.1)' : 'rgba(13, 148, 136, 0.1)'),
+                                    color: iconColor
+                                  }}
+                                >
+                                  <i className={`bi ${idx === 0 ? 'bi-file-earmark-medical-fill' : 'bi-shield-check'}`}></i>
+                                </span>
                                 <span>{doc.shortTitle}</span>
                               </div>
-                              <span className={`badge rounded-pill ${isSelected ? 'bg-white text-dark' : 'bg-light text-muted border'}`} style={{ fontSize: '0.72rem' }}>
+                              <span
+                                className="badge rounded-pill fw-semibold"
+                                style={{
+                                  fontSize: '0.72rem',
+                                  backgroundColor: isSelected ? 'rgba(255, 255, 255, 0.22)' : '#f1f5f9',
+                                  color: isSelected ? '#ffffff' : '#334155',
+                                  border: isSelected ? '1px solid rgba(255, 255, 255, 0.35)' : '1px solid #e2e8f0'
+                                }}
+                              >
                                 <i className="bi bi-calendar3 me-1"></i>{doc.date} &bull; {doc.pageCount} S.
                               </span>
                             </button>
