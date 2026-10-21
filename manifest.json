@@ -8,6 +8,7 @@
   "orientation": "any",
   "background_color": "#f4f6f8",
   "theme_color": "#004767",
+  "categories": ["medical", "health", "productivity", "education"],
   "icons": [
     {
       "src": "assets/favicon.svg",
@@ -19,6 +20,36 @@
       "src": "assets/umf-logo.jpg",
       "sizes": "190x83",
       "type": "image/jpeg"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Isolation & Hygiene",
+      "short_name": "Hygiene",
+      "description": "SOPs und Hygieneplan bei MRE, VRE, MRGN, MRSA & C. diff.",
+      "url": "./#/isolation",
+      "icons": [{ "src": "assets/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "ZVK Intensivpflege",
+      "short_name": "ZVK SOP",
+      "description": "Verfahrensanweisung ZVK, Verbandswechsel & Spülen",
+      "url": "./#/zvk",
+      "icons": [{ "src": "assets/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Universal-Karte",
+      "short_name": "Universal",
+      "description": "Alle 6 Pflegestandards auf einer Karte",
+      "url": "./#/universal-karte",
+      "icons": [{ "src": "assets/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Schnellzugriff (Hub)",
+      "short_name": "Quick Hub",
+      "description": "Schnelle Kachel-Auswahl aller Standards",
+      "url": "./#/quick-hub",
+      "icons": [{ "src": "assets/favicon.svg", "sizes": "any" }]
     }
   ]
 }

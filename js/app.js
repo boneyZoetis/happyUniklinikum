@@ -275,6 +275,147 @@ function ScanModal({ isOpen, onClose, onSelectStandard, showToast }) {
   );
 }
 
+// -------------------------------------------------------------
+// Component: Mobile App Header & Horizontal Category Ribbon
+// Dedicated, Touch-Optimized Header for Smartphones (< 992px)
+// -------------------------------------------------------------
+function MobileAppHeader({ currentRoute, onNavigate, onOpenScanner }) {
+  const categories = [
+    { id: 'dekubitus', label: 'Dekubitus', icon: 'bi-bandaid-fill', color: '#be185d', bg: 'linear-gradient(135deg, #831843, #be185d)' },
+    { id: 'sturz', label: 'Sturz', icon: 'bi-shield-exclamation', color: '#556b2f', bg: 'linear-gradient(135deg, #365314, #65a30d)' },
+    { id: 'schmerz', label: 'Schmerz', icon: 'bi-heart-pulse-fill', color: '#d97706', bg: 'linear-gradient(135deg, #78350f, #d97706)' },
+    { id: 'ernaehrung', label: 'Ernährung', icon: 'bi-egg-fried', color: '#0284c7', bg: 'linear-gradient(135deg, #0c4a6e, #0284c7)' },
+    { id: 'isolation', label: 'Hygiene', icon: 'bi-shield-check', color: '#0284c7', bg: 'linear-gradient(135deg, #0369a1, #0284c7)', badge: 'SOP' },
+    { id: 'zvk', label: 'ZVK SOP', icon: 'bi-droplet-half', color: '#e11d48', bg: 'linear-gradient(135deg, #881337, #e11d48)', badge: 'SOP' }
+  ];
+
+  const isStandardRoute = categories.some((c) => c.id === currentRoute);
+  const activeCategory = categories.find((c) => c.id === currentRoute);
+  const ribbonRef = useRef(null);
+
+  useEffect(() => {
+    if (ribbonRef.current && activeCategory) {
+      const activeEl = ribbonRef.current.querySelector('.mobile-category-pill.active');
+      if (activeEl && activeEl.scrollIntoView) {
+        activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+  }, [currentRoute, activeCategory]);
+
+  return (
+    <header className="mobile-app-header d-block d-lg-none sticky-top no-print">
+      {/* Top Bar with Branding & Quick Actions */}
+      <div className="mobile-top-bar px-3 py-2 d-flex align-items-center justify-content-between">
+        <div className="d-flex align-items-center gap-2 min-w-0">
+          {isStandardRoute || currentRoute === 'universal-karte' || currentRoute === 'qrcodes' ? (
+            <button
+              type="button"
+              className="btn btn-sm btn-light rounded-pill px-2.5 py-1 d-flex align-items-center gap-1 shadow-2xs border fw-bold text-dark"
+              style={{ minHeight: '34px', fontSize: '0.78rem' }}
+              onClick={() => onNavigate('quick-hub')}
+              title="Zurück zum Schnellzugriff"
+            >
+              <i className="bi bi-chevron-left fw-bold"></i>
+              <span>Hub</span>
+            </button>
+          ) : (
+            <a href="#/" className="d-flex align-items-center text-decoration-none">
+              <span className="brand-dot me-1.5"></span>
+              <span className="fw-bold text-dark" style={{ fontSize: '0.92rem', letterSpacing: '-0.3px' }}>
+                UMF Pocketcards
+              </span>
+            </a>
+          )}
+
+          {isStandardRoute && activeCategory && (
+            <span
+              className="badge rounded-pill fw-bold text-truncate shadow-2xs d-inline-flex align-items-center gap-1 ms-1"
+              style={{
+                backgroundColor: 'rgba(2, 132, 199, 0.1)',
+                color: activeCategory.color,
+                border: `1px solid ${activeCategory.color}40`,
+                fontSize: '0.76rem',
+                maxWidth: '160px'
+              }}
+            >
+              <i className={`bi ${activeCategory.icon}`}></i>
+              <span className="text-truncate">{activeCategory.label}</span>
+            </span>
+          )}
+        </div>
+
+        <div className="d-flex align-items-center gap-1.5 flex-shrink-0">
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-primary rounded-pill px-2.5 py-1 fw-bold d-flex align-items-center gap-1 shadow-2xs"
+            style={{ minHeight: '34px', fontSize: '0.74rem' }}
+            onClick={onOpenScanner}
+            title="QR-Code / SOP scannen"
+          >
+            <i className="bi bi-qr-code-scan"></i>
+            <span>Scan</span>
+          </button>
+          <button
+            type="button"
+            className={`btn btn-sm ${currentRoute === 'universal-karte' ? 'btn-warning text-dark fw-bold' : 'btn-light border text-dark'} rounded-pill px-2.5 py-1 d-flex align-items-center gap-1 shadow-2xs`}
+            style={{ minHeight: '34px', fontSize: '0.74rem' }}
+            onClick={() => onNavigate('universal-karte')}
+            title="Universal-Karte (12×8 cm & A4)"
+          >
+            <i className="bi bi-credit-card-2-front-fill text-danger"></i>
+            <span className="d-none d-sm-inline">Karte</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Swipeable Horizontal Ribbon for Instant 1-Thumb Standard Switching */}
+      <div className="mobile-category-ribbon border-top" ref={ribbonRef}>
+        <div className="mobile-category-scroll">
+          <button
+            type="button"
+            className={`mobile-category-pill ${currentRoute === 'quick-hub' || currentRoute === 'home' ? 'active-hub' : ''}`}
+            onClick={() => onNavigate('quick-hub')}
+          >
+            <i className="bi bi-grid-fill"></i>
+            <span>Alle 6</span>
+          </button>
+          {categories.map((cat) => {
+            const isActive = currentRoute === cat.id;
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                className={`mobile-category-pill ${isActive ? 'active' : ''}`}
+                style={{
+                  background: isActive ? cat.bg : undefined,
+                  color: isActive ? '#ffffff' : undefined,
+                  borderColor: isActive ? 'transparent' : undefined
+                }}
+                onClick={() => onNavigate(cat.id)}
+              >
+                <i className={`bi ${cat.icon}`} style={{ color: isActive ? '#ffffff' : cat.color }}></i>
+                <span>{cat.label}</span>
+                {cat.badge && (
+                  <span
+                    className="badge rounded-pill fw-bold ms-0.5"
+                    style={{
+                      fontSize: '0.62rem',
+                      backgroundColor: isActive ? 'rgba(255,255,255,0.25)' : 'rgba(2, 132, 199, 0.1)',
+                      color: isActive ? '#ffffff' : cat.color
+                    }}
+                  >
+                    {cat.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </header>
+  );
+}
+
 function App() {
   const [currentRoute, setCurrentRoute] = useState('home'); // 'home' | 'dekubitus' | 'sturz' | 'schmerz' | 'ernaehrung' | 'zvk' | 'qrcodes'
   const [toast, setToast] = useState(null);
@@ -390,31 +531,29 @@ function App() {
         showToast={showToast}
       />
 
-      {/* Modern Hospital Top Banner - Hidden on quick-hub, and hidden on mobile when viewing a selected standard tile or Universal-Karte */}
+      {/* 1. Dedicated Mobile Sticky App Header & Swipeable Category Ribbon (< 992px) */}
+      <MobileAppHeader
+        currentRoute={currentRoute}
+        onNavigate={navigateTo}
+        onOpenScanner={() => setIsScanModalOpen(true)}
+      />
+
+      {/* 2. Desktop Hospital Top Banner (>= 992px) */}
       {currentRoute !== 'quick-hub' && (
-        <div className={`hospital-banner shadow-sm ${isMobileIsolatedRoute ? 'd-none d-md-block' : ''}`}>
+        <div className="hospital-banner shadow-sm d-none d-lg-block">
           <div className="container d-flex align-items-center justify-content-between py-1 gap-2">
             <div className="d-flex align-items-center gap-2 min-w-0">
               <a href="#/" className="text-decoration-none d-flex align-items-center bg-white rounded-3 p-1 shadow-sm border border-info border-opacity-25 flex-shrink-0">
                 <img src="assets/umf-logo.jpg" alt="Universitätsmedizin Frankfurt" height="32" className="rounded" style={{ maxHeight: '34px' }} />
               </a>
               {/* Desktop Title */}
-              <div className="border-start border-2 ps-2 ps-sm-3 d-none d-md-block" style={{ borderColor: '#0284c7' }}>
+              <div className="border-start border-2 ps-2 ps-sm-3" style={{ borderColor: '#0284c7' }}>
                 <div className="fw-black" style={{ letterSpacing: '0.5px', fontSize: '0.94rem', color: '#00273d' }}>
                   UNIVERSITÄTSMEDIZIN FRANKFURT
                 </div>
                 <div className="fw-semibold" style={{ fontSize: '0.75rem', color: '#0369a1' }}>
                   <i className="bi bi-shield-check text-success me-1"></i>
                   Digitale Pocketcards &bull; <span className="fw-bold" style={{ color: '#0f766e' }}>Expertenstandards in der Pflege</span>
-                </div>
-              </div>
-              {/* Compact Mobile Title */}
-              <div className="d-block d-md-none min-w-0">
-                <div className="fw-black text-truncate" style={{ fontSize: '0.78rem', lineHeight: 1.15, color: '#00273d' }}>
-                  UMF FRANKFURT
-                </div>
-                <div className="fw-semibold text-truncate" style={{ fontSize: '0.68rem', lineHeight: 1.15, color: '#0369a1' }}>
-                  Pflege-Pocketcards &bull; SOPs
                 </div>
               </div>
             </div>
@@ -444,43 +583,17 @@ function App() {
         </div>
       )}
 
-      {/* Main Menu Bar with Clinical Category Colors - Hidden on mobile for quick-hub, universal-karte, and selected tiles, always visible on desktop */}
-      <nav className={`navbar navbar-expand-lg navbar-custom sticky-top shadow-sm py-1 ${(isMobileIsolatedRoute || currentRoute === 'quick-hub') ? 'd-none d-md-block' : ''}`}>
+      {/* 3. Desktop Main Menu Bar (>= 992px) */}
+      <nav className="navbar navbar-expand-lg navbar-custom sticky-top shadow-sm py-1 d-none d-lg-block">
         <div className="container d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center justify-content-between gap-1 gap-lg-2 py-0">
-          {/* Top Row on Mobile: Brand Title on Left + Quick Actions on Right */}
           <div className="d-flex align-items-center justify-content-between w-100 w-lg-auto">
             <a className="navbar-brand d-flex align-items-center gap-2 text-decoration-none py-0.5 m-0" href="#/">
               <span className="brand-dot"></span>
               <span className="brand-title fs-5">UMF Expertenstandards</span>
             </a>
-
-            {/* Mobile Quick Action Pills on Right of Brand Title */}
-            <div className="d-flex d-lg-none align-items-center gap-1.5">
-              <button
-                type="button"
-                className="btn btn-sm btn-outline-primary rounded-pill px-2.5 py-1 fw-semibold d-flex align-items-center gap-1 shadow-sm"
-                style={{ minHeight: '32px', fontSize: '0.74rem' }}
-                onClick={() => setIsScanModalOpen(true)}
-                title="QR-Code scannen oder Foto/SOP erkennen"
-              >
-                <i className="bi bi-qr-code-scan"></i>
-                <span>Scan</span>
-              </button>
-              {currentRoute !== 'home' && (
-                <a
-                  href="#/"
-                  className="btn btn-sm btn-light border rounded-pill px-2.5 py-1 text-secondary shadow-sm d-flex align-items-center gap-1"
-                  style={{ minHeight: '32px', fontSize: '0.74rem' }}
-                  title="Zur Hauptübersicht"
-                >
-                  <i className="bi bi-house-door-fill"></i>
-                  <span>Start</span>
-                </a>
-              )}
-            </div>
           </div>
 
-          {/* Horizontally Scrollable Category Ribbon on Mobile, Inline Pills on Desktop */}
+          {/* Horizontally Scrollable Category Ribbon on Desktop */}
           <div className="nav-standards-scroll w-100 w-lg-auto">
             <a
               href="#/dekubitus"
@@ -626,32 +739,64 @@ function App() {
         )}
       </main>
 
-      {/* Transparent Mobile Footer with 2 Buttons: 1. Home, 2. Universal Karte (Content scrolls behind it) */}
-      <footer className="mobile-transparent-footer d-flex d-md-none no-print" aria-label="Mobile Navigation">
-        <div className="mobile-transparent-footer-inner">
+      {/* Native-Feel Floating Mobile Clinical Dock (No-print, safe-area padded) */}
+      <nav className="mobile-clinical-dock d-flex d-lg-none no-print" aria-label="Mobile Navigation">
+        <div className="mobile-dock-container">
+          {/* 1. Hub / Home */}
           <button
             type="button"
-            className={`mobile-footer-btn home-btn ${currentRoute === 'quick-hub' || currentRoute === 'home' ? 'active' : ''}`}
+            className={`mobile-dock-item ${currentRoute === 'quick-hub' || currentRoute === 'home' ? 'active' : ''}`}
             onClick={() => navigateTo('quick-hub')}
           >
-            <span className="mobile-footer-btn-icon">
-              <i className="bi bi-house-door-fill"></i>
+            <span className="mobile-dock-icon">
+              <i className="bi bi-grid-fill"></i>
             </span>
-            <span>Home</span>
+            <span className="mobile-dock-label">6 Kacheln</span>
           </button>
 
+          {/* 2. Standards Quick Drawer / Active Standard */}
           <button
             type="button"
-            className={`mobile-footer-btn universal-btn ${currentRoute === 'universal-karte' || currentRoute === 'magic-card' ? 'active' : ''}`}
+            className={`mobile-dock-item ${isStandardRoute ? 'active' : ''}`}
+            onClick={() => {
+              if (isStandardRoute) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                navigateTo('dekubitus');
+              }
+            }}
+          >
+            <span className="mobile-dock-icon">
+              <i className="bi bi-journal-medical"></i>
+            </span>
+            <span className="mobile-dock-label">{isStandardRoute ? 'Standard' : 'Leitfäden'}</span>
+          </button>
+
+          {/* 3. Universal-Karte */}
+          <button
+            type="button"
+            className={`mobile-dock-item ${currentRoute === 'universal-karte' || currentRoute === 'magic-card' ? 'active' : ''}`}
             onClick={() => navigateTo('universal-karte')}
           >
-            <span className="mobile-footer-btn-icon">
+            <span className="mobile-dock-icon">
               <i className="bi bi-credit-card-2-front-fill"></i>
             </span>
-            <span>Universal Karte</span>
+            <span className="mobile-dock-label">Universal-Karte</span>
+          </button>
+
+          {/* 4. Instant QR & Foto Scanner */}
+          <button
+            type="button"
+            className="mobile-dock-item scan-dock-item"
+            onClick={() => setIsScanModalOpen(true)}
+          >
+            <span className="mobile-dock-icon scan-icon">
+              <i className="bi bi-qr-code-scan"></i>
+            </span>
+            <span className="mobile-dock-label">QR Scan</span>
           </button>
         </div>
-      </footer>
+      </nav>
 
       {/* Footer: on quick-hub show ONLY the colorful accent line; on standard tiles and universal-karte hide full footer on mobile */}
       {currentRoute === 'quick-hub' ? (
@@ -1731,6 +1876,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [isModalMaximized, setIsModalMaximized] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+  const [showMobileInlinePdf, setShowMobileInlinePdf] = useState(false);
   const isPdfPopupStandard = standard.id === 'zvk' || standard.id === 'isolation';
   const documents = standard.sopDocuments || null;
   const activeDoc = (documents && documents[selectedDocIndex]) ? documents[selectedDocIndex] : null;
@@ -2107,15 +2253,39 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                             href={pdfUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="btn btn-danger rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-bold shadow-sm"
+                            className="btn btn-danger rounded-pill py-2.5 d-flex align-items-center justify-content-center gap-2 fw-bold shadow-sm"
+                            style={{ minHeight: '46px', fontSize: '0.88rem' }}
                           >
                             <i className="bi bi-box-arrow-up-right fs-5"></i>
                             <span>PDF im Vollbild öffnen ({activeDoc ? `${activeDoc.pageCount} S.` : (standard.id === 'zvk' ? '10 S.' : '4 S.')})</span>
                           </a>
+
+                          <button
+                            type="button"
+                            className="btn btn-outline-primary rounded-pill py-2 d-flex align-items-center justify-content-center gap-1.5 fw-semibold small"
+                            style={{ minHeight: '42px' }}
+                            onClick={() => setShowMobileInlinePdf(prev => !prev)}
+                          >
+                            <i className={`bi ${showMobileInlinePdf ? 'bi-chevron-up' : 'bi-file-earmark-text'}`}></i>
+                            <span>{showMobileInlinePdf ? 'Vorschau schließen' : 'Direkte PDF-Vorschau hier anzeigen'}</span>
+                          </button>
+
+                          {showMobileInlinePdf && (
+                            <div className="mt-2 rounded-3 overflow-hidden border shadow-inner" style={{ minHeight: '420px', height: '420px', WebkitOverflowScrolling: 'touch' }}>
+                              <iframe
+                                src={`${pdfBaseUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
+                                title={`Mobile PDF Vorschau ${activeDoc ? activeDoc.title : standard.topic}`}
+                                className="w-100 h-100 border-0 d-block"
+                                style={{ minHeight: '420px' }}
+                              />
+                            </div>
+                          )}
+
                           <a
                             href={pdfUrl}
                             download
                             className="btn btn-outline-secondary rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-semibold small"
+                            style={{ minHeight: '40px' }}
                           >
                             <i className="bi bi-download"></i>
                             <span>PDF Datei herunterladen</span>
