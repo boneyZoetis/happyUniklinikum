@@ -11,17 +11,6 @@
       "decoded_qr.txt",
       "README.md"
     ],
-    "headers": [
-      {
-        "source": "sw.js",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "no-cache, no-store, must-revalidate"
-          }
-        ]
-      }
-    ],
     "rewrites": [
       {
         "source": "**",
