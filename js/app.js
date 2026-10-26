@@ -1876,7 +1876,12 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                             lineHeight: 1.25
                           }}
                         >
-                          {activeDoc ? activeDoc.title : `Verfahrensanweisung & SOP: ${standard.shortTitle}`}
+                          <span className="d-none d-md-inline">
+                            {activeDoc ? activeDoc.title : `Verfahrensanweisung & SOP: ${standard.shortTitle}`}
+                          </span>
+                          <span className="d-inline d-md-none">
+                            {standard.id === 'isolation' ? 'Verfahrensanweisungen & Hygienepläne' : (activeDoc ? activeDoc.title : standard.topic)}
+                          </span>
                         </span>
                         {standard.id === 'isolation' && (
                           <span className="text-muted small" style={{ fontSize: '0.7rem' }}>
@@ -1886,7 +1891,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                       </div>
                     </div>
 
-                    <div className="d-flex align-items-center gap-2 flex-wrap">
+                    <div className="d-none d-md-flex align-items-center gap-2 flex-wrap">
                       {activeDoc && activeDoc.date && (
                         <span
                           className="badge px-3 py-1.5 small d-inline-flex align-items-center gap-1.5 rounded-pill shadow-sm fw-bold"
@@ -1922,10 +1927,10 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                     </div>
                   </div>
 
-                  {/* Document Switcher: ONLY for standards with multiple documents (e.g. Hygiene) */}
+                  {/* Document Switcher: ONLY for standards with multiple documents (e.g. Hygiene) - Desktop Only */}
                   {documents && documents.length > 1 && (
                     <div
-                      className="px-3 py-2.5 border-bottom"
+                      className="px-3 py-2.5 border-bottom d-none d-md-block"
                       style={{
                         background: 'linear-gradient(to right, #f8fafc, #f1f5f9)',
                         borderBottomColor: '#e2e8f0'
@@ -2058,70 +2063,289 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                       </div>
                     </div>
 
-                    {/* Mobile Smartphone: High-Performance, Touch-Friendly Native PDF Card */}
-                    <div className="d-block d-md-none p-3 text-center bg-light">
-                      <div className="bg-white p-3 rounded-4 shadow-sm border mb-2">
-                        <div className="d-inline-flex p-3 rounded-circle bg-danger bg-opacity-10 text-danger mb-2">
-                          <i className="bi bi-file-earmark-pdf-fill fs-1"></i>
-                        </div>
-                        <h6 className="fw-bold text-dark mb-1">
-                          {activeDoc ? activeDoc.title : standard.topic}
-                        </h6>
-                        {activeDoc && activeDoc.date && (
+                    {/* Mobile Smartphone: High-Performance, Touch-Friendly Native PDF Cards */}
+                    <div className="d-block d-md-none p-2 p-sm-3 bg-light">
+                      {documents && documents.length > 1 ? (
+                        /* DUAL-DOCUMENT PRESENTATION (Hygiene / Isolation) */
+                        <div className="d-flex flex-column gap-3">
+                          {/* Top Orientation Bar */}
+                          <div className="p-2.5 bg-white rounded-4 border shadow-2xs text-start">
+                            <div className="d-flex align-items-center justify-content-between gap-2">
+                              <span
+                                className="badge rounded-pill fw-bold text-uppercase d-inline-flex align-items-center gap-1.5 shadow-2xs"
+                                style={{
+                                  backgroundColor: '#f0fdf4',
+                                  color: '#047857',
+                                  border: '1px solid #86efac',
+                                  fontSize: '0.74rem',
+                                  padding: '5px 10px'
+                                }}
+                              >
+                                <i className="bi bi-shield-check"></i> 2 Offizielle QM-Dokumente
+                              </span>
+                              <span className="badge rounded-pill bg-light text-secondary border px-2 py-1" style={{ fontSize: '0.68rem' }}>
+                                UMF Klinikum
+                              </span>
+                            </div>
+                            <div className="text-secondary small mt-1.5" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
+                              Für den Stations- &amp; Intensivalltag stehen Ihnen zwei verbindliche Richtlinien direkt zur Verfügung:
+                            </div>
+                          </div>
+
+                          {/* CARD 1: SOP ALLGEMEINE ISOLATION & REINIGUNG */}
                           <div
-                            className="d-inline-flex align-items-center gap-1.5 px-3 py-1.5 rounded-pill mb-2 fw-bold shadow-2xs"
+                            className="p-3 bg-white rounded-4 shadow-sm text-start position-relative overflow-hidden"
                             style={{
-                              background: standard.id === 'isolation'
-                                ? (selectedDocIndex === 0
-                                    ? 'linear-gradient(135deg, #fef08a 0%, #fde047 100%)'
-                                    : 'linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%)')
-                                : undefined,
-                              color: standard.id === 'isolation'
-                                ? (selectedDocIndex === 0 ? '#713f12' : '#064e3b')
-                                : undefined,
-                              border: standard.id === 'isolation'
-                                ? (selectedDocIndex === 0 ? '1.5px solid #eab308' : '1.5px solid #10b981')
-                                : '1px solid #cbd5e1',
-                              fontSize: '0.8rem'
+                              border: '1.5px solid #7dd3fc',
+                              background: 'linear-gradient(150deg, #ffffff 0%, #f0f9ff 60%, #e0f2fe 100%)'
                             }}
                           >
-                            <i className={`bi ${standard.id === 'isolation' ? 'bi-calendar-check-fill' : 'bi-calendar-check text-primary'}`}></i>
-                            <span>Gültiger Stand: {activeDoc.date} {activeDoc.version ? `(Ver. ${activeDoc.version})` : ''}</span>
+                            <div className="d-flex align-items-center justify-content-between gap-2 mb-2">
+                              <div className="d-flex align-items-center gap-2">
+                                <span
+                                  className="rounded-circle d-inline-flex align-items-center justify-content-center text-white shadow-2xs flex-shrink-0"
+                                  style={{
+                                    width: '32px',
+                                    height: '32px',
+                                    background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)'
+                                  }}
+                                >
+                                  <i className="bi bi-file-earmark-medical-fill"></i>
+                                </span>
+                                <div>
+                                  <span className="badge bg-white text-primary border border-primary border-opacity-25 rounded-pill px-2 py-0.5 fw-bold" style={{ fontSize: '0.68rem', letterSpacing: '0.3px' }}>
+                                    DOKUMENT 1 &bull; ALLGEMEINE SOP
+                                  </span>
+                                </div>
+                              </div>
+                              <span className="badge font-monospace bg-white text-dark border px-2 py-1 rounded-pill small" style={{ fontSize: '0.72rem' }}>
+                                roXtra: <strong>239411</strong>
+                              </span>
+                            </div>
+
+                            <h6 className="fw-bold mb-1.5" style={{ color: '#0369a1', fontSize: '0.96rem', lineHeight: 1.3 }}>
+                              Allgemeines Vorgehen bei Isolation und Reinigung
+                            </h6>
+
+                            <div className="d-flex flex-wrap align-items-center gap-1.5 mb-2">
+                              <span
+                                className="badge rounded-pill fw-bold shadow-2xs"
+                                style={{
+                                  backgroundColor: '#fef08a',
+                                  color: '#713f12',
+                                  border: '1px solid #facc15',
+                                  fontSize: '0.74rem'
+                                }}
+                              >
+                                <i className="bi bi-calendar-check-fill text-warning me-1"></i>
+                                Stand: 19.08.2019 (Ver. 003)
+                              </span>
+                              <span className="badge rounded-pill bg-white text-secondary border px-2 py-1" style={{ fontSize: '0.7rem' }}>
+                                4 Seiten
+                              </span>
+                            </div>
+
+                            <p className="text-secondary small mb-2.5" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
+                              Offizielle UKF Verfahrensanweisung für Isolationsformen, PSA-Schutzkleidung (Kittel, Handschuhe, MNS/FFP2), Farbleitsystem &amp; Schlussdesinfektion.
+                            </p>
+
+                            <div className="d-flex flex-wrap gap-1 mb-3">
+                              <span className="badge rounded-pill bg-white text-primary border border-info border-opacity-50" style={{ fontSize: '0.68rem' }}>
+                                🚪 Farbleitsystem
+                              </span>
+                              <span className="badge rounded-pill bg-white text-primary border border-info border-opacity-50" style={{ fontSize: '0.68rem' }}>
+                                🧤 PSA-Vorgaben
+                              </span>
+                              <span className="badge rounded-pill bg-white text-primary border border-info border-opacity-50" style={{ fontSize: '0.68rem' }}>
+                                🧼 Schlussdesinfektion
+                              </span>
+                            </div>
+
+                            <div className="d-grid gap-1.5">
+                              <a
+                                href="assets/isolation-sop-verfahrensanweisung.pdf"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn btn-sm rounded-pill py-2 px-3 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2 text-white"
+                                style={{
+                                  background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+                                  minHeight: '40px',
+                                  fontSize: '0.84rem'
+                                }}
+                              >
+                                <i className="bi bi-box-arrow-up-right"></i>
+                                <span>1. SOP im Vollbild öffnen (4 S.)</span>
+                              </a>
+                              <a
+                                href="assets/isolation-sop-verfahrensanweisung.pdf"
+                                download
+                                className="btn btn-sm btn-outline-primary rounded-pill py-1.5 px-3 fw-semibold d-flex align-items-center justify-content-center gap-1.5 bg-white"
+                                style={{ fontSize: '0.76rem', borderColor: '#bae6fd' }}
+                              >
+                                <i className="bi bi-download"></i>
+                                <span>PDF herunterladen</span>
+                              </a>
+                            </div>
                           </div>
-                        )}
-                        <div className="text-muted small mb-3">
-                          {activeDoc
-                            ? `${activeDoc.lead} • roXtra ID: ${activeDoc.roXtraId}`
-                            : (standard.id === 'zvk'
-                              ? 'Offizielle Verfahrensanweisung ZVK (10 Seiten) • roXtra ID: 391904'
-                              : 'Allgemeines Vorgehen bei Isolation und Reinigung (4 Seiten) • roXtra ID: 239411')}
-                        </div>
 
-                        <div className="alert alert-info py-2 px-3 small text-start d-flex align-items-center gap-2 mb-3">
-                          <i className="bi bi-phone text-info fs-5 flex-shrink-0"></i>
-                          <span style={{ fontSize: '0.8rem' }}>Für flüssiges Scrollen &amp; Zoom am Smartphone tippen Sie auf den Button, um das PDF im systemeigenen PDF-Viewer zu öffnen.</span>
-                        </div>
+                          {/* CARD 2: HYGIENEPLAN MRE (ERREGERSPEZIFISCH) */}
+                          <div
+                            className="p-3 bg-white rounded-4 shadow-sm text-start position-relative overflow-hidden"
+                            style={{
+                              border: '1.5px solid #86efac',
+                              background: 'linear-gradient(150deg, #ffffff 0%, #f0fdf4 60%, #dcfce7 100%)'
+                            }}
+                          >
+                            <div className="d-flex align-items-center justify-content-between gap-2 mb-2">
+                              <div className="d-flex align-items-center gap-2">
+                                <span
+                                  className="rounded-circle d-inline-flex align-items-center justify-content-center text-white shadow-2xs flex-shrink-0"
+                                  style={{
+                                    width: '32px',
+                                    height: '32px',
+                                    background: 'linear-gradient(135deg, #0d9488 0%, #047857 100%)'
+                                  }}
+                                >
+                                  <i className="bi bi-shield-check"></i>
+                                </span>
+                                <div>
+                                  <span className="badge bg-white text-success border border-success border-opacity-25 rounded-pill px-2 py-0.5 fw-bold" style={{ fontSize: '0.68rem', letterSpacing: '0.3px' }}>
+                                    DOKUMENT 2 &bull; ERREGERSPEZIFISCH
+                                  </span>
+                                </div>
+                              </div>
+                              <span className="badge font-monospace bg-white text-dark border px-2 py-1 rounded-pill small" style={{ fontSize: '0.72rem' }}>
+                                roXtra: <strong>361678</strong>
+                              </span>
+                            </div>
 
-                        <div className="d-grid gap-2">
-                          <a
-                            href={pdfUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-danger rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-bold shadow-sm"
-                          >
-                            <i className="bi bi-box-arrow-up-right fs-5"></i>
-                            <span>PDF im Vollbild öffnen ({activeDoc ? `${activeDoc.pageCount} S.` : (standard.id === 'zvk' ? '10 S.' : '4 S.')})</span>
-                          </a>
-                          <a
-                            href={pdfUrl}
-                            download
-                            className="btn btn-outline-secondary rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-semibold small"
-                          >
-                            <i className="bi bi-download"></i>
-                            <span>PDF Datei herunterladen</span>
-                          </a>
+                            <h6 className="fw-bold mb-1.5" style={{ color: '#047857', fontSize: '0.96rem', lineHeight: 1.3 }}>
+                              Hygieneplan: Umgang mit multiresistenten Erregern (MRE)
+                            </h6>
+
+                            <div className="d-flex flex-wrap align-items-center gap-1.5 mb-2">
+                              <span
+                                className="badge rounded-pill fw-bold shadow-2xs"
+                                style={{
+                                  backgroundColor: '#a7f3d0',
+                                  color: '#064e3b',
+                                  border: '1px solid #34d399',
+                                  fontSize: '0.74rem'
+                                }}
+                              >
+                                <i className="bi bi-calendar-check-fill text-success me-1"></i>
+                                Aktueller Stand: 02.2026 (Ver. 012)
+                              </span>
+                              <span className="badge rounded-pill bg-white text-secondary border px-2 py-1" style={{ fontSize: '0.7rem' }}>
+                                5 Seiten
+                              </span>
+                            </div>
+
+                            <p className="text-secondary small mb-2.5" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
+                              Erregerspezifischer Hygieneplan für Stationen, ITS/IMC, Hämatologie-Onkologie &amp; Neonatologie bei Nachweis von MRSA, VRE, 3/4-MRGN sowie Clostridioides difficile.
+                            </p>
+
+                            <div className="d-flex flex-wrap gap-1 mb-3">
+                              <span className="badge rounded-pill bg-white text-success border border-success border-opacity-50" style={{ fontSize: '0.68rem' }}>
+                                🦠 MRSA &bull; VRE &bull; MRGN
+                              </span>
+                              <span className="badge rounded-pill bg-white text-success border border-success border-opacity-50" style={{ fontSize: '0.68rem' }}>
+                                🏥 ITS / IMC &bull; Hämatologie
+                              </span>
+                              <span className="badge rounded-pill bg-white text-success border border-success border-opacity-50" style={{ fontSize: '0.68rem' }}>
+                                🛡️ Spezifische Sanierung
+                              </span>
+                            </div>
+
+                            <div className="d-grid gap-1.5">
+                              <a
+                                href="assets/hygieneplan-multiresistente-erreger.pdf"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn btn-sm rounded-pill py-2 px-3 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2 text-white"
+                                style={{
+                                  background: 'linear-gradient(135deg, #0d9488 0%, #047857 100%)',
+                                  minHeight: '40px',
+                                  fontSize: '0.84rem'
+                                }}
+                              >
+                                <i className="bi bi-box-arrow-up-right"></i>
+                                <span>2. Hygieneplan im Vollbild öffnen (5 S.)</span>
+                              </a>
+                              <a
+                                href="assets/hygieneplan-multiresistente-erreger.pdf"
+                                download
+                                className="btn btn-sm btn-outline-success rounded-pill py-1.5 px-3 fw-semibold d-flex align-items-center justify-content-center gap-1.5 bg-white"
+                                style={{ fontSize: '0.76rem', borderColor: '#a7f3d0' }}
+                              >
+                                <i className="bi bi-download"></i>
+                                <span>PDF herunterladen</span>
+                              </a>
+                            </div>
+                          </div>
+
+                          <div className="text-center text-muted small" style={{ fontSize: '0.72rem' }}>
+                            <i className="bi bi-info-circle me-1 text-primary"></i>
+                            Beide Dokumente sind offizielle QM-Vorgaben der Universitätsmedizin Frankfurt.
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        /* SINGLE DOCUMENT (ZVK & other standards) */
+                        <div className="bg-white p-3 rounded-4 shadow-sm border mb-2">
+                          <div className="d-inline-flex p-3 rounded-circle bg-danger bg-opacity-10 text-danger mb-2">
+                            <i className="bi bi-file-earmark-pdf-fill fs-1"></i>
+                          </div>
+                          <h6 className="fw-bold text-dark mb-1">
+                            {activeDoc ? activeDoc.title : standard.topic}
+                          </h6>
+                          {activeDoc && activeDoc.date && (
+                            <div
+                              className="d-inline-flex align-items-center gap-1.5 px-3 py-1.5 rounded-pill mb-2 fw-bold shadow-2xs"
+                              style={{
+                                background: 'linear-gradient(135deg, #fef08a 0%, #fde047 100%)',
+                                color: '#713f12',
+                                border: '1.5px solid #eab308',
+                                fontSize: '0.8rem'
+                              }}
+                            >
+                              <i className="bi bi-calendar-check-fill text-warning"></i>
+                              <span>Gültiger Stand: {activeDoc.date} {activeDoc.version ? `(Ver. ${activeDoc.version})` : ''}</span>
+                            </div>
+                          )}
+                          <div className="text-muted small mb-3">
+                            {activeDoc
+                              ? `${activeDoc.lead} • roXtra ID: ${activeDoc.roXtraId}`
+                              : (standard.id === 'zvk'
+                                ? 'Offizielle Verfahrensanweisung ZVK (10 Seiten) • roXtra ID: 391904'
+                                : 'Allgemeines Vorgehen bei Isolation und Reinigung (4 Seiten) • roXtra ID: 239411')}
+                          </div>
+
+                          <div className="alert alert-info py-2 px-3 small text-start d-flex align-items-center gap-2 mb-3">
+                            <i className="bi bi-phone text-info fs-5 flex-shrink-0"></i>
+                            <span style={{ fontSize: '0.8rem' }}>Für flüssiges Scrollen &amp; Zoom am Smartphone tippen Sie auf den Button, um das PDF im systemeigenen PDF-Viewer zu öffnen.</span>
+                          </div>
+
+                          <div className="d-grid gap-2">
+                            <a
+                              href={pdfUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-danger rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-bold shadow-sm"
+                            >
+                              <i className="bi bi-box-arrow-up-right fs-5"></i>
+                              <span>PDF im Vollbild öffnen ({activeDoc ? `${activeDoc.pageCount} S.` : (standard.id === 'zvk' ? '10 S.' : '4 S.')})</span>
+                            </a>
+                            <a
+                              href={pdfUrl}
+                              download
+                              className="btn btn-outline-secondary rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-semibold small"
+                            >
+                              <i className="bi bi-download"></i>
+                              <span>PDF Datei herunterladen</span>
+                            </a>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
