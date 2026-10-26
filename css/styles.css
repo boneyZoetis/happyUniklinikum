@@ -1927,10 +1927,11 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 .gap-2\.5 { gap: 0.625rem !important; }
 .g-2\.5 { --bs-gutter-x: 0.625rem; --bs-gutter-y: 0.625rem; }
 
-/* Mobile view: A4 Universal-Karte & format switch segmented control are desktop-only */
+/* Mobile view: A4 Universal-Karte, format switcher, and top action buttons are desktop-only */
 @media (max-width: 767.98px) {
   #universal-card-a4-printable,
-  .mobile-segmented-control {
+  .mobile-segmented-control,
+  .universal-card-top-actions {
     display: none !important;
   }
 }

@@ -3973,8 +3973,8 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           </button>
         </div>
 
-        {/* Right: Symmetrical Action Buttons */}
-        <div className="d-grid d-lg-flex align-items-center gap-1.5" style={{ gridTemplateColumns: '1fr 1fr 1fr' }}>
+        {/* Right: Symmetrical Action Buttons (Desktop only: hidden in mobile view) */}
+        <div className="universal-card-top-actions d-none d-md-flex align-items-center gap-1.5">
           <button
             className="btn btn-primary btn-sm rounded-pill px-2.5 py-1 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5"
             style={{ minHeight: '36px', fontSize: '0.78rem' }}
