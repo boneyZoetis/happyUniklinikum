@@ -3910,8 +3910,8 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           </a>
         </div>
 
-        {/* Center: Format Selector Pills */}
-        <div className="mobile-segmented-control mx-auto mx-lg-auto w-100" role="group" style={{ maxWidth: '460px', padding: '0.2rem' }}>
+        {/* Center: Format Selector Pills (Desktop only: hidden on mobile) */}
+        <div className="mobile-segmented-control mx-auto mx-lg-auto w-100 d-none d-md-flex" role="group" style={{ maxWidth: '460px', padding: '0.2rem' }}>
           <button
             type="button"
             className={`btn btn-sm ${effectiveFormat === 'atm' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
@@ -4162,11 +4162,24 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                   </button>
                 </div>
 
-                {/* Print ATM Card */}
+                {/* Print ATM Card on Desktop / PDF Download on Mobile */}
                 <div className="col-6 col-sm-12">
+                  {/* Shown in Mobile View (< 768px): PDF Button replaces Drucken */}
                   <button
                     type="button"
-                    className="btn btn-sm btn-dark rounded-pill py-2 px-3 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-2 w-100"
+                    className="btn btn-sm btn-primary rounded-pill py-2 px-3 shadow-sm fw-bold d-flex d-md-none align-items-center justify-content-center gap-2 w-100"
+                    style={{ minHeight: '40px', fontSize: '0.82rem' }}
+                    onClick={() => downloadPdf('atm')}
+                    title="Universal-Pocketcard als PDF-Dokument herunterladen"
+                  >
+                    <i className="bi bi-file-earmark-arrow-down-fill"></i>
+                    <span>PDF</span>
+                  </button>
+
+                  {/* Shown in Desktop View (>= 768px): Print Button */}
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-dark rounded-pill py-2 px-3 shadow-sm fw-bold d-none d-md-flex align-items-center justify-content-center gap-2 w-100"
                     style={{ minHeight: '40px', fontSize: '0.82rem' }}
                     onClick={() => handlePrint('atm')}
                     title="Nur die Scheckkarte drucken"
