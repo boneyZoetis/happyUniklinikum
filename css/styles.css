@@ -1215,8 +1215,9 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   border-left: 1px solid rgba(0, 39, 61, 0.08);
 }
 
-.atm-cutout-hint {
-  display: none;
+.atm-cutout-hint,
+.atm-pdf-only {
+  display: none !important;
 }
 
 /* =========================================================
@@ -1735,55 +1736,84 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     display: none !important;
   }
 
-  /* --- 1. Universal-Karte A4 Print Mode Isolation (Full Page DIN A4 Landscape) --- */
+  /* --- 1. Universal-Karte A4 Print Mode Isolation (Full Page DIN A4 Landscape with 1 cm / 10 mm border) --- */
   body.printing-a4 #universal-card-atm-printable,
   body.active-format-a4:not(.printing-atm) #universal-card-atm-printable {
     display: none !important;
   }
 
+  body.printing-a4,
+  body.active-format-a4:not(.printing-atm) {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    height: 190mm !important;
+    max-height: 190mm !important;
+    overflow: hidden !important;
+  }
+
   body.printing-a4 #universal-card-a4-printable,
   body.active-format-a4:not(.printing-atm) #universal-card-a4-printable {
     display: block !important;
-    width: 297mm !important;
-    max-width: 297mm !important;
-    height: 210mm !important;
-    max-height: 210mm !important;
+    width: 277mm !important;
+    max-width: 277mm !important;
+    height: 190mm !important;
+    max-height: 190mm !important;
     margin: 0 auto !important;
     padding: 0 !important;
     border: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;
     page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-before: avoid !important;
     page-break-after: avoid !important;
+    break-after: avoid !important;
     background: #ffffff !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
   }
 
   body.printing-a4 .a4-native-card,
   body.active-format-a4:not(.printing-atm) .a4-native-card {
-    max-width: 297mm !important;
-    width: 297mm !important;
-    height: 210mm !important;
-    max-height: 210mm !important;
+    max-width: 277mm !important;
+    width: 277mm !important;
+    height: 190mm !important;
+    max-height: 190mm !important;
     box-shadow: none !important;
     border: none !important;
     border-radius: 0 !important;
     page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-before: avoid !important;
     page-break-after: avoid !important;
+    break-after: avoid !important;
     margin: 0 auto !important;
     padding: 0 !important;
     background: #ffffff !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
   }
 
   body.printing-a4 .a4-native-card img,
   body.active-format-a4:not(.printing-atm) .a4-native-card img {
-    width: 297mm !important;
-    height: 210mm !important;
-    max-width: 297mm !important;
-    max-height: 210mm !important;
-    object-fit: fill !important;
+    width: 277mm !important;
+    height: 190mm !important;
+    max-width: 277mm !important;
+    max-height: 190mm !important;
+    object-fit: contain !important;
     display: block !important;
-    margin: 0 !important;
+    margin: 0 auto !important;
     padding: 0 !important;
+  }
+
+  body.printing-a4 .footer-accent-bar,
+  body.active-format-a4:not(.printing-atm) .footer-accent-bar,
+  body.printing-a4 footer,
+  body.active-format-a4:not(.printing-atm) footer,
+  body.printing-a4 .modern-footer,
+  body.active-format-a4:not(.printing-atm) .modern-footer {
+    display: none !important;
   }
 
   body.printing-a4 .universal-card-hotspot,
@@ -1817,7 +1847,7 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     max-width: 120mm !important;
     height: 80mm !important;
     min-height: 80mm !important;
-    margin: 25mm auto 10mm auto !important;
+    margin: 2.5mm auto !important;
     border: 1.5px dashed #004767 !important;
     border-radius: 4mm !important;
     box-shadow: none !important;
@@ -1853,9 +1883,26 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   body.active-format-atm:not(.printing-a4) .atm-cutout-hint {
     display: block !important;
     text-align: center !important;
-    font-size: 9pt !important;
+    font-size: 7.5pt !important;
     color: #475569 !important;
-    margin-top: 4mm !important;
+    margin-top: 1mm !important;
+    margin-bottom: 1.5mm !important;
+  }
+
+  body.printing-atm #universal-card-atm-printable .d-flex.justify-content-center,
+  body.active-format-atm:not(.printing-a4) #universal-card-atm-printable .d-flex.justify-content-center {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  body.printing-atm .atm-pdf-only,
+  body.active-format-atm:not(.printing-a4) .atm-pdf-only {
+    display: block !important;
+  }
+
+  body.printing-atm #universal-card-atm-printable .border-bottom,
+  body.active-format-atm:not(.printing-a4) #universal-card-atm-printable .border-bottom {
+    display: none !important;
   }
 }
 
@@ -1879,3 +1926,11 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 .gap-1\.5 { gap: 0.375rem !important; }
 .gap-2\.5 { gap: 0.625rem !important; }
 .g-2\.5 { --bs-gutter-x: 0.625rem; --bs-gutter-y: 0.625rem; }
+
+/* Mobile view: A4 Universal-Karte is desktop-only */
+@media (max-width: 767.98px) {
+  #universal-card-a4-printable {
+    display: none !important;
+  }
+}
+

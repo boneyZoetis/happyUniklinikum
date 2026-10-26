@@ -3585,7 +3585,7 @@ function UniversalCardA4Native({ onSelectStandard }) {
   return (
     <div className="a4-native-card mx-auto position-relative overflow-hidden" id="universal-card-a4-sheet">
       <img
-        src="assets/universal-card-a4.jpg?v=20261020-02"
+        src="assets/universal-card-a4.jpg?v=20261026-10"
         alt="Universitätsklinikum Frankfurt - Klinische Pflegestandards Universal-Pocketcard DIN A4"
         className="w-100 h-auto d-block a4-card-main-img"
       />
@@ -3651,6 +3651,19 @@ function UniversalCardA4Native({ onSelectStandard }) {
 
 function UniversalCardView({ standards, onSelectStandard, showToast }) {
   const [cardFormat, setCardFormat] = useState('atm'); // 'both' | 'a4' | 'atm'
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const effectiveFormat = isMobile ? 'atm' : cardFormat;
   const list = Object.values(standards);
   const cardUrl = (typeof window !== 'undefined' && window.location)
     ? `${window.location.origin}${window.location.pathname}#/quick-hub`
@@ -3705,6 +3718,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
   // Synchronize active format class to document body for automatic Ctrl+P isolation
   useEffect(() => {
+    const activeFmt = isMobile ? 'atm' : cardFormat;
     document.body.classList.remove('active-format-a4', 'active-format-atm');
     let dynStyle = document.getElementById('dynamic-card-page-style');
     if (!dynStyle) {
@@ -3712,23 +3726,24 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
       dynStyle.id = 'dynamic-card-page-style';
       document.head.appendChild(dynStyle);
     }
-    if (cardFormat === 'atm') {
+    if (activeFmt === 'atm') {
       document.body.classList.add('active-format-atm');
       dynStyle.textContent = `@media print { @page { size: portrait; margin: 10mm; } }`;
     } else {
       document.body.classList.add('active-format-a4');
-      dynStyle.textContent = `@media print { @page { size: A4 landscape; margin: 0; } body, html { margin: 0 !important; padding: 0 !important; } }`;
+      dynStyle.textContent = `@media print { @page { size: A4 landscape; margin: 10mm; } html, body { margin: 0 !important; padding: 0 !important; height: 190mm !important; max-height: 190mm !important; overflow: hidden !important; } }`;
     }
     return () => {
       document.body.classList.remove('active-format-a4', 'active-format-atm', 'printing-a4', 'printing-atm');
       const s = document.getElementById('dynamic-card-page-style');
       if (s) s.remove();
     };
-  }, [cardFormat]);
+  }, [cardFormat, isMobile]);
 
   // Guaranteed print isolation: Only the chosen card is sent to the printer
   const handlePrint = (format) => {
-    const isAtm = format === 'atm';
+    const targetFormat = isMobile ? 'atm' : (format || effectiveFormat);
+    const isAtm = targetFormat === 'atm';
     document.body.classList.remove('printing-a4', 'printing-atm');
     document.body.classList.add(isAtm ? 'printing-atm' : 'printing-a4');
 
@@ -3741,7 +3756,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
     if (isAtm) {
       dynStyle.textContent = `@media print { @page { size: portrait; margin: 10mm; } }`;
     } else {
-      dynStyle.textContent = `@media print { @page { size: A4 landscape; margin: 0; } body, html { margin: 0 !important; padding: 0 !important; } }`;
+      dynStyle.textContent = `@media print { @page { size: A4 landscape; margin: 10mm; } html, body { margin: 0 !important; padding: 0 !important; height: 190mm !important; max-height: 190mm !important; overflow: hidden !important; } }`;
     }
 
     const cleanup = () => {
@@ -3756,7 +3771,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
   const downloadCardImage = () => {
     const a = document.createElement('a');
-    const isAtm = cardFormat === 'atm';
+    const isAtm = isMobile || cardFormat === 'atm';
     a.href = isAtm ? 'assets/universal-card-12x8.jpg' : 'assets/universal-card-a4.jpg';
     a.download = isAtm ? 'UMF-Universal-Pocketcard-12x8cm.jpg' : 'UMF-Universal-Pocketcard-A4.jpg';
     a.click();
@@ -3764,7 +3779,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
   };
 
   const downloadPdf = (format = cardFormat) => {
-    const targetFormat = format === 'both' ? 'a4' : format;
+    const targetFormat = isMobile ? 'atm' : (format === 'both' ? 'a4' : format);
     const isAtm = targetFormat === 'atm';
     const elementId = isAtm ? 'universal-card-atm-printable' : 'universal-card-a4-sheet';
     const element = document.getElementById(elementId) || document.getElementById('universal-card-a4-printable');
@@ -3772,13 +3787,13 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
       handlePrint(targetFormat);
       return;
     }
-    showToast(isAtm ? 'Pocketcard-PDF (12 × 8 cm) wird erstellt...' : 'A4 Universal-Pocketcard PDF wird erstellt...');
+    showToast(isAtm ? 'Pocketcard-PDF (3× auf A4) wird erstellt...' : 'A4 Universal-Pocketcard PDF wird erstellt...');
     if (window.html2pdf) {
       const savedScrollX = window.scrollX || window.pageXOffset || 0;
       const savedScrollY = window.scrollY || window.pageYOffset || 0;
       window.scrollTo(0, 0);
       const opt = {
-        margin: isAtm ? [10, 10, 10, 10] : [0, 0, 0, 0],
+        margin: isAtm ? [6, 10, 6, 10] : [10, 10, 10, 10],
         filename: isAtm ? 'UMF-Universal-Pocketcard-12x8cm.pdf' : 'UMF-Universal-Pocketcard-A4.pdf',
         image: { type: 'jpeg', quality: 1.0 },
         pagebreak: { mode: [] },
@@ -3794,12 +3809,61 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
         .toContainer()
         .then(() => {
           if (worker.prop.overlay) {
-            worker.prop.overlay.style.cssText = 'position:fixed !important;top:0px !important;left:0px !important;right:auto !important;bottom:auto !important;width:1150px !important;height:auto !important;overflow:visible !important;opacity:0 !important;pointer-events:none !important;z-index:-9999 !important;background:#ffffff !important;';
+            worker.prop.overlay.style.cssText = isAtm
+              ? 'position:fixed !important;top:0px !important;left:0px !important;right:auto !important;bottom:auto !important;width:760px !important;height:auto !important;overflow:visible !important;opacity:0 !important;pointer-events:none !important;z-index:-9999 !important;background:#ffffff !important;'
+              : 'position:fixed !important;top:0px !important;left:0px !important;right:auto !important;bottom:auto !important;width:1108px !important;height:760px !important;overflow:hidden !important;opacity:0 !important;pointer-events:none !important;z-index:-9999 !important;background:#ffffff !important;';
           }
           if (worker.prop.container) {
             worker.prop.container.style.margin = '0px';
             worker.prop.container.style.left = '0px';
             worker.prop.container.style.top = '0px';
+            if (isAtm) {
+              worker.prop.container.style.width = '760px';
+              worker.prop.container.style.maxWidth = '760px';
+              const clonedAtm = worker.prop.container.querySelector('#universal-card-atm-printable');
+              if (clonedAtm) {
+                clonedAtm.style.width = '760px';
+                clonedAtm.style.maxWidth = '760px';
+                clonedAtm.style.padding = '4px 0px';
+                clonedAtm.style.border = 'none';
+                clonedAtm.style.boxShadow = 'none';
+              }
+              const pdfOnlyElements = worker.prop.container.querySelectorAll('.atm-pdf-only');
+              pdfOnlyElements.forEach(el => {
+                el.style.display = 'block';
+              });
+              const cards = worker.prop.container.querySelectorAll('.universal-card-interactive-box.atm-size');
+              cards.forEach(c => {
+                c.style.width = '480px';
+                c.style.maxWidth = '480px';
+                c.style.height = '320px';
+                c.style.margin = '4px auto';
+                c.style.border = '1.5px dashed #004767';
+                c.style.borderRadius = '8px';
+                c.style.boxShadow = 'none';
+              });
+              const hints = worker.prop.container.querySelectorAll('.atm-cutout-hint');
+              hints.forEach(h => {
+                h.style.display = 'block';
+                h.style.fontSize = '10px';
+                h.style.textAlign = 'center';
+                h.style.color = '#64748b';
+                h.style.margin = '1px 0 4px 0';
+              });
+            } else {
+              // A4 Landscape Single Page Isolation with 1 cm (10mm) border
+              worker.prop.container.style.cssText = 'position:relative !important;top:0px !important;left:0px !important;right:auto !important;margin:0px !important;padding:0px !important;width:1108px !important;height:760px !important;max-height:760px !important;overflow:hidden !important;background:#ffffff !important;opacity:1 !important;visibility:visible !important;';
+              const clonedSheet = worker.prop.container.querySelector('#universal-card-a4-sheet') || worker.prop.container.querySelector('.a4-native-card') || worker.prop.container;
+              if (clonedSheet) {
+                clonedSheet.style.cssText = 'width:1108px !important;max-width:1108px !important;height:760px !important;max-height:760px !important;margin:0px !important;padding:0px !important;border:none !important;border-radius:0px !important;box-shadow:none !important;overflow:hidden !important;background:#ffffff !important;';
+              }
+              const img = worker.prop.container.querySelector('img.a4-card-main-img') || worker.prop.container.querySelector('img');
+              if (img) {
+                img.style.cssText = 'width:1108px !important;max-width:1108px !important;height:760px !important;max-height:760px !important;object-fit:contain !important;display:block !important;margin:0 auto !important;padding:0 !important;';
+              }
+              const hotspots = worker.prop.container.querySelectorAll('.universal-card-hotspot');
+              hotspots.forEach(h => { h.style.display = 'none'; });
+            }
           }
         })
         .then(() => worker.toCanvas())
@@ -3807,7 +3871,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
         .then(() => worker.save())
         .then(() => {
           window.scrollTo(savedScrollX, savedScrollY);
-          showToast(isAtm ? 'Pocketcard-PDF (12 × 8 cm) erfolgreich heruntergeladen!' : 'A4 Universal-Pocketcard PDF erfolgreich heruntergeladen!');
+          showToast(isAtm ? 'Pocketcards-PDF (3× auf A4) erfolgreich heruntergeladen!' : 'A4 Universal-Pocketcard PDF erfolgreich heruntergeladen!');
         })
         .catch((err) => {
           console.error('PDF error:', err);
@@ -3821,6 +3885,21 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
   return (
     <div className="py-2">
+      {/* Mobile Header Banner (SOP & Expertenstandards Schnellwahl – Exact match to requested banner) */}
+      <div className="d-block d-md-none mb-2.5 no-print" data-html2canvas-ignore="true">
+        <div
+          className="rounded-4 overflow-hidden shadow-sm"
+          style={{ border: '1px solid rgba(147, 197, 253, 0.7)' }}
+        >
+          <img
+            src="assets/qh-header-banner.jpg"
+            alt="SOP & Expertenstandards Schnellwahl – Universitätsmedizin Frankfurt"
+            className="w-100 d-block"
+            style={{ height: 'auto', objectFit: 'cover' }}
+          />
+        </div>
+      </div>
+
       {/* Top Action Toolbar (Mobile & Desktop Responsive) */}
       <div className="d-flex flex-column flex-lg-row justify-content-between align-items-stretch align-items-lg-center mb-2 gap-2 no-print">
         {/* Left: Back Button */}
@@ -3835,10 +3914,10 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
         <div className="mobile-segmented-control mx-auto mx-lg-auto w-100" role="group" style={{ maxWidth: '460px', padding: '0.2rem' }}>
           <button
             type="button"
-            className={`btn btn-sm ${cardFormat === 'atm' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
+            className={`btn btn-sm ${effectiveFormat === 'atm' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
             style={{ fontSize: '0.76rem', minHeight: '34px', padding: '0.2rem 0.5rem' }}
             onClick={() => setCardFormat('atm')}
-            title="Kompaktes Pocketcard- / ATM-Format (12 × 8 cm) für Kitteltasche und Ausweishülle"
+            title="Kompaktes Pocketcard-Format (12 × 8 cm)"
           >
             <i className="bi bi-credit-card-2-front"></i>
             <span className="d-none d-sm-inline">Pocketcard (12 &times; 8 cm)</span>
@@ -3846,10 +3925,23 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           </button>
           <button
             type="button"
-            className={`btn btn-sm ${cardFormat === 'a4' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            style={{ fontSize: '0.76rem', minHeight: '34px', padding: '0.2rem 0.5rem' }}
-            onClick={() => setCardFormat('a4')}
-            title="A4-Format für Stationsaushang und Dokumentenmappe"
+            disabled={isMobile}
+            className={`btn btn-sm ${effectiveFormat === 'a4' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
+            style={{
+              fontSize: '0.76rem',
+              minHeight: '34px',
+              padding: '0.2rem 0.5rem',
+              opacity: isMobile ? 0.35 : 1,
+              cursor: isMobile ? 'not-allowed' : 'pointer'
+            }}
+            onClick={() => {
+              if (isMobile) {
+                showToast('A4-Format ist nur in der Desktop-Ansicht verfügbar');
+                return;
+              }
+              setCardFormat('a4');
+            }}
+            title={isMobile ? 'A4-Pocketcard ist nur in der Desktop-Ansicht verfügbar' : 'A4-Format für Stationsaushang und Dokumentenmappe'}
           >
             <i className="bi bi-file-earmark-text"></i>
             <span className="d-none d-sm-inline">A4-Pocketcard</span>
@@ -3857,10 +3949,23 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           </button>
           <button
             type="button"
-            className={`btn btn-sm ${cardFormat === 'both' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            style={{ fontSize: '0.76rem', minHeight: '34px', padding: '0.2rem 0.5rem' }}
-            onClick={() => setCardFormat('both')}
-            title="A4-Pocketcard und Scheckkarten-Format gleichzeitig anzeigen"
+            disabled={isMobile}
+            className={`btn btn-sm ${effectiveFormat === 'both' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
+            style={{
+              fontSize: '0.76rem',
+              minHeight: '34px',
+              padding: '0.2rem 0.5rem',
+              opacity: isMobile ? 0.35 : 1,
+              cursor: isMobile ? 'not-allowed' : 'pointer'
+            }}
+            onClick={() => {
+              if (isMobile) {
+                showToast('Seitenansicht ist nur in der Desktop-Ansicht verfügbar');
+                return;
+              }
+              setCardFormat('both');
+            }}
+            title={isMobile ? 'Seitenansicht ist nur in der Desktop-Ansicht verfügbar' : 'A4-Pocketcard und Scheckkarten-Format gleichzeitig anzeigen'}
           >
             <i className="bi bi-columns"></i>
             <span className="d-none d-sm-inline">Beide Formate</span>
@@ -3873,7 +3978,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           <button
             className="btn btn-primary btn-sm rounded-pill px-2.5 py-1 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5"
             style={{ minHeight: '36px', fontSize: '0.78rem' }}
-            onClick={() => downloadPdf(cardFormat === 'both' ? 'a4' : cardFormat)}
+            onClick={() => downloadPdf(isMobile ? 'atm' : (cardFormat === 'both' ? 'a4' : cardFormat))}
             title="Universal-Pocketcard als PDF-Dokument herunterladen"
           >
             <i className="bi bi-file-earmark-arrow-down-fill"></i>
@@ -3882,8 +3987,8 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           <button
             className="btn btn-dark btn-sm rounded-pill px-2.5 py-1 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5"
             style={{ minHeight: '36px', fontSize: '0.78rem' }}
-            onClick={() => handlePrint(cardFormat === 'atm' ? 'atm' : 'a4')}
-            title={cardFormat === 'atm' ? 'Nur Pocketcard (12 × 8 cm) drucken' : 'Nur A4-Pocketcard drucken'}
+            onClick={() => handlePrint(isMobile ? 'atm' : (cardFormat === 'atm' ? 'atm' : 'a4'))}
+            title={isMobile || cardFormat === 'atm' ? 'Nur Pocketcard (12 × 8 cm) drucken' : 'Nur A4-Pocketcard drucken'}
           >
             <i className="bi bi-printer-fill"></i>
             <span>Drucken</span>
@@ -3911,9 +4016,9 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
       {/* Main Container */}
       <div className="d-flex flex-column align-items-center justify-content-center my-1 gap-3">
-        {/* 1. THE A4-FORMAT UNIVERSAL POCKETCARD */}
-        {(cardFormat === 'a4' || cardFormat === 'both') && (
-          <div className="w-100 p-2 bg-white rounded-4 border shadow-sm" id="universal-card-a4-printable" style={{ maxWidth: '890px' }}>
+        {/* 1. THE A4-FORMAT UNIVERSAL POCKETCARD (Desktop Only) */}
+        {!isMobile && (effectiveFormat === 'a4' || effectiveFormat === 'both') && (
+          <div className="w-100 p-2 bg-white rounded-4 border shadow-sm d-none d-md-block" id="universal-card-a4-printable" style={{ maxWidth: '890px' }}>
             <div
               className="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center mb-2 px-3 py-2 rounded-3 gap-2 no-print shadow-sm"
               data-html2canvas-ignore="true"
@@ -3928,10 +4033,10 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                 </div>
                 <div className="min-w-0">
                   <h5 className="fw-bold mb-0 text-truncate" style={{ fontSize: '0.88rem', lineHeight: 1.2, color: '#00273d' }}>
-                    Universal-Pocketcard (DIN A4: 297 &times; 210 mm)
+                    Universal-Pocketcard
                   </h5>
                   <div className="text-truncate" style={{ fontSize: '0.72rem', lineHeight: 1.15, color: '#0c4a6e' }}>
-                    Universitätsmedizin Frankfurt &bull; <span style={{ color: '#1d4ed8', fontWeight: 700 }}>Exakte DIN-A4-Passform</span>
+                    Universitätsmedizin Frankfurt
                   </div>
                 </div>
               </div>
@@ -3963,22 +4068,19 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           </div>
         )}
 
-        {/* 2. THE POCKETCARD / ATM-FORMAT */}
-        {(cardFormat === 'atm' || cardFormat === 'both') && (
+        {/* 2. THE POCKETCARD / ATM-FORMAT (Always visible on mobile; on desktop visible for 'atm' or 'both') */}
+        {(isMobile || effectiveFormat === 'atm' || effectiveFormat === 'both') && (
           <div className="w-100 p-3 p-md-4 bg-white rounded-4 border shadow-sm d-flex flex-column align-items-center" id="universal-card-atm-printable" style={{ maxWidth: '540px' }}>
-            {/* Header Row: Properly aligned on both Mobile & Desktop */}
-            <div className="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom w-100 gap-2">
+            {/* Header Row: Shown on Website, hidden in PDF & Print */}
+            <div className="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom w-100 gap-2 no-print" data-html2canvas-ignore="true">
               <div className="d-flex align-items-center gap-2 min-w-0">
                 <div className="bg-light p-1 rounded-3 border d-flex align-items-center flex-shrink-0">
                   <img src="assets/umf-logo.jpg" alt="UMF" height="26" className="rounded" />
                 </div>
                 <div className="min-w-0">
                   <h5 className="fw-bold text-dark mb-0 text-truncate" style={{ fontSize: '0.92rem', lineHeight: 1.2 }}>
-                    Pocketcard- / ATM-Format (12 &times; 8 cm)
+                    Pocketcard
                   </h5>
-                  <div className="text-muted small text-truncate" style={{ fontSize: '0.72rem', lineHeight: 1.2 }}>
-                    Für Kitteltasche &amp; Ausweishülle (12 &times; 8 cm)
-                  </div>
                 </div>
               </div>
 
@@ -3987,14 +4089,31 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
               </span>
             </div>
 
-            {/* The Visual Card scaled to ATM size with Clickable Hotspots */}
+            {/* Pocketcard 1 (Shown on Website, PDF & Print) */}
             <div className="w-100 d-flex justify-content-center">
               <UniversalCardInteractiveCard isAtm={true} onSelectStandard={onSelectStandard} />
             </div>
 
-            {/* Print-only cutout guide */}
+            {/* Print/PDF-only cutout guide 1 */}
             <div className="atm-cutout-hint">
               ✂️ Entlang der gestrichelten Linie ausschneiden (Format: 12 &times; 8 cm)
+            </div>
+
+            {/* Pocketcards 2 & 3: ONLY shown in PDF and Print (Hidden on Website) */}
+            <div className="atm-pdf-only w-100">
+              <div className="w-100 d-flex justify-content-center mt-3 mt-print-0">
+                <UniversalCardInteractiveCard isAtm={true} onSelectStandard={onSelectStandard} />
+              </div>
+              <div className="atm-cutout-hint">
+                ✂️ Entlang der gestrichelten Linie ausschneiden (Format: 12 &times; 8 cm)
+              </div>
+
+              <div className="w-100 d-flex justify-content-center mt-3 mt-print-0">
+                <UniversalCardInteractiveCard isAtm={true} onSelectStandard={onSelectStandard} />
+              </div>
+              <div className="atm-cutout-hint">
+                ✂️ Entlang der gestrichelten Linie ausschneiden (Format: 12 &times; 8 cm)
+              </div>
             </div>
 
             {/* Symmetrical Share & Action Buttons (No 'Karte teilen' header text) */}
@@ -4060,7 +4179,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
               <div className="small text-muted text-center mt-2 pt-1" style={{ fontSize: '0.75rem' }}>
                 <i className="bi bi-check2-circle text-success me-1"></i>
-                Kompakt für Ausweis- &amp; Kitteltaschen &bull; 100% scannbar
+                Kompakt &bull; 100% scannbar
               </div>
             </div>
           </div>
