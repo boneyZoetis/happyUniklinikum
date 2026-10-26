@@ -3900,8 +3900,8 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
         </div>
       </div>
 
-      {/* Top Action Toolbar (Mobile & Desktop Responsive) */}
-      <div className="d-flex flex-column flex-lg-row justify-content-between align-items-stretch align-items-lg-center mb-2 gap-2 no-print">
+      {/* Top Action Toolbar (Desktop only: hidden in mobile view) */}
+      <div className="universal-card-top-toolbar d-none d-md-flex flex-column flex-lg-row justify-content-between align-items-stretch align-items-lg-center mb-2 gap-2 no-print">
         {/* Left: Back Button */}
         <div className="d-flex justify-content-between align-items-center gap-2">
           <a href="#/quick-hub" className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1 shadow-sm d-flex align-items-center gap-2 fw-semibold" style={{ minHeight: '36px', fontSize: '0.8rem' }}>
