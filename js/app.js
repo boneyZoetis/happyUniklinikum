@@ -3,7 +3,7 @@
  * Faithful digital replica of the Universitätsmedizin Frankfurt Pocketcards
  */
 
-const { useState, useEffect, useRef } = React;
+const { useState, useEffect, useRef, useMemo } = React;
 
 const UMF_STANDARDS = window.QRParser ? window.QRParser.UMF_STANDARDS : {};
 
@@ -275,14 +275,190 @@ function ScanModal({ isOpen, onClose, onSelectStandard, showToast }) {
   );
 }
 
+// -------------------------------------------------------------
+// Component: Clinical Secure Login Page
+// -------------------------------------------------------------
+function LoginPage({ onLogin, targetRoute }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+
+  const targetStandardName = useMemo(() => {
+    if (!targetRoute || targetRoute === 'home') return null;
+    if (targetRoute === 'dekubitus') return 'Dekubitusprophylaxe';
+    if (targetRoute === 'sturz') return 'Sturzprophylaxe';
+    if (targetRoute === 'schmerz') return 'Schmerzmanagement';
+    if (targetRoute === 'ernaehrung') return 'Ernährungsmanagement';
+    if (targetRoute === 'isolation') return 'Hygiene & Isolation';
+    if (targetRoute === 'zvk') return 'ZVK Intensivpflege SOP';
+    if (targetRoute === 'quick-hub') return 'Schnellzugriff Hub';
+    if (targetRoute === 'qrcodes') return 'Alle Pocketcards';
+    if (targetRoute === 'universal-karte' || targetRoute === 'magic-card') return 'Universal-Karte';
+    return targetRoute;
+  }, [targetRoute]);
+
+  const handleSubmit = (e) => {
+    if (e) e.preventDefault();
+    setError('');
+
+    const cleanUser = (username || '').trim().toLowerCase();
+    const cleanPass = (password || '').trim();
+
+    if (cleanUser === 'happy' && cleanPass === '2208') {
+      onLogin();
+    } else {
+      setError('Benutzername oder Passwort ist falsch. Bitte überprüfen Sie Ihre Eingaben.');
+    }
+  };
+
+  return (
+    <div className="login-screen-wrapper">
+      <div className="login-card">
+        {/* Header */}
+        <div className="text-center mb-3.5">
+          <div
+            className="d-inline-flex align-items-center justify-content-center rounded-circle mb-2.5 shadow-sm text-white"
+            style={{
+              width: '52px',
+              height: '52px',
+              background: 'linear-gradient(135deg, #0284c7 0%, #004767 100%)',
+              fontSize: '1.4rem'
+            }}
+          >
+            <i className="bi bi-shield-lock-fill"></i>
+          </div>
+          <h5 className="fw-bold text-dark mb-0.5" style={{ fontSize: '1.25rem', letterSpacing: '-0.2px' }}>
+            QM-Portal
+          </h5>
+          <p className="text-muted small mb-0" style={{ fontSize: '0.84rem' }}>
+            Digitale Pflege-Pocketcards &amp; SOP-Standards
+          </p>
+        </div>
+
+        {/* QR Code Scanned Notice (if opened via QR code) */}
+        {targetStandardName && (
+          <div className="alert alert-info py-2 px-3 small rounded-3 d-flex align-items-center gap-2 mb-3">
+            <i className="bi bi-qr-code-scan fs-5 text-primary flex-shrink-0"></i>
+            <div style={{ fontSize: '0.78rem', lineHeight: '1.3' }}>
+              <span className="fw-bold text-dark d-block">Gescannter Bereich: {targetStandardName}</span>
+              <span className="text-secondary">Nach der Anmeldung gelangen Sie direkt dorthin.</span>
+            </div>
+          </div>
+        )}
+
+        {/* Error Alert */}
+        {error && (
+          <div className="alert alert-danger py-2 px-3 small rounded-3 d-flex align-items-center gap-2 mb-3" role="alert">
+            <i className="bi bi-exclamation-triangle-fill text-danger flex-shrink-0"></i>
+            <span style={{ fontSize: '0.8rem' }}>{error}</span>
+          </div>
+        )}
+
+        {/* Login Form */}
+        <form onSubmit={handleSubmit}>
+          <div className="mb-2.5">
+            <label className="form-label small fw-bold text-dark mb-1">
+              Benutzername
+            </label>
+            <div className="login-input-group">
+              <span className="input-icon">
+                <i className="bi bi-person-fill"></i>
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Benutzername"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+                autoFocus
+                required
+              />
+            </div>
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label small fw-bold text-dark mb-1">
+              Passwort
+            </label>
+            <div className="login-input-group">
+              <span className="input-icon">
+                <i className="bi bi-lock-fill"></i>
+              </span>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                className="form-control"
+                placeholder="Passwort"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                className="btn btn-link text-muted pe-3 ps-1 text-decoration-none"
+                onClick={() => setShowPassword(!showPassword)}
+                title={showPassword ? 'Passwort verbergen' : 'Passwort anzeigen'}
+                tabIndex="-1"
+              >
+                <i className={`bi ${showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'}`}></i>
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="btn login-submit-btn w-100 d-flex align-items-center justify-content-center gap-2"
+          >
+            <i className="bi bi-box-arrow-in-right fs-5"></i>
+            <span>Anmelden</span>
+          </button>
+        </form>
+
+        {/* Safe internal access note */}
+        <div className="text-center mt-3 pt-2 border-top">
+          <div className="text-muted" style={{ fontSize: '0.72rem' }}>
+            <i className="bi bi-shield-check me-1 text-success"></i>
+            Geschützter interner QM-Bereich
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [currentRoute, setCurrentRoute] = useState('home'); // 'home' | 'dekubitus' | 'sturz' | 'schmerz' | 'ernaehrung' | 'zvk' | 'qrcodes'
   const [toast, setToast] = useState(null);
   const [isScanModalOpen, setIsScanModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    try {
+      return localStorage.getItem('umf_auth_session') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
 
   const showToast = (message) => {
     setToast(message);
     setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleLogin = () => {
+    try {
+      localStorage.setItem('umf_auth_session', 'true');
+    } catch (e) {}
+    setIsAuthenticated(true);
+    showToast('Erfolgreich angemeldet!');
+  };
+
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem('umf_auth_session');
+    } catch (e) {}
+    setIsAuthenticated(false);
+    showToast('Erfolgreich abgemeldet.');
   };
 
   // Sync hash routing & dynamic document.title
@@ -369,6 +545,22 @@ function App() {
 
   const isStandardRoute = ['dekubitus', 'sturz', 'schmerz', 'ernaehrung', 'zvk', 'isolation'].includes(currentRoute);
   const isMobileIsolatedRoute = isStandardRoute || currentRoute === 'universal-karte' || currentRoute === 'magic-card';
+
+  if (!isAuthenticated) {
+    return (
+      <>
+        <LoginPage onLogin={handleLogin} targetRoute={currentRoute} />
+        {toast && (
+          <div className="copy-feedback-toast">
+            <div className="alert alert-dark shadow-lg d-flex align-items-center gap-2 mb-0 py-2 px-3 border-0">
+              <i className="bi bi-info-circle-fill text-primary fs-5"></i>
+              <span>{toast}</span>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -477,6 +669,16 @@ function App() {
                   <span>Start</span>
                 </a>
               )}
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-danger rounded-pill px-2 py-1 d-inline-flex align-items-center gap-1 shadow-2xs"
+                style={{ minHeight: '32px', fontSize: '0.72rem' }}
+                onClick={handleLogout}
+                title="Abmelden"
+              >
+                <i className="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+              </button>
             </div>
           </div>
 
@@ -529,6 +731,20 @@ function App() {
               <i className="bi bi-droplet-half"></i>
               <span>ZVK SOP</span>
             </a>
+          </div>
+
+          {/* Desktop Logout Button */}
+          <div className="d-none d-lg-flex align-items-center gap-2 ms-auto flex-shrink-0">
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-danger rounded-pill px-3 py-1.5 d-inline-flex align-items-center gap-1.5 fw-semibold shadow-2xs"
+              style={{ minHeight: '36px', fontSize: '0.8rem' }}
+              onClick={handleLogout}
+              title="Vom QM-Portal abmelden"
+            >
+              <i className="bi bi-box-arrow-right"></i>
+              <span>Abmelden</span>
+            </button>
           </div>
         </div>
       </nav>
@@ -650,6 +866,18 @@ function App() {
             </span>
             <span>Universal Karte</span>
           </button>
+
+          <button
+            type="button"
+            className="mobile-footer-btn logout-btn"
+            onClick={handleLogout}
+            title="Abmelden"
+          >
+            <span className="mobile-footer-btn-icon text-danger">
+              <i className="bi bi-box-arrow-right"></i>
+            </span>
+            <span>Logout</span>
+          </button>
         </div>
       </footer>
 
@@ -740,8 +968,17 @@ function App() {
                   <div className="small text-white-50" style={{ fontSize: '0.75rem' }}>
                     Gültige klinische Versionen 2024–2026
                   </div>
-                  <div className="mt-2 pt-2 border-top border-secondary border-opacity-25 small text-white-50" style={{ fontSize: '0.72rem' }}>
-                    Offline &amp; Mobile Ready &bull; Standalone PWA
+                  <div className="mt-2 pt-2 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center text-white-50" style={{ fontSize: '0.72rem' }}>
+                    <span>Angemeldet als <strong>happy</strong></span>
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="btn btn-sm btn-outline-danger py-0.5 px-2 rounded-pill fw-semibold text-white border-danger"
+                      style={{ fontSize: '0.7rem' }}
+                      title="Abmelden"
+                    >
+                      <i className="bi bi-box-arrow-right me-1"></i>Logout
+                    </button>
                   </div>
                 </div>
               </div>
@@ -3046,7 +3283,7 @@ function PdfSlideCard({ standard, onCopy, onDownloadQr, onDownloadPdf }) {
 // Component: Dedicated Separate Page for Each Standard
 // -------------------------------------------------------------
 function StandardDetailPage({ standard, onNavigate, showToast }) {
-  const otherStandards = Object.values(UMF_STANDARDS).filter(s => s.id !== standard.id);
+  const allStandards = Object.values(UMF_STANDARDS);
 
   const copyToClipboard = (text, label = 'Text') => {
     navigator.clipboard.writeText(text).then(() => {
@@ -3082,18 +3319,25 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
   return (
     <div>
       {/* Top Breadcrumb & Switcher (Desktop/Tablet Only) */}
-      <div className="d-none d-md-flex flex-column gap-2 mb-3 no-print">
+      <div className="d-none d-md-flex flex-column gap-2.5 mb-3.5 no-print">
         <div className="d-flex justify-content-between align-items-center gap-2 w-100">
-          <a href="#/" className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5 fw-semibold" style={{ minHeight: '40px', fontSize: '0.82rem' }}>
-            <i className="bi bi-grid-fill"></i>
+          <a
+            href="#/"
+            className="btn-all-kacheln"
+            title="Zurück zur Übersicht aller 6 Expertenstandards"
+          >
+            <span className="icon-badge">
+              <i className="bi bi-grid-fill"></i>
+            </span>
             <span>Alle 6 Kacheln</span>
+            <i className="bi bi-arrow-left text-muted ms-1" style={{ fontSize: '0.82rem' }}></i>
           </a>
 
           {/* Grouped PDF & Print Button Pill */}
-          <div className="btn-group shadow-sm rounded-pill overflow-hidden" role="group">
+          <div className="btn-group shadow-sm rounded-pill overflow-hidden border border-primary border-opacity-25" role="group">
             <button
-              className="btn btn-primary btn-sm px-3 py-1.5 fw-semibold d-flex align-items-center gap-1.5"
-              style={{ minHeight: '40px', fontSize: '0.82rem' }}
+              className="btn btn-primary btn-sm px-3.5 py-1.5 fw-semibold d-flex align-items-center gap-1.5"
+              style={{ minHeight: '42px', fontSize: '0.82rem' }}
               onClick={() => downloadPdf(standard)}
               title="Aktuelle Ansicht als PDF-Dokument herunterladen"
             >
@@ -3102,8 +3346,8 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
               <span className="d-inline d-sm-none">PDF</span>
             </button>
             <button
-              className="btn btn-dark btn-sm px-3 py-1.5 fw-semibold d-flex align-items-center gap-1.5 border-start border-white border-opacity-25"
-              style={{ minHeight: '40px', fontSize: '0.82rem' }}
+              className="btn btn-dark btn-sm px-3.5 py-1.5 fw-semibold d-flex align-items-center gap-1.5 border-start border-white border-opacity-25"
+              style={{ minHeight: '42px', fontSize: '0.82rem' }}
               onClick={() => window.print()}
               title="Drucken / Als PDF drucken"
             >
@@ -3113,20 +3357,52 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
           </div>
         </div>
 
-        {/* Horizontally scrollable quick-switch pills for all other standards on desktop */}
-        <div className="nav-standards-scroll w-100 py-0.5">
-          {otherStandards.map(s => (
-            <button
-              key={s.id}
-              type="button"
-              className="btn btn-white bg-white btn-sm rounded-pill border px-2.5 py-1 text-dark shadow-sm flex-shrink-0 d-inline-flex align-items-center gap-1.5"
-              style={{ fontSize: '0.78rem', minHeight: '36px' }}
-              onClick={() => onNavigate(s.id)}
-            >
-              <i className={`bi ${s.icon}`} style={{ color: s.accentColor }}></i>
-              <span className="fw-semibold">{s.shortTitle}</span>
-            </button>
-          ))}
+        {/* Horizontally scrollable quick-switch pills for all standards on desktop */}
+        <div className="quick-switcher-bar w-100 py-1">
+          {allStandards.map(s => {
+            const isActive = s.id === standard.id;
+            return (
+              <button
+                key={s.id}
+                type="button"
+                className={`quick-switcher-pill ${s.id} ${isActive ? 'active' : ''}`}
+                style={
+                  isActive
+                    ? {
+                        background: s.bannerGradient || s.accentColor,
+                        borderColor: 'transparent',
+                        color: '#ffffff',
+                        boxShadow: `0 4px 14px ${s.accentColor}45`
+                      }
+                    : {
+                        borderColor: `${s.accentColor}35`,
+                        color: '#1e293b'
+                      }
+                }
+                onClick={() => onNavigate(s.id)}
+                title={isActive ? `${s.shortTitle} (Aktuell geöffnet)` : `Zu ${s.shortTitle} wechseln`}
+              >
+                <span
+                  className="icon-bubble"
+                  style={{
+                    backgroundColor: isActive ? 'rgba(255, 255, 255, 0.25)' : (s.badgeBg || `${s.accentColor}15`),
+                    color: isActive ? '#ffffff' : s.accentColor
+                  }}
+                >
+                  <i className={`bi ${s.icon}`}></i>
+                </span>
+                <span>{s.shortTitle}</span>
+                {isActive && (
+                  <span
+                    className="badge rounded-pill bg-white text-dark ms-1 shadow-2xs fw-bold text-uppercase"
+                    style={{ fontSize: '0.62rem', padding: '2.5px 6.5px', letterSpacing: '0.3px' }}
+                  >
+                    Aktiv
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
