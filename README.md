@@ -6,21 +6,21 @@ Eine spezialisierte Web-Anwendung für die **Universitätsmedizin Frankfurt (UMF
 
 ## Die 4 Expertenstandards
 
-1. 🟣 **Dekubitusprophylaxe in der Pflege** *(roXtra ID: 400139 / 400129)*
-2. 🟢 **Sturzprophylaxe in der Pflege** *(roXtra ID: 138896 / 275545)*
-3. 🟡 **Schmerzmanagement in der Pflege** *(roXtra ID: 399503 / 399486)*
-4. 🔵 **Ernährungsmanagement in der Pflege** *(roXtra ID: 408310 / 408331)*
+1. 🟣 **Dekubitusprophylaxe in der Pflege**
+2. 🟢 **Sturzprophylaxe in der Pflege**
+3. 🟡 **Schmerzmanagement in der Pflege**
+4. 🔵 **Ernährungsmanagement in der Pflege**
 
 ---
 
 ## Funktionen
 
-- **4 Kacheln Übersicht (`#/`)**: Direkte Übersicht aller vier Standards mit offiziellen Illustrationen, roXtra IDs und generierten QR-Codes.
+- **4 Kacheln Übersicht (`#/`)**: Direkte Übersicht aller vier Standards mit offiziellen Illustrationen und generierten QR-Codes.
 - **Dedizierte Einzelseiten**: Detailansicht jedes Standards mit:
   - Generiertem QR-Code in hoher Auflösung (zum Scannen oder als PNG-Download)
   - Eingebettetem YouTube-Schulungsvideo (16:9 responsive Player)
   - Offizieller klinischer Illustration
-  - roXtra Dokumenten-IDs mit 1-Klick-Kopierfunktion
+  - Direkter QM-Dokumentation & Handlungsschritten
   - Strukturierter Pflegeprozess-Handlungsleitfaden (4 Phasen)
 - **Pocketcards Druckansicht (`#/qrcodes`)**: Alle 4 Pocketcards mit QR-Codes auf einen Blick, optimiert für den Ausdruck (Kitteltasche).
 

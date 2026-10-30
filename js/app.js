@@ -238,15 +238,15 @@ function ScanModal({ isOpen, onClose, onSelectStandard, showToast }) {
                       onChange={handleFileUpload}
                     />
 
-                    {/* Quick roXtra Search */}
+                    {/* Quick Search */}
                     <div className="border-top pt-2">
-                      <div className="fw-bold small mb-2 text-dark">Oder roXtra ID / Suchbegriff eingeben:</div>
+                      <div className="fw-bold small mb-2 text-dark">Oder Thema / Suchbegriff eingeben:</div>
                       <form onSubmit={handleManualSubmit} className="input-group">
                         <input
                           type="text"
                           className="form-control"
                           style={{ minHeight: '42px' }}
-                          placeholder="z. B. 391904, 484866, ZVK"
+                          placeholder="z. B. Dekubitus, ZVK, Sturz"
                           value={manualInput}
                           onChange={(e) => setManualInput(e.target.value)}
                         />
@@ -255,7 +255,7 @@ function ScanModal({ isOpen, onClose, onSelectStandard, showToast }) {
                         </button>
                       </form>
                       <div className="small text-muted mt-2" style={{ fontSize: '0.72rem' }}>
-                        Tipp: <strong>391904</strong> (ZVK SOP), <strong>484866</strong> (Verbandswechsel), <strong>400139</strong> (Dekubitus)
+                        Tipp: <strong>ZVK</strong> (Verfahrensanweisung), <strong>Dekubitus</strong> (Pflegestandard), <strong>Sturz</strong> (Prophylaxe)
                       </div>
                     </div>
                   </div>
@@ -735,7 +735,7 @@ function App() {
                 <div className="footer-status-card p-3 rounded-3 text-start text-lg-end d-inline-block w-100 w-md-auto">
                   <div className="d-flex align-items-center gap-2 justify-content-lg-end mb-1">
                     <span className="live-status-dot"></span>
-                    <span className="small fw-bold text-white">roXtra QM-System</span>
+                    <span className="small fw-bold text-white">QM-System</span>
                   </div>
                   <div className="small text-white-50" style={{ fontSize: '0.75rem' }}>
                     Gültige klinische Versionen 2024–2026
@@ -1096,7 +1096,7 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
                 }}
               >
                 <div className="p-3 p-sm-4 d-flex flex-column h-100">
-                  {/* Header: Colorful Gradient Icon, Category Badge & roXtra ID */}
+                  {/* Header: Colorful Gradient Icon & Category Badge */}
                   <div className="d-flex flex-wrap justify-content-between align-items-center mb-2.5 gap-2">
                     <div className="d-flex align-items-center gap-2 min-w-0">
                       <div
@@ -1126,13 +1126,6 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
                         </span>
                       </div>
                     </div>
-
-                    <span
-                      className="badge bg-white text-secondary border font-monospace px-2.5 py-1 rounded-pill shadow-xs text-wrap"
-                      style={{ fontSize: '0.72rem', borderColor: enh.borderColor, lineHeight: '1.3' }}
-                    >
-                      roXtra: <strong className="text-dark">{std.roXtraIds.join(' / ')}</strong>
-                    </span>
                   </div>
 
                   {/* Title */}
@@ -1447,7 +1440,7 @@ function StandardA4PrintSheet({ standard }) {
       </div>
       <div className="d-flex justify-content-between align-items-center gap-2 pt-1 border-top text-muted" style={{ fontSize: '0.63rem' }}>
         <span className="text-truncate">Universitätsmedizin Frankfurt &bull; Pflegedirektion &bull; Expertenstandards im Pflegeprozess</span>
-        <span className="fw-semibold text-dark text-nowrap flex-shrink-0">QM-Dokumentation roXtra (ID: {standard.roXtraIds.join(', ')}) &bull; {pageLabel}</span>
+        <span className="fw-semibold text-dark text-nowrap flex-shrink-0">QM-Dokumentation &bull; {pageLabel}</span>
       </div>
     </div>
   );
@@ -1472,9 +1465,6 @@ function StandardA4PrintSheet({ standard }) {
                   {standard.topic}
                 </h4>
               </div>
-              <span className="badge bg-white text-dark border px-2 py-1 font-monospace flex-shrink-0" style={{ fontSize: '0.72rem' }}>
-                roXtra ID: <strong>{standard.roXtraIds.join(' / ')}</strong>
-              </span>
             </div>
             {standard.leadText && (
               <div className="text-dark fw-semibold mb-1" style={{ fontSize: '0.74rem', lineHeight: 1.32 }}>
@@ -1614,9 +1604,6 @@ function StandardA4PrintSheet({ standard }) {
                   {standard.topic} — Pflegeprozess &amp; Digitale Referenzen
                 </h5>
               </div>
-              <span className="badge bg-white text-dark border px-2 py-1 font-monospace flex-shrink-0" style={{ fontSize: '0.72rem' }}>
-                roXtra ID: <strong>{standard.roXtraIds.join(' / ')}</strong>
-              </span>
             </div>
           </div>
 
@@ -1702,7 +1689,7 @@ function StandardA4PrintSheet({ standard }) {
           <div className="a4-std-section-box">
             <div className="fw-bold text-dark text-uppercase mb-1.5 d-flex align-items-center gap-1.5" style={{ fontSize: '0.74rem' }}>
               <i className="bi bi-folder2-open text-primary"></i>
-              <span>QM-Dokumentation (roXtra) &amp; Klinische Gültigkeit:</span>
+              <span>QM-Dokumentation &amp; Klinische Gültigkeit:</span>
             </div>
             <div className="a4-std-two-col-grid" style={{ fontSize: '0.71rem', lineHeight: 1.35 }}>
               <div>
@@ -1710,7 +1697,7 @@ function StandardA4PrintSheet({ standard }) {
                 <div><strong>Standard / Thema:</strong> {standard.shortTitle}</div>
               </div>
               <div>
-                <div><strong>roXtra Dokumenten-IDs:</strong> <span className="font-monospace fw-bold">{standard.roXtraIds.join(', ')}</span></div>
+                <div><strong>Pflegestandard:</strong> Evidenzbasiert &bull; UMF QM-geprüft</div>
                 <div><strong>Gültigkeit:</strong> Klinikweit &bull; Stationäre &amp; Intensivpflege (Stand: 2026)</div>
               </div>
             </div>
@@ -1772,7 +1759,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
 
         {/* 2. Pocketcard Main Content Area */}
         <div className="p-3 p-sm-4 bg-white">
-          {/* Title & roXtra Identification */}
+          {/* Title & Document Identification */}
           <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 pb-2 border-bottom gap-2">
             <div>
               {standard.id === 'isolation' ? (
@@ -1817,23 +1804,6 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
               >
                 {standard.topic}
               </h4>
-            </div>
-            <div className="d-flex align-items-center gap-2 flex-shrink-0">
-              <span
-                className={`badge px-3 py-1.5 font-monospace rounded-pill shadow-2xs ${
-                  standard.id === 'isolation'
-                    ? 'bg-white border'
-                    : 'bg-light text-dark border'
-                }`}
-                style={{
-                  fontSize: '0.78rem',
-                  borderColor: standard.id === 'isolation' ? '#bae6fd' : undefined,
-                  color: standard.id === 'isolation' ? '#0369a1' : undefined
-                }}
-              >
-                <i className="bi bi-file-earmark-medical me-1.5 text-primary"></i>
-                roXtra: <strong>{standard.roXtraIds.join(' / ')}</strong>
-              </span>
             </div>
           </div>
 
@@ -1912,18 +1882,6 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                           </span>
                         </span>
                       )}
-                      <span
-                        className="badge bg-white px-3 py-1.5 small font-monospace rounded-pill shadow-2xs"
-                        style={{
-                          border: '1.5px solid #94a3b8',
-                          color: '#1e293b',
-                          fontSize: '0.8rem',
-                          fontWeight: '600'
-                        }}
-                      >
-                        <i className="bi bi-file-earmark-medical me-1 text-primary"></i>
-                        roXtra ID: <strong>{activeDoc ? activeDoc.roXtraId : standard.roXtraIds.join(' / ')}</strong>
-                      </span>
                     </div>
                   </div>
 
@@ -2118,9 +2076,6 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                                   </span>
                                 </div>
                               </div>
-                              <span className="badge font-monospace bg-white text-dark border px-2 py-1 rounded-pill small" style={{ fontSize: '0.72rem' }}>
-                                roXtra: <strong>239411</strong>
-                              </span>
                             </div>
 
                             <h6 className="fw-bold mb-1.5" style={{ color: '#0369a1', fontSize: '0.96rem', lineHeight: 1.3 }}>
@@ -2214,9 +2169,6 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                                   </span>
                                 </div>
                               </div>
-                              <span className="badge font-monospace bg-white text-dark border px-2 py-1 rounded-pill small" style={{ fontSize: '0.72rem' }}>
-                                roXtra: <strong>361678</strong>
-                              </span>
                             </div>
 
                             <h6 className="fw-bold mb-1.5" style={{ color: '#047857', fontSize: '0.96rem', lineHeight: 1.3 }}>
@@ -2314,10 +2266,10 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                           )}
                           <div className="text-muted small mb-3">
                             {activeDoc
-                              ? `${activeDoc.lead} • roXtra ID: ${activeDoc.roXtraId}`
+                              ? activeDoc.lead
                               : (standard.id === 'zvk'
-                                ? 'Offizielle Verfahrensanweisung ZVK (10 Seiten) • roXtra ID: 391904'
-                                : 'Allgemeines Vorgehen bei Isolation und Reinigung (4 Seiten) • roXtra ID: 239411')}
+                                ? 'Offizielle Verfahrensanweisung ZVK (10 Seiten)'
+                                : 'Allgemeines Vorgehen bei Isolation und Reinigung (4 Seiten)')}
                           </div>
 
                           <div className="alert alert-info py-2 px-3 small text-start d-flex align-items-center gap-2 mb-3">
@@ -2370,7 +2322,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                     <div className="d-flex align-items-center gap-2 small">
                       <i className="bi bi-file-earmark-check-fill text-success fs-6"></i>
                       <span className="text-secondary">
-                        Gültige Version im roXtra QM-System (ID {activeDoc ? activeDoc.roXtraId : standard.roXtraIds.join(' / ')})
+                        Gültige Version im QM-System
                       </span>
                       {activeDoc && activeDoc.date && (
                         <span
@@ -2564,13 +2516,13 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                   </div>
                 </div>
 
-                {/* roXtra footnote */}
+                {/* QM footnote */}
                 <div className="pt-2 border-top small text-muted d-flex align-items-center justify-content-between">
                   <span>
-                    <i className="bi bi-info-circle me-1"></i> QM-Verfahrensanweisung im roXtra
+                    <i className="bi bi-info-circle me-1"></i> QM-Verfahrensanweisung
                   </span>
-                  <span className="font-monospace text-dark fw-bold">
-                    IDs: {standard.roXtraIds.join(', ')}
+                  <span className="text-muted">
+                    Universitätsmedizin Frankfurt
                   </span>
                 </div>
               </div>
@@ -2680,7 +2632,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
           {/* 5. Pocketcard QM Footer */}
           <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center pt-2 border-top text-muted gap-1 text-center text-sm-start" style={{ fontSize: '0.72rem' }}>
             <span>Universitätsmedizin Frankfurt &bull; Pflegedirektion &bull; Expertenstandards im Pflegeprozess</span>
-            <span>QM-Dokumentation roXtra &bull; Stand: 2026</span>
+            <span>QM-Dokumentation &bull; Stand: 2026</span>
           </div>
 
           {/* 6. Action Toolbar (Only on screen, ignored when exporting PDF / printing) */}
@@ -2768,7 +2720,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                       {activeDoc ? activeDoc.title : (standard.title || standard.topic)}
                     </h6>
                     <div className="text-white-50 small" style={{ fontSize: '0.72rem' }}>
-                      Universitätsmedizin Frankfurt &bull; roXtra ID: {activeDoc ? activeDoc.roXtraId : standard.roXtraIds.join(' / ')} {activeDoc && activeDoc.date ? `• Stand: ${activeDoc.date} (Ver. ${activeDoc.version})` : ''} &bull; Scrolling &amp; Vollbild
+                      Universitätsmedizin Frankfurt {activeDoc && activeDoc.date ? `• Stand: ${activeDoc.date} (Ver. ${activeDoc.version})` : ''} &bull; Scrolling &amp; Vollbild
                     </div>
                   </div>
                 </div>
@@ -2999,7 +2951,7 @@ function PdfSlideCard({ standard, onCopy, onDownloadQr, onDownloadPdf }) {
       {/* Slide Content Area (Exact Layout from PDF) */}
       <div className="p-4 bg-white">
         <div className="row g-3 align-items-center">
-          {/* Left Box: Process intro, Colored Standard Pill, Instructions & roXtra */}
+          {/* Left Box: Process intro, Colored Standard Pill & Instructions */}
           <div className="col-lg-6 col-md-6">
             <div className="pdf-bordered-box">
               <p className="mb-0 text-dark fw-medium" style={{ fontSize: '1rem', lineHeight: '1.6' }}>
@@ -3011,27 +2963,10 @@ function PdfSlideCard({ standard, onCopy, onDownloadQr, onDownloadPdf }) {
                 {standard.topic}
               </div>
 
-              {/* Instructions and roXtra references */}
-              <p className="mb-3 text-dark" style={{ fontSize: '0.92rem', lineHeight: '1.55' }}>
+              {/* Instructions */}
+              <p className="mb-0 text-dark" style={{ fontSize: '0.92rem', lineHeight: '1.55' }}>
                 {standard.instructions}
               </p>
-
-              {/* Interactive 1-click copy chips */}
-              <div className="mt-auto pt-2 border-top d-flex flex-wrap align-items-center gap-2">
-                <span className="small text-muted fw-bold">roXtra:</span>
-                {standard.roXtraIds.map((id, i) => (
-                  <button
-                    key={i}
-                    className="roxtra-badge btn btn-sm py-1 px-2 border-0"
-                    onClick={() => onCopy(id, `roXtra ID ${id}`)}
-                    title="ID kopieren"
-                  >
-                    <i className="bi bi-file-text text-primary"></i>
-                    <span>ID: <strong>{id}</strong></span>
-                    <i className="bi bi-clipboard text-muted ms-1 small"></i>
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
 
@@ -3246,7 +3181,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                             Dokument 1: Allgemeines Vorgehen bei Isolation und Reinigung
                           </div>
                           <div className="text-muted mt-0.5" style={{ fontSize: '0.78rem' }}>
-                            roXtra ID: <strong className="text-dark">239411</strong> &bull; Freigabe: Kempf, Volkhard &bull; AutorInnen: Bayer, Comoli, Hiller, Lerche
+                            Freigabe: Kempf, Volkhard &bull; AutorInnen: Bayer, Comoli, Hiller, Lerche
                           </div>
                         </div>
                       </div>
@@ -3290,7 +3225,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                             Dokument 2: Hygieneplan: Umgang mit multiresistenten Erregern (MRE)
                           </div>
                           <div className="text-muted mt-0.5" style={{ fontSize: '0.78rem' }}>
-                            roXtra ID: <strong className="text-dark">361678</strong> &bull; Häma-Onko (Station+TK), ITS/IMC, Neonatologie
+                            Häma-Onko (Station+TK), ITS/IMC, Neonatologie
                           </div>
                         </div>
                       </div>
@@ -3508,23 +3443,23 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
 
                 <div className="p-3 bg-light rounded-3 border mb-3">
                   <div className="fw-bold small text-uppercase text-secondary mb-2">
-                    <i className="bi bi-folder2-open me-1 text-primary"></i> QM-Dokumente im roXtra:
+                    <i className="bi bi-folder2-open me-1 text-primary"></i> QM-Dokumente:
                   </div>
                   <div className="d-flex flex-column gap-2">
                     <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
-                      <span><strong>ID: 391904</strong> &bull; Verfahrensanweisung ZVK</span>
+                      <span className="fw-semibold">Verfahrensanweisung ZVK</span>
                       <span className="badge bg-secondary">Ver. 002 / 09.2024</span>
                     </div>
                     <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
-                      <span><strong>ID: 484866</strong> &bull; OMW ZVK Verbandswechsel</span>
+                      <span className="fw-semibold">OMW ZVK Verbandswechsel</span>
                       <span className="badge bg-secondary">Ver. 001 / 07.2026</span>
                     </div>
                     <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
-                      <span><strong>ID: 456904</strong> &bull; OMW - Infusionsfilter</span>
+                      <span className="fw-semibold">OMW - Infusionsfilter</span>
                       <span className="badge bg-secondary">Ver. 001 / 08.2025</span>
                     </div>
                     <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
-                      <span><strong>ID: 414354</strong> &bull; Standard-Infusionsschema ITS</span>
+                      <span className="fw-semibold">Standard-Infusionsschema ITS</span>
                       <span className="badge bg-secondary">Gültig ITS</span>
                     </div>
                   </div>
@@ -4271,7 +4206,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                     <i className="bi bi-aspect-ratio me-1 text-primary"></i> DIN A4
                   </span>
                   <span className="badge rounded-pill fw-semibold font-monospace px-2 py-1 text-dark" style={{ fontSize: '0.68rem', background: '#dcfce7', border: '1px solid #86efac' }}>
-                    <i className="bi bi-shield-check me-1 text-success"></i> roXtra
+                    <i className="bi bi-shield-check me-1 text-success"></i> QM-geprüft
                   </span>
                 </div>
                 <button
@@ -4651,7 +4586,7 @@ function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
                   />
                 </div>
 
-                {/* Center Badge, Title, and roXtra IDs */}
+                {/* Center Badge, Title */}
                 <div
                   className="flex-grow-1 min-w-0 position-relative pe-5"
                   style={{ zIndex: 2 }}
@@ -4687,7 +4622,7 @@ function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
                       fontWeight: 500
                     }}
                   >
-                    roXtra ID: {std.roXtraIds.join(', ')}
+                    Pflegedirektion &bull; Evidenzbasiert
                   </div>
                 </div>
               </div>

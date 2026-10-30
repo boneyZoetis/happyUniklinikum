@@ -25,7 +25,7 @@ root.QRParser = (function () {
       pdfPage: 1,
       graphicImage: 'assets/graphic-dekubitus.jpg',
       leadText: 'An der UMF werden verschiedene Expertenstandards umgesetzt. Die Anwendung orientiert sich immer am Pflegeprozess.',
-      instructions: 'Erfahren Sie mehr über den Expertenstandard Dekubitusprophylaxe, in dem Sie den QR – Code scannen und sich das Video anschauen. Weiterführende Informationen zu diesem Expertenstandard finden Sie auch im roXtra unter der ID: 400139 sowie der ID: 400129.',
+      instructions: 'Erfahren Sie mehr über den Expertenstandard Dekubitusprophylaxe, in dem Sie den QR – Code scannen und sich das Video anschauen. Weiterführende Informationen zu diesem Expertenstandard finden Sie in den offiziellen Dokumenten der Pflegedirektion.',
       whyImportant: [
         'Druck gezielt reduzieren & Gewebeschäden vermeiden',
         'Haut schützen & gefährdete Körperstellen entlasten',
@@ -80,7 +80,7 @@ root.QRParser = (function () {
       pdfPage: 2,
       graphicImage: 'assets/graphic-sturz.jpg',
       leadText: 'Sichere Maßnahmen zur Vermeidung von Stürzen – Sicherheit, Mobilität und Lebensqualität in der Pflege an der Universitätsmedizin Frankfurt.',
-      instructions: 'Erfahren Sie mehr über den Expertenstandard Sturzprophylaxe in der Pflege, in dem Sie den QR – Code scannen und sich das Video anschauen. Weiterführende Informationen zu diesem Expertenstandard finden Sie auch im roXtra unter der ID: 138896 sowie der ID: 275545.',
+      instructions: 'Erfahren Sie mehr über den Expertenstandard Sturzprophylaxe in der Pflege, in dem Sie den QR – Code scannen und sich das Video anschauen. Weiterführende Informationen zu diesem Expertenstandard finden Sie in den offiziellen Dokumenten der Pflegedirektion.',
       whyImportant: [
         'Stürze vermeiden (Verletzungen & Sturzfolgen wirksam verhindern)',
         'Mobilität fördern (Regelmäßige Mobilisation sicher unterstützen)',
@@ -135,7 +135,7 @@ root.QRParser = (function () {
       pdfPage: 3,
       graphicImage: 'assets/graphic-schmerz.jpg',
       leadText: 'Schmerzen erkennen, einschätzen und wirksam lindern – Wissen, Sicherheit und Qualität in der Pflege an der Universitätsmedizin Frankfurt.',
-      instructions: 'Erfahren Sie mehr über den Expertenstandard Schmerzmanagement in der Pflege, in dem Sie den QR – Code scannen und sich das Video anschauen. Weiterführende Informationen zu diesem Expertenstandard finden Sie auch im roXtra unter der ID: 399503 sowie der ID: 399486.',
+      instructions: 'Erfahren Sie mehr über den Expertenstandard Schmerzmanagement in der Pflege, in dem Sie den QR – Code scannen und sich das Video anschauen. Weiterführende Informationen zu diesem Expertenstandard finden Sie in den offiziellen Dokumenten der Pflegedirektion.',
       whyImportant: [
         'Schmerzen lindern (Gezielte & zeitgerechte Schmerztherapie)',
         'Komfort fördern (Wohlbefinden, Ruhe & Mobilität unterstützen)',
@@ -190,7 +190,7 @@ root.QRParser = (function () {
       pdfPage: 4,
       graphicImage: 'assets/graphic-ernaehrung.jpg',
       leadText: 'Sicherung der oralen Ernährung in der Pflege – Gut ernährt, mehr Lebensqualität! Wissen, Sicherheit und Qualität an der Universitätsmedizin Frankfurt.',
-      instructions: 'Erfahren Sie mehr über den Expertenstandard Ernährungsmanagement zur Sicherung der oralen Ernährung in der Pflege, in dem Sie den QR – Code scannen und sich das Video anschauen. Weiterführende Informationen zu diesem Expertenstandard finden Sie auch im roXtra unter der ID: 408310 sowie der ID: 408331.',
+      instructions: 'Erfahren Sie mehr über den Expertenstandard Ernährungsmanagement zur Sicherung der oralen Ernährung in der Pflege, in dem Sie den QR – Code scannen und sich das Video anschauen. Weiterführende Informationen zu diesem Expertenstandard finden Sie in den offiziellen Dokumenten der Pflegedirektion.',
       whyImportant: [
         'Mangelernährung vermeiden (Früherkennung & bedarfsgerechte Kost)',
         'Selbstständigkeit fördern (Individuelle Hilfe & Hilfsmittel bereitstellen)',
@@ -256,7 +256,7 @@ root.QRParser = (function () {
       infusionsschemaPdfUrl: 'assets/zvk-sop-verfahrensanweisung.pdf#page=10',
       graphicImage: 'assets/graphic-zvk.jpg',
       leadText: 'Einsatz von SOPs auf der Intensivstation – Schnell. Sicher. Gemeinsam. Ein ZVK dient der sicheren zentralvenösen Therapie. Ein aseptischer Umgang hilft, Infektionen und Komplikationen zu vermeiden.',
-      instructions: 'Scannen Sie den QR-Code, um die vollständige Verfahrensanweisung (SOP) sowie klinische Checklisten zum ZVK aufzurufen. Weiterführende Dokumente im roXtra unter ID: 391904, ID: 484866, ID: 456904 und ID: 414354.',
+      instructions: 'Scannen Sie den QR-Code, um die vollständige Verfahrensanweisung (SOP) sowie klinische Checklisten zum ZVK aufzurufen. Weiterführende Dokumente finden Sie im QM-Portal der Pflegedirektion.',
       whyImportant: [
         'Infektionen vermeiden (Katheter-assoziierte Infektionen / CLABSI verhindern)',
         'Durchgängigkeit sichern (Okklusion, Verschluss & Thrombose vermeiden)',
@@ -327,7 +327,7 @@ root.QRParser = (function () {
           dateLabel: 'Stand: 19.08.2019',
           pageCount: 4,
           pdfUrl: 'assets/isolation-sop-verfahrensanweisung.pdf',
-          lead: 'Offizielle UKF Verfahrensanweisung (ID 239411 • Freigabe: 19.08.2019 • Ver. 003) – 4 Seiten. Isolationsformen, PSA-Vorgaben, Meldewege und Schlussdesinfektion.'
+          lead: 'Offizielle UKF Verfahrensanweisung (Freigabe: 19.08.2019 • Ver. 003) – 4 Seiten. Isolationsformen, PSA-Vorgaben, Meldewege und Schlussdesinfektion.'
         },
         {
           id: 'iso-hygieneplan',
@@ -339,7 +339,7 @@ root.QRParser = (function () {
           dateLabel: 'Stand: 02.2026',
           pageCount: 5,
           pdfUrl: 'assets/hygieneplan-multiresistente-erreger.pdf',
-          lead: 'Offizieller UKF Hygieneplan (ID 361678 • Stand: 02.2026 • Ver. 012) – 5 Seiten. Häma-Onko (Station+TK), ITS/IMC, Neonatologie.'
+          lead: 'Offizieller UKF Hygieneplan (Stand: 02.2026 • Ver. 012) – 5 Seiten. Häma-Onko (Station+TK), ITS/IMC, Neonatologie.'
         }
       ],
       image: 'assets/isolation-poster.jpg',
@@ -347,7 +347,7 @@ root.QRParser = (function () {
       pdfPage: 1,
       graphicImage: 'assets/graphic-isolation.jpg',
       leadText: 'Hygiene schützt – Gemeinsam für Patienten und Mitarbeitende. Schneller Zugriff auf den aktuellen Hygieneplan und alle wichtigen Handlungsleitfäden bei MRE- und Infektionsnachweis.',
-      instructions: 'Scannen Sie den QR-Code, um die vollständige Verfahrensanweisung (SOP) sowie Hygienerichtlinien zur Isolation aufzurufen. Weiterführende Dokumente im QM-System unter ID-Nr.: 239411 und ID-Nr.: 361678.',
+      instructions: 'Scannen Sie den QR-Code, um die vollständige Verfahrensanweisung (SOP) sowie Hygienerichtlinien zur Isolation aufzurufen. Weiterführende Dokumente finden Sie im QM-Portal der Pflegedirektion.',
       whyImportant: [
         'Übertragung verhindern (Infektionsketten konsequent unterbrechen)',
         'Patienten schützen (Schutz vor nosokomialen Infektionen & MRE)',
