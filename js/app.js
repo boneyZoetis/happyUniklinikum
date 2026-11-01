@@ -842,29 +842,31 @@ function App() {
         )}
       </main>
 
-      {/* Transparent Mobile Footer with 2 Buttons: 1. Home, 2. Universal Karte (Content scrolls behind it) */}
+      {/* WhatsApp-Style Translucent Floating Mobile Navigation Dock: 1. Home, 2. U-Card, 3. Logout */}
       <footer className="mobile-transparent-footer d-flex d-md-none no-print" aria-label="Mobile Navigation">
         <div className="mobile-transparent-footer-inner">
           <button
             type="button"
             className={`mobile-footer-btn home-btn ${currentRoute === 'quick-hub' || currentRoute === 'home' ? 'active' : ''}`}
             onClick={() => navigateTo('quick-hub')}
+            title="Home"
           >
             <span className="mobile-footer-btn-icon">
               <i className="bi bi-house-door-fill"></i>
             </span>
-            <span>Home</span>
+            <span className="mobile-footer-btn-text">Home</span>
           </button>
 
           <button
             type="button"
             className={`mobile-footer-btn universal-btn ${currentRoute === 'universal-karte' || currentRoute === 'magic-card' ? 'active' : ''}`}
             onClick={() => navigateTo('universal-karte')}
+            title="Zur U-Card (Universal-Karte)"
           >
             <span className="mobile-footer-btn-icon">
               <i className="bi bi-credit-card-2-front-fill"></i>
             </span>
-            <span>Universal Karte</span>
+            <span className="mobile-footer-btn-text">U-Card</span>
           </button>
 
           <button
@@ -873,10 +875,10 @@ function App() {
             onClick={handleLogout}
             title="Abmelden"
           >
-            <span className="mobile-footer-btn-icon text-danger">
+            <span className="mobile-footer-btn-icon">
               <i className="bi bi-box-arrow-right"></i>
             </span>
-            <span>Logout</span>
+            <span className="mobile-footer-btn-text">Logout</span>
           </button>
         </div>
       </footer>
