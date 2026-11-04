@@ -2945,31 +2945,22 @@ function exportStandardA4Pdf(std, showToast) {
   // Save all previous styles
   const prevDisplay = printSheet.style.display;
   const prevPosition = printSheet.style.position;
-  const prevTop = printSheet.style.top;
-  const prevLeft = printSheet.style.left;
-  const prevZIndex = printSheet.style.zIndex;
   const prevWidth = printSheet.style.width;
   const prevMaxWidth = printSheet.style.maxWidth;
   const prevMargin = printSheet.style.margin;
   const prevBackground = printSheet.style.background;
 
-  // Position FIXED at (0, 0) on viewport with exact 794px width (prevents clipping on mobile/narrow screens)
+  // Render in normal document flow centered at exactly 794px width (prevents clipping & offsets)
   printSheet.style.display = 'block';
-  printSheet.style.position = 'fixed';
-  printSheet.style.top = '0px';
-  printSheet.style.left = '0px';
-  printSheet.style.zIndex = '999999';
+  printSheet.style.position = 'relative';
   printSheet.style.width = '794px';
   printSheet.style.maxWidth = '794px';
-  printSheet.style.margin = '0';
+  printSheet.style.margin = '0 auto';
   printSheet.style.background = '#ffffff';
 
   const restoreStyles = () => {
     printSheet.style.display = prevDisplay;
     printSheet.style.position = prevPosition;
-    printSheet.style.top = prevTop;
-    printSheet.style.left = prevLeft;
-    printSheet.style.zIndex = prevZIndex;
     printSheet.style.width = prevWidth;
     printSheet.style.maxWidth = prevMaxWidth;
     printSheet.style.margin = prevMargin;
@@ -2984,9 +2975,12 @@ function exportStandardA4Pdf(std, showToast) {
       scale: 2,
       useCORS: true,
       logging: false,
-      windowWidth: 794,
+      x: 0,
+      y: 0,
       scrollX: 0,
-      scrollY: 0
+      scrollY: 0,
+      width: 794,
+      windowWidth: 794
     },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
     pagebreak: { mode: 'legacy' }
@@ -4702,30 +4696,21 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
     if (isAtm) {
       const prevDisplay = element.style.display;
       const prevPosition = element.style.position;
-      const prevTop = element.style.top;
-      const prevLeft = element.style.left;
-      const prevZIndex = element.style.zIndex;
       const prevWidth = element.style.width;
       const prevMaxWidth = element.style.maxWidth;
       const prevMargin = element.style.margin;
       const prevBackground = element.style.background;
 
       element.style.display = 'block';
-      element.style.position = 'fixed';
-      element.style.top = '0px';
-      element.style.left = '0px';
-      element.style.zIndex = '999999';
+      element.style.position = 'relative';
       element.style.width = '794px';
       element.style.maxWidth = '794px';
-      element.style.margin = '0';
+      element.style.margin = '0 auto';
       element.style.background = '#ffffff';
 
       const restoreStyles = () => {
         element.style.display = prevDisplay;
         element.style.position = prevPosition;
-        element.style.top = prevTop;
-        element.style.left = prevLeft;
-        element.style.zIndex = prevZIndex;
         element.style.width = prevWidth;
         element.style.maxWidth = prevMaxWidth;
         element.style.margin = prevMargin;
@@ -4740,9 +4725,12 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           scale: 2,
           useCORS: true,
           logging: false,
-          windowWidth: 794,
+          x: 0,
+          y: 0,
           scrollX: 0,
-          scrollY: 0
+          scrollY: 0,
+          width: 794,
+          windowWidth: 794
         },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
@@ -4758,9 +4746,6 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
     } else {
       const prevDisplay = element.style.display;
       const prevPosition = element.style.position;
-      const prevTop = element.style.top;
-      const prevLeft = element.style.left;
-      const prevZIndex = element.style.zIndex;
       const prevWidth = element.style.width;
       const prevMaxWidth = element.style.maxWidth;
       const prevHeight = element.style.height;
@@ -4768,22 +4753,16 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
       const prevBackground = element.style.background;
 
       element.style.display = 'block';
-      element.style.position = 'fixed';
-      element.style.top = '0px';
-      element.style.left = '0px';
-      element.style.zIndex = '999999';
+      element.style.position = 'relative';
       element.style.width = '1123px';
       element.style.maxWidth = '1123px';
       element.style.height = '794px';
-      element.style.margin = '0';
+      element.style.margin = '0 auto';
       element.style.background = '#ffffff';
 
       const restoreStyles = () => {
         element.style.display = prevDisplay;
         element.style.position = prevPosition;
-        element.style.top = prevTop;
-        element.style.left = prevLeft;
-        element.style.zIndex = prevZIndex;
         element.style.width = prevWidth;
         element.style.maxWidth = prevMaxWidth;
         element.style.height = prevHeight;
@@ -4799,9 +4778,12 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           scale: 2,
           useCORS: true,
           logging: false,
-          windowWidth: 1123,
+          x: 0,
+          y: 0,
           scrollX: 0,
-          scrollY: 0
+          scrollY: 0,
+          width: 1123,
+          windowWidth: 1123
         },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
       };

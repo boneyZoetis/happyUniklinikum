@@ -2293,6 +2293,10 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 /* Dedicated DIN A4 Pocketcard Print & PDF Styles (120 x 80 mm on DIN A4) */
 .pocketcard-atm-a4-sheet {
   display: none;
+  width: 794px;
+  max-width: 794px;
+  margin: 0 auto;
+  background-color: #ffffff;
 }
 
 .a4-atm-print-page {
