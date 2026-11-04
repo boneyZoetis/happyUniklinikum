@@ -2968,7 +2968,7 @@ function exportStandardA4Pdf(std, showToast) {
       scrollY: 0
     },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    pagebreak: { mode: ['css', 'legacy'] }
+    pagebreak: { mode: 'legacy' }
   };
 
   if (window.html2pdf) {
@@ -4652,7 +4652,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
     const style = document.createElement('style');
     style.id = 'dynamic-print-page-style';
     style.innerHTML = isAtm
-      ? '@page { size: 120mm 80mm; margin: 0; }'
+      ? '@page { size: A4 portrait; margin: 8mm; }'
       : '@page { size: A4 landscape; margin: 8mm; }';
     document.head.appendChild(style);
 
@@ -4672,61 +4672,93 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
     }, 1500);
   };
 
-  const downloadPdf = () => {
+  const downloadPdf = (formatOverride) => {
+    const isAtm = (formatOverride || effectiveFormat) === 'atm';
     if (!window.html2pdf) {
-      handlePrint(effectiveFormat);
+      handlePrint(isAtm ? 'atm' : 'a4');
       return;
     }
-    const isAtm = effectiveFormat === 'atm';
-    const targetId = isAtm ? 'universal-card-interactive-card' : 'universal-card-a4-sheet';
+    const targetId = isAtm ? 'universal-card-atm-a4-sheet' : 'universal-card-a4-sheet';
     const element = document.getElementById(targetId);
     if (!element) {
-      handlePrint(effectiveFormat);
+      handlePrint(isAtm ? 'atm' : 'a4');
       return;
     }
-    showToast(isAtm ? 'Erstelle Intensivkompass Pocketcard PDF...' : 'Erstelle DIN A4 PDF...');
+    showToast(isAtm ? 'Erstelle Pocketcard DIN A4 PDF (12 × 8 cm)...' : 'Erstelle DIN A4 PDF...');
 
-    // Save previous dimensions to restore after export
-    const prevWidth = element.style.width;
-    const prevMaxWidth = element.style.maxWidth;
-    const prevHeight = element.style.height;
+    if (isAtm) {
+      const prevDisplay = element.style.display;
+      const prevPosition = element.style.position;
+      const prevWidth = element.style.width;
 
-    if (!isAtm) {
+      element.style.display = 'block';
+      element.style.position = 'relative';
+      element.style.width = '794px';
+
+      const opt = {
+        margin: [0, 0, 0, 0],
+        filename: 'Intensivkompass_Pocketcard_12x8_DIN_A4.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          windowWidth: 794,
+          scrollX: 0,
+          scrollY: 0
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      window.html2pdf().set(opt).from(element).save().then(() => {
+        element.style.display = prevDisplay;
+        element.style.position = prevPosition;
+        element.style.width = prevWidth;
+        showToast('Pocketcard DIN A4 PDF erfolgreich heruntergeladen!');
+      }).catch((err) => {
+        element.style.display = prevDisplay;
+        element.style.position = prevPosition;
+        element.style.width = prevWidth;
+        console.error('PDF error:', err);
+        handlePrint('atm');
+      });
+    } else {
+      const prevWidth = element.style.width;
+      const prevMaxWidth = element.style.maxWidth;
+      const prevHeight = element.style.height;
+
       element.style.width = '1123px';
       element.style.maxWidth = '1123px';
       element.style.height = '794px';
+
+      const opt = {
+        margin: [0, 0, 0, 0],
+        filename: 'Klinische_Universal_A4_Uebersicht.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          windowWidth: 1123,
+          scrollX: 0,
+          scrollY: 0
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+      };
+
+      window.html2pdf().set(opt).from(element).save().then(() => {
+        element.style.width = prevWidth;
+        element.style.maxWidth = prevMaxWidth;
+        element.style.height = prevHeight;
+        showToast('DIN A4 PDF erfolgreich heruntergeladen!');
+      }).catch((err) => {
+        element.style.width = prevWidth;
+        element.style.maxWidth = prevMaxWidth;
+        element.style.height = prevHeight;
+        console.error('PDF error:', err);
+        handlePrint('a4');
+      });
     }
-
-    const opt = {
-      margin: isAtm ? [0, 0, 0, 0] : [5, 5, 5, 5],
-      filename: isAtm ? 'Intensivkompass_Digital_Pocketcard_12x8.pdf' : 'Klinische_Universal_A4_Uebersicht.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        windowWidth: isAtm ? 800 : 1123,
-        scrollX: 0,
-        scrollY: 0
-      },
-      jsPDF: { unit: 'mm', format: isAtm ? [120, 80] : 'a4', orientation: 'landscape' }
-    };
-
-    window.html2pdf().set(opt).from(element).save().then(() => {
-      if (!isAtm) {
-        element.style.width = prevWidth;
-        element.style.maxWidth = prevMaxWidth;
-        element.style.height = prevHeight;
-      }
-      showToast('PDF erfolgreich heruntergeladen!');
-    }).catch(() => {
-      if (!isAtm) {
-        element.style.width = prevWidth;
-        element.style.maxWidth = prevMaxWidth;
-        element.style.height = prevHeight;
-      }
-      handlePrint(effectiveFormat);
-    });
   };
 
   return (
@@ -4860,76 +4892,165 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
             <UniversalCardA4Native onSelectStandard={onSelectStandard} />
           </div>
         ) : (
-          <div className="w-100 p-2 p-sm-3.5 rounded-4 border shadow-sm d-flex flex-column align-items-center u-card-pedestal" style={{ maxWidth: '640px' }} id="universal-card-atm-printable">
-            <UniversalCardInteractiveCard isAtm={true} onSelectStandard={onSelectStandard} />
+          <>
+            <div className="w-100 p-2 p-sm-3.5 rounded-4 border shadow-sm d-flex flex-column align-items-center u-card-pedestal" style={{ maxWidth: '640px' }} id="universal-card-atm-printable">
+              <UniversalCardInteractiveCard isAtm={true} onSelectStandard={onSelectStandard} />
 
-            {/* Symmetrical Share & Action Buttons: WhatsApp, Teilen, Link, PDF */}
-            <div className="w-100 mt-3 pt-2.5 border-top no-print" data-html2canvas-ignore="true">
-              <div className="row g-2">
-                {/* WhatsApp Share Button */}
-                <div className="col-6 col-sm-3">
-                  <a
-                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-sm rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 text-white w-100 text-decoration-none"
-                    style={{ backgroundColor: '#25D366', borderColor: '#25D366', minHeight: '42px', fontSize: '0.82rem' }}
-                    title="Pocketcard per WhatsApp teilen"
-                  >
-                    <i className="bi bi-whatsapp fs-6"></i>
-                    <span>WhatsApp</span>
-                  </a>
+              {/* Symmetrical Share & Action Buttons: WhatsApp, Teilen, Link, PDF */}
+              <div className="w-100 mt-3 pt-2.5 border-top no-print" data-html2canvas-ignore="true">
+                <div className="row g-2">
+                  {/* WhatsApp Share Button */}
+                  <div className="col-6 col-sm-3">
+                    <a
+                      href={`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-sm rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 text-white w-100 text-decoration-none"
+                      style={{ backgroundColor: '#25D366', borderColor: '#25D366', minHeight: '42px', fontSize: '0.82rem' }}
+                      title="Pocketcard per WhatsApp teilen"
+                    >
+                      <i className="bi bi-whatsapp fs-6"></i>
+                      <span>WhatsApp</span>
+                    </a>
+                  </div>
+
+                  {/* Native Social Media / System Share */}
+                  <div className="col-6 col-sm-3">
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-primary rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100"
+                      style={{ backgroundColor: '#004767', borderColor: '#004767', minHeight: '42px', fontSize: '0.82rem' }}
+                      onClick={handleShareCard}
+                      title="Über Social Media oder andere Apps teilen"
+                    >
+                      <i className="bi bi-share-fill"></i>
+                      <span>Teilen</span>
+                    </button>
+                  </div>
+
+                  {/* Copy Link */}
+                  <div className="col-6 col-sm-3">
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-outline-dark rounded-pill py-2 px-2 fw-semibold shadow-sm d-flex align-items-center justify-content-center gap-1.5 bg-white w-100"
+                      style={{ minHeight: '42px', fontSize: '0.82rem' }}
+                      onClick={handleCopyShareLink}
+                      title="Link in die Zwischenablage kopieren"
+                    >
+                      <i className="bi bi-link-45deg fs-5"></i>
+                      <span>Link kopieren</span>
+                    </button>
+                  </div>
+
+                  {/* PDF Download */}
+                  <div className="col-6 col-sm-3">
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-danger rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100"
+                      style={{ minHeight: '42px', fontSize: '0.82rem' }}
+                      onClick={() => downloadPdf('atm')}
+                      title="Pocketcard als DIN A4 PDF herunterladen"
+                    >
+                      <i className="bi bi-file-earmark-pdf-fill"></i>
+                      <span>PDF</span>
+                    </button>
+                  </div>
                 </div>
 
-                {/* Native Social Media / System Share */}
-                <div className="col-6 col-sm-3">
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-primary rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100"
-                    style={{ backgroundColor: '#004767', borderColor: '#004767', minHeight: '42px', fontSize: '0.82rem' }}
-                    onClick={handleShareCard}
-                    title="Über Social Media oder andere Apps teilen"
-                  >
-                    <i className="bi bi-share-fill"></i>
-                    <span>Teilen</span>
-                  </button>
+                <div className="small text-muted text-center mt-2.5 pt-1" style={{ fontSize: '0.74rem' }}>
+                  <i className="bi bi-check2-circle text-success me-1"></i>
+                  Pocketcard (12 × 8 cm) &bull; 100% scannbar &bull; Kitteltaschen-Standard
                 </div>
-
-                {/* Copy Link */}
-                <div className="col-6 col-sm-3">
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-outline-dark rounded-pill py-2 px-2 fw-semibold shadow-sm d-flex align-items-center justify-content-center gap-1.5 bg-white w-100"
-                    style={{ minHeight: '42px', fontSize: '0.82rem' }}
-                    onClick={handleCopyShareLink}
-                    title="Link in die Zwischenablage kopieren"
-                  >
-                    <i className="bi bi-link-45deg fs-5"></i>
-                    <span>Link kopieren</span>
-                  </button>
-                </div>
-
-                {/* PDF Download */}
-                <div className="col-6 col-sm-3">
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-danger rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100"
-                    style={{ minHeight: '42px', fontSize: '0.82rem' }}
-                    onClick={() => downloadPdf('atm')}
-                    title="Pocketcard als PDF herunterladen"
-                  >
-                    <i className="bi bi-file-earmark-pdf-fill"></i>
-                    <span>PDF</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="small text-muted text-center mt-2.5 pt-1" style={{ fontSize: '0.74rem' }}>
-                <i className="bi bi-check2-circle text-success me-1"></i>
-                Pocketcard (12 × 8 cm) &bull; 100% scannbar &bull; Kitteltaschen-Standard
               </div>
             </div>
-          </div>
+
+            {/* Dedicated DIN A4 Sheet for Pocketcard (12 x 8 cm) Print & PDF Download */}
+            <div id="universal-card-atm-a4-sheet" className="pocketcard-atm-a4-sheet">
+              <div className="a4-atm-print-page">
+                {/* Top Brand / Cutout Header */}
+                <div className="a4-atm-cutout-header">
+                  <div className="d-flex align-items-center justify-content-between mb-1 pb-1 border-bottom border-secondary border-opacity-25">
+                    <div className="d-flex align-items-center gap-2">
+                      <span className="badge bg-primary text-white px-2 py-0.5 fw-bold" style={{ fontSize: '0.72rem' }}>
+                        <i className="bi bi-scissors me-1"></i>Schnittmarke
+                      </span>
+                      <strong className="text-dark" style={{ fontSize: '0.85rem' }}>
+                        Intensivkompass Digital – Pocketcard (12 × 8 cm)
+                      </strong>
+                    </div>
+                    <span className="badge bg-light text-secondary border px-2 py-0.5 font-monospace" style={{ fontSize: '0.68rem' }}>
+                      DIN A4 Ausdruck &bull; 100% Originalgröße
+                    </span>
+                  </div>
+                  <div className="text-secondary small d-flex align-items-center justify-content-between" style={{ fontSize: '0.72rem' }}>
+                    <span>
+                      <i className="bi bi-info-circle text-primary me-1"></i>
+                      Entlang der gestrichelten Linie ausschneiden (120 × 80 mm) und laminieren. Passt exakt in jede Kitteltasche.
+                    </span>
+                    <span className="fw-semibold text-primary">Stand: 2026</span>
+                  </div>
+                </div>
+
+                {/* The Exact 12 x 8 cm Card Box (Centered, with Scissor Cut Marks) */}
+                <div className="pocketcard-atm-cutout-frame-wrapper position-relative">
+                  <div className="cut-corner cut-corner-tl">✂</div>
+                  <div className="cut-corner cut-corner-tr">✂</div>
+                  <div className="cut-corner cut-corner-bl">✂</div>
+                  <div className="cut-corner cut-corner-br">✂</div>
+
+                  <div className="pocketcard-atm-cutout-frame">
+                    <div className="position-relative w-100 h-100" style={{ lineHeight: 0 }}>
+                      <img
+                        src="assets/universal-card-12x8.jpg"
+                        alt="Intensivkompass Digital – Pocketcard 12 × 8 cm"
+                        className="w-100 h-100 d-block"
+                        style={{ objectFit: 'cover' }}
+                      />
+
+                      {/* Scannable Crisp QR Code Overlay */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          left: '72.8%',
+                          top: '34.5%',
+                          width: '17.1%',
+                          height: '25.2%',
+                          pointerEvents: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          zIndex: 4,
+                          padding: '2px',
+                          backgroundColor: '#ffffff',
+                          borderRadius: '3px'
+                        }}
+                      >
+                        <QrCodeCanvas
+                          value={portalUrl}
+                          size={120}
+                          color="#001833"
+                          style={{ width: '100%', height: '100%' }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Clinical Reference Notes */}
+                <div className="a4-atm-cutout-footer">
+                  <div className="d-flex justify-content-between align-items-center text-muted small" style={{ fontSize: '0.68rem' }}>
+                    <span>
+                      <i className="bi bi-shield-check text-success me-1"></i>
+                      Klinische Intensivpflege &amp; Gerätestandards &bull; Evidenzbasierte Leitfäden
+                    </span>
+                    <span className="font-monospace">
+                      120 mm × 80 mm &bull; DIN A4 Druckbogen
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
 

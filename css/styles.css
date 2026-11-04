@@ -2273,8 +2273,8 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 }
 
 .a4-std-page-1 {
-  page-break-after: always;
-  break-after: page;
+  page-break-after: auto;
+  break-after: auto;
 }
 
 .a4-std-page-2 {
@@ -2290,30 +2290,82 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   break-after: page !important;
 }
 
-/* Fix html2pdf internal overlay/container coordinates so PDF never shifts or clips */
-.html2pdf__overlay {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: auto !important;
-  bottom: auto !important;
-  width: 794px !important;
-  height: auto !important;
-  overflow: visible !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  z-index: -9999 !important;
+/* Dedicated DIN A4 Pocketcard Print & PDF Styles (120 x 80 mm on DIN A4) */
+.pocketcard-atm-a4-sheet {
+  display: none;
 }
 
-.html2pdf__container {
-  position: relative !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: auto !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 794px !important;
-  background-color: #ffffff !important;
+.a4-atm-print-page {
+  width: 794px;
+  max-width: 794px;
+  height: 1118px;
+  max-height: 1118px;
+  background-color: #ffffff;
+  border: 1.5px solid #004767;
+  border-radius: 8px;
+  margin: 0 auto;
+  padding: 30px 40px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  color: #0f172a;
+}
+
+.a4-atm-cutout-header {
+  width: 100%;
+  max-width: 580px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-sizing: border-box;
+}
+
+.pocketcard-atm-cutout-frame-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto 0;
+  position: relative;
+  padding: 16px;
+}
+
+.pocketcard-atm-cutout-frame {
+  width: 454px;
+  height: 302px;
+  border: 1.5px dashed #004767;
+  border-radius: 14px;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: #ffffff;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(0, 43, 71, 0.1);
+}
+
+.cut-corner {
+  position: absolute;
+  font-size: 16px;
+  color: #004767;
+  user-select: none;
+  line-height: 1;
+}
+
+.cut-corner-tl { top: -2px; left: -2px; }
+.cut-corner-tr { top: -2px; right: -2px; }
+.cut-corner-bl { bottom: -2px; left: -2px; }
+.cut-corner-br { bottom: -2px; right: -2px; }
+
+.a4-atm-cutout-footer {
+  width: 100%;
+  max-width: 580px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 16px;
+  box-sizing: border-box;
 }
 
 .a4-std-header-bar {
@@ -2327,10 +2379,10 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 }
 
 .a4-std-body {
-  padding: 12px 16px;
+  padding: 10px 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   background-color: #ffffff;
   flex-grow: 1;
 }
@@ -2636,17 +2688,24 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     display: none !important;
   }
 
-  /* --- 2. Universal-Karte ATM Print Mode Isolation (Only ATM Scheckkarte Prints) --- */
+  /* --- 2. Universal-Karte ATM Print Mode Isolation (DIN A4 Sheet with 12 x 8 cm Pocketcard) --- */
   body.printing-atm #universal-card-a4-printable,
-  body.active-format-atm:not(.printing-a4) #universal-card-a4-printable {
+  body.active-format-atm:not(.printing-a4) #universal-card-a4-printable,
+  body.printing-atm #universal-card-atm-printable,
+  body.active-format-atm:not(.printing-a4) #universal-card-atm-printable,
+  body.printing-atm .u-card-pedestal,
+  body.printing-atm .quick-hub-top-header {
     display: none !important;
   }
 
-  body.printing-atm #universal-card-atm-printable,
-  body.active-format-atm:not(.printing-a4) #universal-card-atm-printable {
-    display: block !important;
+  body.printing-atm .pocketcard-atm-a4-sheet,
+  body.active-format-atm:not(.printing-a4) .pocketcard-atm-a4-sheet {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
     width: 100% !important;
-    margin: 0 !important;
+    margin: 0 auto !important;
     padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
@@ -2654,68 +2713,93 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     page-break-after: avoid !important;
   }
 
-  body.printing-atm .universal-card-interactive-box.atm-size,
-  body.active-format-atm:not(.printing-a4) .universal-card-interactive-box.atm-size {
-    width: 120mm !important;
-    max-width: 120mm !important;
-    height: 80mm !important;
-    min-height: 80mm !important;
-    margin: 2.5mm auto !important;
-    border: 1.5px dashed #004767 !important;
-    border-radius: 4mm !important;
+  body.printing-atm .a4-atm-print-page,
+  body.active-format-atm:not(.printing-a4) .a4-atm-print-page {
+    width: 194mm !important;
+    max-width: 194mm !important;
+    height: 275mm !important;
+    max-height: 275mm !important;
+    margin: 0 auto !important;
+    padding: 15mm 10mm !important;
+    border: 1.5px solid #004767 !important;
+    border-radius: 8px !important;
     box-shadow: none !important;
-    overflow: hidden !important;
+    box-sizing: border-box !important;
     page-break-inside: avoid !important;
-    position: relative !important;
+    break-inside: avoid !important;
     display: flex !important;
     flex-direction: column !important;
-    align-items: stretch !important;
     justify-content: space-between !important;
+    align-items: center !important;
     background: #ffffff !important;
-    box-sizing: border-box !important;
-    padding: 0 !important;
   }
 
-  body.printing-atm .universal-card-interactive-box.atm-size .universal-card-inner,
-  body.active-format-atm:not(.printing-a4) .universal-card-interactive-box.atm-size .universal-card-inner {
+  body.printing-atm .a4-atm-cutout-header,
+  body.active-format-atm:not(.printing-a4) .a4-atm-cutout-header {
     width: 100% !important;
-    height: 100% !important;
+    max-width: 160mm !important;
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    padding: 3mm 5mm !important;
+    box-sizing: border-box !important;
+  }
+
+  body.printing-atm .pocketcard-atm-cutout-frame-wrapper,
+  body.active-format-atm:not(.printing-a4) .pocketcard-atm-cutout-frame-wrapper {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    margin: auto 0 !important;
+    position: relative !important;
+    padding: 4mm !important;
   }
 
-  body.printing-atm .universal-card-interactive-box.atm-size .universal-card-img,
-  body.active-format-atm:not(.printing-a4) .universal-card-interactive-box.atm-size .universal-card-img {
-    width: 100% !important;
-    height: 100% !important;
+  body.printing-atm .pocketcard-atm-cutout-frame,
+  body.active-format-atm:not(.printing-a4) .pocketcard-atm-cutout-frame {
+    width: 120mm !important;
+    min-width: 120mm !important;
+    max-width: 120mm !important;
+    height: 80mm !important;
+    min-height: 80mm !important;
+    max-height: 80mm !important;
+    border: 1.5px dashed #004767 !important;
+    border-radius: 4mm !important;
+    box-shadow: none !important;
+    margin: 0 auto !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    background: #ffffff !important;
+  }
+
+  body.printing-atm .pocketcard-atm-cutout-frame img,
+  body.active-format-atm:not(.printing-a4) .pocketcard-atm-cutout-frame img {
+    width: 120mm !important;
+    height: 80mm !important;
+    max-width: 120mm !important;
+    max-height: 80mm !important;
     object-fit: cover !important;
-  }
-
-  body.printing-atm .atm-cutout-hint,
-  body.active-format-atm:not(.printing-a4) .atm-cutout-hint {
-    display: block !important;
-    text-align: center !important;
-    font-size: 7.5pt !important;
-    color: #475569 !important;
-    margin-top: 1mm !important;
-    margin-bottom: 1.5mm !important;
-  }
-
-  body.printing-atm #universal-card-atm-printable .d-flex.justify-content-center,
-  body.active-format-atm:not(.printing-a4) #universal-card-atm-printable .d-flex.justify-content-center {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-  }
-
-  body.printing-atm .atm-pdf-only,
-  body.active-format-atm:not(.printing-a4) .atm-pdf-only {
     display: block !important;
   }
 
-  body.printing-atm #universal-card-atm-printable .border-bottom,
-  body.active-format-atm:not(.printing-a4) #universal-card-atm-printable .border-bottom {
-    display: none !important;
+  body.printing-atm .cut-corner,
+  body.active-format-atm:not(.printing-a4) .cut-corner {
+    display: block !important;
+    position: absolute !important;
+    font-size: 11pt !important;
+    color: #004767 !important;
+  }
+
+  body.printing-atm .a4-atm-cutout-footer,
+  body.active-format-atm:not(.printing-a4) .a4-atm-cutout-footer {
+    width: 100% !important;
+    max-width: 160mm !important;
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    padding: 2.5mm 5mm !important;
+    box-sizing: border-box !important;
   }
 }
 
