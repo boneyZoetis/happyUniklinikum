@@ -53,24 +53,24 @@ body {
   z-index: 1020;
 }
 
-/* Brand Pill Button in Navbar (Intensivstandards Button) */
+/* Brand Pill Button in Navbar (Intensivstandards Button - Light / Minimal Mint) */
 .navbar-brand.brand-btn-stylish {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
   padding: 0.35rem 0.95rem;
   border-radius: 9999px;
-  background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(56, 189, 248, 0.15) 100%);
-  border: 1.5px solid rgba(2, 132, 199, 0.28);
-  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%) !important;
+  border: 1.5px solid rgba(16, 185, 129, 0.4) !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1), inset 0 1px 0 #ffffff !important;
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none !important;
 }
 
 .navbar-brand.brand-btn-stylish:hover {
-  background: linear-gradient(135deg, rgba(2, 132, 199, 0.16) 0%, rgba(56, 189, 248, 0.25) 100%);
-  border-color: rgba(2, 132, 199, 0.55);
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.2), inset 0 1px 0 rgba(255, 255, 255, 1);
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%) !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.22), inset 0 1px 0 #ffffff !important;
   transform: translateY(-1.5px);
 }
 
@@ -82,20 +82,20 @@ body {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 0.74rem;
-  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35);
   flex-shrink: 0;
   transition: transform 0.22s ease;
 }
 
 .navbar-brand.brand-btn-stylish:hover .brand-pulse-badge {
   transform: scale(1.12) rotate(-8deg);
-  background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
 }
 
 .navbar-brand.brand-btn-stylish .brand-live-dot {
@@ -111,6 +111,16 @@ body {
 @keyframes live-pulse-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.45; transform: scale(0.85); }
+}
+
+.navbar-brand.brand-btn-stylish .brand-title {
+  font-weight: 850;
+  letter-spacing: -0.2px;
+  background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  font-size: clamp(1.02rem, 2.5vw, 1.22rem) !important;
+  line-height: 1.1;
 }
 
 .brand-dot {
@@ -536,6 +546,7 @@ body {
 
 /* =========================================================
    TOP BREADCRUMB & STANDARD SWITCHER BUTTONS (BEAUTIFIED)
+   Light / Minimal Mint - Non-dark design
    ========================================================= */
 .btn-all-kacheln {
   position: relative;
@@ -545,13 +556,13 @@ body {
   padding: 0.45rem 1.25rem;
   min-height: 42px;
   border-radius: 9999px;
-  background: linear-gradient(135deg, #001a2e 0%, #003354 50%, #0284c7 100%) !important;
-  color: #ffffff !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%) !important;
+  color: #065f46 !important;
   font-weight: 750;
   font-size: 0.84rem;
   letter-spacing: 0.3px;
-  border: 1.5px solid rgba(56, 189, 248, 0.45) !important;
-  box-shadow: 0 4px 16px rgba(0, 39, 61, 0.25), 0 2px 6px rgba(2, 132, 199, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  border: 1.5px solid rgba(16, 185, 129, 0.45) !important;
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff !important;
   text-decoration: none !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
@@ -566,17 +577,17 @@ body {
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.15), transparent);
   transform: skewX(-25deg);
   transition: left 0.65s ease;
   pointer-events: none;
 }
 
 .btn-all-kacheln:hover {
-  background: linear-gradient(135deg, #00223d 0%, #0284c7 50%, #0369a1 100%) !important;
-  color: #ffffff !important;
-  border-color: rgba(56, 189, 248, 0.8) !important;
-  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.45), 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%) !important;
+  color: #047857 !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.22), inset 0 1px 0 #ffffff !important;
   transform: translateY(-2px) scale(1.02);
 }
 
@@ -586,29 +597,29 @@ body {
 
 .btn-all-kacheln:active {
   transform: translateY(0) scale(0.98);
-  box-shadow: 0 2px 8px rgba(0, 39, 61, 0.3) !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15) !important;
 }
 
 .btn-all-kacheln .icon-badge {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: #ffffff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 0.76rem;
-  box-shadow: 0 2px 6px rgba(56, 189, 248, 0.4);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35);
   transition: all 0.25s ease;
   flex-shrink: 0;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .btn-all-kacheln:hover .icon-badge {
   transform: rotate(-10deg) scale(1.12);
-  background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
-  box-shadow: 0 3px 10px rgba(56, 189, 248, 0.6);
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.5);
 }
 
 .btn-all-kacheln .back-arrow {
@@ -618,36 +629,37 @@ body {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(16, 185, 129, 0.12);
   font-size: 0.72rem;
-  color: #bae6fd;
+  color: #059669;
   margin-left: 2px;
   transition: transform 0.22s ease, background 0.22s ease;
 }
 
 .btn-all-kacheln:hover .back-arrow {
   transform: translateX(-3px);
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.25);
+  color: #047857;
+  background: rgba(16, 185, 129, 0.22);
 }
 
 /* =========================================================
    ULTRA-STYLISH 5 KACHELN ACTION BUTTONS (.btn-kachel-open)
+   Light / Minimal White Pill with procedure accents
    ========================================================= */
 .btn-kachel-open {
   position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.42rem 1.15rem;
+  padding: 0.38rem 1.05rem;
   min-height: 36px;
   border-radius: 9999px;
-  color: #ffffff !important;
+  background: #ffffff !important;
   font-weight: 750;
   font-size: 0.81rem;
-  letter-spacing: 0.3px;
-  border: 1px solid rgba(255, 255, 255, 0.35) !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.25px;
+  border: 1.5px solid currentColor !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none !important;
   cursor: pointer;
@@ -662,7 +674,7 @@ body {
   left: -100%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
   transform: skewX(-25deg);
   transition: left 0.6s ease;
   pointer-events: none;
@@ -670,8 +682,8 @@ body {
 
 .btn-kachel-open:hover {
   transform: translateY(-2px) scale(1.03);
-  filter: brightness(1.08);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12), inset 0 1px 0 #ffffff !important;
+  filter: brightness(0.97);
 }
 
 .btn-kachel-open:hover::before {
@@ -689,8 +701,6 @@ body {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.24);
-  border: 1px solid rgba(255, 255, 255, 0.4);
   font-size: 0.72rem;
   color: #ffffff;
   transition: transform 0.22s ease;
@@ -698,8 +708,7 @@ body {
 }
 
 .btn-kachel-open:hover .kachel-arrow-badge {
-  transform: translateX(3px);
-  background: rgba(255, 255, 255, 0.35);
+  transform: translateX(3px) scale(1.08);
 }
 
 /* =========================================================

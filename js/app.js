@@ -1274,13 +1274,21 @@ function TilesOverview({ standards, onSelectStandard }) {
                       type="button"
                       className="btn-kachel-open ms-auto"
                       style={{
-                        background: enh.btnGradient,
-                        boxShadow: `0 4px 14px ${enh.btnShadow}`
+                        backgroundColor: '#ffffff',
+                        color: enh.tagColor,
+                        borderColor: enh.tagBorder,
+                        boxShadow: `0 2px 10px ${enh.btnShadow}`
                       }}
                       title={`${std.title} öffnen`}
                     >
-                      <span>Details &amp; Kurven</span>
-                      <span className="kachel-arrow-badge">
+                      <span className="fw-bold">Details &amp; Kurven</span>
+                      <span
+                        className="kachel-arrow-badge"
+                        style={{
+                          backgroundColor: enh.tagColor,
+                          color: '#ffffff'
+                        }}
+                      >
                         <i className="bi bi-arrow-right"></i>
                       </span>
                     </button>
