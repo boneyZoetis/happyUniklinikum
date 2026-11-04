@@ -5457,46 +5457,33 @@ function QuickHubView({ standards, onSelectStandard, onLogout }) {
         })}
       </div>
 
-      {/* Blended Clinical ICU Patient Monitor Illustration */}
+      {/* Seamless Ambient Monitor Illustration - Edgeless, borderless, blending directly into the page background */}
       <div
-        className="quick-hub-monitor-box mt-3 mb-2 w-100 position-relative overflow-hidden text-center mx-auto"
+        className="quick-hub-monitor-ambient w-100 position-relative text-center mx-auto mt-1 mb-2"
         style={{
-          borderRadius: '20px',
-          boxShadow: '0 8px 24px -4px rgba(2, 132, 199, 0.16)',
-          border: '1.5px solid rgba(186, 230, 253, 0.55)',
-          background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 249, 255, 0.7) 100%)',
-          maxWidth: '580px'
+          maxWidth: '580px',
+          background: 'transparent',
+          border: 'none',
+          boxShadow: 'none',
+          pointerEvents: 'none',
+          overflow: 'hidden'
         }}
       >
         <img
           src="assets/quick-hub-monitor.jpg"
-          alt="Intensivpflege Patientenmonitor &amp; Bettplatz"
-          className="w-100 d-block"
+          alt="Intensivpflege Patientenmonitor"
+          className="quick-hub-monitor-ambient-img w-100 d-block"
           style={{
             objectFit: 'cover',
-            maxHeight: '270px',
-            maskImage: 'linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)'
+            maxHeight: '260px',
+            border: 'none',
+            outline: 'none',
+            boxShadow: 'none',
+            background: 'transparent',
+            maskImage: 'radial-gradient(ellipse 95% 75% at 50% 50%, black 35%, rgba(0, 0, 0, 0.8) 55%, rgba(0, 0, 0, 0.25) 78%, transparent 100%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 95% 75% at 50% 50%, black 35%, rgba(0, 0, 0, 0.8) 55%, rgba(0, 0, 0, 0.25) 78%, transparent 100%)'
           }}
         />
-        <div
-          className="position-absolute bottom-0 start-0 end-0 py-1.5 px-3 d-flex align-items-center justify-content-center gap-1.5"
-          style={{
-            background: 'linear-gradient(to top, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0) 100%)'
-          }}
-        >
-          <span
-            className="badge rounded-pill fw-semibold"
-            style={{
-              background: 'rgba(2, 132, 199, 0.12)',
-              color: '#0369a1',
-              fontSize: '0.68rem',
-              border: '1px solid rgba(2, 132, 199, 0.22)'
-            }}
-          >
-            <i className="bi bi-activity text-danger me-1"></i>Patientenmonitoring &bull; Evidenzbasierte Leitfäden
-          </span>
-        </div>
       </div>
     </div>
   );
