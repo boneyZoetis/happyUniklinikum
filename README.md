@@ -1,6 +1,6 @@
-# UMF Expertenstandards &bull; Digitale Pflege-Pocketcards
+# Klinische Pflegestandards &bull; Digitale Pocketcards
 
-Eine spezialisierte Web-Anwendung für die **Universitätsmedizin Frankfurt (UMF)** zur Darstellung und Bereitstellung der 4 Pflege-Expertenstandards mit interaktiven Kacheln, Schulungsvideos und scannbaren, dynamisch generierten QR-Codes.
+Eine spezialisierte Web-Anwendung zur Darstellung und Bereitstellung von klinischen Pflege-Expertenstandards mit interaktiven Kacheln, Schulungsvideos und scannbaren, dynamisch generierten QR-Codes.
 
 ---
 

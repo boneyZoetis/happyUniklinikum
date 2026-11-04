@@ -1,5 +1,5 @@
 /**
- * Zero-dependency Static HTTP Server for UMF Expertenstandards
+ * Zero-dependency Static HTTP Server for Klinische Intensivstandards
  * Runs with Node.js or agy-node
  */
 
@@ -86,7 +86,7 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, '127.0.0.1', () => {
   const localUrl = `http://localhost:${PORT}`;
   console.log('\n======================================================');
-  console.log('   UMF Expertenstandards - Digitale Pocketcards       ');
+  console.log('   Klinische Intensivstandards - Digitale Pocketcards ');
   console.log('======================================================');
   console.log(`\n> Server is running at: ${localUrl}`);
   console.log(`> Serving files from:   ${ROOT_DIR}`);

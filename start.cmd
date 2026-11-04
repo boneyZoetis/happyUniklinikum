@@ -1,7 +1,7 @@
 @echo off
-title UMF Expertenstandards
+title Klinische Intensivstandards
 echo ======================================================
-echo    Starting UMF Expertenstandards Application...
+echo    Starting Klinische Intensivstandards Application...
 echo ======================================================
 
 :: Check if agy-node or node is available

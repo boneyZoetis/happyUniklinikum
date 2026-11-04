@@ -1,4 +1,4 @@
-/* Modern Custom Styling for UMF Expertenstandards Application */
+/* Modern Custom Styling for Klinische Pflegestandards Application */
 :root {
   --umf-navy: #004767;
   --umf-navy-dark: #003049;
@@ -15,6 +15,18 @@
   --zvk-gradient: linear-gradient(135deg, #881337 0%, #e11d48 100%);
   --isolation-color: #0284c7;
   --isolation-gradient: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+  
+  /* 5 New Active Intensive Care Standards */
+  --beatmung-color: #0284c7;
+  --beatmung-gradient: linear-gradient(135deg, #001f3f 0%, #0284c7 100%);
+  --befeuchtung-color: #16a34a;
+  --befeuchtung-gradient: linear-gradient(135deg, #064e3b 0%, #16a34a 100%);
+  --hfnc-color: #ea580c;
+  --hfnc-gradient: linear-gradient(135deg, #431407 0%, #ea580c 100%);
+  --arterie-color: #dc2626;
+  --arterie-gradient: linear-gradient(135deg, #450a0a 0%, #dc2626 100%);
+  --evd-color: #7c3aed;
+  --evd-gradient: linear-gradient(135deg, #2e1065 0%, #7c3aed 100%);
   
   --surface-bg: #ffffff;
   --body-bg: #f4f6f8;
@@ -52,18 +64,20 @@ body {
 
 .brand-title {
   font-weight: 800;
-  letter-spacing: -0.4px;
-  background: linear-gradient(135deg, #00273d 0%, #004767 60%, #0284c7 100%);
+  letter-spacing: -0.3px;
+  background: linear-gradient(135deg, #001f3f 0%, #0284c7 50%, #0d9488 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
 }
 
-/* Hospital Sub-header / Main Top Header with crisp clinical sky-blue to periwinkle-ice gradient */
+/* Hospital Sub-header / Main Top Header with rich colorful medical gradient */
 .hospital-banner {
-  background: linear-gradient(135deg, #bae6fd 0%, #dbeafe 52%, #e0e7ff 100%);
+  background: linear-gradient(135deg, #001a2e 0%, #003354 36%, #0369a1 72%, #0284c7 100%);
   border-bottom: 2px solid #38bdf8;
-  padding: 0.65rem 0;
+  padding: 0.7rem 0;
   position: relative;
+  box-shadow: 0 4px 18px rgba(0, 39, 61, 0.2);
 }
 
 .hospital-banner::before {
@@ -72,8 +86,9 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 3.5px;
-  background: linear-gradient(90deg, #be185d 0%, #16a34a 20%, #ea580c 40%, #0284c7 60%, #e11d48 80%, #facc15 100%);
+  height: 4px;
+  background: linear-gradient(90deg, #dc2626 0%, #16a34a 20%, #ea580c 40%, #7c3aed 60%, #0284c7 80%, #facc15 100%);
+  z-index: 2;
 }
 
 /* =========================================================
@@ -410,6 +425,19 @@ body {
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 }
 
+.nav-standard-link.beatmung.active { background: var(--beatmung-color); }
+.nav-standard-link.befeuchtung-invasiv.active { background: var(--befeuchtung-color); }
+.nav-standard-link.hfnc.active { background: var(--hfnc-color); }
+.nav-standard-link.arterie.active { background: var(--arterie-color); }
+.nav-standard-link.evd.active { background: var(--evd-color); }
+
+.nav-standard-link.beatmung:not(.active) { color: var(--beatmung-color); }
+.nav-standard-link.befeuchtung-invasiv:not(.active) { color: var(--befeuchtung-color); }
+.nav-standard-link.hfnc:not(.active) { color: var(--hfnc-color); }
+.nav-standard-link.arterie:not(.active) { color: var(--arterie-color); }
+.nav-standard-link.evd:not(.active) { color: var(--evd-color); }
+
+/* Legacy mappings for backward compatibility */
 .nav-standard-link.dekubitus.active { background: var(--dekubitus-color); }
 .nav-standard-link.sturz.active { background: var(--sturz-color); }
 .nav-standard-link.schmerz.active { background: var(--schmerz-color); }
@@ -535,6 +563,36 @@ body {
 .quick-switcher-pill:not(.active):hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+}
+
+.quick-switcher-pill.beatmung:not(.active):hover {
+  background: #f0f9ff;
+  border-color: #0284c7 !important;
+  color: #0369a1 !important;
+}
+
+.quick-switcher-pill.befeuchtung-invasiv:not(.active):hover {
+  background: #f0fdf4;
+  border-color: #16a34a !important;
+  color: #15803d !important;
+}
+
+.quick-switcher-pill.hfnc:not(.active):hover {
+  background: #fff7ed;
+  border-color: #ea580c !important;
+  color: #c2410c !important;
+}
+
+.quick-switcher-pill.arterie:not(.active):hover {
+  background: #fff1f2;
+  border-color: #dc2626 !important;
+  color: #991b1b !important;
+}
+
+.quick-switcher-pill.evd:not(.active):hover {
+  background: #faf5ff;
+  border-color: #7c3aed !important;
+  color: #581c87 !important;
 }
 
 .quick-switcher-pill.dekubitus:not(.active):hover {
@@ -687,6 +745,12 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
+.footer-category-pill.pill-beatmung:hover { background: var(--beatmung-color); border-color: var(--beatmung-color); }
+.footer-category-pill.pill-befeuchtung:hover { background: var(--befeuchtung-color); border-color: var(--befeuchtung-color); }
+.footer-category-pill.pill-hfnc:hover { background: var(--hfnc-color); border-color: var(--hfnc-color); }
+.footer-category-pill.pill-arterie:hover { background: var(--arterie-color); border-color: var(--arterie-color); }
+.footer-category-pill.pill-evd:hover { background: var(--evd-color); border-color: var(--evd-color); }
+
 .footer-category-pill.pill-dekubitus:hover { background: var(--dekubitus-color); border-color: var(--dekubitus-color); }
 .footer-category-pill.pill-sturz:hover { background: var(--sturz-color); border-color: var(--sturz-color); }
 .footer-category-pill.pill-schmerz:hover { background: var(--schmerz-color); border-color: var(--schmerz-color); }
@@ -772,7 +836,7 @@ body {
 }
 
 /* =========================================================
-   QUICK HUB: 6 CLICKABLE LABELS AFTER SCANNING MAGIC CARD
+   QUICK HUB: 5 CLICKABLE LABELS WITH CLINICAL ILLUSTRATIONS
    ========================================================= */
 .quick-hub-label-card {
   transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
@@ -780,26 +844,13 @@ body {
   overflow: hidden;
 }
 
-.quick-hub-label-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
-  pointer-events: none;
-}
-
 .quick-hub-label-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 25px -4px rgba(0, 39, 61, 0.15) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px -4px rgba(0, 39, 61, 0.2) !important;
 }
 
-.quick-hub-label-card:hover .bi-chevron-right {
-  color: var(--umf-navy) !important;
-  transform: translateX(4px);
-  transition: transform 0.2s ease;
+.quick-hub-label-card:active {
+  transform: scale(0.985);
 }
 
 @media print {
@@ -912,7 +963,7 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   }
 
   .navbar-custom .brand-title {
-    font-size: 1rem !important;
+    font-size: clamp(1.08rem, 3.8vw, 1.25rem) !important;
     letter-spacing: -0.3px;
   }
 
@@ -996,7 +1047,7 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   }
 
   .navbar-custom .brand-title {
-    font-size: 0.92rem !important;
+    font-size: 1.05rem !important;
   }
 
   .nav-standard-link {
@@ -1057,8 +1108,50 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 }
 
 .universal-card-interactive-box.atm-size {
-  max-width: 440px;
-  border-radius: 1rem;
+  max-width: 640px;
+  aspect-ratio: 1024 / 682;
+  border-radius: 1.15rem;
+}
+
+@media (max-width: 576px) {
+  .universal-card-interactive-box.atm-size {
+    max-width: 100% !important;
+    border-radius: 0.95rem !important;
+  }
+}
+
+.u-card-pedestal {
+  background: radial-gradient(ellipse at top, #f8fafc 0%, #ffffff 80%);
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 20px 45px -10px rgba(2, 132, 199, 0.12);
+  transition: all 0.25s ease;
+}
+
+.u-card-tile-item {
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.u-card-tile-item:hover {
+  transform: translateX(3px);
+  box-shadow: 0 4px 14px rgba(0, 39, 61, 0.1) !important;
+}
+
+.u-card-tile-item:active {
+  transform: scale(0.985);
+}
+
+.a4-std-card-box {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.a4-std-card-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px -4px rgba(0, 39, 61, 0.14) !important;
+}
+
+.standard-tile-tap:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 39, 61, 0.12) !important;
 }
 
 .universal-card-inner {
@@ -1215,6 +1308,28 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   transform: scale(0.99);
 }
 
+.a4-procedure-tile {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.a4-procedure-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -3px rgba(0, 39, 61, 0.15) !important;
+}
+
+.a4-procedure-tile:active {
+  transform: scale(0.99);
+}
+
+.a4-center-phone-mockup {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.a4-center-phone-mockup:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -4px rgba(0, 39, 61, 0.18) !important;
+}
+
 .a4-row-thumb-box {
   height: 34px;
   width: 195px;
@@ -1343,7 +1458,7 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   border-bottom-right-radius: 6px;
 }
 
-/* Bottom Universitätsklinikum Frankfurt Panoramic Picture Banner */
+/* Bottom Panoramic Picture Banner */
 .a4-ukf-bottom-banner {
   min-height: 175px;
   width: 100%;
@@ -1558,20 +1673,38 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 }
 
 /* Responsive Scaling for Mobile Screens */
+.a4-device-thumb-col {
+  width: 88px;
+  flex-shrink: 0;
+}
+
 @media (max-width: 768px) {
   body {
-    padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   .copy-feedback-toast {
-    bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(92px + env(safe-area-inset-bottom, 0px));
     right: 1rem;
     left: 1rem;
   }
 
   .a4-native-card {
-    aspect-ratio: auto;
-    border-radius: 0.95rem;
+    aspect-ratio: auto !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 1rem !important;
+    margin: 0 auto !important;
+    box-shadow: 0 6px 20px rgba(0, 39, 61, 0.12) !important;
+  }
+
+  .a4-center-phone-mockup {
+    max-width: 250px !important;
+    margin: 0.85rem auto !important;
+    box-shadow: 0 4px 16px rgba(0, 39, 61, 0.1) !important;
   }
 
   .a4-card-header {
@@ -1680,6 +1813,47 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   }
 }
 
+@media (max-width: 576px) {
+  .quick-hub-label-card {
+    min-height: 80px !important;
+    padding: 0.7rem 0.85rem !important;
+    border-radius: 14px !important;
+  }
+
+  .quick-hub-icon-box {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .quick-hub-arrow-btn {
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .quick-hub-top-header {
+    padding: 0.75rem 0.9rem !important;
+    margin-bottom: 0.65rem !important;
+  }
+
+  .a4-procedure-tile {
+    min-height: auto !important;
+    padding: 0.6rem 0.65rem !important;
+  }
+
+  .a4-device-thumb-col {
+    width: 74px !important;
+  }
+
+  .a4-point-text {
+    font-size: 0.68rem !important;
+    line-height: 1.22 !important;
+  }
+
+  .a4-thumb-tag {
+    font-size: 0.48rem !important;
+  }
+}
+
 @media (max-width: 400px) {
   .a4-header-skyline-box {
     display: none;
@@ -1689,6 +1863,13 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   }
   .a4-row-title {
     font-size: 0.78rem !important;
+  }
+  .a4-device-thumb-col {
+    width: 64px !important;
+  }
+  .a4-point-text {
+    font-size: 0.65rem !important;
+    line-height: 1.18 !important;
   }
 }
 
@@ -2088,8 +2269,8 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     position: relative !important;
     display: flex !important;
     flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
+    align-items: stretch !important;
+    justify-content: space-between !important;
     background: #ffffff !important;
     box-sizing: border-box !important;
     padding: 0 !important;
@@ -2159,18 +2340,42 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 .gap-2\.5 { gap: 0.625rem !important; }
 .g-2\.5 { --bs-gutter-x: 0.625rem; --bs-gutter-y: 0.625rem; }
 
-/* Mobile view: A4 Universal-Karte, format switcher, and top action toolbar are desktop-only */
+/* Mobile view adjustments */
+@media (max-width: 991.98px) {
+  .quick-hub-mobile-hide {
+    display: none !important;
+  }
+}
+
 @media (max-width: 767.98px) {
-  #universal-card-a4-printable,
   .mobile-segmented-control,
   .universal-card-top-actions,
   .universal-card-top-toolbar {
     display: none !important;
   }
+
+  .pocketcard-screen-view {
+    border-radius: 1.25rem !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07) !important;
+  }
+
+  .pocketcard-screen-view .pocketcard-print-header {
+    padding: 0.85rem 1rem !important;
+  }
+
+  .keypoint-item {
+    padding: 0.65rem 0.75rem !important;
+    border-radius: 0.75rem !important;
+  }
+
+  .clinical-picture-card img {
+    max-height: 250px !important;
+    object-fit: cover !important;
+  }
 }
 
 /* =========================================================
-   SECURE LOGIN PAGE STYLING (UMF QM-PORTAL)
+   SECURE LOGIN PAGE STYLING (KLINISCHES QM-PORTAL)
    ========================================================= */
 .login-screen-wrapper {
   min-height: 100vh;

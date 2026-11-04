@@ -1,6 +1,6 @@
 /**
- * UMF Expertenstandards - Standalone React & Bootstrap Application
- * Faithful digital replica of the Universitätsmedizin Frankfurt Pocketcards
+ * Klinische Pflegestandards & Intensivpflege - Standalone React & Bootstrap Application
+ * Evidenzbasierte klinische Standards für Intensivpflege & Notfallmedizin
  */
 
 const { useState, useEffect, useRef, useMemo } = React;
@@ -26,7 +26,6 @@ function QrCodeCanvas({ value, size = 160, color = '#0f172a', className = '', id
             correctLevel: window.QRCode.CorrectLevel.M
           });
 
-          // Extract canvas and convert to permanent base64 image
           const canvas = tempDiv.querySelector('canvas');
           if (canvas) {
             const dataUrl = canvas.toDataURL('image/png');
@@ -41,7 +40,6 @@ function QrCodeCanvas({ value, size = 160, color = '#0f172a', className = '', id
             containerRef.current.innerHTML = '';
             containerRef.current.appendChild(img);
           } else {
-            // fallback
             while (tempDiv.firstChild) {
               containerRef.current.appendChild(tempDiv.firstChild);
             }
@@ -68,215 +66,7 @@ function QrCodeCanvas({ value, size = 160, color = '#0f172a', className = '', id
 }
 
 // -------------------------------------------------------------
-// Component: Quick Scan & Image Recognition Modal
-// -------------------------------------------------------------
-function ScanModal({ isOpen, onClose, onSelectStandard, showToast }) {
-  const [manualInput, setManualInput] = useState('');
-  const [cameraActive, setCameraActive] = useState(false);
-  const videoRef = useRef(null);
-  const readerRef = useRef(null);
-
-  useEffect(() => {
-    if (!isOpen) {
-      if (readerRef.current) {
-        try { readerRef.current.reset(); } catch(e) {}
-        readerRef.current = null;
-      }
-      setCameraActive(false);
-    }
-  }, [isOpen]);
-
-  const handleStartCamera = async () => {
-    try {
-      setCameraActive(true);
-      if (window.ZXing) {
-        const reader = new window.ZXing.BrowserQRCodeReader();
-        readerRef.current = reader;
-        const devices = await reader.getVideoInputDevices();
-        const selectedDeviceId = devices.length > 0 ? devices[0].deviceId : undefined;
-        await reader.decodeFromVideoDevice(selectedDeviceId, videoRef.current, (result, err) => {
-          if (result && result.getText()) {
-            handleCodeRecognized(result.getText());
-          }
-        });
-      } else {
-        showToast('Kamera-Bibliothek wird noch geladen...');
-      }
-    } catch (err) {
-      console.warn('Camera error:', err);
-      showToast('Kamera konnte nicht gestartet werden');
-      setCameraActive(false);
-    }
-  };
-
-  const handleCodeRecognized = (rawText) => {
-    if (readerRef.current) {
-      try { readerRef.current.reset(); } catch(e) {}
-      readerRef.current = null;
-    }
-    setCameraActive(false);
-    onClose();
-    if (window.QRParser) {
-      const match = window.QRParser.detectUmfStandard(rawText);
-      if (match) {
-        showToast(`Standard erkannt: ${match.shortTitle}`);
-        onSelectStandard(match.id);
-        return;
-      }
-    }
-    showToast(`Code gescannt: ${rawText.substring(0, 30)}`);
-  };
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
-
-    const nameLower = file.name.toLowerCase();
-    if (nameLower.includes('zvk') || nameLower.includes('katheter') || nameLower.includes('391904') || nameLower.includes('484866') || nameLower.includes('media_1791797527962')) {
-      onClose();
-      showToast('ZVK Standard aus Foto erkannt!');
-      onSelectStandard('zvk');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.src = event.target.result;
-      img.onload = () => {
-        if (window.ZXing) {
-          const qrReader = new window.ZXing.BrowserQRCodeReader();
-          qrReader.decodeFromImage(img).then(res => {
-            handleCodeRecognized(res.getText());
-          }).catch(() => {
-            const match = window.QRParser ? window.QRParser.detectUmfStandard(file.name) : null;
-            if (match) {
-              onClose();
-              showToast(`Erkannt: ${match.shortTitle}`);
-              onSelectStandard(match.id);
-            } else {
-              onClose();
-              showToast('ZVK Intensivpflege erkannt!');
-              onSelectStandard('zvk');
-            }
-          });
-        }
-      };
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleManualSubmit = (e) => {
-    e.preventDefault();
-    if (!manualInput.trim()) return;
-    handleCodeRecognized(manualInput.trim());
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(15, 23, 42, 0.65)', zIndex: 1060 }}>
-      <div className="modal-dialog modal-dialog-centered modal-lg">
-        <div className="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-          <div className="modal-header bg-dark text-white py-3 px-3 px-sm-4">
-            <h5 className="modal-title fw-bold d-flex align-items-center gap-2 mb-0" style={{ fontSize: '1.05rem' }}>
-              <i className="bi bi-qr-code-scan text-info"></i>
-              <span>QR scannen &bull; Foto / SOP erkennen</span>
-            </h5>
-            <button type="button" className="btn-close btn-close-white" onClick={onClose}></button>
-          </div>
-          <div className="modal-body p-3 p-sm-4 bg-light">
-            <div className="row g-3 g-sm-4">
-              {/* Option 1: Live Camera Scanner */}
-              <div className="col-12 col-md-6">
-                <div className="p-3 bg-white rounded-3 border h-100 text-center d-flex flex-column justify-content-between">
-                  <div className="fw-bold mb-2 text-dark">
-                    <i className="bi bi-camera-fill me-1 text-primary"></i> Live Kamera Scanner
-                  </div>
-                  {cameraActive ? (
-                    <div className="position-relative rounded overflow-hidden bg-black mb-2" style={{ height: '200px' }}>
-                      <video ref={videoRef} style={{ width: '100%', height: '100%', objectFit: 'cover' }}></video>
-                      <div className="position-absolute top-50 start-50 translate-middle border border-2 border-danger rounded" style={{ width: '130px', height: '130px', pointerEvents: 'none' }}></div>
-                    </div>
-                  ) : (
-                    <div className="bg-light rounded p-4 mb-2 text-muted border border-dashed d-flex flex-column align-items-center justify-content-center" style={{ height: '200px' }}>
-                      <i className="bi bi-webcam fs-1 text-secondary mb-2"></i>
-                      <div className="small">Kamera auf Pocketcard oder Poster richten</div>
-                    </div>
-                  )}
-                  <div>
-                    {!cameraActive ? (
-                      <button className="btn btn-outline-primary btn-sm rounded-pill w-100 d-flex align-items-center justify-content-center gap-1.5 fw-semibold" style={{ minHeight: '44px' }} onClick={handleStartCamera}>
-                        <i className="bi bi-camera-video"></i>
-                        <span>Kamera starten</span>
-                      </button>
-                    ) : (
-                      <button className="btn btn-outline-danger btn-sm rounded-pill w-100 d-flex align-items-center justify-content-center gap-1.5 fw-semibold" style={{ minHeight: '44px' }} onClick={() => { if (readerRef.current) readerRef.current.reset(); setCameraActive(false); }}>
-                        <i className="bi bi-stop-circle"></i>
-                        <span>Kamera stoppen</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Option 2: Upload Photo / Poster */}
-              <div className="col-12 col-md-6">
-                <div className="p-3 bg-white rounded-3 border h-100 d-flex flex-column justify-content-between">
-                  <div>
-                    <div className="fw-bold mb-2 text-dark">
-                      <i className="bi bi-image-fill me-1 text-success"></i> Foto / Poster hochladen
-                    </div>
-                    <p className="text-muted small mb-2">
-                      Laden Sie ein Foto oder Bild eines Posters / einer Pocketcard hoch, um direkt zur SOP zu gelangen:
-                    </p>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="form-control mb-3"
-                      style={{ minHeight: '42px' }}
-                      onChange={handleFileUpload}
-                    />
-
-                    {/* Quick Search */}
-                    <div className="border-top pt-2">
-                      <div className="fw-bold small mb-2 text-dark">Oder Thema / Suchbegriff eingeben:</div>
-                      <form onSubmit={handleManualSubmit} className="input-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          style={{ minHeight: '42px' }}
-                          placeholder="z. B. Dekubitus, ZVK, Sturz"
-                          value={manualInput}
-                          onChange={(e) => setManualInput(e.target.value)}
-                        />
-                        <button type="submit" className="btn btn-dark fw-semibold px-3" style={{ minHeight: '42px' }}>
-                          Öffnen
-                        </button>
-                      </form>
-                      <div className="small text-muted mt-2" style={{ fontSize: '0.72rem' }}>
-                        Tipp: <strong>ZVK</strong> (Verfahrensanweisung), <strong>Dekubitus</strong> (Pflegestandard), <strong>Sturz</strong> (Prophylaxe)
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="modal-footer bg-white py-2 px-3 px-sm-4 justify-content-between">
-            <small className="text-muted d-none d-sm-inline">Universitätsmedizin Frankfurt &bull; OmniScan Information System</small>
-            <button type="button" className="btn btn-sm btn-secondary rounded-pill px-4" style={{ minHeight: '38px' }} onClick={onClose}>
-              Schließen
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// -------------------------------------------------------------
-// Component: Clinical Secure Login Page
+// Component: Login Page
 // -------------------------------------------------------------
 function LoginPage({ onLogin, targetRoute }) {
   const [username, setUsername] = useState('');
@@ -286,15 +76,14 @@ function LoginPage({ onLogin, targetRoute }) {
 
   const targetStandardName = useMemo(() => {
     if (!targetRoute || targetRoute === 'home') return null;
-    if (targetRoute === 'dekubitus') return 'Dekubitusprophylaxe';
-    if (targetRoute === 'sturz') return 'Sturzprophylaxe';
-    if (targetRoute === 'schmerz') return 'Schmerzmanagement';
-    if (targetRoute === 'ernaehrung') return 'Ernährungsmanagement';
-    if (targetRoute === 'isolation') return 'Hygiene & Isolation';
-    if (targetRoute === 'zvk') return 'ZVK Intensivpflege SOP';
+    if (targetRoute === 'beatmung') return '1. Beatmungsgerät & Gerätecheck';
+    if (targetRoute === 'befeuchtung-invasiv') return '2. Aktive Befeuchtung (Invasiv)';
+    if (targetRoute === 'hfnc') return '3. High-Flow-Therapie (HFNC)';
+    if (targetRoute === 'arterie') return '4. Invasives Druckmesssystem (Arterie)';
+    if (targetRoute === 'evd') return '5. Externe Ventrikeldrainage (EVD)';
     if (targetRoute === 'quick-hub') return 'Schnellzugriff Hub';
     if (targetRoute === 'qrcodes') return 'Alle Pocketcards';
-    if (targetRoute === 'universal-karte' || targetRoute === 'magic-card') return 'Universal-Karte';
+    if (targetRoute === 'universal-karte' || targetRoute === 'magic-card') return 'U-Card';
     return targetRoute;
   }, [targetRoute]);
 
@@ -315,63 +104,58 @@ function LoginPage({ onLogin, targetRoute }) {
   return (
     <div className="login-screen-wrapper">
       <div className="login-card">
-        {/* Header */}
         <div className="text-center mb-3.5">
-          <div
-            className="d-inline-flex align-items-center justify-content-center rounded-circle mb-2.5 shadow-sm text-white"
-            style={{
-              width: '52px',
-              height: '52px',
-              background: 'linear-gradient(135deg, #0284c7 0%, #004767 100%)',
-              fontSize: '1.4rem'
-            }}
-          >
-            <i className="bi bi-shield-lock-fill"></i>
+          <div className="login-logo-circle mx-auto mb-2.5 shadow-md">
+            <i className="bi bi-heart-pulse-fill" style={{ fontSize: '1.75rem', color: '#ffffff' }}></i>
           </div>
-          <h5 className="fw-bold text-dark mb-0.5" style={{ fontSize: '1.25rem', letterSpacing: '-0.2px' }}>
-            QM-Portal
-          </h5>
-          <p className="text-muted small mb-0" style={{ fontSize: '0.84rem' }}>
-            Digitale Pflege-Pocketcards &amp; SOP-Standards
+
+          <span className="badge rounded-pill px-3 py-1 text-uppercase fw-bold mb-2 shadow-2xs" style={{ background: 'rgba(2, 132, 199, 0.1)', color: '#0284c7', border: '1px solid rgba(2, 132, 199, 0.22)', fontSize: '0.72rem', letterSpacing: '0.4px' }}>
+            <i className="bi bi-shield-lock-fill me-1"></i> QM-Intensivportal
+          </span>
+
+          <h2 className="login-title fw-black mb-1">
+            Klinische Pflegestandards
+          </h2>
+
+          <p className="login-subtitle mb-0">
+            Digitale Pocketcards &bull; Intensivpflege &amp; Leitfäden
           </p>
         </div>
 
-        {/* QR Code Scanned Notice (if opened via QR code) */}
         {targetStandardName && (
-          <div className="alert alert-info py-2 px-3 small rounded-3 d-flex align-items-center gap-2 mb-3">
-            <i className="bi bi-qr-code-scan fs-5 text-primary flex-shrink-0"></i>
-            <div style={{ fontSize: '0.78rem', lineHeight: '1.3' }}>
-              <span className="fw-bold text-dark d-block">Gescannter Bereich: {targetStandardName}</span>
-              <span className="text-secondary">Nach der Anmeldung gelangen Sie direkt dorthin.</span>
+          <div className="alert alert-primary py-2 px-3 rounded-3 mb-3 small d-flex align-items-center gap-2 border-0 shadow-2xs" style={{ background: 'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%)', color: '#0369a1' }}>
+            <i className="bi bi-box-arrow-in-right fs-5 flex-shrink-0 text-primary"></i>
+            <div>
+              <div className="text-secondary" style={{ fontSize: '0.72rem' }}>Direktzugriff angefordert für:</div>
+              <strong className="fw-bold">{targetStandardName}</strong>
             </div>
           </div>
         )}
 
-        {/* Error Alert */}
         {error && (
-          <div className="alert alert-danger py-2 px-3 small rounded-3 d-flex align-items-center gap-2 mb-3" role="alert">
-            <i className="bi bi-exclamation-triangle-fill text-danger flex-shrink-0"></i>
-            <span style={{ fontSize: '0.8rem' }}>{error}</span>
+          <div className="alert alert-danger py-2 px-3 rounded-3 mb-3 small d-flex align-items-center gap-2 border-0 shadow-2xs">
+            <i className="bi bi-exclamation-triangle-fill fs-5 flex-shrink-0"></i>
+            <span>{error}</span>
           </div>
         )}
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div className="mb-2.5">
-            <label className="form-label small fw-bold text-dark mb-1">
+            <label className="form-label small fw-bold text-dark mb-1" htmlFor="login-username">
               Benutzername
             </label>
-            <div className="login-input-group">
-              <span className="input-icon">
+            <div className="input-group">
+              <span className="input-group-text bg-white border-end-0 text-secondary">
                 <i className="bi bi-person-fill"></i>
               </span>
               <input
+                id="login-username"
                 type="text"
-                className="form-control"
-                placeholder="Benutzername"
+                autoComplete="username"
+                className="form-control border-start-0 ps-1"
+                placeholder="Benutzername eingeben"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                autoComplete="username"
                 autoFocus
                 required
               />
@@ -379,28 +163,29 @@ function LoginPage({ onLogin, targetRoute }) {
           </div>
 
           <div className="mb-3">
-            <label className="form-label small fw-bold text-dark mb-1">
+            <label className="form-label small fw-bold text-dark mb-1" htmlFor="login-password">
               Passwort
             </label>
-            <div className="login-input-group">
-              <span className="input-icon">
-                <i className="bi bi-lock-fill"></i>
+            <div className="input-group">
+              <span className="input-group-text bg-white border-end-0 text-secondary">
+                <i className="bi bi-key-fill"></i>
               </span>
               <input
+                id="login-password"
                 type={showPassword ? 'text' : 'password'}
-                className="form-control"
-                placeholder="Passwort"
+                autoComplete="current-password"
+                className="form-control border-start-0 border-end-0 px-1"
+                placeholder="Passwort eingeben"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password"
                 required
               />
               <button
                 type="button"
-                className="btn btn-link text-muted pe-3 ps-1 text-decoration-none"
+                className="input-group-text bg-white border-start-0 text-secondary"
                 onClick={() => setShowPassword(!showPassword)}
-                title={showPassword ? 'Passwort verbergen' : 'Passwort anzeigen'}
                 tabIndex="-1"
+                title={showPassword ? 'Passwort verbergen' : 'Passwort anzeigen'}
               >
                 <i className={`bi ${showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'}`}></i>
               </button>
@@ -409,29 +194,31 @@ function LoginPage({ onLogin, targetRoute }) {
 
           <button
             type="submit"
-            className="btn login-submit-btn w-100 d-flex align-items-center justify-content-center gap-2"
+            className="btn btn-primary w-100 rounded-pill py-2.5 fw-bold shadow-md d-flex align-items-center justify-content-center gap-2 text-white"
+            style={{ minHeight: '44px', fontSize: '0.92rem', background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', border: 'none' }}
           >
-            <i className="bi bi-box-arrow-in-right fs-5"></i>
             <span>Anmelden</span>
+            <i className="bi bi-arrow-right"></i>
           </button>
         </form>
 
-        {/* Safe internal access note */}
-        <div className="text-center mt-3 pt-2 border-top">
-          <div className="text-muted" style={{ fontSize: '0.72rem' }}>
-            <i className="bi bi-shield-check me-1 text-success"></i>
-            Geschützter interner QM-Bereich
-          </div>
+        <div className="text-center mt-3 pt-2.5 border-top border-light">
+          <small className="text-muted" style={{ fontSize: '0.74rem' }}>
+            Geschütztes QM-System &bull; Klinische Evidenz
+          </small>
         </div>
       </div>
     </div>
   );
 }
 
+
+// -------------------------------------------------------------
+// Component: App (Root Router & Shell with Main Top Header)
+// -------------------------------------------------------------
 function App() {
-  const [currentRoute, setCurrentRoute] = useState('home'); // 'home' | 'dekubitus' | 'sturz' | 'schmerz' | 'ernaehrung' | 'zvk' | 'qrcodes'
+  const [currentRoute, setCurrentRoute] = useState('home');
   const [toast, setToast] = useState(null);
-  const [isScanModalOpen, setIsScanModalOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     try {
       return localStorage.getItem('umf_auth_session') === 'true';
@@ -466,36 +253,56 @@ function App() {
     const handleHashChange = () => {
       const hash = (window.location.hash || '#/').toLowerCase();
 
-      if (hash.includes('dekubitus')) {
-        setCurrentRoute('dekubitus');
-        document.title = 'Dekubitusprophylaxe • UMF Expertenstandard';
+      if (hash.includes('beatmung') || hash.includes('ventilator')) {
+        setCurrentRoute('beatmung');
+        document.title = 'Beatmungsgerät & Check • Intensivstandard';
+      } else if (hash.includes('befeucht') || hash.includes('humid')) {
+        setCurrentRoute('befeuchtung-invasiv');
+        document.title = 'Aktive Atemgasbefeuchtung • Invasive Beatmung';
+      } else if (hash.includes('hfnc') || hash.includes('high-flow') || hash.includes('highflow')) {
+        setCurrentRoute('hfnc');
+        document.title = 'High-Flow-Therapie (HFNC) • ROX-Index & Monitoring';
+      } else if (hash.includes('arterie') || hash.includes('arteriell') || hash.includes('art-line') || hash.includes('druckmessung')) {
+        setCurrentRoute('arterie');
+        document.title = 'Invasives arterielles Druckmesssystem • Nullabgleich';
+      } else if (hash.includes('evd') || hash.includes('ventrikel') || hash.includes('drainage') || hash.includes('hirndruck')) {
+        setCurrentRoute('evd');
+        document.title = 'Externe Ventrikeldrainage (EVD) • Nivellierung & ICP';
+      } else if (hash.includes('dekubitus')) {
+        setCurrentRoute('beatmung');
       } else if (hash.includes('sturz')) {
-        setCurrentRoute('sturz');
-        document.title = 'Sturzprophylaxe • UMF Expertenstandard';
+        setCurrentRoute('befeuchtung-invasiv');
       } else if (hash.includes('schmerz')) {
-        setCurrentRoute('schmerz');
-        document.title = 'Schmerzmanagement • UMF Expertenstandard';
-      } else if (hash.includes('ernaehrung') || hash.includes('ernährung')) {
-        setCurrentRoute('ernaehrung');
-        document.title = 'Ernährungsmanagement • UMF Expertenstandard';
-      } else if (hash.includes('zvk') || hash.includes('katheter') || hash.includes('venenkatheter')) {
-        setCurrentRoute('zvk');
-        document.title = 'ZVK Intensivpflege • UMF Standard';
-      } else if (hash.includes('isolation') || hash.includes('hygiene') || hash.includes('mre') || hash.includes('mrsa') || hash.includes('mrgn') || hash.includes('vre') || hash.includes('diff')) {
-        setCurrentRoute('isolation');
-        document.title = 'Isolation & Hygiene • UMF Leitfaden';
-      } else if (hash.includes('universal') || hash.includes('magic') || hash.includes('card')) {
+        setCurrentRoute('hfnc');
+      } else if (hash.includes('ernaehrung')) {
+        setCurrentRoute('arterie');
+      } else if (hash.includes('zvk') || hash.includes('isolation')) {
+        setCurrentRoute('evd');
+      } else if (
+        hash.includes('qrcodes') ||
+        hash.includes('pocketcards') ||
+        hash.includes('pocketcard') ||
+        hash.includes('alle-karten') ||
+        hash.includes('all-cards')
+      ) {
+        const isMobileScreen = typeof window !== 'undefined' && window.innerWidth < 768;
+        setCurrentRoute(isMobileScreen ? 'quick-hub' : 'home');
+        document.title = 'Klinische Intensivstandards • Digitale Pflege-Pocketcards';
+      } else if (hash.includes('universal') || hash.includes('magic') || hash.includes('u-card') || hash.includes('ucard')) {
         setCurrentRoute('universal-karte');
-        document.title = 'Universal-Karte • UMF Pocketcards';
+        document.title = 'U-Card • Digitale Pocketcards';
       } else if (hash.includes('hub') || hash.includes('menu') || hash.includes('quick')) {
         setCurrentRoute('quick-hub');
-        document.title = 'UMF Schnellzugriff • Alle 6 Standards';
-      } else if (hash.includes('qrcodes')) {
-        setCurrentRoute('qrcodes');
-        document.title = 'Alle Pocketcards • UMF Standards';
+        document.title = 'Schnellzugriff • Intensivpflege Standards';
       } else {
-        setCurrentRoute('home');
-        document.title = 'UMF Expertenstandards • Digitale Pflege-Pocketcards';
+        const isMobileScreen = typeof window !== 'undefined' && window.innerWidth < 768;
+        if (isMobileScreen && (!hash || hash === '' || hash === '#/' || hash === '#')) {
+          setCurrentRoute('quick-hub');
+          document.title = 'Schnellzugriff • Intensivpflege Standards';
+        } else {
+          setCurrentRoute('home');
+          document.title = 'Klinische Intensivstandards • Digitale Pflege-Pocketcards';
+        }
       }
     };
 
@@ -504,7 +311,6 @@ function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  // Mobile Device & Orientation Technology: Real-time listener for portrait & landscape
   const [deviceOrientation, setDeviceOrientation] = useState(
     typeof window !== 'undefined' && window.innerWidth > window.innerHeight ? 'landscape' : 'portrait'
   );
@@ -523,28 +329,28 @@ function App() {
     handleOrientation();
     window.addEventListener('resize', handleOrientation);
     window.addEventListener('orientationchange', handleOrientation);
-    if (window.screen && window.screen.orientation) {
-      try {
-        window.screen.orientation.addEventListener('change', handleOrientation);
-      } catch (e) {}
-    }
     return () => {
       window.removeEventListener('resize', handleOrientation);
       window.removeEventListener('orientationchange', handleOrientation);
-      if (window.screen && window.screen.orientation) {
-        try {
-          window.screen.orientation.removeEventListener('change', handleOrientation);
-        } catch (e) {}
-      }
     };
   }, []);
 
   const navigateTo = (route) => {
-    window.location.hash = `#/${route}`;
+    let target = route;
+    const isMobileScreen = typeof window !== 'undefined' && window.innerWidth < 768;
+    if (route === 'pocketcard' || route === 'pocketcards' || route === 'pocket-cards' || route === 'cards' || route === 'qrcodes' || route === 'alle-pocketcards') {
+      target = isMobileScreen ? 'quick-hub' : 'home';
+    } else if (route === 'home') {
+      target = isMobileScreen ? 'quick-hub' : 'home';
+    }
+    setCurrentRoute(target);
+    window.location.hash = target === 'home' ? '#/' : `#/${target}`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const isStandardRoute = ['dekubitus', 'sturz', 'schmerz', 'ernaehrung', 'zvk', 'isolation'].includes(currentRoute);
+  const isStandardRoute = ['beatmung', 'befeuchtung-invasiv', 'hfnc', 'arterie', 'evd'].includes(currentRoute);
   const isMobileIsolatedRoute = isStandardRoute || currentRoute === 'universal-karte' || currentRoute === 'magic-card';
+  const shouldHideMobileHeaders = isMobileIsolatedRoute || currentRoute === 'quick-hub';
 
   if (!isAuthenticated) {
     return (
@@ -574,105 +380,124 @@ function App() {
         </div>
       )}
 
-      {/* Quick Scanner & Photo Recognition Modal */}
-      <ScanModal
-        isOpen={isScanModalOpen}
-        onClose={() => setIsScanModalOpen(false)}
-        onSelectStandard={(id) => navigateTo(id)}
-        showToast={showToast}
-      />
-
-      {/* Modern Hospital Top Banner - Hidden on quick-hub, and hidden on mobile when viewing a selected standard tile or Universal-Karte */}
-      {currentRoute !== 'quick-hub' && (
-        <div className={`hospital-banner shadow-sm ${isMobileIsolatedRoute ? 'd-none d-md-block' : ''}`}>
-          <div className="container d-flex align-items-center justify-content-between py-1 gap-2">
-            <div className="d-flex align-items-center gap-2 min-w-0">
-              <a href="#/" className="text-decoration-none d-flex align-items-center bg-white rounded-3 p-1 shadow-sm border border-info border-opacity-25 flex-shrink-0">
-                <img src="assets/umf-logo.jpg" alt="Universitätsmedizin Frankfurt" height="32" className="rounded" style={{ maxHeight: '34px' }} />
-              </a>
-              {/* Desktop Title */}
-              <div className="border-start border-2 ps-2 ps-sm-3 d-none d-md-block" style={{ borderColor: '#0284c7' }}>
-                <div className="fw-black" style={{ letterSpacing: '0.5px', fontSize: '0.94rem', color: '#00273d' }}>
-                  UNIVERSITÄTSMEDIZIN FRANKFURT
-                </div>
-                <div className="fw-semibold" style={{ fontSize: '0.75rem', color: '#0369a1' }}>
-                  <i className="bi bi-shield-check text-success me-1"></i>
-                  Digitale Pocketcards &bull; <span className="fw-bold" style={{ color: '#0f766e' }}>Expertenstandards in der Pflege</span>
-                </div>
-              </div>
-              {/* Compact Mobile Title */}
-              <div className="d-block d-md-none min-w-0">
-                <div className="fw-black text-truncate" style={{ fontSize: '0.78rem', lineHeight: 1.15, color: '#00273d' }}>
-                  UMF FRANKFURT
-                </div>
-                <div className="fw-semibold text-truncate" style={{ fontSize: '0.68rem', lineHeight: 1.15, color: '#0369a1' }}>
-                  Pflege-Pocketcards &bull; SOPs
-                </div>
-              </div>
-            </div>
-
-            <div className="d-flex align-items-center gap-1.5 flex-shrink-0">
-              <button
-                className={`btn btn-sm ${currentRoute === 'universal-karte' || currentRoute === 'magic-card' ? 'btn-warning text-dark fw-bold' : 'btn-outline-warning text-dark fw-bold'} rounded-pill px-2.5 px-sm-3 py-1 shadow-sm d-flex align-items-center gap-1 magic-btn-glow`}
-                style={{ minHeight: '36px', fontSize: '0.78rem' }}
-                onClick={() => navigateTo('universal-karte')}
-                title="Universal-Karte (A4- & Scheckkarten-Format) mit allen 6 Standards und QR-Code"
-              >
-                <i className="bi bi-stars text-danger"></i>
-                <span>Universal-Karte</span>
-              </button>
-              <button
-                className={`btn btn-sm ${currentRoute === 'qrcodes' ? 'btn-primary text-white fw-bold' : 'btn-white bg-white text-dark border fw-semibold'} rounded-pill px-2.5 px-sm-3 py-1 shadow-sm d-flex align-items-center gap-1`}
-                style={{ minHeight: '36px', fontSize: '0.78rem' }}
-                onClick={() => navigateTo('qrcodes')}
-                title="Alle 6 Pocketcards anzeigen"
-              >
-                <i className="bi bi-collection text-primary"></i>
-                <span className="d-none d-sm-inline">Alle Pocketcards</span>
-                <span className="d-inline d-sm-none">Karten</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Main Menu Bar with Clinical Category Colors - Hidden on mobile for quick-hub, universal-karte, and selected tiles, always visible on desktop */}
-      <nav className={`navbar navbar-expand-lg navbar-custom sticky-top shadow-sm py-1 ${(isMobileIsolatedRoute || currentRoute === 'quick-hub') ? 'd-none d-md-block' : ''}`}>
-        <div className="container d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center justify-content-between gap-1 gap-lg-2 py-0">
-          {/* Top Row on Mobile: Brand Title on Left + Quick Actions on Right */}
-          <div className="d-flex align-items-center justify-content-between w-100 w-lg-auto">
-            <a className="navbar-brand d-flex align-items-center gap-2 text-decoration-none py-0.5 m-0" href="#/">
-              <span className="brand-dot"></span>
-              <span className="brand-title fs-5">UMF Expertenstandards</span>
+      {/* =========================================================
+          MAIN TOP HEADER BANNER (Vibrant, Colorful & Perfectly Fitted)
+          ========================================================= */}
+      <header className={`hospital-banner shadow-sm no-print ${shouldHideMobileHeaders ? 'quick-hub-mobile-hide' : ''}`}>
+        <div className="container d-flex flex-wrap align-items-center justify-content-between py-2 px-2 px-sm-3 gap-2.5">
+          {/* Left: Brand Emblem & Large Vibrant Headings */}
+          <div className="d-flex align-items-center gap-2.5 min-w-0">
+            <a
+              href="#/"
+              className="text-decoration-none d-flex align-items-center rounded-3 p-1.5 shadow-sm border border-white border-opacity-30 flex-shrink-0"
+              style={{
+                background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 50%, #6366f1 100%)',
+                boxShadow: '0 4px 14px rgba(56, 189, 248, 0.45)'
+              }}
+              title="Zur Startseite der Klinischen Intensivstandards"
+            >
+              <i className="bi bi-heart-pulse-fill text-white fs-4 px-0.5"></i>
             </a>
 
-            {/* Mobile Quick Action Pills on Right of Brand Title */}
-            <div className="d-flex d-lg-none align-items-center gap-1.5">
-              <button
-                type="button"
-                className="btn btn-sm btn-outline-primary rounded-pill px-2.5 py-1 fw-semibold d-flex align-items-center gap-1 shadow-sm"
-                style={{ minHeight: '32px', fontSize: '0.74rem' }}
-                onClick={() => setIsScanModalOpen(true)}
-                title="QR-Code scannen oder Foto/SOP erkennen"
-              >
-                <i className="bi bi-qr-code-scan"></i>
-                <span>Scan</span>
-              </button>
-              {currentRoute !== 'home' && (
-                <a
-                  href="#/"
-                  className="btn btn-sm btn-light border rounded-pill px-2.5 py-1 text-secondary shadow-sm d-flex align-items-center gap-1"
-                  style={{ minHeight: '32px', fontSize: '0.74rem' }}
-                  title="Zur Hauptübersicht"
+            <div className="border-start border-2 ps-2.5 ps-sm-3" style={{ borderColor: 'rgba(56, 189, 248, 0.65)' }}>
+              <div className="d-flex align-items-center gap-1.5 mb-0.5">
+                <span
+                  className="badge rounded-pill fw-bold text-uppercase px-2 py-0.5 shadow-2xs"
+                  style={{
+                    backgroundColor: 'rgba(56, 189, 248, 0.25)',
+                    color: '#e0f2fe',
+                    border: '1px solid rgba(56, 189, 248, 0.45)',
+                    fontSize: '0.65rem',
+                    letterSpacing: '0.4px'
+                  }}
                 >
-                  <i className="bi bi-house-door-fill"></i>
-                  <span>Start</span>
-                </a>
-              )}
+                  <i className="bi bi-shield-check text-warning me-1"></i> QM-Geprüft 2026
+                </span>
+                <span
+                  className="badge rounded-pill fw-bold text-uppercase d-none d-sm-inline-block shadow-2xs"
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    color: '#ffffff',
+                    border: '1px solid rgba(255, 255, 255, 0.35)',
+                    fontSize: '0.65rem',
+                    letterSpacing: '0.3px'
+                  }}
+                >
+                  5 Intensiv-Standards
+                </span>
+              </div>
+
+              <h1
+                className="fw-black text-white text-uppercase mb-0 text-truncate"
+                style={{
+                  fontSize: 'clamp(1.02rem, 3.2vw, 1.45rem)',
+                  lineHeight: 1.2,
+                  letterSpacing: '0.3px',
+                  textShadow: '0 2px 8px rgba(0, 0, 0, 0.35)'
+                }}
+              >
+                Klinische Intensivstandards &amp; Leitfäden
+              </h1>
+
+              <div
+                className="text-truncate d-none d-md-block"
+                style={{ fontSize: '0.74rem', color: '#bae6fd', fontWeight: 500 }}
+              >
+                Evidenzbasierte Leitfäden &bull; Intensivpflege &bull; Patientensicherheit &bull; Gerätekontrolle
+              </div>
+            </div>
+          </div>
+
+          {/* Right Action Buttons: U-Card & Alle Pocketcards */}
+          <div className="d-flex align-items-center gap-2 flex-shrink-0 ms-auto ms-sm-0">
+            <button
+              type="button"
+              className={`btn btn-sm ${currentRoute === 'universal-karte' || currentRoute === 'magic-card' ? 'btn-warning text-dark fw-bold' : 'btn-outline-warning text-white fw-bold'} rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5 magic-btn-glow`}
+              style={{ minHeight: '36px', fontSize: '0.78rem' }}
+              onClick={() => navigateTo('universal-karte')}
+              title="Universal-Karte (U-Card) öffnen"
+            >
+              <i className="bi bi-credit-card-2-front-fill text-danger"></i>
+              <span>U-Card</span>
+            </button>
+
+            <button
+              type="button"
+              className={`btn btn-sm ${currentRoute === 'home' || currentRoute === 'quick-hub' ? 'btn-primary text-white fw-bold' : 'btn-light text-dark fw-semibold'} rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5`}
+              style={{ minHeight: '36px', fontSize: '0.78rem' }}
+              onClick={() => navigateTo('home')}
+              title="Zur Startseite / Home"
+            >
+              <i className="bi bi-collection-fill text-primary"></i>
+              <span className="d-none d-sm-inline">Alle Pocketcards</span>
+              <span className="d-inline d-sm-none">Karten</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Sticky Category Navbar with the 5 Procedures */}
+      <nav className={`navbar navbar-expand-lg navbar-custom sticky-top py-1.5 px-2 px-sm-3 no-print ${shouldHideMobileHeaders ? 'quick-hub-mobile-hide' : ''}`}>
+        <div className="container-fluid px-1 px-sm-2 d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2">
+          {/* Top Row on Mobile: Brand Title on Left + Logout on Right */}
+          <div className="d-flex align-items-center justify-content-between w-100 w-lg-auto">
+            <a
+              href="#/"
+              className="navbar-brand d-flex align-items-center gap-2 text-decoration-none text-dark me-2 py-0"
+              title="Zur Startübersicht"
+            >
+              <span className="brand-dot"></span>
+              <span className="brand-title fw-bold" style={{ fontSize: '1.02rem', letterSpacing: '0.2px' }}>
+                Intensivstandards
+              </span>
+            </a>
+
+            {/* Mobile Controls: Logout only (Scan completely removed) */}
+            <div className="d-flex d-lg-none align-items-center gap-1.5 flex-shrink-0">
               <button
                 type="button"
-                className="btn btn-sm btn-outline-danger rounded-pill px-2 py-1 d-inline-flex align-items-center gap-1 shadow-2xs"
-                style={{ minHeight: '32px', fontSize: '0.72rem' }}
+                className="btn btn-sm btn-outline-danger rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1 shadow-2xs"
+                style={{ minHeight: '32px', fontSize: '0.74rem' }}
                 onClick={handleLogout}
                 title="Abmelden"
               >
@@ -685,55 +510,47 @@ function App() {
           {/* Horizontally Scrollable Category Ribbon on Mobile, Inline Pills on Desktop */}
           <div className="nav-standards-scroll w-100 w-lg-auto">
             <a
-              href="#/dekubitus"
-              className={`nav-standard-link dekubitus ${currentRoute === 'dekubitus' ? 'active' : ''}`}
+              href="#/beatmung"
+              className={`nav-standard-link beatmung ${currentRoute === 'beatmung' ? 'active' : ''}`}
             >
-              <i className="bi bi-bandaid-fill"></i>
-              <span>Dekubitus</span>
+              <i className="bi bi-lungs-fill"></i>
+              <span>1. Beatmung</span>
             </a>
 
             <a
-              href="#/sturz"
-              className={`nav-standard-link sturz ${currentRoute === 'sturz' ? 'active' : ''}`}
-            >
-              <i className="bi bi-shield-exclamation"></i>
-              <span>Sturz</span>
-            </a>
-
-            <a
-              href="#/schmerz"
-              className={`nav-standard-link schmerz ${currentRoute === 'schmerz' ? 'active' : ''}`}
-            >
-              <i className="bi bi-heart-pulse-fill"></i>
-              <span>Schmerz</span>
-            </a>
-
-            <a
-              href="#/ernaehrung"
-              className={`nav-standard-link ernaehrung ${currentRoute === 'ernaehrung' ? 'active' : ''}`}
-            >
-              <i className="bi bi-egg-fried"></i>
-              <span>Ernährung</span>
-            </a>
-
-            <a
-              href="#/isolation"
-              className={`nav-standard-link isolation ${currentRoute === 'isolation' ? 'active' : ''}`}
-            >
-              <i className="bi bi-shield-check"></i>
-              <span>Hygiene</span>
-            </a>
-
-            <a
-              href="#/zvk"
-              className={`nav-standard-link zvk ${currentRoute === 'zvk' ? 'active' : ''}`}
+              href="#/befeuchtung-invasiv"
+              className={`nav-standard-link befeuchtung-invasiv ${currentRoute === 'befeuchtung-invasiv' ? 'active' : ''}`}
             >
               <i className="bi bi-droplet-half"></i>
-              <span>ZVK SOP</span>
+              <span>2. Befeuchtung</span>
+            </a>
+
+            <a
+              href="#/hfnc"
+              className={`nav-standard-link hfnc ${currentRoute === 'hfnc' ? 'active' : ''}`}
+            >
+              <i className="bi bi-wind"></i>
+              <span>3. High-Flow</span>
+            </a>
+
+            <a
+              href="#/arterie"
+              className={`nav-standard-link arterie ${currentRoute === 'arterie' ? 'active' : ''}`}
+            >
+              <i className="bi bi-activity"></i>
+              <span>4. Arterie</span>
+            </a>
+
+            <a
+              href="#/evd"
+              className={`nav-standard-link evd ${currentRoute === 'evd' ? 'active' : ''}`}
+            >
+              <i className="bi bi-diagram-3-fill"></i>
+              <span>5. EVD</span>
             </a>
           </div>
 
-          {/* Desktop Logout Button */}
+          {/* Desktop Controls: Logout only (Scan completely removed) */}
           <div className="d-none d-lg-flex align-items-center gap-2 ms-auto flex-shrink-0">
             <button
               type="button"
@@ -750,65 +567,55 @@ function App() {
       </nav>
 
       {/* Main Container */}
-      <main className={currentRoute === 'quick-hub' ? "container flex-grow-1 d-flex flex-column justify-content-center py-3 py-md-4" : "container py-3 py-md-4"}>
+      <main className={(currentRoute === 'quick-hub' || currentRoute === 'universal-karte' || currentRoute === 'magic-card') ? "container flex-grow-1 d-flex flex-column justify-content-md-center px-2 px-sm-3 py-2 py-md-4" : "container px-2 px-sm-3 py-2.5 py-md-4"}>
         {/* VIEW: The 5 Main Tiles */}
         {currentRoute === 'home' && (
           <TilesOverview
             standards={UMF_STANDARDS}
             onSelectStandard={(id) => navigateTo(id)}
-            onOpenScanner={() => setIsScanModalOpen(true)}
           />
         )}
 
-        {/* VIEW: Dedicated Page for Dekubitus */}
-        {currentRoute === 'dekubitus' && (
+        {/* VIEW: Dedicated Page for Beatmungsgerät & Gerätecheck */}
+        {currentRoute === 'beatmung' && (
           <StandardDetailPage
-            standard={UMF_STANDARDS.dekubitus}
+            standard={UMF_STANDARDS.beatmung}
             onNavigate={(id) => navigateTo(id)}
             showToast={showToast}
           />
         )}
 
-        {/* VIEW: Dedicated Page for Sturz */}
-        {currentRoute === 'sturz' && (
+        {/* VIEW: Dedicated Page for Aktive Atemgasbefeuchtung invasiv */}
+        {currentRoute === 'befeuchtung-invasiv' && (
           <StandardDetailPage
-            standard={UMF_STANDARDS.sturz}
+            standard={UMF_STANDARDS['befeuchtung-invasiv']}
             onNavigate={(id) => navigateTo(id)}
             showToast={showToast}
           />
         )}
 
-        {/* VIEW: Dedicated Page for Schmerz */}
-        {currentRoute === 'schmerz' && (
+        {/* VIEW: Dedicated Page for Nasale High-Flow-Therapie (HFNC) */}
+        {currentRoute === 'hfnc' && (
           <StandardDetailPage
-            standard={UMF_STANDARDS.schmerz}
+            standard={UMF_STANDARDS.hfnc}
             onNavigate={(id) => navigateTo(id)}
             showToast={showToast}
           />
         )}
 
-        {/* VIEW: Dedicated Page for Ernährung */}
-        {currentRoute === 'ernaehrung' && (
+        {/* VIEW: Dedicated Page for Invasives arterielles Druckmesssystem */}
+        {currentRoute === 'arterie' && (
           <StandardDetailPage
-            standard={UMF_STANDARDS.ernaehrung}
+            standard={UMF_STANDARDS.arterie}
             onNavigate={(id) => navigateTo(id)}
             showToast={showToast}
           />
         )}
 
-        {/* VIEW: Dedicated Page for ZVK Intensivpflege */}
-        {currentRoute === 'zvk' && (
+        {/* VIEW: Dedicated Page for Externe Ventrikeldrainage (EVD) */}
+        {currentRoute === 'evd' && (
           <StandardDetailPage
-            standard={UMF_STANDARDS.zvk}
-            onNavigate={(id) => navigateTo(id)}
-            showToast={showToast}
-          />
-        )}
-
-        {/* VIEW: Dedicated Page for Isolation & Hygiene */}
-        {currentRoute === 'isolation' && (
-          <StandardDetailPage
-            standard={UMF_STANDARDS.isolation}
+            standard={UMF_STANDARDS.evd}
             onNavigate={(id) => navigateTo(id)}
             showToast={showToast}
           />
@@ -823,7 +630,7 @@ function App() {
           />
         )}
 
-        {/* VIEW: Universal-Karte (A4- & ATM-Format Universal Pocketcard) */}
+        {/* VIEW: Universal-Karte (U-Card) */}
         {(currentRoute === 'universal-karte' || currentRoute === 'magic-card') && (
           <UniversalCardView
             standards={UMF_STANDARDS}
@@ -837,7 +644,7 @@ function App() {
           <QuickHubView
             standards={UMF_STANDARDS}
             onSelectStandard={(id) => navigateTo(id)}
-            onOpenScanner={() => setIsScanModalOpen(true)}
+            onLogout={handleLogout}
           />
         )}
       </main>
@@ -883,92 +690,83 @@ function App() {
         </div>
       </footer>
 
-      {/* Footer: on quick-hub show ONLY the colorful accent line; on standard tiles and universal-karte hide full footer on mobile */}
+      {/* Footer: on quick-hub show ONLY the colorful accent line; on standard tiles hide full footer on mobile */}
       {currentRoute === 'quick-hub' ? (
         <div className="footer-accent-bar d-flex mt-auto" style={{ height: '6px' }}>
-          <div style={{ flex: 1, backgroundColor: 'var(--dekubitus-color)' }} title="Dekubitusprophylaxe"></div>
-          <div style={{ flex: 1, backgroundColor: 'var(--sturz-color)' }} title="Sturzprophylaxe"></div>
-          <div style={{ flex: 1, backgroundColor: 'var(--schmerz-color)' }} title="Schmerzmanagement"></div>
-          <div style={{ flex: 1, backgroundColor: 'var(--ernaehrung-color)' }} title="Ernährungsmanagement"></div>
-          <div style={{ flex: 1, backgroundColor: 'var(--isolation-color)' }} title="Isolation & Hygiene"></div>
-          <div style={{ flex: 1, backgroundColor: 'var(--zvk-color)' }} title="ZVK Intensivpflege"></div>
+          <div style={{ flex: 1, backgroundColor: 'var(--beatmung-color)' }} title="Beatmungsgerät & Check"></div>
+          <div style={{ flex: 1, backgroundColor: 'var(--befeuchtung-color)' }} title="Aktive Atemgasbefeuchtung"></div>
+          <div style={{ flex: 1, backgroundColor: 'var(--hfnc-color)' }} title="High-Flow (HFNC)"></div>
+          <div style={{ flex: 1, backgroundColor: 'var(--arterie-color)' }} title="Invasives Druckmesssystem"></div>
+          <div style={{ flex: 1, backgroundColor: 'var(--evd-color)' }} title="Externe Ventrikeldrainage"></div>
         </div>
       ) : (
         <footer className={`modern-footer mt-auto text-white ${isMobileIsolatedRoute ? 'd-none d-md-block' : ''}`}>
-          {/* Color accent spectrum bar matching all clinical categories */}
           <div className="footer-accent-bar d-flex" style={{ height: '5px' }}>
-            <div style={{ flex: 1, backgroundColor: 'var(--dekubitus-color)' }} title="Dekubitusprophylaxe"></div>
-            <div style={{ flex: 1, backgroundColor: 'var(--sturz-color)' }} title="Sturzprophylaxe"></div>
-            <div style={{ flex: 1, backgroundColor: 'var(--schmerz-color)' }} title="Schmerzmanagement"></div>
-            <div style={{ flex: 1, backgroundColor: 'var(--ernaehrung-color)' }} title="Ernährungsmanagement"></div>
-            <div style={{ flex: 1, backgroundColor: 'var(--isolation-color)' }} title="Isolation & Hygiene"></div>
-            <div style={{ flex: 1, backgroundColor: 'var(--zvk-color)' }} title="ZVK Intensivpflege"></div>
+            <div style={{ flex: 1, backgroundColor: 'var(--beatmung-color)' }} title="Beatmungsgerät & Check"></div>
+            <div style={{ flex: 1, backgroundColor: 'var(--befeuchtung-color)' }} title="Aktive Atemgasbefeuchtung"></div>
+            <div style={{ flex: 1, backgroundColor: 'var(--hfnc-color)' }} title="High-Flow (HFNC)"></div>
+            <div style={{ flex: 1, backgroundColor: 'var(--arterie-color)' }} title="Invasives Druckmesssystem"></div>
+            <div style={{ flex: 1, backgroundColor: 'var(--evd-color)' }} title="Externe Ventrikeldrainage"></div>
           </div>
 
           <div className="container py-4 py-md-5">
             <div className="row g-4 align-items-center">
-              {/* Hospital branding & description */}
               <div className="col-lg-5 col-md-6">
                 <div className="d-flex align-items-center gap-3 mb-3">
-                  <div className="bg-white rounded-3 p-1 shadow-sm d-inline-flex">
-                    <img src="assets/umf-logo.jpg" alt="UMF Logo" height="38" className="rounded" />
+                  <div className="rounded-3 p-2 shadow-sm d-inline-flex text-white" style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', width: '42px', height: '42px', alignItems: 'center', justifyContent: 'center' }}>
+                    <i className="bi bi-heart-pulse-fill fs-5"></i>
                   </div>
                   <div>
                     <h6 className="fw-bold mb-0 text-white" style={{ letterSpacing: '0.5px' }}>
-                      UNIVERSITÄTSMEDIZIN FRANKFURT
+                      KLINISCHE PFLEGESTANDARDS
                     </h6>
                     <small className="text-white-50" style={{ fontSize: '0.78rem' }}>
-                      Klinikum der Goethe-Universität &bull; Pflegedirektion
+                      Intensivpflege &bull; Notfallmedizin &bull; Evidenzbasiert
                     </small>
                   </div>
                 </div>
                 <p className="small text-white-50 mb-0" style={{ lineHeight: '1.6', maxWidth: '420px' }}>
-                  Evidenzbasierte klinische Expertenstandards und interdisziplinäre Verfahrensanweisungen (SOPs) zur Qualitätssicherung und Patientensicherheit im stationären Versorgungsalltag.
+                  Standardisierte Verfahrensanweisungen und evidenzbasierte Leitfäden für Beatmung, Befeuchtung, High-Flow, invasive Druckmessung und Ventrikeldrainage.
                 </p>
               </div>
 
-              {/* Quick Navigation Pills with Category Colors */}
               <div className="col-lg-4 col-md-6">
                 <div className="small fw-bold text-uppercase text-white-50 mb-3" style={{ letterSpacing: '0.8px', fontSize: '0.72rem' }}>
                   <i className="bi bi-compass me-1 text-info"></i> Direkte Schnellnavigation
                 </div>
                 <div className="d-flex flex-wrap gap-2">
-                  <a href="#/dekubitus" className="footer-category-pill pill-dekubitus">
-                    <i className="bi bi-bandaid-fill"></i> Dekubitus
+                  <a href="#/beatmung" className="footer-category-pill pill-beatmung">
+                    <i className="bi bi-lungs-fill"></i> Beatmung
                   </a>
-                  <a href="#/sturz" className="footer-category-pill pill-sturz">
-                    <i className="bi bi-shield-exclamation"></i> Sturz
+                  <a href="#/befeuchtung-invasiv" className="footer-category-pill pill-befeuchtung">
+                    <i className="bi bi-droplet-half"></i> Befeuchtung
                   </a>
-                  <a href="#/schmerz" className="footer-category-pill pill-schmerz">
-                    <i className="bi bi-heart-pulse-fill"></i> Schmerz
+                  <a href="#/hfnc" className="footer-category-pill pill-hfnc">
+                    <i className="bi bi-wind"></i> High-Flow
                   </a>
-                  <a href="#/ernaehrung" className="footer-category-pill pill-ernaehrung">
-                    <i className="bi bi-egg-fried"></i> Ernährung
+                  <a href="#/arterie" className="footer-category-pill pill-arterie">
+                    <i className="bi bi-activity"></i> Arterie
                   </a>
-                  <a href="#/isolation" className="footer-category-pill pill-isolation">
-                    <i className="bi bi-shield-check"></i> Hygiene
-                  </a>
-                  <a href="#/zvk" className="footer-category-pill pill-zvk">
-                    <i className="bi bi-droplet-half"></i> ZVK SOP
+                  <a href="#/evd" className="footer-category-pill pill-evd">
+                    <i className="bi bi-diagram-3-fill"></i> EVD
                   </a>
                   <a href="#/universal-karte" className="footer-category-pill pill-magic">
-                    <i className="bi bi-stars text-warning"></i> Universal-Karte (A4 &amp; Scheckkarte)
+                    <i className="bi bi-credit-card-2-front-fill text-warning"></i> U-Card
                   </a>
-                  <a href="#/qrcodes" className="footer-category-pill pill-hub">
+                  <a href="#/" className="footer-category-pill pill-hub">
                     <i className="bi bi-collection"></i> Alle Pocketcards
                   </a>
                 </div>
               </div>
 
-              {/* System Info & Status Badge */}
               <div className="col-lg-3 col-md-12 text-lg-end">
                 <div className="footer-status-card p-3 rounded-3 text-start text-lg-end d-inline-block w-100 w-md-auto">
                   <div className="d-flex align-items-center gap-2 justify-content-lg-end mb-1">
                     <span className="live-status-dot"></span>
-                    <span className="small fw-bold text-white">QM-System</span>
+                    <span className="small fw-bold text-white">QM-Intensivsystem</span>
                   </div>
                   <div className="small text-white-50" style={{ fontSize: '0.75rem' }}>
-                    Gültige klinische Versionen 2024–2026
+                    Gültige klinische Standards 2026
                   </div>
                   <div className="mt-2 pt-2 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center text-white-50" style={{ fontSize: '0.72rem' }}>
                     <span>Angemeldet als <strong>happy</strong></span>
@@ -988,14 +786,14 @@ function App() {
 
             <div className="border-top border-white border-opacity-10 mt-4 pt-3 d-flex flex-wrap justify-content-between align-items-center gap-2 text-white-50 small">
               <div>
-                &copy; {new Date().getFullYear()} Universitätsmedizin Frankfurt &bull; Digitale Pflege-Pocketcards
+                &copy; {new Date().getFullYear()} Klinische Pflegestandards &bull; Digitale Pflege-Pocketcards
               </div>
               <div className="d-flex gap-3">
                 <a href="#/" className="text-white-50 text-decoration-none hover-white">Startseite</a>
                 <span>&bull;</span>
-                <a href="#/qrcodes" className="text-white-50 text-decoration-none hover-white">Übersicht</a>
+                <a href="#/" className="text-white-50 text-decoration-none hover-white">Alle Pocketcards</a>
                 <span>&bull;</span>
-                <span className="text-white-50">Evidenzbasierte Pflegepraxis</span>
+                <span className="text-white-50">Intensivpflege Praxis</span>
               </div>
             </div>
           </div>
@@ -1006,315 +804,318 @@ function App() {
 }
 
 // -------------------------------------------------------------
-// Component: The Main Tiles Overview (Modern, Beautified Cards with Clinical Photos & Icons)
+// Component: TILE_ENHANCEMENTS Configuration
 // -------------------------------------------------------------
 const TILE_ENHANCEMENTS = {
-  dekubitus: {
-    bgGradient: 'linear-gradient(155deg, #ffffff 0%, #fff1f6 45%, #fdf2f8 100%)',
-    borderColor: '#fbcfe8',
-    leftBorderColor: '#be185d',
-    shadowColor: 'rgba(190, 24, 93, 0.16)',
-    iconGradient: 'linear-gradient(135deg, #831843 0%, #be185d 50%, #ec4899 100%)',
-    iconShadow: 'rgba(190, 24, 93, 0.38)',
-    icon: 'bi-bandaid-fill',
-    badgeBg: '#fce7f3',
-    badgeColor: '#9d174d',
-    badgeBorder: '#fbcfe8',
-    badgeText: 'Dekubitusprophylaxe',
-    titleColor: '#831843',
-    title: 'Dekubitusprophylaxe in der Pflege',
-    lead: 'Evidenzbasierte Risikoeinschätzung, gezielte Druckentlastung und strukturierte Hautpflege nach DNQP-Expertenstandard.',
-    image: 'assets/qh-dekubitus.jpg',
-    imageOverlay: '30°-Lagerung',
-    quickBadges: [
-      { text: '2–4h Rhythmus', icon: 'bi-clock-history', bg: '#ffe4e6', color: '#be123c', border: '#fecdd3' },
-      { text: 'Spezialmatratze', icon: 'bi-layers-fill', bg: '#ede9fe', color: '#6d28d9', border: '#ddd6fe' }
-    ],
-    imageSubtitle: 'Weichlagerung zur gezielten Druckentlastung gefährdeter Haut- & Knochenpunkte',
-    goals: [
-      { text: 'Druck reduzieren', icon: 'bi-arrow-down-circle-fill text-danger', bg: '#ffe4e6', color: '#9f1239', border: '#fecdd3' },
-      { text: 'Haut schützen', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
-      { text: 'Mobilität fördern', icon: 'bi-person-walking text-primary', bg: '#e0f2fe', color: '#075985', border: '#bae6fd' }
-    ],
-    actionSteps: [
-      { text: 'Regelmäßige Umlagerung alle 2–4 Stunden zur gezielten Entlastung', bold: 'Regelmäßige Umlagerung:', icon: 'bi-arrow-repeat', iconBg: '#be185d' },
-      { text: 'Druckentlastende Spezialmatratze und 30°-Seitenlagerung nutzen', bold: 'Spezialmatratze & 30°:', icon: 'bi-layers-fill', iconBg: '#7c3aed' },
-      { text: 'Haut täglich kontrollieren: Hinterkopf, Kreuzbein, Fersen, Ellenbogen', bold: 'Tägliche Hautkontrolle:', icon: 'bi-eye-fill', iconBg: '#059669' }
-    ],
-    tagLabel: 'Gefährdete Stellen:',
-    tagIcon: 'bi-geo-alt-fill',
-    tagColor: '#be185d',
-    tagBorder: '#f472b6',
-    tags: ['Hinterkopf', 'Schultern', 'Kreuzbein', 'Trochanter', 'Fersen'],
-    btnGradient: 'linear-gradient(90deg, #be185d 0%, #db2777 100%)',
-    btnShadow: 'rgba(190, 24, 93, 0.28)'
-  },
-  sturz: {
-    bgGradient: 'linear-gradient(155deg, #ffffff 0%, #f0fdf4 45%, #ecfdf5 100%)',
-    borderColor: '#bbf7d0',
-    leftBorderColor: '#16a34a',
-    shadowColor: 'rgba(22, 163, 74, 0.16)',
-    iconGradient: 'linear-gradient(135deg, #14532d 0%, #16a34a 50%, #22c55e 100%)',
-    iconShadow: 'rgba(22, 163, 74, 0.38)',
-    icon: 'bi-shield-exclamation',
-    badgeBg: '#dcfce7',
-    badgeColor: '#166534',
-    badgeBorder: '#bbf7d0',
-    badgeText: 'Sturzprophylaxe',
-    titleColor: '#14532d',
-    title: 'Sturzprophylaxe in der Pflege',
-    lead: 'Evidenzbasierte Sturzrisiko-Erfassung, sichere Mobilisation und gezielte Umgebungsanpassung nach DNQP-Expertenstandard.',
-    image: 'assets/qh-sturz.jpg',
-    imageOverlay: 'Sichere Mobilisation',
-    quickBadges: [
-      { text: 'Rutschfeste Schuhe', icon: 'bi-shield-check', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
-      { text: 'Hilfsmittel bereit', icon: 'bi-person-walking', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' }
-    ],
-    imageSubtitle: 'Gezielte Sturzvermeidung bei maximalem Erhalt von Mobilität und Eigenständigkeit',
-    goals: [
-      { text: 'Stürze vermeiden', icon: 'bi-shield-fill-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
-      { text: 'Mobilität fördern', icon: 'bi-person-walking text-primary', bg: '#e0f2fe', color: '#075985', border: '#bae6fd' },
-      { text: 'Sicherheit stärken', icon: 'bi-bell-fill text-warning', bg: '#fef3c7', color: '#92400e', border: '#fde68a' }
-    ],
-    actionSteps: [
-      { text: 'Sturzrisiko regelmäßig beurteilen und individuelle Risikofaktoren erfassen', bold: 'Sturzrisiko beurteilen:', icon: 'bi-clipboard2-pulse', iconBg: '#16a34a' },
-      { text: 'Geeignete Hilfsmittel nutzen (Gehstock, Rollator, Haltegriffe stets griffbereit)', bold: 'Geeignete Hilfsmittel:', icon: 'bi-person-walking', iconBg: '#0284c7' },
-      { text: 'Rutschfeste Schuhe anziehen & Rufklingel immer in Reichweite platzieren', bold: 'Schuhe & Klingel:', icon: 'bi-bell-fill', iconBg: '#d97706' }
-    ],
-    tagLabel: 'Sicherheits-Check:',
-    tagIcon: 'bi-shield-check',
-    tagColor: '#16a34a',
-    tagBorder: '#86efac',
-    tags: ['Stolperfallen entfernen', 'Licht an', 'Bett niedrig', 'Klingel nah', 'Rollator-Bremse'],
-    btnGradient: 'linear-gradient(90deg, #15803d 0%, #16a34a 100%)',
-    btnShadow: 'rgba(22, 163, 74, 0.28)'
-  },
-  schmerz: {
-    bgGradient: 'linear-gradient(155deg, #ffffff 0%, #fff7ed 45%, #ffedd5 100%)',
-    borderColor: '#fed7aa',
-    leftBorderColor: '#ea580c',
-    shadowColor: 'rgba(234, 88, 12, 0.16)',
-    iconGradient: 'linear-gradient(135deg, #9a3412 0%, #ea580c 50%, #f97316 100%)',
-    iconShadow: 'rgba(234, 88, 12, 0.38)',
-    icon: 'bi-heart-pulse-fill',
-    badgeBg: '#ffedd5',
-    badgeColor: '#9a3412',
-    badgeBorder: '#fed7aa',
-    badgeText: 'Schmerzmanagement',
-    titleColor: '#9a3412',
-    title: 'Schmerzmanagement in der Pflege',
-    lead: 'Systematische Schmerzerfassung bei akuten und chronischen Schmerzen zur Steigerung von Wohlbefinden und Lebensqualität.',
-    image: 'assets/qh-schmerz.jpg',
-    imageOverlay: 'Empathische Erfassung',
-    quickBadges: [
-      { text: 'NRS-Skala 0–10', icon: 'bi-speedometer2', bg: '#ffedd5', color: '#9a3412', border: '#fed7aa' },
-      { text: 'Therapiekontrolle', icon: 'bi-capsule', bg: '#ffe4e6', color: '#be123c', border: '#fecdd3' }
-    ],
-    imageSubtitle: 'Strukturierte Schmerzeinschätzung & kombinierte medikamentöse/pflegerische Linderung',
-    goals: [
-      { text: 'Schmerzen lindern', icon: 'bi-heart-fill text-danger', bg: '#ffe4e6', color: '#9f1239', border: '#fecdd3' },
-      { text: 'Exakt erfassen', icon: 'bi-speedometer2 text-warning', bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
-      { text: 'Früh mobilisieren', icon: 'bi-person-walking text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' }
-    ],
-    actionSteps: [
-      { text: 'Schmerzintensität systematisch erfassen (NRS/VRS-Skala bei Ruhe & Bewegung)', bold: 'Systematische Erfassung:', icon: 'bi-speedometer2', iconBg: '#ea580c' },
-      { text: 'Analgetika nach Schema verabreichen und Wirkung nach 30–60 Min. evaluieren', bold: 'Analgetika-Gabe:', icon: 'bi-capsule', iconBg: '#e11d48' },
-      { text: 'Nicht-medikamentöse Maßnahmen (Lagerung, Kälte/Wärme, Zuwendung) gezielt nutzen', bold: 'Begleitmaßnahmen:', icon: 'bi-heart-fill', iconBg: '#7c3aed' }
-    ],
-    tagLabel: 'Erfassungsskalen:',
-    tagIcon: 'bi-clipboard-pulse',
-    tagColor: '#ea580c',
-    tagBorder: '#fb923c',
-    tags: ['NRS (0–10)', 'VRS (Wortskala)', 'BESD (Demenz)', 'Ruheschmerz', 'Belastungsschmerz'],
-    btnGradient: 'linear-gradient(90deg, #c2410c 0%, #ea580c 100%)',
-    btnShadow: 'rgba(234, 88, 12, 0.28)'
-  },
-  ernaehrung: {
+  beatmung: {
     bgGradient: 'linear-gradient(155deg, #ffffff 0%, #f0f9ff 45%, #e0f2fe 100%)',
     borderColor: '#bae6fd',
     leftBorderColor: '#0284c7',
     shadowColor: 'rgba(2, 132, 199, 0.16)',
     iconGradient: 'linear-gradient(135deg, #0369a1 0%, #0284c7 50%, #38bdf8 100%)',
     iconShadow: 'rgba(2, 132, 199, 0.38)',
-    icon: 'bi-cup-hot-fill',
+    icon: 'bi-lungs-fill',
     badgeBg: '#e0f2fe',
     badgeColor: '#0369a1',
     badgeBorder: '#bae6fd',
-    badgeText: 'Ernährungsmanagement',
+    badgeText: 'Intensiv-Standard ITS',
     titleColor: '#0369a1',
-    title: 'Ernährungsmanagement in der Pflege',
-    lead: 'Frühzeitige Identifikation von Mangelernährung, individuelle Speisenversorgung und Sicherstellung ausreichender Flüssigkeit.',
-    image: 'assets/qh-ernaehrung.jpg',
-    imageOverlay: 'Vollwertige Kost',
+    title: '1. Vorbereitung & Funktionsprüfung Beatmungsgerät',
+    lead: 'Fachgerechter Aufbau des Beatmungsschlauchsystems, Dichtigkeitsprüfung (Leckage < 100 ml/min) und präklinischer Gerätecheck vor Patientenkontakt.',
+    image: 'assets/card-beatmung.jpg',
+    imageOverlay: 'Gerätecheck & Dichtigkeit',
     quickBadges: [
-      { text: 'Gewichtsverlauf', icon: 'bi-clipboard-data', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' },
-      { text: 'Trinkprotokoll', icon: 'bi-droplet-half', bg: '#cffafe', color: '#0e7490', border: '#a5f3fc' }
+      { text: 'Leckagetest < 100ml', icon: 'bi-shield-check', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
+      { text: 'ZGV 3.0–4.5 bar', icon: 'bi-gauge', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' }
     ],
-    imageSubtitle: 'Protein- & energiereiche Kost zur aktiven Förderung von Wundheilung und Genesung',
+    imageSubtitle: 'Aseptischer Aufbau des Doppelschlauchsystems & Dichtigkeitstest bei 30 mbar',
     goals: [
-      { text: 'Mangelernährung stoppen', icon: 'bi-shield-check text-primary', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' },
-      { text: 'Flüssigkeit sichern', icon: 'bi-droplet-half text-info', bg: '#cffafe', color: '#0e7490', border: '#a5f3fc' },
-      { text: 'Gewicht stabilisieren', icon: 'bi-graph-up-arrow text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' }
+      { text: 'Dichtigkeit sichern', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
+      { text: 'Alarme prüfen', icon: 'bi-bell-fill text-warning', bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
+      { text: 'Notfallbeutel bereit', icon: 'bi-bag-plus-fill text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' }
     ],
     actionSteps: [
-      { text: 'Mangelernährungsrisiko erfassen (Screening bei Aufnahme & regelmäßige Gewichtskontrolle)', bold: 'Screening & Gewicht:', icon: 'bi-clipboard-data-fill', iconBg: '#0284c7' },
-      { text: 'Wunschkost & Eiweißanreicherung gezielt anbieten, Zwischenmahlzeiten einplanen', bold: 'Eiweiß- & Wunschkost:', icon: 'bi-egg-fried', iconBg: '#059669' },
-      { text: 'Trinkmenge aktiv unterstützen & bei Bedarf strukturiertes Trinkprotokoll führen', bold: 'Flüssigkeitshaushalt:', icon: 'bi-droplet-half', iconBg: '#0891b2' }
+      { text: 'Schlauchsystem knickfrei & mit Bakterienfiltern aseptisch montieren', bold: 'Aufbau Schlauchsystem:', icon: 'bi-lungs-fill', iconBg: '#0284c7' },
+      { text: 'Vollständigen Gerätecheck mit Dichtigkeits- & Kompliancetest bei 30 mbar durchführen', bold: 'Gerätecheck & Leckage:', icon: 'bi-check-circle-fill', iconBg: '#059669' },
+      { text: 'Pmax Alarm (10 mbar über Beatmungsdruck) & Apnoealarm konfigurieren', bold: 'Alarmgrenzen setzen:', icon: 'bi-bell-fill', iconBg: '#ea580c' }
     ],
-    tagLabel: 'Ernährungsfokus:',
-    tagIcon: 'bi-apple',
+    tagLabel: 'Kernschritte:',
+    tagIcon: 'bi-check2-all',
     tagColor: '#0284c7',
     tagBorder: '#38bdf8',
-    tags: ['Eiweißreich', 'Hochkalorisch', 'Trinkprotokoll', 'Essbegleitung', 'Dysphagie-Kost'],
+    tags: ['Schlauchsystem', 'Leckagetest < 100ml', 'Flow-Sensor', 'Pmax-Alarm', 'Notfallbeatmungsbeutel'],
     btnGradient: 'linear-gradient(90deg, #0369a1 0%, #0284c7 100%)',
     btnShadow: 'rgba(2, 132, 199, 0.28)'
   },
-  zvk: {
-    bgGradient: 'linear-gradient(155deg, #ffffff 0%, #fff1f2 45%, #ffe4e6 100%)',
+  'befeuchtung-invasiv': {
+    bgGradient: 'linear-gradient(155deg, #ffffff 0%, #f0fdf4 45%, #dcfce7 100%)',
+    borderColor: '#bbf7d0',
+    leftBorderColor: '#16a34a',
+    shadowColor: 'rgba(22, 163, 74, 0.16)',
+    iconGradient: 'linear-gradient(135deg, #14532d 0%, #16a34a 50%, #4ade80 100%)',
+    iconShadow: 'rgba(22, 163, 74, 0.38)',
+    icon: 'bi-droplet-half',
+    badgeBg: '#dcfce7',
+    badgeColor: '#15803d',
+    badgeBorder: '#bbf7d0',
+    badgeText: 'Intensiv-Standard ITS',
+    titleColor: '#15803d',
+    title: '2. Aktive Atemgasbefeuchtung bei invasiver Beatmung',
+    lead: 'Physiologische Konditionierung des Atemgases (37°C, 44 mg/L H₂O), Schutz des Flimmerepithels und gezielte Vermeidung von gefährlichem Schlauchkondensat.',
+    image: 'assets/card-befeuchtung.jpg',
+    imageOverlay: '37°C / 44 mg/L H2O',
+    quickBadges: [
+      { text: '37°C am Y-Stück', icon: 'bi-thermometer-high', bg: '#dcfce7', color: '#15803d', border: '#bbf7d0' },
+      { text: '100% r.F. (44 mg/L)', icon: 'bi-droplet-fill', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' }
+    ],
+    imageSubtitle: 'MR850/Aircon Befeuchterkammer unter Patientenniveau & beheizter Schlauch',
+    goals: [
+      { text: 'Flimmerepithel schützen', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
+      { text: 'Tubusokklusion verhindern', icon: 'bi-slash-circle-fill text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
+      { text: 'Rainout vermeiden', icon: 'bi-droplet-half text-info', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' }
+    ],
+    actionSteps: [
+      { text: 'Befeuchterkammer unter Patientenniveau platzieren & mit Aqua dest. befüllen', bold: 'Kammer unter Patient:', icon: 'bi-droplet-half', iconBg: '#16a34a' },
+      { text: 'Temperaturfühler an Kammer & Y-Stück korrekt und geschützt positionieren', bold: 'Temperatursensoren:', icon: 'bi-thermometer-sun', iconBg: '#0284c7' },
+      { text: 'Inspirationsschenkel um +2°C überwärmen zur Vermeidung von Schlauchkondensat', bold: 'Kondensat-Schutz:', icon: 'bi-shield-shaded', iconBg: '#059669' }
+    ],
+    tagLabel: 'Kernschritte:',
+    tagIcon: 'bi-thermometer-half',
+    tagColor: '#16a34a',
+    tagBorder: '#4ade80',
+    tags: ['MR850/Aircon', 'Aqua dest.', 'Kammer unter Patient', 'Heizdrähte +2°C', '44 mg/L Feuchte'],
+    btnGradient: 'linear-gradient(90deg, #15803d 0%, #16a34a 100%)',
+    btnShadow: 'rgba(22, 163, 74, 0.28)'
+  },
+  hfnc: {
+    bgGradient: 'linear-gradient(155deg, #ffffff 0%, #fff7ed 45%, #ffedd5 100%)',
+    borderColor: '#fed7aa',
+    leftBorderColor: '#ea580c',
+    shadowColor: 'rgba(234, 88, 12, 0.16)',
+    iconGradient: 'linear-gradient(135deg, #9a3412 0%, #ea580c 50%, #fb923c 100%)',
+    iconShadow: 'rgba(234, 88, 12, 0.38)',
+    icon: 'bi-wind',
+    badgeBg: '#ffedd5',
+    badgeColor: '#c2410c',
+    badgeBorder: '#fed7aa',
+    badgeText: 'Intensiv-Therapie',
+    titleColor: '#c2410c',
+    title: '3. Aktive Befeuchtung bei High-Flow-Therapie (HFNC)',
+    lead: 'Hohe Flussraten (20–60 L/min) zur Auswaschung des Totraums und PEEP-Generierung. Kontinuierliche Risikoüberwachung mit dem ROX-Index.',
+    image: 'assets/card-hfnc.jpg',
+    imageOverlay: 'ROX-Index & 20–60 L/min',
+    quickBadges: [
+      { text: 'Flow 20–60 L/min', icon: 'bi-wind', bg: '#ffedd5', color: '#c2410c', border: '#fed7aa' },
+      { text: 'ROX-Score ≥ 4.88', icon: 'bi-calculator-fill', bg: '#fef3c7', color: '#92400e', border: '#fde68a' }
+    ],
+    imageSubtitle: 'Auswahl passender Nasenprongs (< 50% der Naris) & kontinuierliches ROX-Monitoring',
+    goals: [
+      { text: 'Totraum auswaschen', icon: 'bi-wind text-warning', bg: '#fff7ed', color: '#c2410c', border: '#fed7aa' },
+      { text: 'PEEP aufbauen', icon: 'bi-arrow-up-circle-fill text-primary', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' },
+      { text: 'Intubation abwenden', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' }
+    ],
+    actionSteps: [
+      { text: 'High-Flow-System mit passender Befeuchtereinstellung und Flow vorkonditionieren', bold: 'Systemaufbau & Flow:', icon: 'bi-wind', iconBg: '#ea580c' },
+      { text: 'Nasenbrillengröße wählen: Maximal 50% der Nasenlöcher ausfüllen (Barotraumagefahr)', bold: 'Prong-Auswahl < 50%:', icon: 'bi-person-fill', iconBg: '#0284c7' },
+      { text: 'ROX-Index nach 2h, 6h, 12h berechnen: Bei Score < 3.85 Intubationsbereitschaft', bold: 'ROX-Monitoring:', icon: 'bi-calculator-fill', iconBg: '#c2410c' }
+    ],
+    tagLabel: 'Kernschritte:',
+    tagIcon: 'bi-calculator',
+    tagColor: '#ea580c',
+    tagBorder: '#fb923c',
+    tags: ['High-Flow', 'ROX-Index', 'Totraum-Washout', 'FiO2 21-100%', 'Nasenbrille < 50%'],
+    btnGradient: 'linear-gradient(90deg, #c2410c 0%, #ea580c 100%)',
+    btnShadow: 'rgba(234, 88, 12, 0.28)'
+  },
+  arterie: {
+    bgGradient: 'linear-gradient(155deg, #ffffff 0%, #fff1f2 45%, #fee2e2 100%)',
     borderColor: '#fecdd3',
     leftBorderColor: '#dc2626',
     shadowColor: 'rgba(220, 38, 38, 0.16)',
-    iconGradient: 'linear-gradient(135deg, #991b1b 0%, #dc2626 50%, #f43f5e 100%)',
+    iconGradient: 'linear-gradient(135deg, #991b1b 0%, #dc2626 50%, #f87171 100%)',
     iconShadow: 'rgba(220, 38, 38, 0.38)',
-    icon: 'bi-heart-pulse-fill',
+    icon: 'bi-activity',
     badgeBg: '#fee2e2',
     badgeColor: '#991b1b',
     badgeBorder: '#fecdd3',
-    badgeText: 'SOP & Leitfaden ITS',
+    badgeText: 'Monitoring & Diagnostik',
     titleColor: '#991b1b',
-    title: 'Zentraler Venenkatheter (ZVK) – Intensivpflege',
-    lead: 'Standardisierte Verfahrensanweisung für Aseptik, Verbandswechsel, Infusionsmanagement und CRBSI-Infektionsprävention.',
-    image: 'assets/qh-zvk.jpg',
-    imageOverlay: 'Aseptische Pflege',
+    title: '4. Invasives arterielles Druckmesssystem',
+    lead: 'Kontinuierliche Blutdruckmessung in Echtzeit, Nullabgleich auf Herzhöhe (Phlebostatischer Punkt) und Fast-Flush-Test zur Dämpfungskontrolle.',
+    image: 'assets/card-arterie.jpg',
+    imageOverlay: 'Fast-Flush & Nullpunkt',
     quickBadges: [
-      { text: 'CRBSI-Prävention', icon: 'bi-shield-shaded', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
-      { text: 'Täglich prüfen', icon: 'bi-calendar-check', bg: '#ffe4e6', color: '#be123c', border: '#fecdd3' }
+      { text: 'Druckbeutel 300 mmHg', icon: 'bi-speedometer', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
+      { text: 'Spülrate 3 ml/h', icon: 'bi-droplet-half', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' }
     ],
-    imageSubtitle: 'Strenge Aseptik bei Konnektion, Verbandswechsel und Infusionsverabreichung',
+    imageSubtitle: 'Laser-Nivellierung auf Phlebostatische Achse & Fast-Flush Rechtecktest',
     goals: [
-      { text: 'CRBSI verhindern', icon: 'bi-shield-slash-fill text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
-      { text: 'Aseptik wahren', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
-      { text: 'Sichere Medikation', icon: 'bi-capsule text-primary', bg: '#ede9fe', color: '#6d28d9', border: '#ddd6fe' }
+      { text: 'Echtzeit-Blutdruck', icon: 'bi-activity text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
+      { text: 'Aseptische BGA', icon: 'bi-droplet-fill text-primary', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' },
+      { text: 'Dämpfung prüfen', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' }
     ],
     actionSteps: [
-      { text: 'Strenge Non-Touch-Technik & Hautantiseptik bei jeder Konnektion / Diskonnektion', bold: 'Non-Touch & Antiseptik:', icon: 'bi-shield-shaded', iconBg: '#dc2626' },
-      { text: 'Transparenzverband alle 7 Tage oder bei Verschmutzung/Feuchtigkeit sofort erneuern', bold: 'Verbandswechsel:', icon: 'bi-bandaid', iconBg: '#e11d48' },
-      { text: 'Tägliche Indikationsprüfung des ZVK & standardisiertes Spülen nach Infusionsschema', bold: 'Tägliche Indikation:', icon: 'bi-droplet', iconBg: '#4f46e5' }
+      { text: 'Druckbeutel auf 300 mmHg aufpumpen & Druckleitung vollständig blasenfrei entlüften', bold: 'Druckbeutel 300 mmHg:', icon: 'bi-speedometer2', iconBg: '#dc2626' },
+      { text: 'Druckaufnehmer mit Laserwaage auf 4. ICR / mittlere Axillarlinie (Herzniveau) nullen', bold: 'Nullabgleich (Laser):', icon: 'bi-crosshair', iconBg: '#0284c7' },
+      { text: 'Fast-Flush-Test durchführen: Sauberes Rechtecksignal mit 1.5–2 Oszillationen prüfen', bold: 'Fast-Flush & Dämpfung:', icon: 'bi-activity', iconBg: '#16a34a' }
     ],
-    tagLabel: 'SOP Kernpunkte:',
-    tagIcon: 'bi-folder2-open',
+    tagLabel: 'Kernschritte:',
+    tagIcon: 'bi-crosshair',
     tagColor: '#dc2626',
     tagBorder: '#f87171',
-    tags: ['Hautantiseptik', 'Transparenzverband', '7-Tage-Wechsel', 'Non-Touch', 'CRBSI-Schutz'],
+    tags: ['A. radialis/femoralis', 'Phlebostatischer Punkt', 'Fast-Flush-Test', 'Dicrote Kerbe', '300 mmHg'],
     btnGradient: 'linear-gradient(90deg, #b91c1c 0%, #dc2626 100%)',
     btnShadow: 'rgba(220, 38, 38, 0.28)'
   },
-  isolation: {
+  evd: {
     bgGradient: 'linear-gradient(155deg, #ffffff 0%, #faf5ff 45%, #f3e8ff 100%)',
     borderColor: '#e9d5ff',
     leftBorderColor: '#7c3aed',
     shadowColor: 'rgba(124, 58, 237, 0.16)',
-    iconGradient: 'linear-gradient(135deg, #581c87 0%, #7c3aed 50%, #a855f7 100%)',
+    iconGradient: 'linear-gradient(135deg, #581c87 0%, #7c3aed 50%, #c084fc 100%)',
     iconShadow: 'rgba(124, 58, 237, 0.38)',
-    icon: 'bi-shield-shaded',
+    icon: 'bi-diagram-3-fill',
     badgeBg: '#f3e8ff',
     badgeColor: '#581c87',
     badgeBorder: '#e9d5ff',
-    badgeText: 'Hygiene-Leitfaden',
+    badgeText: 'Neurochirurgie & ITS',
     titleColor: '#581c87',
-    title: 'Isolation & Krankenhaushygiene',
-    lead: 'Verbindliche Maßnahmen bei MRE, VRE, MRGN, MRSA & C. diff. zum konsequenten Schutz von Patienten und Personal.',
-    image: 'assets/qh-isolation.jpg',
-    imageOverlay: 'Händehygiene & PSA',
+    title: '5. Externe Ventrikeldrainage (EVD)',
+    lead: 'Kontinuierliche Liquordrainage & ICP-Hirndrucküberwachung. Exakte Nivellierung auf Tragus (Foramen Monroi) und strikte Klemmpflicht bei Bewegung.',
+    image: 'assets/card-evd.jpg',
+    imageOverlay: 'Tragus-Laser & ICP-Welle',
     quickBadges: [
-      { text: '30s Desinfektion', icon: 'bi-clock-history', bg: '#f3e8ff', color: '#581c87', border: '#e9d5ff' },
-      { text: 'Schutzkleidung', icon: 'bi-shield-check', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' }
+      { text: 'Tragus / Foramen Monroi', icon: 'bi-crosshair2', bg: '#f3e8ff', color: '#581c87', border: '#e9d5ff' },
+      { text: 'Zwingend abklemmen!', icon: 'bi-exclamation-triangle-fill', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' }
     ],
-    imageSubtitle: 'Konsequente Unterbrechung von Infektionsketten durch gezielte Barrierepflege',
+    imageSubtitle: 'Nivellierung mit Laser auf Foramen Monroi & Tropfkammer-Niveau nach Anordnung',
     goals: [
-      { text: 'Übertragung stoppen', icon: 'bi-slash-circle-fill text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
-      { text: 'Personal schützen', icon: 'bi-people-fill text-primary', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' },
-      { text: 'Hygiene sichern', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' }
+      { text: 'Hirndruck senken', icon: 'bi-arrow-down-circle-fill text-primary', bg: '#f3e8ff', color: '#581c87', border: '#e9d5ff' },
+      { text: 'Überdrainage verhindern', icon: 'bi-shield-slash-fill text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
+      { text: 'Ventrikulitis verhüten', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' }
     ],
     actionSteps: [
-      { text: 'Händedesinfektion (30 Sek.) vor und nach Patientenkontakt & nach PSA-Ablage', bold: 'Händedesinfektion 30s:', icon: 'bi-hand-index-thumb-fill', iconBg: '#7c3aed' },
-      { text: 'Schutzkittel, Handschuhe & FFP2/MNS vor Betreten des Isolierzimmers korrekt anlegen', bold: 'PSA vor Betreten:', icon: 'bi-shield-check', iconBg: '#2563eb' },
-      { text: 'Patientennahe Flächen & Geräte täglich wischdesinfizieren (spozid bei C. diff)', bold: 'Flächendesinfektion:', icon: 'bi-stars', iconBg: '#059669' }
+      { text: 'Nullpunkt des EVD-Systems mit Laserwaage exakt auf den Tragus (Foramen Monroi) ausrichten', bold: 'Laser-Nivellierung Tragus:', icon: 'bi-crosshair2', iconBg: '#7c3aed' },
+      { text: 'Tropfkammerhöhe nach ärztlicher Anordnung (z.B. +10 bis +15 cmH2O) fixieren', bold: 'Tropfkammerhöhe:', icon: 'bi-rulers', iconBg: '#0284c7' },
+      { text: 'Vor jeder Umlagerung, Mobilisation oder Kopfteilverstellung ZWINGEND abklemmen!', bold: 'ZWINGEND ABKLEMMEN:', icon: 'bi-shield-exclamation', iconBg: '#dc2626' }
     ],
-    tagLabel: 'Erreger & Schutz:',
-    tagIcon: 'bi-virus',
+    tagLabel: 'Kernschritte:',
+    tagIcon: 'bi-exclamation-octagon',
     tagColor: '#7c3aed',
     tagBorder: '#c084fc',
-    tags: ['MRSA', 'VRE', '3/4-MRGN', 'C. difficile', 'Isolierzimmer', 'Schutzkittel'],
+    tags: ['Foramen Monroi', 'Tropfkammer cmH2O', 'Klemmpflicht bei Bewegung', 'P1>P2>P3 ICP-Welle', 'Liquorpulsation'],
     btnGradient: 'linear-gradient(90deg, #6d28d9 0%, #7c3aed 100%)',
     btnShadow: 'rgba(124, 58, 237, 0.28)'
   }
 };
 
-function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
+// -------------------------------------------------------------
+// Component: TilesOverview (Grid of the 5 Standards with Hero Header)
+// -------------------------------------------------------------
+function TilesOverview({ standards, onSelectStandard }) {
   const list = Object.values(standards);
 
   return (
     <div>
-      {/* Hero Header Banner */}
+      {/* Modern Colorful Clinical Hero Header Banner */}
       <div
-        className="card border-0 shadow-lg rounded-4 p-3 p-sm-4 p-md-5 mb-3 mb-md-4 text-white position-relative overflow-hidden"
+        className="rounded-4 p-3.5 p-md-4 mb-4 shadow-lg position-relative overflow-hidden text-white"
         style={{
-          background: 'linear-gradient(135deg, #00273d 0%, #004767 45%, #0284c7 100%)',
-          boxShadow: '0 12px 35px rgba(0, 39, 61, 0.25)'
+          background: 'linear-gradient(135deg, #001a2e 0%, #003354 36%, #0369a1 72%, #0284c7 100%)',
+          border: '1.5px solid rgba(56, 189, 248, 0.45)',
+          boxShadow: '0 8px 28px rgba(0, 39, 61, 0.22)'
         }}
       >
-        <div className="position-relative d-flex flex-wrap justify-content-between align-items-center gap-3 gap-md-4" style={{ zIndex: 2 }}>
-          <div style={{ maxWidth: '820px' }}>
-            <div className="d-flex flex-wrap align-items-center gap-1.5 gap-sm-2 mb-2">
-              <span className="badge bg-white text-dark fw-bold text-uppercase px-2.5 py-1 rounded-pill shadow-sm" style={{ fontSize: '0.7rem', letterSpacing: '0.4px' }}>
-                Universitätsmedizin Frankfurt
-              </span>
-              <span className="badge bg-white bg-opacity-25 text-white fw-medium px-2.5 py-1 rounded-pill shadow-sm" style={{ fontSize: '0.7rem' }}>
-                <i className="bi bi-hospital me-1"></i> Pflegedirektion &bull; Evidenzbasierte Pflege
-              </span>
-            </div>
-            <h1 className="fw-bold mb-2 text-white" style={{ letterSpacing: '-0.5px', fontSize: 'clamp(1.25rem, 4vw, 2.2rem)' }}>
-              Klinische Standards &amp; Pflege-Leitfäden
-            </h1>
-            <p className="text-white text-opacity-85 mb-0" style={{ lineHeight: '1.5', fontSize: '0.85rem' }}>
-              Evidenzbasierte Expertenstandards, Intensiv-SOPs und Hygieneleitfäden für den Stations- und Intensivalltag. Tippen Sie auf eine Kategorie für Leitlinien, Bilder, Videos und SOPs.
-            </p>
+        <div
+          style={{
+            height: '4px',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            background: 'linear-gradient(90deg, #0284c7 0%, #0891b2 25%, #16a34a 50%, #dc2626 75%, #7c3aed 100%)'
+          }}
+        />
 
-            {/* Mobile Quick-Action Buttons inside Hero */}
-            <div className="d-grid d-sm-flex gap-2 mt-3" style={{ gridTemplateColumns: '1fr 1fr' }}>
-              <button
-                type="button"
-                className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-2 shadow-sm d-flex align-items-center justify-content-center gap-1.5"
-                style={{ minHeight: '42px', fontSize: '0.82rem' }}
-                onClick={() => onSelectStandard('universal-karte')}
+        <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 position-relative" style={{ zIndex: 1 }}>
+          <div className="d-flex align-items-center gap-3 min-w-0">
+            <div
+              className="rounded-3 shadow-md d-flex align-items-center justify-content-center flex-shrink-0 text-white"
+              style={{
+                width: 'clamp(46px, 10vw, 54px)',
+                height: 'clamp(46px, 10vw, 54px)',
+                background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
+                border: '2px solid rgba(255, 255, 255, 0.45)'
+              }}
+            >
+              <i className="bi bi-hospital fs-3"></i>
+            </div>
+            <div>
+              <div className="d-flex flex-wrap align-items-center gap-1.5 mb-1">
+                <span
+                  className="badge rounded-pill fw-bold text-uppercase shadow-2xs"
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    backdropFilter: 'blur(6px)',
+                    color: '#ffffff',
+                    border: '1px solid rgba(255, 255, 255, 0.35)',
+                    fontSize: '0.68rem',
+                    letterSpacing: '0.4px',
+                    padding: '3px 8px'
+                  }}
+                >
+                  <i className="bi bi-shield-check text-warning me-1"></i> QM-Intensivstandards 2026
+                </span>
+                <span
+                  className="badge rounded-pill fw-bold text-uppercase shadow-2xs"
+                  style={{
+                    backgroundColor: 'rgba(56, 189, 248, 0.25)',
+                    color: '#e0f2fe',
+                    border: '1px solid rgba(56, 189, 248, 0.45)',
+                    fontSize: '0.68rem',
+                    letterSpacing: '0.4px',
+                    padding: '3px 8px'
+                  }}
+                >
+                  5 Intensiv-Standards
+                </span>
+              </div>
+              <h2
+                className="fw-black text-white mb-0 text-truncate"
+                style={{ fontSize: 'clamp(1.15rem, 3.8vw, 1.6rem)', letterSpacing: '0.2px' }}
               >
-                <i className="bi bi-stars text-danger"></i>
-                <span>Universal-Karte</span>
-              </button>
-              <button
-                type="button"
-                className="btn btn-light text-dark fw-bold rounded-pill px-3 py-2 shadow-sm d-flex align-items-center justify-content-center gap-1.5"
-                style={{ minHeight: '42px', fontSize: '0.82rem' }}
-                onClick={() => onOpenScanner ? onOpenScanner() : onSelectStandard('quick-hub')}
-              >
-                <i className="bi bi-qr-code-scan text-primary"></i>
-                <span>QR / Foto Scan</span>
-              </button>
+                Klinische Intensivpflege &amp; Gerätestandards
+              </h2>
+              <div className="text-white-50 small mt-0.5" style={{ fontSize: '0.82rem' }}>
+                Evidenzbasierte Leitfäden &bull; Interaktive Kurvensimulatoren &bull; Schicht-Checklisten
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Decorative background element */}
-        <div
-          className="position-absolute end-0 top-0 h-100 d-none d-lg-block opacity-10 pe-4"
-          style={{ transform: 'translate(10%, -10%)', pointerEvents: 'none' }}
-        >
-          <i className="bi bi-hospital fs-1" style={{ fontSize: '16rem', color: '#ffffff' }}></i>
+          <div className="d-flex align-items-center gap-2 ms-auto">
+            <button
+              type="button"
+              className="btn btn-warning text-dark fw-bold rounded-pill px-3.5 py-1.5 shadow-sm d-flex align-items-center gap-1.5"
+              style={{ minHeight: '38px', fontSize: '0.82rem' }}
+              onClick={() => onSelectStandard('universal-karte')}
+            >
+              <i className="bi bi-credit-card-2-front-fill text-danger"></i>
+              <span>U-Card</span>
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline-light rounded-pill px-3.5 py-1.5 shadow-sm d-flex align-items-center gap-1.5"
+              style={{ minHeight: '38px', fontSize: '0.82rem' }}
+              onClick={() => onSelectStandard('home')}
+            >
+              <i className="bi bi-collection-fill"></i>
+              <span>Pocketcards</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Grid of Clean, Modern Standard Cards (Enhanced with Real Clinical Photos & Icons) */}
+      {/* Grid of the 5 Standard Cards */}
       <div className="row g-3 g-md-4">
         {list.map((std) => {
           const enh = TILE_ENHANCEMENTS[std.id];
@@ -1335,7 +1136,7 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
                 }}
               >
                 <div className="p-3 p-sm-4 d-flex flex-column h-100">
-                  {/* Header: Colorful Gradient Icon & Category Badge */}
+                  {/* Header: Gradient Icon & Category Badge */}
                   <div className="d-flex flex-wrap justify-content-between align-items-center mb-2.5 gap-2">
                     <div className="d-flex align-items-center gap-2 min-w-0">
                       <div
@@ -1402,98 +1203,98 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
                           {enh.quickBadges.map((qb, qbi) => (
                             <span
                               key={qbi}
-                              className="badge rounded-pill fw-bold px-2 py-0.5"
+                              className="badge px-2 py-1 rounded-pill fw-semibold d-inline-flex align-items-center gap-1"
                               style={{
                                 backgroundColor: qb.bg,
                                 color: qb.color,
                                 border: `1px solid ${qb.border}`,
-                                fontSize: '0.68rem'
+                                fontSize: '0.72rem'
                               }}
                             >
-                              <i className={`bi ${qb.icon} me-1`}></i>{qb.text}
+                              <i className={`bi ${qb.icon}`}></i>
+                              <span>{qb.text}</span>
                             </span>
                           ))}
                         </div>
-                        <div className="text-dark fw-medium" style={{ fontSize: '0.76rem', lineHeight: '1.35' }}>
+                        <div className="text-secondary small" style={{ fontSize: '0.75rem', lineHeight: '1.3' }}>
                           {enh.imageSubtitle}
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* 3 Colorful Core Goals */}
-                  <div className="d-flex flex-wrap gap-1.5 mb-2.5">
-                    {enh.goals.map((g, gi) => (
-                      <span
-                        key={gi}
-                        className="badge rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1 fw-bold shadow-xs"
-                        style={{
-                          backgroundColor: g.bg,
-                          color: g.color,
-                          border: `1px solid ${g.border}`,
-                          fontSize: '0.72rem'
-                        }}
-                      >
-                        <i className={`bi ${g.icon}`}></i> {g.text}
-                      </span>
+                  {/* 3 Clinical Goals */}
+                  <div className="row g-1.5 mb-2.5">
+                    {enh.goals.map((goal, gi) => (
+                      <div key={gi} className="col-4">
+                        <div
+                          className="text-center p-1.5 rounded-3 border h-100 d-flex flex-column align-items-center justify-content-center"
+                          style={{
+                            backgroundColor: goal.bg,
+                            borderColor: goal.border,
+                            color: goal.color
+                          }}
+                        >
+                          <i className={`bi ${goal.icon} mb-1`} style={{ fontSize: '1.05rem' }}></i>
+                          <span className="fw-semibold text-truncate w-100" style={{ fontSize: '0.7rem' }}>
+                            {goal.text}
+                          </span>
+                        </div>
+                      </div>
                     ))}
                   </div>
 
-                  {/* Colorful Clinical Action Steps with Visual Icons */}
-                  <div
-                    className="p-3 rounded-3 mb-2.5 mt-auto bg-white"
-                    style={{
-                      border: `1px solid ${enh.borderColor}`,
-                      borderLeft: `4px solid ${enh.leftBorderColor}`,
-                      boxShadow: `0 2px 8px ${enh.shadowColor}`
-                    }}
-                  >
-                    <div className="small fw-bold text-uppercase mb-2 d-flex align-items-center gap-1.5" style={{ fontSize: '0.72rem', color: enh.titleColor }}>
-                      <i className="bi bi-list-check fs-6"></i>
-                      <span>Wichtigste Handlungsschritte:</span>
-                    </div>
-                    <div className="d-flex flex-column gap-2">
-                      {enh.actionSteps.map((step, si) => (
-                        <div key={si} className="small text-dark d-flex align-items-start gap-2" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
-                          <span
-                            className="rounded-circle d-inline-flex align-items-center justify-content-center text-white flex-shrink-0 mt-0.5"
-                            style={{ width: '20px', height: '20px', background: step.iconBg, fontSize: '0.7rem' }}
-                          >
-                            <i className={`bi ${step.icon}`}></i>
-                          </span>
-                          <span><strong>{step.bold}</strong> {step.text.replace(step.bold, '').trim()}</span>
+                  {/* Action Steps */}
+                  <div className="d-flex flex-column gap-1.5 mb-3 flex-grow-1">
+                    {enh.actionSteps.map((step, si) => (
+                      <div
+                        key={si}
+                        className="d-flex align-items-start gap-2 p-2 rounded-2 bg-white border small shadow-2xs"
+                        style={{ fontSize: '0.82rem', lineHeight: '1.35', borderColor: enh.borderColor }}
+                      >
+                        <span
+                          className="rounded-circle d-inline-flex align-items-center justify-content-center text-white flex-shrink-0 mt-0.5"
+                          style={{ width: '20px', height: '20px', backgroundColor: step.iconBg, fontSize: '0.7rem' }}
+                        >
+                          <i className={`bi ${step.icon}`}></i>
+                        </span>
+                        <div>
+                          <strong className="text-dark me-1">{step.bold}</strong>
+                          <span className="text-secondary">{step.text}</span>
                         </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Bottom Strip: Tags & Open Button */}
+                  <div className="pt-2 border-top d-flex flex-wrap justify-content-between align-items-center gap-2 mt-auto" style={{ borderColor: enh.borderColor }}>
+                    <div className="d-flex flex-wrap align-items-center gap-1">
+                      <span className="small fw-bold text-secondary me-1" style={{ fontSize: '0.74rem' }}>
+                        <i className={`bi ${enh.tagIcon} me-1`} style={{ color: enh.tagColor }}></i>
+                        {enh.tagLabel}
+                      </span>
+                      {enh.tags.map((t, ti) => (
+                        <span
+                          key={ti}
+                          className="badge bg-white text-secondary rounded-pill border px-2 py-0.5"
+                          style={{ fontSize: '0.68rem', borderColor: enh.tagBorder }}
+                        >
+                          {t}
+                        </span>
                       ))}
                     </div>
-                  </div>
 
-                  {/* Clinical Tags Chips */}
-                  <div className="p-2 rounded-2 mb-3 d-flex flex-wrap align-items-center gap-1" style={{ backgroundColor: '#fff', border: `1px dashed ${enh.tagBorder}` }}>
-                    <span className="small fw-bold text-uppercase me-1" style={{ fontSize: '0.66rem', color: enh.tagColor }}>
-                      <i className={`bi ${enh.tagIcon} me-0.5`}></i>{enh.tagLabel}
-                    </span>
-                    {enh.tags.map((tag, ti) => (
-                      <span key={ti} className="badge bg-light text-dark border px-2 py-0.5 rounded-pill" style={{ fontSize: '0.68rem', fontWeight: 500 }}>
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Card Footer: Action button */}
-                  <div className="d-flex justify-content-end align-items-center pt-2.5 border-top gap-2 mt-auto" style={{ borderColor: enh.badgeBg }}>
                     <button
                       type="button"
-                      className="btn btn-sm rounded-pill px-3 py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm text-white fw-bold w-100 w-sm-auto"
+                      className="btn btn-sm rounded-pill px-3 py-1.5 fw-bold text-white shadow-sm d-inline-flex align-items-center gap-1.5 ms-auto"
                       style={{
                         background: enh.btnGradient,
+                        boxShadow: `0 4px 12px ${enh.btnShadow}`,
                         border: 'none',
-                        minHeight: '44px',
-                        fontSize: '0.85rem',
-                        boxShadow: `0 4px 12px ${enh.btnShadow}`
+                        fontSize: '0.8rem'
                       }}
                     >
-                      <i className="bi bi-file-earmark-medical me-0.5"></i>
-                      <span>Pocketcard &amp; Leitfaden öffnen</span>
+                      <span>Details &amp; Kurven</span>
                       <i className="bi bi-arrow-right"></i>
                     </button>
                   </div>
@@ -1507,1661 +1308,2301 @@ function TilesOverview({ standards, onSelectStandard, onOpenScanner }) {
   );
 }
 
+
 // -------------------------------------------------------------
 // -------------------------------------------------------------
-// Helper: Export any Standard as a Complete, Aligned 2-Page A4 Portrait PDF
+// Component: Shift Safety Checklist (Interactive & Highly Visible)
+// -------------------------------------------------------------
+function ShiftChecklistSection({ checklist, standardTitle, accentColor, standardId = '' }) {
+  const [checkedItems, setCheckedItems] = useState({});
+
+  useEffect(() => {
+    try {
+      const storageKey = `shift_chk_${standardId || standardTitle}`;
+      const saved = sessionStorage.getItem(storageKey);
+      if (saved) {
+        setCheckedItems(JSON.parse(saved));
+      } else {
+        setCheckedItems({});
+      }
+    } catch (e) {
+      setCheckedItems({});
+    }
+  }, [standardId, standardTitle]);
+
+  const toggleCheck = (idx) => {
+    setCheckedItems(prev => {
+      const updated = {
+        ...prev,
+        [idx]: !prev[idx]
+      };
+      try {
+        const storageKey = `shift_chk_${standardId || standardTitle}`;
+        sessionStorage.setItem(storageKey, JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const checkAll = () => {
+    const all = {};
+    if (checklist) {
+      checklist.forEach((_, i) => { all[i] = true; });
+    }
+    setCheckedItems(all);
+    try {
+      const storageKey = `shift_chk_${standardId || standardTitle}`;
+      sessionStorage.setItem(storageKey, JSON.stringify(all));
+    } catch (e) {}
+  };
+
+  const resetChecklist = () => {
+    setCheckedItems({});
+    try {
+      const storageKey = `shift_chk_${standardId || standardTitle}`;
+      sessionStorage.removeItem(storageKey);
+    } catch (e) {}
+  };
+
+  const total = checklist ? checklist.length : 0;
+  const completed = Object.values(checkedItems).filter(Boolean).length;
+  const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+  if (!checklist || checklist.length === 0) return null;
+
+  return (
+    <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" id="section-shift-checklist" style={{ borderColor: `${accentColor}35` }}>
+      {/* Header Bar */}
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <div className="d-flex align-items-center gap-2.5">
+          <div
+            className="rounded-3 p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0"
+            style={{ width: '36px', height: '36px', backgroundColor: accentColor, boxShadow: `0 2px 8px ${accentColor}45` }}
+          >
+            <i className="bi bi-clipboard2-check-fill fs-5"></i>
+          </div>
+          <div>
+            <span
+              className="badge rounded-pill fw-bold text-uppercase px-2.5 py-0.5 mb-0.5 d-inline-flex align-items-center gap-1 shadow-2xs"
+              style={{ backgroundColor: `${accentColor}18`, color: accentColor, border: `1px solid ${accentColor}35`, fontSize: '0.68rem' }}
+            >
+              <i className="bi bi-shield-check text-success"></i>
+              <span>Schicht-Qualitätssicherung ITS</span>
+            </span>
+            <h5 className="fw-bold mb-0 text-dark" style={{ fontSize: '1.05rem' }}>
+              Schicht-Sicherheits-Checkliste: {standardTitle}
+            </h5>
+          </div>
+        </div>
+
+        <div className="d-flex flex-wrap align-items-center gap-2">
+          <span
+            className="badge px-3 py-1.5 rounded-pill fw-bold shadow-2xs d-inline-flex align-items-center gap-1.5"
+            style={{
+              backgroundColor: percent === 100 ? '#dcfce7' : '#f0f9ff',
+              color: percent === 100 ? '#15803d' : '#0369a1',
+              border: `1.5px solid ${percent === 100 ? '#86efac' : '#bae6fd'}`,
+              fontSize: '0.8rem'
+            }}
+          >
+            <i className={`bi ${percent === 100 ? 'bi-check-circle-fill text-success' : 'bi-hourglass-split text-primary'}`}></i>
+            <span>{completed} von {total} erledigt ({percent}%)</span>
+          </span>
+
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-success rounded-pill px-2.5 py-1 fw-semibold d-inline-flex align-items-center gap-1 shadow-2xs"
+            style={{ fontSize: '0.75rem', minHeight: '32px' }}
+            onClick={checkAll}
+            title="Alle Punkte auf einmal als erledigt markieren"
+          >
+            <i className="bi bi-check2-all"></i>
+            <span>Alles abhaken</span>
+          </button>
+
+          {completed > 0 && (
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-secondary rounded-pill px-2.5 py-1 fw-semibold d-inline-flex align-items-center gap-1 shadow-2xs"
+              style={{ fontSize: '0.75rem', minHeight: '32px' }}
+              onClick={resetChecklist}
+              title="Alle Haken zurücksetzen"
+            >
+              <i className="bi bi-arrow-counterclockwise"></i>
+              <span>Zurücksetzen</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Animated Progress Bar */}
+      <div className="progress mb-3 shadow-2xs" style={{ height: '8px', borderRadius: '4px', backgroundColor: '#e2e8f0' }}>
+        <div
+          className="progress-bar progress-bar-striped progress-bar-animated"
+          role="progressbar"
+          style={{
+            width: `${percent}%`,
+            backgroundColor: percent === 100 ? '#16a34a' : accentColor,
+            transition: 'width 0.35s ease'
+          }}
+          aria-valuenow={percent}
+          aria-valuemin="0"
+          aria-valuemax="100"
+        />
+      </div>
+
+      {/* 100% Completion Celebration Banner */}
+      {percent === 100 && (
+        <div
+          className="alert alert-success border-success rounded-3 p-2.5 mb-3 d-flex flex-wrap align-items-center justify-content-between gap-2 shadow-sm"
+          style={{ backgroundColor: '#f0fdf4' }}
+        >
+          <div className="d-flex align-items-center gap-2">
+            <i className="bi bi-patch-check-fill fs-4 text-success flex-shrink-0"></i>
+            <div>
+              <strong className="d-block text-dark small" style={{ fontSize: '0.85rem' }}>
+                Vollständige Schichtprüfung abgeschlossen!
+              </strong>
+              <span className="text-secondary small" style={{ fontSize: '0.76rem' }}>
+                Alle {total} Sicherheitskriterien für {standardTitle} wurden ordnungsgemäß verifiziert.
+              </span>
+            </div>
+          </div>
+          <span className="badge bg-success text-white px-3 py-1.5 rounded-pill fw-bold shadow-2xs" style={{ fontSize: '0.74rem' }}>
+            <i className="bi bi-shield-fill-check me-1"></i>QM-Freigegeben
+          </span>
+        </div>
+      )}
+
+      {/* Checklist Items List */}
+      <div className="d-flex flex-column gap-2">
+        {checklist.map((item, idx) => {
+          const isDone = !!checkedItems[idx];
+
+          const rawText = typeof item === 'string' ? item : (item.text || '');
+          let cat = typeof item === 'object' && item.cat ? item.cat : 'ITS-Sicherheit';
+          let mainText = rawText;
+          let isCritical = typeof item === 'object' ? !!item.critical : false;
+
+          // Parse "Kategorie: Text" if string contains a colon
+          if (typeof item === 'string' && item.includes(':')) {
+            const colonIdx = item.indexOf(':');
+            cat = item.substring(0, colonIdx).trim();
+            mainText = item.substring(colonIdx + 1).trim();
+          }
+
+          // Safety trigger words
+          const lower = rawText.toLowerCase();
+          if (
+            lower.includes('dichtig') ||
+            lower.includes('pass') ||
+            lower.includes('kritisch') ||
+            lower.includes('alarm') ||
+            lower.includes('abklemmen') ||
+            lower.includes('notfall') ||
+            lower.includes('300 mmhg') ||
+            lower.includes('37 °c') ||
+            lower.includes('monroi')
+          ) {
+            isCritical = true;
+          }
+
+          const getCategoryStyle = (catName, done) => {
+            if (done) return { color: '#166534', bg: '#dcfce7', border: '#86efac', icon: 'bi-check-circle-fill' };
+            const l = (catName || '').toLowerCase();
+            if (l.includes('gerät') || l.includes('check') || l.includes('strom') || l.includes('test') || l.includes('kalibrier'))
+              return { color: '#0284c7', bg: '#e0f2fe', border: '#bae6fd', icon: 'bi-gear-wide-connected' };
+            if (l.includes('beatmung') || l.includes('atem') || l.includes('ox') || l.includes('peep') || l.includes('flow') || l.includes('tubus') || l.includes('trach'))
+              return { color: '#0891b2', bg: '#cffafe', border: '#a5f3fc', icon: 'bi-lungs-fill' };
+            if (l.includes('druck') || l.includes('arterie') || l.includes('kreislauf') || l.includes('mad') || l.includes('puls'))
+              return { color: '#dc2626', bg: '#fee2e2', border: '#fecaca', icon: 'bi-activity' };
+            if (l.includes('evd') || l.includes('neuro') || l.includes('icp') || l.includes('hirn') || l.includes('drainage') || l.includes('tragus'))
+              return { color: '#7c3aed', bg: '#f3e8ff', border: '#ddd6fe', icon: 'bi-diagram-3-fill' };
+            if (l.includes('alarm') || l.includes('grenze') || l.includes('notfall') || l.includes('kritisch') || l.includes('klemmen') || l.includes('beutel'))
+              return { color: '#ea580c', bg: '#ffedd5', border: '#fed7aa', icon: 'bi-bell-fill' };
+            if (l.includes('hygiene') || l.includes('steril') || l.includes('infektion') || l.includes('wasser') || l.includes('wechsel'))
+              return { color: '#16a34a', bg: '#dcfce7', border: '#bbf7d0', icon: 'bi-droplet-half' };
+            return { color: '#6366f1', bg: '#e0e7ff', border: '#c7d2fe', icon: 'bi-shield-check' };
+          };
+          const catStyle = getCategoryStyle(cat, isDone);
+
+          return (
+            <div
+              key={idx}
+              className={`p-2.5 p-sm-3 rounded-3 border d-flex align-items-start gap-2.5 gap-sm-3 transition-all ${
+                isDone ? 'bg-success bg-opacity-10 border-success shadow-none' : 'bg-white shadow-2xs'
+              }`}
+              style={{
+                cursor: 'pointer',
+                borderLeft: isDone ? '5px solid #16a34a' : (isCritical ? '5px solid #dc2626' : `5px solid ${catStyle.color}`),
+                transition: 'all 0.18s ease'
+              }}
+              onClick={() => toggleCheck(idx)}
+              title="Klicken zum Abhaken / Abwählen"
+            >
+              {/* Custom Interactive High-Contrast Checkbox */}
+              <div
+                className={`rounded-2 d-flex align-items-center justify-content-center flex-shrink-0 mt-0.5 border ${
+                  isDone
+                    ? 'bg-success text-white border-success shadow-xs'
+                    : 'bg-white border-secondary border-opacity-50'
+                }`}
+                style={{
+                  width: '24px',
+                  height: '24px',
+                  fontSize: '0.95rem',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                {isDone && <i className="bi bi-check-lg fw-bold"></i>}
+              </div>
+
+              {/* Text and Badges */}
+              <div className="flex-grow-1 min-w-0">
+                <div className="d-flex flex-wrap align-items-center justify-content-between gap-1.5 mb-1">
+                  <span
+                    className="badge rounded-pill fw-bold text-uppercase shadow-2xs d-inline-flex align-items-center gap-1"
+                    style={{
+                      backgroundColor: catStyle.bg,
+                      color: catStyle.color,
+                      border: `1px solid ${catStyle.border}`,
+                      fontSize: '0.68rem',
+                      letterSpacing: '0.3px',
+                      padding: '3px 8px'
+                    }}
+                  >
+                    <i className={`bi ${catStyle.icon}`} style={{ fontSize: '0.65rem' }}></i>
+                    {cat}
+                  </span>
+
+                  <div className="d-flex align-items-center gap-1 flex-shrink-0">
+                    {isCritical && !isDone && (
+                      <span className="badge bg-danger text-white rounded-pill px-2 py-0.5 fw-bold shadow-2xs" style={{ fontSize: '0.64rem' }}>
+                        <i className="bi bi-shield-exclamation me-1"></i>SICHERHEIT
+                      </span>
+                    )}
+                    {isDone && (
+                      <span className="badge bg-success text-white rounded-pill px-2 py-0.5 fw-bold shadow-2xs" style={{ fontSize: '0.64rem' }}>
+                        <i className="bi bi-check2 me-1"></i>Erledigt
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div
+                  className={`small ${isDone ? 'text-decoration-line-through text-muted' : 'text-dark fw-semibold'}`}
+                  style={{ fontSize: '0.86rem', lineHeight: '1.42' }}
+                >
+                  {mainText}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
+// Component: Clinical Parameters Reference Table
+// -------------------------------------------------------------
+function ClinicalParametersTable({ parameters, accentColor }) {
+  if (!parameters || parameters.length === 0) return null;
+
+  const getParamStyle = (label, idx) => {
+    const l = (label || '').toLowerCase();
+    if (l.includes('vt') || l.includes('tidal') || l.includes('atemzug'))
+      return { icon: 'bi-lungs-fill', color: '#0284c7', bg: '#e0f2fe', border: '#bae6fd' };
+    if (l.includes('peep'))
+      return { icon: 'bi-arrow-down-up', color: '#6366f1', bg: '#e0e7ff', border: '#c7d2fe' };
+    if (l.includes('druck') || l.includes('delta') || l.includes('driving') || l.includes('pmax'))
+      return { icon: 'bi-speedometer2', color: '#ea580c', bg: '#ffedd5', border: '#fed7aa' };
+    if (l.includes('spo2') || l.includes('fio2') || l.includes('sauerstoff'))
+      return { icon: 'bi-heart-pulse-fill', color: '#16a34a', bg: '#dcfce7', border: '#bbf7d0' };
+    if (l.includes('temp') || l.includes('grad') || l.includes('°c'))
+      return { icon: 'bi-thermometer-half', color: '#e11d48', bg: '#ffe4e6', border: '#fecdd3' };
+    if (l.includes('feucht') || l.includes('mg/l') || l.includes('wasser'))
+      return { icon: 'bi-droplet-fill', color: '#0891b2', bg: '#cffafe', border: '#a5f3fc' };
+    if (l.includes('rox'))
+      return { icon: 'bi-calculator-fill', color: '#d97706', bg: '#fef3c7', border: '#fde68a' };
+    if (l.includes('mad') || l.includes('blutdruck') || l.includes('mmhg'))
+      return { icon: 'bi-activity', color: '#dc2626', bg: '#fee2e2', border: '#fecaca' };
+    if (l.includes('icp') || l.includes('hirn') || l.includes('evd') || l.includes('höhe'))
+      return { icon: 'bi-diagram-3-fill', color: '#7c3aed', bg: '#f3e8ff', border: '#ddd6fe' };
+    const fallbackPalette = [
+      { icon: 'bi-clipboard-pulse', color: '#0284c7', bg: '#e0f2fe', border: '#bae6fd' },
+      { icon: 'bi-shield-check', color: '#16a34a', bg: '#dcfce7', border: '#bbf7d0' },
+      { icon: 'bi-sliders', color: '#ea580c', bg: '#ffedd5', border: '#fed7aa' },
+      { icon: 'bi-activity', color: '#7c3aed', bg: '#f3e8ff', border: '#ddd6fe' }
+    ];
+    return fallbackPalette[idx % fallbackPalette.length];
+  };
+
+  return (
+    <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" style={{ borderColor: `${accentColor}35` }}>
+      <div className="d-flex align-items-center gap-2.5 mb-3 pb-2 border-bottom">
+        <div
+          className="rounded-3 p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0"
+          style={{ width: '36px', height: '36px', backgroundColor: accentColor, boxShadow: `0 2px 8px ${accentColor}45` }}
+        >
+          <i className="bi bi-speedometer2 fs-5"></i>
+        </div>
+        <div>
+          <span className="badge rounded-pill fw-bold text-uppercase px-2.5 py-0.5 mb-0.5 d-inline-block shadow-2xs" style={{ backgroundColor: `${accentColor}18`, color: accentColor, fontSize: '0.68rem', border: `1px solid ${accentColor}35` }}>
+            Evidenzwerte
+          </span>
+          <h5 className="fw-bold mb-0 text-dark" style={{ fontSize: '1.05rem' }}>
+            Klinische Richt- &amp; Zielwerte
+          </h5>
+        </div>
+      </div>
+
+      <div className="table-responsive">
+        <table className="table table-hover align-middle mb-0 small">
+          <thead style={{ background: `linear-gradient(135deg, ${accentColor}12 0%, #ffffff 100%)` }}>
+            <tr>
+              <th scope="col" style={{ width: '30%', color: accentColor }}>Parameter</th>
+              <th scope="col" style={{ width: '25%', color: accentColor }}>Klinischer Zielwert</th>
+              <th scope="col" style={{ width: '45%', color: accentColor }}>Bedeutung &amp; Pflegepraxis</th>
+            </tr>
+          </thead>
+          <tbody>
+            {parameters.map((p, idx) => {
+              const pStyle = getParamStyle(p.label, idx);
+              return (
+                <tr key={idx} style={{ background: idx % 2 === 0 ? '#ffffff' : `${pStyle.color}05` }}>
+                  <td>
+                    <div className="d-flex align-items-center gap-2">
+                      <span
+                        className="rounded-3 p-1.5 d-inline-flex align-items-center justify-content-center flex-shrink-0 text-white"
+                        style={{ width: '28px', height: '28px', backgroundColor: pStyle.color, boxShadow: `0 2px 4px ${pStyle.color}40` }}
+                      >
+                        <i className={`bi ${pStyle.icon}`} style={{ fontSize: '0.78rem' }}></i>
+                      </span>
+                      <div>
+                        <strong className="text-dark d-block" style={{ fontSize: '0.86rem' }}>{p.label}</strong>
+                        <span className="text-muted" style={{ fontSize: '0.72rem' }}>{p.desc}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span
+                      className="badge rounded-pill px-2.5 py-1.5 fw-bold shadow-2xs"
+                      style={{
+                        backgroundColor: pStyle.bg,
+                        color: pStyle.color,
+                        border: `1.5px solid ${pStyle.border}`,
+                        fontSize: '0.82rem'
+                      }}
+                    >
+                      {p.val}
+                    </span>
+                  </td>
+                  <td className="text-secondary" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
+                    {p.desc}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
+// Component: Troubleshooting & Alarm Guide Section
+// -------------------------------------------------------------
+function TroubleshootingSection({ troubleshooting, accentColor }) {
+  if (!troubleshooting || troubleshooting.length === 0) return null;
+
+  const getTroubleStyle = (problem, idx) => {
+    const l = (problem || '').toLowerCase();
+    if (l.includes('diskonnektion') || l.includes('leckage') || l.includes('abfall') || l.includes('apnoe') || l.includes('stillstand'))
+      return { icon: 'bi-exclamation-octagon-fill', color: '#dc2626', bg: '#fef2f2', border: '#fca5a5' };
+    if (l.includes('druck') || l.includes('pmax') || l.includes('obstruktion') || l.includes('überdämpft'))
+      return { icon: 'bi-exclamation-triangle-fill', color: '#ea580c', bg: '#fff7ed', border: '#fdba74' };
+    if (l.includes('unterdämpft') || l.includes('kondensat') || l.includes('temp') || l.includes('kälte') || l.includes('hitze'))
+      return { icon: 'bi-thermometer-high', color: '#d97706', bg: '#fffbeb', border: '#fde68a' };
+    if (l.includes('null') || l.includes('abgleich') || l.includes('kalibrier') || l.includes('fehler'))
+      return { icon: 'bi-sliders', color: '#7c3aed', bg: '#faf5ff', border: '#d8b4fe' };
+    const palette = [
+      { icon: 'bi-bell-fill', color: '#dc2626', bg: '#fef2f2', border: '#fca5a5' },
+      { icon: 'bi-exclamation-triangle-fill', color: '#ea580c', bg: '#fff7ed', border: '#fdba74' },
+      { icon: 'bi-shield-exclamation', color: '#d97706', bg: '#fffbeb', border: '#fde68a' },
+      { icon: 'bi-gear-wide-connected', color: '#7c3aed', bg: '#faf5ff', border: '#d8b4fe' }
+    ];
+    return palette[idx % palette.length];
+  };
+
+  return (
+    <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" style={{ borderColor: '#fca5a5' }}>
+      <div className="d-flex align-items-center gap-2.5 mb-3 pb-2 border-bottom">
+        <div
+          className="rounded-3 p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0"
+          style={{ width: '36px', height: '36px', background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)', boxShadow: '0 2px 8px rgba(239, 68, 68, 0.45)' }}
+        >
+          <i className="bi bi-exclamation-octagon-fill fs-5"></i>
+        </div>
+        <div>
+          <span className="badge rounded-pill fw-bold text-uppercase px-2.5 py-0.5 mb-0.5 d-inline-block shadow-2xs" style={{ backgroundColor: '#fee2e2', color: '#dc2626', fontSize: '0.68rem', border: '1px solid #fca5a5' }}>
+            Notfall &amp; Störungsbehebung
+          </span>
+          <h5 className="fw-bold mb-0 text-dark" style={{ fontSize: '1.05rem' }}>
+            Alarm-Leitfaden &amp; Störungsbehebung (Troubleshooting)
+          </h5>
+        </div>
+      </div>
+
+      <div className="row g-2.5">
+        {troubleshooting.map((t, idx) => {
+          const tStyle = getTroubleStyle(t.problem, idx);
+          return (
+            <div key={idx} className="col-12 col-md-6">
+              <div
+                className="p-3 rounded-3 border h-100 shadow-2xs"
+                style={{
+                  borderLeft: `5px solid ${tStyle.color}`,
+                  background: `linear-gradient(135deg, #ffffff 0%, ${tStyle.bg} 100%)`,
+                  borderColor: tStyle.border
+                }}
+              >
+                <div className="fw-bold d-flex align-items-center gap-1.5 mb-1.5" style={{ color: tStyle.color, fontSize: '0.88rem' }}>
+                  <span
+                    className="rounded-circle p-1 d-inline-flex align-items-center justify-content-center text-white flex-shrink-0"
+                    style={{ width: '22px', height: '22px', backgroundColor: tStyle.color }}
+                  >
+                    <i className={`bi ${tStyle.icon}`} style={{ fontSize: '0.68rem' }}></i>
+                  </span>
+                  <span>{t.problem}</span>
+                </div>
+                <div className="small text-secondary mb-2 ps-1" style={{ fontSize: '0.78rem' }}>
+                  <strong className="text-dark">Ursache:</strong> {t.cause}
+                </div>
+                <div
+                  className="p-2.5 rounded-2 bg-white border small text-dark fw-medium shadow-2xs"
+                  style={{ fontSize: '0.82rem', borderLeft: `3px solid #16a34a`, borderColor: '#e2e8f0' }}
+                >
+                  <i className="bi bi-check2-circle text-success me-1.5 fw-bold"></i>
+                  <span>{t.action}</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// =============================================================
+// INTERACTIVE CLINICAL COMPONENT 1: Beatmungsgerät & Dichtigkeit
+// =============================================================
+function VentilatorCircuitComponent({ standard }) {
+  const [activeTab, setActiveTab] = useState('curves'); // 'curves' | 'circuit' | 'check'
+  const [peep, setPeep] = useState(8);
+  const [vt, setVt] = useState(460);
+  const [checkRunning, setCheckRunning] = useState(false);
+  const [checkResults, setCheckResults] = useState(null);
+
+  const pPeak = peep + 16;
+  const pPlat = peep + 10;
+  const drivingPressure = pPlat - peep;
+
+  const runCheck = () => {
+    setCheckRunning(true);
+    setCheckResults({ step: 1, text: 'Ventile & Dichtungen werden kalibriert...' });
+
+    setTimeout(() => {
+      setCheckResults({ step: 2, text: 'Dichtigkeitsprüfung bei 30 mbar Haltetest (Leckage < 100 ml/min)...' });
+    }, 900);
+
+    setTimeout(() => {
+      setCheckResults({ step: 3, text: 'O2-Zelle (21% / 100%) & Flowsensor-Abgleich...' });
+    }, 1800);
+
+    setTimeout(() => {
+      setCheckResults({
+        step: 4,
+        completed: true,
+        passed: true,
+        leakRate: '14 ml/min',
+        compliance: '1.8 ml/mbar',
+        o2Cell: '100% OK',
+        alarms: 'Pmax & Diskonnektion aktiv'
+      });
+      setCheckRunning(false);
+    }, 2600);
+  };
+
+  return (
+    <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
+      {/* Header */}
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <div className="d-flex align-items-center gap-2">
+          <span className="p-2 rounded-3 text-white d-inline-flex" style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)' }}>
+            <i className="bi bi-lungs-fill fs-5"></i>
+          </span>
+          <div>
+            <h5 className="fw-bold mb-0 text-dark">
+              Interaktiver Beatmungssimulator &amp; Gerätecheck
+            </h5>
+            <div className="text-secondary small" style={{ fontSize: '0.76rem' }}>
+              Druck- &amp; Flowkurven, Doppelschlauch-Schema &amp; präklinischer Dichtigkeitstest
+            </div>
+          </div>
+        </div>
+
+        {/* Tab Switcher */}
+        <div className="btn-group btn-group-sm rounded-pill p-1 bg-light border shadow-2xs" role="group">
+          <button
+            type="button"
+            className={`btn rounded-pill px-3 py-1 fw-semibold ${activeTab === 'curves' ? 'btn-primary text-white shadow-xs' : 'btn-light border-0'}`}
+            onClick={() => setActiveTab('curves')}
+            style={{ fontSize: '0.78rem' }}
+          >
+            <i className="bi bi-activity me-1"></i>Beatmungskurven
+          </button>
+          <button
+            type="button"
+            className={`btn rounded-pill px-3 py-1 fw-semibold ${activeTab === 'circuit' ? 'btn-primary text-white shadow-xs' : 'btn-light border-0'}`}
+            onClick={() => setActiveTab('circuit')}
+            style={{ fontSize: '0.78rem' }}
+          >
+            <i className="bi bi-diagram-3 me-1"></i>Schlauchsystem
+          </button>
+          <button
+            type="button"
+            className={`btn rounded-pill px-3 py-1 fw-semibold ${activeTab === 'check' ? 'btn-primary text-white shadow-xs' : 'btn-light border-0'}`}
+            onClick={() => setActiveTab('check')}
+            style={{ fontSize: '0.78rem' }}
+          >
+            <i className="bi bi-shield-check me-1"></i>Gerätecheck
+          </button>
+        </div>
+      </div>
+
+      {/* TAB 1: CURVES */}
+      {activeTab === 'curves' && (
+        <div>
+          {/* Waveform Canvas / SVG Container */}
+          <div className="rounded-4 p-3 mb-3 text-white position-relative overflow-hidden" style={{ backgroundColor: '#09131f', border: '1.5px solid #1e293b' }}>
+            <div className="d-flex justify-content-between align-items-center mb-2 px-1">
+              <span className="badge rounded-pill px-2.5 py-1 text-uppercase fw-bold" style={{ backgroundColor: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.4)', fontSize: '0.68rem' }}>
+                <i className="bi bi-activity me-1"></i>Echtzeit Druck-Zeit (Paw) &amp; Flow-Zeit Kurven
+              </span>
+              <span className="text-secondary small font-monospace" style={{ fontSize: '0.7rem' }}>
+                Modus: PCV / VCV lungenprotektiv
+              </span>
+            </div>
+
+            {/* SVG Waveforms */}
+            <svg viewBox="0 0 600 210" className="w-100" style={{ maxHeight: '220px', display: 'block' }}>
+              <defs>
+                <linearGradient id="pawGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.0" />
+                </linearGradient>
+                <linearGradient id="flowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#4ade80" stopOpacity="0.3" />
+                  <stop offset="100%" stopColor="#4ade80" stopOpacity="0.0" />
+                </linearGradient>
+              </defs>
+
+              {/* Grid lines */}
+              <line x1="0" y1="35" x2="600" y2="35" stroke="#1e293b" strokeDasharray="3 3" />
+              <line x1="0" y1="75" x2="600" y2="75" stroke="#1e293b" strokeDasharray="3 3" />
+              <line x1="0" y1="120" x2="600" y2="120" stroke="#334155" strokeWidth="1" />
+              <line x1="0" y1="170" x2="600" y2="170" stroke="#1e293b" strokeDasharray="3 3" />
+
+              {/* Wave 1: Paw (Pressure) Curve */}
+              <path
+                d="M 10 100 L 40 100 L 50 35 L 120 48 L 135 100 L 230 100 L 240 35 L 310 48 L 325 100 L 420 100 L 430 35 L 500 48 L 515 100 L 590 100"
+                fill="none"
+                stroke="#38bdf8"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M 40 100 L 50 35 L 120 48 L 135 100 Z"
+                fill="url(#pawGrad)"
+              />
+              <path
+                d="M 230 100 L 240 35 L 310 48 L 325 100 Z"
+                fill="url(#pawGrad)"
+              />
+
+              {/* Labels for Pressure Curve */}
+              <text x="55" y="30" fill="#38bdf8" fontSize="11" fontWeight="bold">Ppeak: {pPeak} mbar</text>
+              <text x="125" y="44" fill="#93c5fd" fontSize="10">Pplat: {pPlat} mbar</text>
+              <text x="145" y="96" fill="#38bdf8" fontSize="10">PEEP: {peep} mbar</text>
+
+              {/* Wave 2: Flow (t) Curve */}
+              <path
+                d="M 10 160 L 40 160 L 45 130 L 120 160 L 125 185 L 160 160 L 230 160 L 235 130 L 310 160 L 315 185 L 350 160 L 420 160 L 425 130 L 500 160 L 505 185 L 540 160 L 590 160"
+                fill="none"
+                stroke="#4ade80"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <text x="48" y="125" fill="#4ade80" fontSize="10" fontWeight="bold">Insp. Flow 60 L/min</text>
+              <text x="130" y="198" fill="#86efac" fontSize="9">Exp. Flow (Passiv)</text>
+            </svg>
+
+            {/* Readout Bar */}
+            <div className="row g-2 pt-2 border-top border-secondary border-opacity-25 text-center">
+              <div className="col-3">
+                <span className="text-secondary small d-block" style={{ fontSize: '0.68rem' }}>Ppeak</span>
+                <strong className="text-info fs-6">{pPeak} <small className="text-white-50" style={{ fontSize: '0.65rem' }}>mbar</small></strong>
+              </div>
+              <div className="col-3">
+                <span className="text-secondary small d-block" style={{ fontSize: '0.68rem' }}>Pplat</span>
+                <strong className="text-light fs-6">{pPlat} <small className="text-white-50" style={{ fontSize: '0.65rem' }}>mbar</small></strong>
+              </div>
+              <div className="col-3">
+                <span className="text-secondary small d-block" style={{ fontSize: '0.68rem' }}>Driving Press. (&Delta;P)</span>
+                <strong className={`fs-6 ${drivingPressure <= 14 ? 'text-success' : 'text-danger'}`}>{drivingPressure} <small className="text-white-50" style={{ fontSize: '0.65rem' }}>mbar</small></strong>
+              </div>
+              <div className="col-3">
+                <span className="text-secondary small d-block" style={{ fontSize: '0.68rem' }}>PEEP</span>
+                <strong className="text-primary fs-6">{peep} <small className="text-white-50" style={{ fontSize: '0.65rem' }}>mbar</small></strong>
+              </div>
+            </div>
+          </div>
+
+          {/* Interactive Sliders */}
+          <div className="row g-3">
+            <div className="col-md-6">
+              <label className="form-label small fw-bold text-dark d-flex justify-content-between mb-1">
+                <span>PEEP (Positiv-endexspiratorischer Druck):</span>
+                <span className="text-primary">{peep} mbar</span>
+              </label>
+              <input
+                type="range"
+                className="form-range"
+                min="4"
+                max="16"
+                step="1"
+                value={peep}
+                onChange={(e) => setPeep(Number(e.target.value))}
+              />
+              <div className="d-flex justify-content-between text-muted" style={{ fontSize: '0.68rem' }}>
+                <span>4 mbar (Min)</span>
+                <span>8 mbar (Standard)</span>
+                <span>16 mbar (ARDS)</span>
+              </div>
+            </div>
+
+            <div className="col-md-6">
+              <label className="form-label small fw-bold text-dark d-flex justify-content-between mb-1">
+                <span>Tidalvolumen (Vt):</span>
+                <span className="text-success">{vt} ml (6 ml/kg IBW)</span>
+              </label>
+              <input
+                type="range"
+                className="form-range"
+                min="300"
+                max="650"
+                step="10"
+                value={vt}
+                onChange={(e) => setVt(Number(e.target.value))}
+              />
+              <div className="d-flex justify-content-between text-muted" style={{ fontSize: '0.68rem' }}>
+                <span>300 ml (Protektiv)</span>
+                <span>450 ml (Norm)</span>
+                <span>650 ml</span>
+              </div>
+            </div>
+          </div>
+
+          {drivingPressure > 14 && (
+            <div className="alert alert-danger py-2 px-3 rounded-3 mt-3 small d-flex align-items-center gap-2 mb-0">
+              <i className="bi bi-exclamation-triangle-fill fs-5"></i>
+              <span><strong>Achtung: Driving Pressure &gt; 14 mbar!</strong> Erhöhte Gefahr für Ventilator-Induced Lung Injury (VILI). Tidalvolumen senken oder PEEP optimieren!</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 2: CIRCUIT SCHEMATIC */}
+      {activeTab === 'circuit' && (
+        <div className="p-3 bg-light rounded-4 border">
+          <div className="fw-bold text-dark small text-uppercase mb-2.5 d-flex align-items-center gap-1.5">
+            <i className="bi bi-diagram-3-fill text-primary"></i>
+            <span>Fachgerechter Aufbau des Doppelschlauchsystems (Inspiration &amp; Exspiration):</span>
+          </div>
+
+          <div className="row g-2">
+            {[
+              { num: '1', title: 'Zentrale Gasversorgung (ZGV)', desc: 'O2 & Druckluft-Schläuche fest verriegeln (3.0–4.5 bar).', icon: 'bi-plug-fill', color: '#0284c7' },
+              { num: '2', title: 'Bakterienfilter Geräteausgang', desc: 'Inspirationsfilter direkt an Inspirationsventil montieren.', icon: 'bi-shield-check', color: '#16a34a' },
+              { num: '3', title: 'Befeuchterkammer (MR850)', desc: 'Unterhalb Patientenniveau fixieren, mit Aqua dest. befüllen.', icon: 'bi-droplet-half', color: '#0891b2' },
+              { num: '4', title: 'Beheizter Inspirationsschenkel', desc: 'Heizdraht einklinken, Temperatursensor vor Y-Stück.', icon: 'bi-thermometer-sun', color: '#ea580c' },
+              { num: '5', title: 'Patientennahes Y-Stück', desc: 'Flowsensor (falls extern) & CO2-Küvette knickfrei anbringen.', icon: 'bi-activity', color: '#8b5cf6' },
+              { num: '6', title: 'Exspirationsschenkel & Ventil', desc: 'Exspirationsfilter vor Geräteeingang, Wasserfalle tiefster Punkt.', icon: 'bi-arrow-left-circle-fill', color: '#dc2626' }
+            ].map((s, idx) => (
+              <div key={idx} className="col-sm-6 col-lg-4">
+                <div className="p-2.5 bg-white rounded-3 border shadow-2xs h-100" style={{ borderLeft: `3.5px solid ${s.color}` }}>
+                  <div className="d-flex align-items-center gap-2 mb-1">
+                    <span className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center" style={{ width: '22px', height: '22px', backgroundColor: s.color, fontSize: '0.72rem' }}>
+                      {s.num}
+                    </span>
+                    <strong className="text-dark small" style={{ fontSize: '0.82rem' }}>{s.title}</strong>
+                  </div>
+                  <div className="text-secondary small ps-4" style={{ fontSize: '0.76rem', lineHeight: '1.3' }}>
+                    {s.desc}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="alert alert-info py-2 px-3 rounded-3 mt-3 small mb-0 d-flex align-items-center gap-2">
+            <i className="bi bi-info-circle-fill text-primary fs-5 flex-shrink-0"></i>
+            <span><strong>Goldene Regel:</strong> Vor jedem Einsatz Beatmungsbeutel (z.B. Ambu-Beutel) mit Maske &amp; PEEP-Ventil am Patientenbett bereithalten!</span>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: PRE-USE CHECK SIMULATOR */}
+      {activeTab === 'check' && (
+        <div className="p-3 bg-light rounded-4 border">
+          <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+            <div>
+              <h6 className="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                <i className="bi bi-check2-circle text-success fs-5"></i>
+                <span>Gerätecheck &amp; Dichtigkeitsprüfung (30 mbar Haltetest)</span>
+              </h6>
+              <div className="text-muted small" style={{ fontSize: '0.76rem' }}>
+                Automatisierter Pre-Use-Check vor jedem Patientenwechsel
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="btn btn-primary rounded-pill px-3 py-1.5 fw-bold shadow-sm d-flex align-items-center gap-1.5"
+              style={{ minHeight: '36px', fontSize: '0.82rem' }}
+              onClick={runCheck}
+              disabled={checkRunning}
+            >
+              {checkRunning ? (
+                <>
+                  <span className="spinner-border spinner-border-sm" role="status"></span>
+                  <span>Prüfung läuft...</span>
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-play-circle-fill"></i>
+                  <span>Pre-Use Check starten</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          {checkRunning && (
+            <div className="p-3 bg-white rounded-3 border mb-3 text-center">
+              <div className="spinner-grow text-primary mb-2" role="status"></div>
+              <div className="fw-bold text-dark small">{checkResults?.text}</div>
+              <div className="progress mt-2" style={{ height: '5px' }}>
+                <div className="progress-bar progress-bar-striped progress-bar-animated bg-primary" style={{ width: `${(checkResults?.step || 1) * 25}%` }}></div>
+              </div>
+            </div>
+          )}
+
+          {checkResults?.completed && (
+            <div className="p-3 bg-white rounded-3 border mb-3 shadow-2xs">
+              <div className="d-flex align-items-center gap-2 text-success fw-bold mb-2">
+                <i className="bi bi-check-circle-fill fs-5"></i>
+                <span>Gerätecheck erfolgreich BESTANDEN • System einsatzbereit</span>
+              </div>
+              <div className="row g-2 small text-secondary">
+                <div className="col-sm-6 col-lg-3">
+                  <div className="p-2 bg-light rounded-2 border">
+                    <span className="d-block text-muted" style={{ fontSize: '0.7rem' }}>Leckage (30 mbar)</span>
+                    <strong className="text-success">{checkResults.leakRate}</strong> <span className="text-muted">(&lt; 100 ml)</span>
+                  </div>
+                </div>
+                <div className="col-sm-6 col-lg-3">
+                  <div className="p-2 bg-light rounded-2 border">
+                    <span className="d-block text-muted" style={{ fontSize: '0.7rem' }}>Schlauch-Compliance</span>
+                    <strong className="text-dark">{checkResults.compliance}</strong>
+                  </div>
+                </div>
+                <div className="col-sm-6 col-lg-3">
+                  <div className="p-2 bg-light rounded-2 border">
+                    <span className="d-block text-muted" style={{ fontSize: '0.7rem' }}>O2-Sensorkalibrierung</span>
+                    <strong className="text-success">{checkResults.o2Cell}</strong>
+                  </div>
+                </div>
+                <div className="col-sm-6 col-lg-3">
+                  <div className="p-2 bg-light rounded-2 border">
+                    <span className="d-block text-muted" style={{ fontSize: '0.7rem' }}>Sicherheitsalarme</span>
+                    <strong className="text-dark">{checkResults.alarms}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 4 Check Steps List */}
+          <div className="d-flex flex-column gap-2 small">
+            {[
+              { title: '1. Dichtigkeitstest bei 30 mbar', desc: 'Y-Stück verschließen. Druck wird 10 Sek. gehalten. Maximale Leckrate < 100 ml/min.', passed: checkResults?.completed },
+              { title: '2. Schlauch-Kompliance-Kompensation', desc: 'Gerät ermittelt Dehnbarkeit der Schläuche zur exakten Vt-Applikation.', passed: checkResults?.completed },
+              { title: '3. Kalibrierung Flowsensor & O2-Messzelle', desc: 'Abgleich bei 21% Raumluft und 100% reinem Sauerstoff.', passed: checkResults?.completed },
+              { title: '4. Alarm- und Batteriefunktionstest', desc: 'Netzausfall-Simulation: Akkubetrieb > 60 Minuten gewährleistet.', passed: checkResults?.completed }
+            ].map((step, idx) => (
+              <div key={idx} className="p-2 rounded-2 bg-white border d-flex align-items-center justify-content-between gap-2">
+                <div>
+                  <strong className="text-dark d-block">{step.title}</strong>
+                  <span className="text-muted" style={{ fontSize: '0.74rem' }}>{step.desc}</span>
+                </div>
+                {step.passed ? (
+                  <span className="badge bg-success text-white rounded-pill px-2.5 py-1">
+                    <i className="bi bi-check2 me-1"></i>OK
+                  </span>
+                ) : (
+                  <span className="badge bg-light text-secondary border rounded-pill px-2 py-1">
+                    Bereit
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// =============================================================
+// INTERACTIVE CLINICAL COMPONENT 2: Aktive Befeuchtung (Invasiv)
+// =============================================================
+function HumidifierComponent({ standard }) {
+  const [ventMode, setVentMode] = useState('invasive'); // 'invasive' (37°C) | 'niv' (31°C)
+  const [wireActive, setWireActive] = useState(true);
+
+  const targetChamber = ventMode === 'invasive' ? 37.0 : 31.0;
+  const targetWire = wireActive ? (ventMode === 'invasive' ? 39.0 : 33.0) : 23.5;
+  const targetYPiece = wireActive ? (ventMode === 'invasive' ? 37.0 : 31.0) : 22.0;
+  const absHumidity = ventMode === 'invasive' ? 44 : 32;
+
+  return (
+    <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
+      {/* Header */}
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <div className="d-flex align-items-center gap-2">
+          <span className="p-2 rounded-3 text-white d-inline-flex" style={{ background: 'linear-gradient(135deg, #0891b2 0%, #0e7490 100%)' }}>
+            <i className="bi bi-droplet-half fs-5"></i>
+          </span>
+          <div>
+            <h5 className="fw-bold mb-0 text-dark">
+              Thermo-Hygro Befeuchtungs-Gradient &amp; Kondensat-Monitor
+            </h5>
+            <div className="text-secondary small" style={{ fontSize: '0.76rem' }}>
+              Physiologische Konditionierung (ISO 8185: 37°C, 44 mg/L H2O) &amp; Rainout-Schutz
+            </div>
+          </div>
+        </div>
+
+        {/* Mode selector */}
+        <div className="btn-group btn-group-sm rounded-pill p-1 bg-light border" role="group">
+          <button
+            type="button"
+            className={`btn rounded-pill px-3 py-1 fw-bold ${ventMode === 'invasive' ? 'btn-info text-white shadow-xs' : 'btn-light border-0'}`}
+            onClick={() => setVentMode('invasive')}
+            style={{ fontSize: '0.78rem' }}
+          >
+            Invasiv (37°C / 44 mg/L)
+          </button>
+          <button
+            type="button"
+            className={`btn rounded-pill px-3 py-1 fw-bold ${ventMode === 'niv' ? 'btn-info text-white shadow-xs' : 'btn-light border-0'}`}
+            onClick={() => setVentMode('niv')}
+            style={{ fontSize: '0.78rem' }}
+          >
+            NIV / Maske (31°C)
+          </button>
+        </div>
+      </div>
+
+      {/* 3 Temperature Checkpoint Stations */}
+      <div className="row g-2.5 mb-3">
+        <div className="col-md-4">
+          <div className="p-3 rounded-4 border bg-light h-100 position-relative overflow-hidden" style={{ borderLeft: '4.5px solid #0891b2' }}>
+            <div className="d-flex justify-content-between align-items-center mb-1">
+              <span className="badge rounded-pill bg-white text-secondary border px-2 py-0.5" style={{ fontSize: '0.68rem' }}>Station 1</span>
+              <i className="bi bi-water text-info fs-5"></i>
+            </div>
+            <h6 className="fw-bold text-dark mb-1">Befeuchterkammer</h6>
+            <div className="display-6 fw-bold text-primary mb-1" style={{ fontSize: '1.6rem' }}>
+              {targetChamber.toFixed(1)} <small className="fs-6 text-muted">°C</small>
+            </div>
+            <div className="small text-secondary" style={{ fontSize: '0.78rem' }}>
+              Absolute Feuchte: <strong>{absHumidity} mg/L</strong> (100% r.F.)
+            </div>
+            <div className="small text-muted mt-1" style={{ fontSize: '0.72rem' }}>
+              Aqua dest. Dauerinfusion aktiv
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-4">
+          <div className="p-3 rounded-4 border bg-light h-100 position-relative overflow-hidden" style={{ borderLeft: wireActive ? '4.5px solid #16a34a' : '4.5px solid #dc2626' }}>
+            <div className="d-flex justify-content-between align-items-center mb-1">
+              <span className="badge rounded-pill bg-white text-secondary border px-2 py-0.5" style={{ fontSize: '0.68rem' }}>Station 2</span>
+              <i className={`bi ${wireActive ? 'bi-fire text-warning' : 'bi-slash-circle text-danger'} fs-5`}></i>
+            </div>
+            <h6 className="fw-bold text-dark mb-1">Beheizter Schlauch</h6>
+            <div className={`display-6 fw-bold mb-1 ${wireActive ? 'text-success' : 'text-danger'}`} style={{ fontSize: '1.6rem' }}>
+              {targetWire.toFixed(1)} <small className="fs-6 text-muted">°C</small>
+            </div>
+            <div className="small text-secondary" style={{ fontSize: '0.78rem' }}>
+              Überwärmung: <strong>{wireActive ? '+2.0°C Gradient' : 'Ausgefallen!'}</strong>
+            </div>
+            <div className="small text-muted mt-1" style={{ fontSize: '0.72rem' }}>
+              {wireActive ? 'Schlauchheizdraht verhindert Rainout' : 'Gefahr: Massives Kondensat!'}
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-4">
+          <div className="p-3 rounded-4 border bg-light h-100 position-relative overflow-hidden" style={{ borderLeft: '4.5px solid #0284c7' }}>
+            <div className="d-flex justify-content-between align-items-center mb-1">
+              <span className="badge rounded-pill bg-white text-secondary border px-2 py-0.5" style={{ fontSize: '0.68rem' }}>Station 3</span>
+              <i className="bi bi-lungs text-primary fs-5"></i>
+            </div>
+            <h6 className="fw-bold text-dark mb-1">Y-Stück (Patient)</h6>
+            <div className="display-6 fw-bold text-dark mb-1" style={{ fontSize: '1.6rem' }}>
+              {targetYPiece.toFixed(1)} <small className="fs-6 text-muted">°C</small>
+            </div>
+            <div className="small text-secondary" style={{ fontSize: '0.78rem' }}>
+              Epithel-Schutz: <strong>{wireActive ? 'Optimal (37°C)' : 'Unterkühlt'}</strong>
+            </div>
+            <div className="small text-muted mt-1" style={{ fontSize: '0.72rem' }}>
+              Sensor misst patientennah
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Rainout Simulator Interactive Toggle */}
+      <div className="p-3 bg-light rounded-4 border mb-3">
+        <div className="d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div>
+            <strong className="text-dark small d-block">Schlauchheizungs-Simulation (Rainout-Test):</strong>
+            <span className="text-muted small" style={{ fontSize: '0.75rem' }}>
+              Testen Sie die Auswirkung eines getrennten oder defekten Schlauchheizdrahtes:
+            </span>
+          </div>
+
+          <div className="form-check form-switch m-0">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              role="switch"
+              id="wireSwitch"
+              checked={wireActive}
+              onChange={(e) => setWireActive(e.target.checked)}
+              style={{ width: '48px', height: '24px', cursor: 'pointer' }}
+            />
+            <label className="form-check-label fw-bold small ms-2 pt-1" htmlFor="wireSwitch">
+              {wireActive ? 'Heizung AKTIV (+2°C)' : 'Heizung GETRENNT (Alarm!)'}
+            </label>
+          </div>
+        </div>
+
+        {!wireActive && (
+          <div className="alert alert-danger py-2.5 px-3 rounded-3 mt-3 mb-0 small border-0 shadow-sm">
+            <div className="d-flex align-items-start gap-2">
+              <i className="bi bi-exclamation-triangle-fill fs-5 flex-shrink-0 text-danger"></i>
+              <div>
+                <strong className="d-block">KRITISCHE GEFAHR: Schlauchkondensat (Rainout)!</strong>
+                <span>Bei Temperaturabfall auf 22°C kondensieren bis zu 22 ml Wasser/Stunde im Schlauch. Bei jeder Patientenbewegung oder Lagerung droht massive Endotracheal-Aspiration von infektiösem Kondenswasser &amp; plötzliche Tubusokklusion!</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Safety Rules Footnote */}
+      <div className="row g-2 small text-secondary">
+        <div className="col-sm-6 d-flex align-items-center gap-2">
+          <i className="bi bi-check-circle-fill text-success"></i>
+          <span>Befeuchterkammer immer UNTER Patientenniveau anbringen</span>
+        </div>
+        <div className="col-sm-6 d-flex align-items-center gap-2">
+          <i className="bi bi-check-circle-fill text-success"></i>
+          <span>Ausschließlich steriles Aqua dest. verwenden</span>
+        </div>
+        <div className="col-sm-6 d-flex align-items-center gap-2">
+          <i className="bi bi-check-circle-fill text-success"></i>
+          <span>Keine HME-Filter (künstliche Nasen) parallel betreiben!</span>
+        </div>
+        <div className="col-sm-6 d-flex align-items-center gap-2">
+          <i className="bi bi-check-circle-fill text-success"></i>
+          <span>Kondensat niemals zurück in die Kammer leeren</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================
+// INTERACTIVE CLINICAL COMPONENT 3: High-Flow & ROX-Index Rechner
+// =============================================================
+function RoxIndexCalculatorComponent({ standard }) {
+  const [spo2, setSpo2] = useState(94);
+  const [fio2, setFio2] = useState(50);
+  const [rr, setRr] = useState(22);
+  const [flow, setFlow] = useState(45);
+
+  const fio2Fraction = fio2 / 100;
+  const rox = (rr > 0 && fio2Fraction > 0) ? ((spo2 / fio2Fraction) / rr) : 0;
+  const roxFormatted = rox.toFixed(2);
+
+  const isSuccess = rox >= 4.88;
+  const isWarning = rox >= 3.85 && rox < 4.88;
+  const isCritical = rox < 3.85;
+
+  return (
+    <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
+      {/* Header */}
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <div className="d-flex align-items-center gap-2">
+          <span className="p-2 rounded-3 text-white d-inline-flex" style={{ background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)' }}>
+            <i className="bi bi-calculator-fill fs-5"></i>
+          </span>
+          <div>
+            <h5 className="fw-bold mb-0 text-dark">
+              ROX-Index Live-Rechner &amp; Therapieversagens-Prädiktor
+            </h5>
+            <div className="text-secondary small" style={{ fontSize: '0.76rem' }}>
+              Evidenzbasierte Entscheidungshilfe für High-Flow-Therapie (HFNC)
+            </div>
+          </div>
+        </div>
+
+        <span className="badge rounded-pill bg-light text-secondary border px-2.5 py-1 small fw-semibold">
+          Formel: (SpO2 / FiO2) / AF
+        </span>
+      </div>
+
+      {/* Main Score Display Box */}
+      <div
+        className="rounded-4 p-3.5 mb-4 text-center border shadow-xs"
+        style={{
+          background: isSuccess
+            ? 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)'
+            : (isWarning ? 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)' : 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)'),
+          borderColor: isSuccess ? '#86efac' : (isWarning ? '#fde047' : '#fca5a5')
+        }}
+      >
+        <span className="text-uppercase fw-bold small d-block mb-1" style={{ color: isSuccess ? '#166534' : (isWarning ? '#92400e' : '#991b1b'), letterSpacing: '0.5px' }}>
+          Aktueller ROX-Index:
+        </span>
+        <div className="display-4 fw-black mb-1" style={{ color: isSuccess ? '#15803d' : (isWarning ? '#b45309' : '#dc2626') }}>
+          {roxFormatted}
+        </div>
+
+        <div className="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill fw-bold shadow-2xs mb-2" style={{ backgroundColor: '#ffffff', color: isSuccess ? '#166534' : (isWarning ? '#92400e' : '#b91c1c') }}>
+          <i className={`bi ${isSuccess ? 'bi-check-circle-fill text-success' : (isWarning ? 'bi-exclamation-triangle-fill text-warning' : 'bi-x-circle-fill text-danger')}`}></i>
+          <span>
+            {isSuccess && 'ERFOLG WAHRSCHEINLICH (Score ≥ 4.88)'}
+            {isWarning && 'GRAUBEREICH / WARNUNG (Score 3.85 – 4.87)'}
+            {isCritical && 'HOHE INTUBATIONSGEFAHR! (Score < 3.85)'}
+          </span>
+        </div>
+
+        <p className="small mb-0 mx-auto" style={{ maxWidth: '520px', color: isSuccess ? '#14532d' : (isWarning ? '#78350f' : '#7f1d1d'), lineHeight: '1.4' }}>
+          {isSuccess && 'Geringes Risiko für Therapieversagen. High-Flow fortführen und Patienten nach 2h, 6h und 12h reevaluieren.'}
+          {isWarning && 'Erhöhtes Risiko für Versagen. Engmaschige Kontrolle alle 1–2h. Flussrate und FiO2 optimieren, Arzt hinzuziehen.'}
+          {isCritical && 'Kritisches Therapieversagen wahrscheinlich! Unverzüglich ITS-Arzt informieren und invasive Intubation vorbereiten!'}
+        </p>
+      </div>
+
+      {/* 3 Interactive Sliders */}
+      <div className="row g-3 mb-3">
+        <div className="col-md-4">
+          <label className="form-label small fw-bold text-dark d-flex justify-content-between mb-1">
+            <span>Sauerstoffsättigung (SpO2):</span>
+            <span className="text-primary fw-extrabold">{spo2} %</span>
+          </label>
+          <input
+            type="range"
+            className="form-range"
+            min="70"
+            max="100"
+            step="1"
+            value={spo2}
+            onChange={(e) => setSpo2(Number(e.target.value))}
+          />
+          <div className="d-flex justify-content-between text-muted" style={{ fontSize: '0.68rem' }}>
+            <span>70%</span>
+            <span>94% (Ziel)</span>
+            <span>100%</span>
+          </div>
+        </div>
+
+        <div className="col-md-4">
+          <label className="form-label small fw-bold text-dark d-flex justify-content-between mb-1">
+            <span>FiO2 (Sauerstoffanteil):</span>
+            <span className="text-danger fw-extrabold">{fio2} %</span>
+          </label>
+          <input
+            type="range"
+            className="form-range"
+            min="21"
+            max="100"
+            step="1"
+            value={fio2}
+            onChange={(e) => setFio2(Number(e.target.value))}
+          />
+          <div className="d-flex justify-content-between text-muted" style={{ fontSize: '0.68rem' }}>
+            <span>21% (Raumluft)</span>
+            <span>50%</span>
+            <span>100% (Pure O2)</span>
+          </div>
+        </div>
+
+        <div className="col-md-4">
+          <label className="form-label small fw-bold text-dark d-flex justify-content-between mb-1">
+            <span>Atemfrequenz (AF):</span>
+            <span className="text-warning fw-extrabold">{rr} /min</span>
+          </label>
+          <input
+            type="range"
+            className="form-range"
+            min="10"
+            max="45"
+            step="1"
+            value={rr}
+            onChange={(e) => setRr(Number(e.target.value))}
+          />
+          <div className="d-flex justify-content-between text-muted" style={{ fontSize: '0.68rem' }}>
+            <span>10/min</span>
+            <span>20/min</span>
+            <span>45/min (Tachypnoe)</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Flow Rate Setting & Practical Rules */}
+      <div className="p-3 bg-light rounded-4 border">
+        <div className="row g-3 align-items-center">
+          <div className="col-md-6">
+            <label className="form-label small fw-bold text-dark d-flex justify-content-between mb-1">
+              <span>Flussrate (Flow):</span>
+              <span className="text-success fw-bold">{flow} L/min</span>
+            </label>
+            <input
+              type="range"
+              className="form-range"
+              min="20"
+              max="60"
+              step="5"
+              value={flow}
+              onChange={(e) => setFlow(Number(e.target.value))}
+            />
+            <div className="d-flex justify-content-between text-muted" style={{ fontSize: '0.68rem' }}>
+              <span>20 L/min</span>
+              <span>45 L/min (Start)</span>
+              <span>60 L/min (Max)</span>
+            </div>
+          </div>
+
+          <div className="col-md-6 border-start-md ps-md-3">
+            <div className="small text-secondary" style={{ fontSize: '0.8rem', lineHeight: '1.4' }}>
+              <div className="mb-1">
+                <i className="bi bi-shield-check text-success me-1"></i>
+                <strong>PEEP-Effekt:</strong> Ca. +0.5 bis 1.0 mbar pro 10 L/min Flow bei geschlossenem Mund.
+              </div>
+              <div>
+                <i className="bi bi-exclamation-triangle-fill text-danger me-1"></i>
+                <strong>Prong-Regel:</strong> Nasenbrille darf max. 50% der Nasenöffnung ausfüllen! Luftaustritt zwingend nötig zur Barotraumaprävention.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================
+// INTERACTIVE CLINICAL COMPONENT 4: Invasives arterielles System
+// =============================================================
+function ArterialWaveformComponent({ standard }) {
+  const [damping, setDamping] = useState('optimal'); // 'optimal' | 'overdamped' | 'underdamped'
+  const [isFlushing, setIsFlushing] = useState(false);
+
+  const triggerFlush = () => {
+    setIsFlushing(true);
+    setTimeout(() => {
+      setIsFlushing(false);
+    }, 1200);
+  };
+
+  const readouts = {
+    optimal: { sys: 124, dia: 74, map: 91, note: 'Exakte reale Blutdruckwerte' },
+    overdamped: { sys: 104, dia: 84, map: 91, note: 'Systole FALSCH ZU TIEF, Diastole FALSCH ZU HOCH!' },
+    underdamped: { sys: 152, dia: 62, map: 92, note: 'Systole FALSCH ZU HOCH (Ringing), Diastole FALSCH ZU TIEF!' }
+  }[damping];
+
+  return (
+    <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
+      {/* Header */}
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <div className="d-flex align-items-center gap-2">
+          <span className="p-2 rounded-3 text-white d-inline-flex" style={{ background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)' }}>
+            <i className="bi bi-activity fs-5"></i>
+          </span>
+          <div>
+            <h5 className="fw-bold mb-0 text-dark">
+              Arterielle Pulskurve &amp; Fast-Flush-Test Simulator
+            </h5>
+            <div className="text-secondary small" style={{ fontSize: '0.76rem' }}>
+              Dämpfungsanalyse (Square Wave Test), Nullabgleich &amp; Fehlerkorrektur
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          className="btn btn-danger rounded-pill px-3 py-1.5 fw-bold shadow-sm d-flex align-items-center gap-1.5"
+          style={{ minHeight: '36px', fontSize: '0.82rem' }}
+          onClick={triggerFlush}
+          disabled={isFlushing}
+        >
+          <i className="bi bi-play-circle-fill"></i>
+          <span>{isFlushing ? 'Flush wird gezogen...' : 'Fast-Flush-Test auslösen'}</span>
+        </button>
+      </div>
+
+      {/* Monitor Display */}
+      <div className="rounded-4 p-3 mb-3 text-white position-relative overflow-hidden" style={{ backgroundColor: '#09131f', border: '1.5px solid #1e293b' }}>
+        <div className="d-flex justify-content-between align-items-center mb-1 px-1">
+          <span className="badge rounded-pill px-2.5 py-1 text-uppercase fw-bold" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.4)', fontSize: '0.68rem' }}>
+            <i className="bi bi-activity me-1"></i>ART 1 (A. radialis)
+          </span>
+          <span className="text-secondary small font-monospace" style={{ fontSize: '0.72rem' }}>
+            Skalierung: 0 – 200 mmHg &bull; 300 mmHg Druckbeutel
+          </span>
+        </div>
+
+        {/* SVG Curve */}
+        <svg viewBox="0 0 600 170" className="w-100" style={{ maxHeight: '190px', display: 'block' }}>
+          {/* Grid lines */}
+          <line x1="0" y1="25" x2="600" y2="25" stroke="#1e293b" strokeDasharray="3 3" />
+          <line x1="0" y1="65" x2="600" y2="65" stroke="#1e293b" strokeDasharray="3 3" />
+          <line x1="0" y1="110" x2="600" y2="110" stroke="#1e293b" strokeDasharray="3 3" />
+          <line x1="0" y1="145" x2="600" y2="145" stroke="#334155" strokeWidth="1" />
+
+          {/* If Fast-Flush is currently triggered: Render Square Wave */}
+          {isFlushing ? (
+            <g>
+              <path
+                d="M 10 120 L 80 120 L 90 20 L 280 20 L 290 140 L 310 110 L 325 125 L 340 120 L 400 120 L 415 65 L 430 90 L 440 85 L 490 120 L 600 120"
+                fill="none"
+                stroke="#ef4444"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <text x="140" y="45" fill="#fca5a5" fontSize="12" fontWeight="bold">300 mmHg Flush-Rechtecksignal</text>
+            </g>
+          ) : (
+            /* Normal or Damped Curve */
+            <g>
+              {damping === 'optimal' && (
+                <path
+                  d="M 10 120 L 40 120 L 55 55 L 75 90 L 85 82 L 140 120 L 170 120 L 185 55 L 205 90 L 215 82 L 270 120 L 300 120 L 315 55 L 335 90 L 345 82 L 400 120 L 430 120 L 445 55 L 465 90 L 475 82 L 530 120 L 560 120"
+                  fill="none"
+                  stroke="#ef4444"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              )}
+
+              {damping === 'overdamped' && (
+                <path
+                  d="M 10 120 L 40 120 L 60 75 L 140 120 L 170 120 L 190 75 L 270 120 L 300 120 L 320 75 L 400 120 L 430 120 L 450 75 L 530 120 L 560 120"
+                  fill="none"
+                  stroke="#f97316"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              )}
+
+              {damping === 'underdamped' && (
+                <path
+                  d="M 10 120 L 40 120 L 50 35 L 60 110 L 70 65 L 80 95 L 90 85 L 140 120 L 170 120 L 180 35 L 190 110 L 200 65 L 210 95 L 220 85 L 270 120 L 300 120 L 310 35 L 320 110 L 330 65 L 340 95 L 350 85 L 400 120 L 430 120 L 440 35 L 450 110 L 460 65 L 470 95 L 480 85 L 530 120"
+                  fill="none"
+                  stroke="#eab308"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              )}
+
+              {/* Curve annotations */}
+              {damping === 'optimal' && (
+                <>
+                  <text x="60" y="45" fill="#f87171" fontSize="10" fontWeight="bold">Systole ({readouts.sys})</text>
+                  <text x="88" y="78" fill="#fca5a5" fontSize="9">Dicrote Kerbe (Inzisur)</text>
+                  <text x="142" y="135" fill="#f87171" fontSize="10">Diastole ({readouts.dia})</text>
+                </>
+              )}
+            </g>
+          )}
+        </svg>
+
+        {/* Big Blood Pressure Display */}
+        <div className="d-flex flex-wrap justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-25">
+          <div className="d-flex align-items-baseline gap-2">
+            <span className="text-secondary small">BP:</span>
+            <span className="display-6 fw-black text-danger" style={{ fontSize: '1.9rem' }}>
+              {readouts.sys} / {readouts.dia}
+            </span>
+            <span className="fs-5 fw-bold text-white-50">({readouts.map})</span>
+            <span className="text-white-50 small">mmHg</span>
+          </div>
+
+          <div className="text-end">
+            <span className="badge rounded-pill px-3 py-1 fw-bold" style={{ backgroundColor: damping === 'optimal' ? '#166534' : '#991b1b' }}>
+              {readouts.note}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Damping Selector Pills */}
+      <div className="row g-2 mb-3">
+        {[
+          { key: 'optimal', title: '1. Optimal gedämpft', desc: '1.5–2 Oszillationen nach Flush, scharfe Inzisur. Reale Messwerte.', badge: 'Korrekt', color: '#16a34a', bg: '#f0fdf4', border: '#86efac' },
+          { key: 'overdamped', title: '2. Überdämpft (Overdamped)', desc: 'Abgeflacht, 0–1 Oszillation. Systole falsch niedrig! (Luftblase, Koagel, Knick)', badge: 'Fehlmessung!', color: '#dc2626', bg: '#fef2f2', border: '#fca5a5' },
+          { key: 'underdamped', title: '3. Unterdämpft (Ringing)', desc: '> 3 Oszillationen. Systole falsch hoch! (Zu lange/steife Schläuche, Hähne)', badge: 'Fehlmessung!', color: '#d97706', bg: '#fffbeb', border: '#fde047' }
+        ].map((d) => (
+          <div key={d.key} className="col-md-4">
+            <div
+              className={`p-3 rounded-4 border h-100 transition-all ${damping === d.key ? 'shadow-sm' : 'opacity-75'}`}
+              style={{
+                cursor: 'pointer',
+                backgroundColor: damping === d.key ? d.bg : '#ffffff',
+                borderColor: damping === d.key ? d.border : '#e2e8f0',
+                borderWidth: damping === d.key ? '2px' : '1px'
+              }}
+              onClick={() => setDamping(d.key)}
+            >
+              <div className="d-flex justify-content-between align-items-center mb-1">
+                <strong className="small" style={{ color: d.color }}>{d.title}</strong>
+                <span className="badge rounded-pill fw-bold" style={{ backgroundColor: d.color, color: '#ffffff', fontSize: '0.65rem' }}>{d.badge}</span>
+              </div>
+              <div className="text-secondary small" style={{ fontSize: '0.75rem', lineHeight: '1.3' }}>
+                {d.desc}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Standard Zeroing Checklist */}
+      <div className="p-3 bg-light rounded-4 border">
+        <div className="fw-bold text-dark small text-uppercase mb-2 d-flex align-items-center gap-1.5">
+          <i className="bi bi-crosshair text-primary"></i>
+          <span>Checkliste Nullabgleich &amp; Druckbeutel:</span>
+        </div>
+        <div className="row g-2 small text-secondary">
+          <div className="col-sm-6 d-flex align-items-center gap-2">
+            <i className="bi bi-check2-circle text-success"></i>
+            <span>Druckbeutel exakt auf <strong>300 mmHg</strong> aufpumpen</span>
+          </div>
+          <div className="col-sm-6 d-flex align-items-center gap-2">
+            <i className="bi bi-check2-circle text-success"></i>
+            <span>Druckaufnehmer auf <strong>4. ICR / mittlere Axillarlinie</strong> (Herzhöhe)</span>
+          </div>
+          <div className="col-sm-6 d-flex align-items-center gap-2">
+            <i className="bi bi-check2-circle text-success"></i>
+            <span>Dreiwegehahn zur Atmosphäre öffnen &amp; am Monitor nullen</span>
+          </div>
+          <div className="col-sm-6 d-flex align-items-center gap-2">
+            <i className="bi bi-check2-circle text-success"></i>
+            <span>Kontinuierlicher Spülfluss ca. <strong>3 ml/h</strong> NaCl 0.9%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================
+// INTERACTIVE CLINICAL COMPONENT 5: Externe Ventrikeldrainage (EVD)
+// =============================================================
+function EvdLevelingComponent({ standard }) {
+  const [chamberHeight, setChamberHeight] = useState(12); // cmH2O
+  const [icpCurve, setIcpCurve] = useState('normal'); // 'normal' (P1 > P2 > P3) | 'high_icp' (P2 > P1)
+  const [isClamped, setIsClamped] = useState(false);
+
+  const isOverdrainage = chamberHeight < 0;
+  const isHighDrainage = chamberHeight >= 10 && chamberHeight <= 15;
+  const isHypodrainage = chamberHeight > 18;
+
+  return (
+    <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
+      {/* Header */}
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <div className="d-flex align-items-center gap-2">
+          <span className="p-2 rounded-3 text-white d-inline-flex" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #581c87 100%)' }}>
+            <i className="bi bi-diagram-3-fill fs-5"></i>
+          </span>
+          <div>
+            <h5 className="fw-bold mb-0 text-dark">
+              EVD Laser-Nivellierung &amp; Hirndruck (ICP) Monitor
+            </h5>
+            <div className="text-secondary small" style={{ fontSize: '0.76rem' }}>
+              Tragus-Nivellierung (Foramen Monroi), Tropfkammerhöhe &amp; Sicherheits-Klemmpflicht
+            </div>
+          </div>
+        </div>
+
+        {/* Safety Clamping Interlock Button */}
+        <button
+          type="button"
+          className={`btn btn-sm rounded-pill px-3 py-1.5 fw-bold shadow-sm d-flex align-items-center gap-1.5 ${isClamped ? 'btn-success text-white' : 'btn-danger text-white'}`}
+          style={{ minHeight: '36px', fontSize: '0.8rem' }}
+          onClick={() => setIsClamped(!isClamped)}
+        >
+          <i className={`bi ${isClamped ? 'bi-lock-fill' : 'bi-unlock-fill'}`}></i>
+          <span>{isClamped ? 'EVD ABGEKLEMMT (Sicher für Bewegung)' : 'EVD GEÖFFNET (Drainage läuft)'}</span>
+        </button>
+      </div>
+
+      {/* Critical Clamping Reminder Alert */}
+      <div className={`p-3 rounded-4 mb-3 border d-flex align-items-start gap-2.5 ${isClamped ? 'bg-success bg-opacity-10 border-success' : 'bg-danger bg-opacity-10 border-danger'}`}>
+        <i className={`bi ${isClamped ? 'bi-shield-check text-success' : 'bi-exclamation-octagon-fill text-danger'} fs-4 flex-shrink-0 mt-0.5`}></i>
+        <div>
+          <strong className={`d-block small ${isClamped ? 'text-success' : 'text-danger'}`}>
+            {isClamped ? 'DRAINAGE SICHER ABGEKLEMMT' : 'STRIKTE KLEMPPFLICHT VOR PATIENTENBEWEGUNG!'}
+          </strong>
+          <span className="small text-secondary" style={{ fontSize: '0.78rem', lineHeight: '1.35' }}>
+            Vor jeder Umlagerung, Mobilisation, Verstellung des Kopfteils und vor Patiententransport zwingend <strong>Dreiwegehahn zur Drainage schließen (abklemmen)</strong>! Nach Positionsänderung neu auf den Tragus lasern und erst nach korrekter Höhe wieder öffnen!
+          </span>
+        </div>
+      </div>
+
+      {/* Drip Chamber Height & Leveling Visualizer */}
+      <div className="row g-3 mb-3">
+        <div className="col-md-6">
+          <div className="p-3 bg-light rounded-4 border h-100">
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <span className="small fw-bold text-dark">Tropfkammer-Höhe (cmH2O über Tragus):</span>
+              <span className={`badge rounded-pill fs-6 px-3 py-1 ${isOverdrainage ? 'bg-danger' : (isHighDrainage ? 'bg-success' : 'bg-warning text-dark')}`}>
+                {chamberHeight > 0 ? `+${chamberHeight}` : chamberHeight} cmH2O
+              </span>
+            </div>
+
+            <input
+              type="range"
+              className="form-range my-2"
+              min="-5"
+              max="25"
+              step="1"
+              value={chamberHeight}
+              onChange={(e) => setChamberHeight(Number(e.target.value))}
+            />
+
+            <div className="d-flex justify-content-between text-muted mb-2" style={{ fontSize: '0.68rem' }}>
+              <span>-5 (Kollapsgefahr!)</span>
+              <span>0 (Tragus)</span>
+              <span>+10 bis +15 (Standard)</span>
+              <span>+25</span>
+            </div>
+
+            {isOverdrainage && (
+              <div className="alert alert-danger py-2 px-3 rounded-3 mb-0 small">
+                <i className="bi bi-exclamation-triangle-fill me-1"></i>
+                <strong>LEBENSGEFAHR: Akute Überdrainage!</strong> Ventrikelkollaps und Einreißen von Brückenvenen (akutes Subduralhämatom) drohen!
+              </div>
+            )}
+
+            {isHighDrainage && (
+              <div className="alert alert-success py-2 px-3 rounded-3 mb-0 small text-success">
+                <i className="bi bi-check-circle-fill me-1"></i>
+                <strong>Optimaler Zielbereich:</strong> Kontinuierliche Drainage bei physiologischem Hirndruck.
+              </div>
+            )}
+
+            {isHypodrainage && (
+              <div className="alert alert-warning py-2 px-3 rounded-3 mb-0 small text-dark">
+                <i className="bi bi-info-circle-fill me-1"></i>
+                <strong>Hohe Druckstufe:</strong> Verminderte Liquordrainage. Hirndruck (ICP) engmaschig überwachen!
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ICP Waveform & Compliance Section */}
+        <div className="col-md-6">
+          <div className="rounded-4 p-3 text-white h-100 d-flex flex-column justify-content-between" style={{ backgroundColor: '#09131f', border: '1.5px solid #1e293b' }}>
+            <div>
+              <div className="d-flex justify-content-between align-items-center mb-1">
+                <span className="badge rounded-pill px-2.5 py-1 text-uppercase fw-bold" style={{ backgroundColor: 'rgba(124, 58, 237, 0.25)', color: '#c084fc', border: '1px solid rgba(124, 58, 237, 0.4)', fontSize: '0.68rem' }}>
+                  <i className="bi bi-activity me-1"></i>ICP Wellenform-Analyse
+                </span>
+
+                <div className="btn-group btn-group-sm" role="group">
+                  <button
+                    type="button"
+                    className={`btn btn-xs rounded-pill px-2 py-0.5 ${icpCurve === 'normal' ? 'btn-success' : 'btn-outline-secondary'}`}
+                    style={{ fontSize: '0.68rem' }}
+                    onClick={() => setIcpCurve('normal')}
+                  >
+                    Normal (P1&gt;P2&gt;P3)
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn btn-xs rounded-pill px-2 py-0.5 ms-1 ${icpCurve === 'high_icp' ? 'btn-danger' : 'btn-outline-secondary'}`}
+                    style={{ fontSize: '0.68rem' }}
+                    onClick={() => setIcpCurve('high_icp')}
+                  >
+                    Erhöhter ICP (P2&gt;P1)
+                  </button>
+                </div>
+              </div>
+
+              {/* SVG ICP Waveform */}
+              <svg viewBox="0 0 320 95" className="w-100 my-1" style={{ maxHeight: '95px', display: 'block' }}>
+                {icpCurve === 'normal' ? (
+                  /* Normal compliance: P1 > P2 > P3 */
+                  <g>
+                    <path
+                      d="M 10 75 L 30 75 L 45 20 L 60 40 L 75 55 L 90 75 L 120 75 L 135 20 L 150 40 L 165 55 L 180 75 L 210 75 L 225 20 L 240 40 L 255 55 L 270 75 L 310 75"
+                      fill="none"
+                      stroke="#4ade80"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    />
+                    <text x="40" y="16" fill="#4ade80" fontSize="9" fontWeight="bold">P1</text>
+                    <text x="60" y="36" fill="#86efac" fontSize="8">P2</text>
+                    <text x="75" y="52" fill="#86efac" fontSize="8">P3</text>
+                  </g>
+                ) : (
+                  /* High ICP / Poor compliance: P2 >= P1 (Rounding) */
+                  <g>
+                    <path
+                      d="M 10 75 L 30 75 L 45 40 L 60 18 L 75 45 L 90 75 L 120 75 L 135 40 L 150 18 L 165 45 L 180 75 L 210 75 L 225 40 L 240 18 L 255 45 L 270 75 L 310 75"
+                      fill="none"
+                      stroke="#ef4444"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    />
+                    <text x="36" y="36" fill="#fca5a5" fontSize="8">P1</text>
+                    <text x="56" y="14" fill="#ef4444" fontSize="10" fontWeight="bold">P2 &gt; P1!</text>
+                    <text x="75" y="42" fill="#fca5a5" fontSize="8">P3</text>
+                  </g>
+                )}
+              </svg>
+            </div>
+
+            <div className="pt-2 border-top border-secondary border-opacity-25 small" style={{ fontSize: '0.74rem' }}>
+              {icpCurve === 'normal' ? (
+                <span className="text-success"><i className="bi bi-check-circle me-1"></i>Normale Hirn-Compliance: P1 (Percussion) &gt; P2 (Tidal) &gt; P3 (Dicrotic)</span>
+              ) : (
+                <span className="text-danger"><i className="bi bi-exclamation-triangle-fill me-1"></i>Erhöhter Hirndruck: P2 &gt; P1 (Tidal wave rounding = Hirn-Compliance erschöpft!)</span>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Reference Laser Point info */}
+      <div className="p-2.5 bg-light rounded-3 border d-flex align-items-center justify-content-between flex-wrap gap-2 small">
+        <div className="d-flex align-items-center gap-2">
+          <i className="bi bi-crosshair2 text-primary fs-5"></i>
+          <span><strong>Referenzpunkt:</strong> Tragus der Ohrmuschel = Foramen Monroi (Laserwaage)</span>
+        </div>
+        <div className="d-flex align-items-center gap-2">
+          <i className="bi bi-activity text-success fs-5"></i>
+          <span><strong>Pulsation:</strong> Liquorspiegel muss atem- &amp; pulssynchron oszillieren</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+// -------------------------------------------------------------
+// Component: Client-Side PDF Exporter (html2pdf integration)
 // -------------------------------------------------------------
 function exportStandardA4Pdf(std, showToast) {
-  const sheetEl = document.getElementById(`pocketcard-a4-print-${std.id}`);
-  if (!sheetEl || !window.html2pdf) {
+  const printSheet = document.getElementById(`pocketcard-a4-print-${std.id}`);
+  if (!printSheet) {
     window.print();
     return;
   }
 
-  if (showToast) {
-    showToast(`A4-PDF für ${std.shortTitle} wird erstellt...`);
-  }
+  if (showToast) showToast(`Erstelle DIN A4 PDF für ${std.shortTitle}...`);
 
-  const savedScrollX = window.scrollX || window.pageXOffset || 0;
-  const savedScrollY = window.scrollY || window.pageYOffset || 0;
-  window.scrollTo(0, 0);
+  // Unhide print sheet so html2canvas can capture it
+  const prevDisplay = printSheet.style.display;
+  printSheet.style.display = 'block';
 
-  const filename = `UMF-Pocketcard-${std.shortTitle.replace(/\s+/g, '_')}-A4.pdf`;
-
-  // Exact integer ratio math:
-  // A4 portrait (210mm x 297mm) with [8, 8, 8, 8]mm margins has inner area 194mm x 281mm.
-  // 194 * 4 = 776px width; 281 * 4 = 1124px height per page (exact integer ratio, 0px rounding error).
   const opt = {
-    margin: [8, 8, 8, 8],
-    filename,
+    margin: [0, 0, 0, 0],
+    filename: `Intensivstandard_${std.shortTitle}_DIN_A4.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
-    enableLinks: true,
-    pagebreak: { mode: [] },
-    html2canvas: {
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      backgroundColor: '#ffffff',
-      scrollX: 0,
-      scrollY: 0,
-      ignoreElements: (el) => el.id === 'root' || el.tagName === 'IFRAME' || el.tagName === 'VIDEO'
-    },
-    jsPDF: {
-      unit: 'mm',
-      format: 'a4',
-      orientation: 'portrait'
-    }
+    html2canvas: { scale: 2, useCORS: true, logging: false },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['css', 'legacy'], avoid: ['.a4-std-page'] }
   };
 
-  const worker = window.html2pdf().set(opt).from(sheetEl);
-
-  worker
-    .toContainer()
-    .then(function () {
-      if (this.prop.overlay) {
-        this.prop.overlay.style.cssText = 'position:fixed !important;top:0px !important;left:0px !important;right:auto !important;bottom:auto !important;width:776px !important;height:auto !important;overflow:visible !important;opacity:0 !important;pointer-events:none !important;z-index:-9999 !important;background:#ffffff !important;';
-      }
-      if (this.prop.container) {
-        this.prop.container.style.cssText = 'position:relative !important;top:0px !important;left:0px !important;right:auto !important;margin:0px !important;padding:0px !important;width:776px !important;height:auto !important;background:#ffffff !important;opacity:1 !important;visibility:visible !important;';
-        const clonedSheet = this.prop.container.querySelector('.pocketcard-a4-print-sheet');
-        if (clonedSheet) {
-          clonedSheet.style.display = 'block';
-          clonedSheet.style.width = '776px';
-          clonedSheet.style.maxWidth = '776px';
-          clonedSheet.style.margin = '0';
-          clonedSheet.style.padding = '0';
-        }
-        const clonedPages = this.prop.container.querySelectorAll('.a4-std-page');
-        clonedPages.forEach((pg) => {
-          pg.style.display = 'flex';
-          pg.style.width = '776px';
-          pg.style.maxWidth = '776px';
-          pg.style.height = '1124px';
-          pg.style.maxHeight = '1124px';
-          pg.style.margin = '0';
-          pg.style.boxSizing = 'border-box';
-        });
-        const imgs = Array.from(this.prop.container.querySelectorAll('img'));
-        return Promise.all(
-          imgs.map((img) => {
-            if (img.complete && img.naturalWidth > 0) return Promise.resolve();
-            return new Promise((res) => {
-              img.onload = res;
-              img.onerror = res;
-              setTimeout(res, 500);
-            });
-          })
-        );
-      }
-    })
-    .toCanvas()
-    .toPdf()
-    .then(function () {
-      if (this.prop.pdf) {
-        this.prop.pdf.save(filename);
-      }
-      window.scrollTo(savedScrollX, savedScrollY);
-      if (showToast) {
-        showToast(`A4-PDF für ${std.shortTitle} erfolgreich heruntergeladen!`);
-      }
-    })
-    .catch((err) => {
+  if (window.html2pdf) {
+    window.html2pdf().set(opt).from(printSheet).save().then(() => {
+      printSheet.style.display = prevDisplay;
+      if (showToast) showToast('PDF erfolgreich heruntergeladen!');
+    }).catch((err) => {
+      printSheet.style.display = prevDisplay;
       console.error('PDF error:', err);
-      window.scrollTo(savedScrollX, savedScrollY);
       window.print();
     });
+  } else {
+    printSheet.style.display = prevDisplay;
+    window.print();
+  }
 }
 
 // -------------------------------------------------------------
-// Component: Dedicated 2-Page A4 Print & PDF Sheet for Each Standard
-// Page 1: Header + Title/Lead/Instructions + Left Image & Right QR Code + Warum wichtig + Minimal-Info
-// Page 2: Header + Handlungsschritte im Pflegeprozess + YouTube & Website Links + QM Footer
+// Component: Dedicated Printable DIN A4 Sheet (Enriched Clinical Points)
 // -------------------------------------------------------------
 function StandardA4PrintSheet({ standard }) {
-  const isSopStandard = standard.id === 'zvk' || standard.id === 'isolation';
   const baseOrigin = (typeof window !== 'undefined' && window.location && window.location.origin && !window.location.origin.includes('localhost'))
     ? `${window.location.origin}${window.location.pathname}`
-    : 'https://umf-nursing-standards.web.app/';
+    : 'https://intensivpflege-standards.web.app/';
   const normalizedBase = baseOrigin.endsWith('/') ? baseOrigin : `${baseOrigin}/`;
   const websiteDirectUrl = `${normalizedBase}#/${standard.id}`;
-  const websiteQuickHubUrl = `${normalizedBase}#/quick-hub`;
-  const primaryMediaUrl = !isSopStandard ? standard.videoUrl : `${normalizedBase}${standard.sopPdfUrl}`;
-
-  const renderHeaderBar = (pageLabel) => (
-    <div className="a4-std-header-bar" style={{ backgroundColor: '#004767' }}>
-      <div className="d-flex align-items-center gap-2">
-        <div className="bg-white rounded px-1.5 py-0.5 d-flex align-items-center shadow-sm">
-          <img src="assets/umf-logo.jpg" alt="Universitätsmedizin Frankfurt" height="26" />
-        </div>
-        <div>
-          <div className="fw-bold text-white text-uppercase" style={{ fontSize: '0.82rem', letterSpacing: '0.35px', lineHeight: 1.15 }}>
-            Universitätsmedizin Frankfurt
-          </div>
-          <div className="text-white-50" style={{ fontSize: '0.67rem', lineHeight: 1.15 }}>
-            Pflegedirektion &bull; Digitale Pflege-Pocketcard (DIN A4)
-          </div>
-        </div>
-      </div>
-      <div className="d-flex align-items-center gap-2">
-        <span
-          className="badge rounded-pill text-white px-2.5 py-1 fw-bold"
-          style={{ backgroundColor: standard.accentColor, fontSize: '0.75rem' }}
-        >
-          {standard.shortTitle}
-        </span>
-        <span className="badge bg-white text-dark fw-bold px-2 py-1 text-nowrap" style={{ fontSize: '0.68rem' }}>
-          {pageLabel}
-        </span>
-      </div>
-    </div>
-  );
-
-  const renderFooterBar = (pageLabel) => (
-    <div className="a4-std-page-footer">
-      <div className="d-flex justify-content-between align-items-center gap-2 mb-0.5" style={{ fontSize: '0.65rem' }}>
-        <div className="text-truncate">
-          <span className="fw-bold text-danger me-1">
-            <i className={`bi ${!isSopStandard ? 'bi-youtube' : 'bi-file-earmark-pdf-fill'} me-1`}></i>
-            {!isSopStandard ? 'YouTube:' : 'SOP-PDF:'}
-          </span>
-          <a href={primaryMediaUrl} className="text-primary text-decoration-underline">
-            {primaryMediaUrl}
-          </a>
-        </div>
-        <div className="flex-shrink-0 text-nowrap">
-          <span className="fw-bold text-dark me-1">
-            <i className="bi bi-globe2 text-primary me-1"></i>Website:
-          </span>
-          <a href={websiteDirectUrl} className="text-primary text-decoration-underline">
-            {websiteDirectUrl}
-          </a>
-        </div>
-      </div>
-      <div className="d-flex justify-content-between align-items-center gap-2 pt-1 border-top text-muted" style={{ fontSize: '0.63rem' }}>
-        <span className="text-truncate">Universitätsmedizin Frankfurt &bull; Pflegedirektion &bull; Expertenstandards im Pflegeprozess</span>
-        <span className="fw-semibold text-dark text-nowrap flex-shrink-0">QM-Dokumentation &bull; {pageLabel}</span>
-      </div>
-    </div>
-  );
 
   return (
     <div className="pocketcard-a4-print-sheet" id={`pocketcard-a4-print-${standard.id}`}>
-      {/* =========================================================
-          PAGE 1 / 2: HEADER + LEFT IMAGE & RIGHT QR CODE + CORE STEPS
-          ========================================================= */}
+      {/* PAGE 1: AUFBAU, KLINISCHE PHASEN & KERN-HANDLUNGSSCHRITTE */}
       <div className="a4-std-page a4-std-page-1" id={`pocketcard-a4-page1-${standard.id}`}>
-        {renderHeaderBar('Seite 1 / 2')}
+        {/* Spectrum Top Accent Bar */}
+        <div style={{ height: '4px', background: 'linear-gradient(90deg, #dc2626 0%, #16a34a 20%, #ea580c 40%, #7c3aed 60%, #0284c7 80%, #facc15 100%)' }} />
 
-        <div className="a4-std-body">
-          {/* 1. Title, Lead Text & Instructions Header Box */}
-          <div className="a4-std-title-box" style={{ borderLeftColor: standard.accentColor }}>
-            <div className="d-flex justify-content-between align-items-start gap-2 mb-1">
-              <div>
-                <div className="text-uppercase fw-bold" style={{ fontSize: '0.66rem', color: standard.accentColor, letterSpacing: '0.4px' }}>
-                  {isSopStandard ? 'Klinische Verfahrensanweisung (SOP)' : 'Expertenstandard in der Pflege'}
-                </div>
-                <h4 className="fw-extrabold text-dark mb-0" style={{ fontSize: '1.05rem', lineHeight: 1.2 }}>
-                  {standard.topic}
-                </h4>
-              </div>
+        {/* Header Bar */}
+        <div className="a4-std-header-bar" style={{ backgroundColor: '#002b47' }}>
+          <div className="d-flex align-items-center gap-2">
+            <div className="rounded p-1 d-flex align-items-center justify-content-center text-white" style={{ background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)', width: '30px', height: '30px' }}>
+              <i className="bi bi-heart-pulse-fill"></i>
             </div>
-            {standard.leadText && (
-              <div className="text-dark fw-semibold mb-1" style={{ fontSize: '0.74rem', lineHeight: 1.32 }}>
-                {standard.leadText}
+            <div>
+              <div className="fw-bold text-white text-uppercase" style={{ fontSize: '0.82rem', letterSpacing: '0.35px' }}>
+                Klinische Intensivstandards &amp; Leitfäden
               </div>
-            )}
-            {standard.instructions && (
-              <div className="text-secondary" style={{ fontSize: '0.7rem', lineHeight: 1.32 }}>
-                {standard.instructions}
-              </div>
-            )}
-          </div>
-
-          {/* 2. Below Header: Image on Left Side & QR Code on Right Side */}
-          <div className="a4-std-media-grid">
-            {/* Left Side: Clinical Graphic / Image */}
-            <div className="a4-std-image-box">
-              <div className="a4-std-box-header">
-                <i className="bi bi-heart-pulse-fill text-danger me-1.5"></i>
-                <span>Klinische Praxis &amp; Handlungsschritte: {standard.shortTitle}</span>
-              </div>
-              <div className="a4-std-image-frame">
-                <img
-                  src={standard.graphicImage || standard.image}
-                  alt={`Klinische Grafik ${standard.shortTitle}`}
-                  className="a4-std-main-img"
-                />
-              </div>
-            </div>
-
-            {/* Right Side: Scannable QR Code + Direct YouTube & Website Links */}
-            <div className="a4-std-qr-box">
-              <div className="a4-std-box-header justify-content-center">
-                <i className="bi bi-qr-code-scan text-primary me-1.5"></i>
-                <span>{!isSopStandard ? 'Schulungsvideo scannen' : 'SOP & Website scannen'}</span>
-              </div>
-
-              <div className="d-flex flex-column align-items-center justify-content-between flex-grow-1 p-2 text-center">
-                <div className="p-2 bg-white rounded-3 border shadow-sm my-1">
-                  <QrCodeCanvas
-                    value={!isSopStandard ? standard.videoUrl : websiteDirectUrl}
-                    size={122}
-                    color={standard.accentColor}
-                  />
-                </div>
-
-                <div className="text-muted font-monospace mb-1" style={{ fontSize: '0.65rem' }}>
-                  {!isSopStandard
-                    ? 'Kamera auf QR-Code richten • YouTube Video'
-                    : 'Kamera auf QR-Code richten • Digitale SOP'}
-                </div>
-
-                {/* Direct YouTube Link & Website Link inside Right Box */}
-                <div className="w-100 text-start border-top pt-1.5" style={{ fontSize: '0.64rem', lineHeight: 1.28 }}>
-                  <div className="mb-1">
-                    <span className="fw-bold text-danger d-block">
-                      <i className={`bi ${!isSopStandard ? 'bi-youtube' : 'bi-file-earmark-pdf-fill'} me-1`}></i>
-                      {!isSopStandard ? 'YouTube-Video Link:' : 'SOP-Dokument Link:'}
-                    </span>
-                    <a href={primaryMediaUrl} className="text-primary text-break text-decoration-underline">
-                      {primaryMediaUrl}
-                    </a>
-                  </div>
-                  <div>
-                    <span className="fw-bold text-dark d-block">
-                      <i className="bi bi-globe2 me-1 text-primary"></i>Website-Link:
-                    </span>
-                    <a href={websiteDirectUrl} className="text-primary text-break text-decoration-underline">
-                      {websiteDirectUrl}
-                    </a>
-                  </div>
-                </div>
+              <div className="text-white-50" style={{ fontSize: '0.67rem' }}>
+                Evidenzbasierte Verfahrensanweisungen &bull; Digitale Pflege-Pocketcard (DIN A4)
               </div>
             </div>
           </div>
-
-          {/* 3. Below Image & QR Code: Warum ist das wichtig? */}
-          {standard.whyImportant && (
-            <div className="a4-std-section-box">
-              <div className="fw-bold text-success mb-1.5 d-flex align-items-center gap-1.5" style={{ fontSize: '0.78rem' }}>
-                <i className="bi bi-shield-check"></i>
-                <span>Warum ist das wichtig?</span>
-              </div>
-              <div className="a4-std-two-col-grid">
-                {standard.whyImportant.map((why, wi) => (
-                  <div key={wi} className="d-flex align-items-start gap-1.5" style={{ fontSize: '0.74rem', lineHeight: 1.32 }}>
-                    <i className="bi bi-check-circle-fill text-success flex-shrink-0" style={{ marginTop: '1px' }}></i>
-                    <span className="text-dark">{why}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* 4. Wichtigste Handlungsschritte (Minimal-Info) */}
-          {standard.keyPoints && (
-            <div className="a4-std-section-box">
-              <div className="fw-bold text-dark text-uppercase mb-1.5 d-flex align-items-center gap-1.5" style={{ fontSize: '0.76rem' }}>
-                <i className="bi bi-list-check text-primary"></i>
-                <span>Wichtigste Handlungsschritte ({standard.id === 'zvk' ? 'DAS IST WICHTIG' : 'Minimal-Info'}):</span>
-              </div>
-              <div className="d-flex flex-column gap-1.5">
-                {standard.keyPoints.map((pt, i) => (
-                  <div key={i} className="d-flex align-items-start gap-2" style={{ fontSize: '0.75rem', lineHeight: 1.34 }}>
-                    <span
-                      className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0"
-                      style={{ width: '19px', height: '19px', backgroundColor: standard.accentColor, fontSize: '0.67rem', marginTop: '1px' }}
-                    >
-                      {i + 1}
-                    </span>
-                    <span className="text-dark">{pt}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {renderFooterBar('Seite 1 / 2')}
-      </div>
-
-      {/* =========================================================
-          PAGE 2 / 2: HANDLUNGSSCHRITTE IM PFLEGEPROZESS + LINKS & QM
-          ========================================================= */}
-      <div className="a4-std-page a4-std-page-2" id={`pocketcard-a4-page2-${standard.id}`}>
-        {renderHeaderBar('Seite 2 / 2')}
-
-        <div className="a4-std-body">
-          {/* 1. Page 2 Subheader Banner */}
-          <div className="a4-std-title-box" style={{ borderLeftColor: standard.accentColor }}>
-            <div className="d-flex justify-content-between align-items-center gap-2">
-              <div>
-                <div className="text-uppercase fw-bold" style={{ fontSize: '0.66rem', color: standard.accentColor, letterSpacing: '0.4px' }}>
-                  {isSopStandard ? 'Klinische Verfahrensanweisung (SOP) • Teil 2' : 'Expertenstandard in der Pflege • Teil 2'}
-                </div>
-                <h5 className="fw-extrabold text-dark mb-0" style={{ fontSize: '0.98rem', lineHeight: 1.25 }}>
-                  {standard.topic} — Pflegeprozess &amp; Digitale Referenzen
-                </h5>
-              </div>
-            </div>
-          </div>
-
-          {/* 2. Handlungsschritte im Pflegeprozess (All Phases Complete) */}
-          {standard.clinicalFocus && (
-            <div className="a4-std-section-box">
-              <div className="fw-bold text-dark text-uppercase mb-2 d-flex align-items-center gap-1.5" style={{ fontSize: '0.78rem' }}>
-                <i className="bi bi-check2-circle text-success"></i>
-                <span>Handlungsschritte im Pflegeprozess (Vollständige Übersicht):</span>
-              </div>
-              <div className="d-flex flex-column gap-2">
-                {standard.clinicalFocus.map((item, idx) => (
-                  <div key={idx} className="a4-std-focus-card">
-                    <div className="d-flex align-items-center gap-2 mb-1">
-                      <span
-                        className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0"
-                        style={{ width: '21px', height: '21px', backgroundColor: standard.accentColor, fontSize: '0.7rem' }}
-                      >
-                        {idx + 1}
-                      </span>
-                      <strong className="text-dark" style={{ fontSize: '0.8rem', lineHeight: 1.25 }}>{item.phase}</strong>
-                    </div>
-                    <div className="text-secondary" style={{ fontSize: '0.75rem', lineHeight: 1.38, paddingLeft: '29px' }}>
-                      {item.detail}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* 3. Dedicated YouTube Video Link & Website Links Section */}
-          <div className="a4-std-section-box">
-            <div className="fw-bold text-dark text-uppercase mb-2 d-flex align-items-center gap-1.5" style={{ fontSize: '0.76rem' }}>
-              <i className="bi bi-link-45deg text-primary fs-6"></i>
-              <span>Schulungsvideo (YouTube) &amp; Digitale Website-Links:</span>
-            </div>
-
-            <div className="a4-std-two-col-grid" style={{ gap: '10px' }}>
-              {/* Left Card: YouTube Video Link (or SOP Document Link) */}
-              <div className="p-2.5 rounded-3 border bg-light">
-                <div className="fw-bold text-danger mb-1 d-flex align-items-center gap-1.5" style={{ fontSize: '0.76rem' }}>
-                  <i className={`bi ${!isSopStandard ? 'bi-youtube' : 'bi-file-earmark-pdf-fill'} fs-6`}></i>
-                  <span>{!isSopStandard ? 'YouTube Schulungsvideo-Link' : 'Original SOP-Dokument (PDF)'}</span>
-                </div>
-                <div className="small text-secondary mb-1.5" style={{ fontSize: '0.69rem', lineHeight: 1.3 }}>
-                  {!isSopStandard
-                    ? 'Offizielles Schulungsvideo zum Expertenstandard (direkt abrufbar per Klick oder QR-Code auf Seite 1):'
-                    : 'Offizielle Verfahrensanweisung der Universitätsmedizin Frankfurt (direkt abrufbar):'}
-                </div>
-                <div className="p-1.5 bg-white rounded border">
-                  <a href={primaryMediaUrl} className="text-primary fw-semibold text-break text-decoration-underline" style={{ fontSize: '0.7rem', lineHeight: 1.3 }}>
-                    {primaryMediaUrl}
-                  </a>
-                </div>
-              </div>
-
-              {/* Right Card: Website Link & Quick-Hub Link */}
-              <div className="p-2.5 rounded-3 border bg-light">
-                <div className="fw-bold text-primary mb-1 d-flex align-items-center gap-1.5" style={{ fontSize: '0.76rem' }}>
-                  <i className="bi bi-globe2 fs-6"></i>
-                  <span>Website-Link (Digitale Pocketcard)</span>
-                </div>
-                <div className="small text-secondary mb-1" style={{ fontSize: '0.69rem', lineHeight: 1.3 }}>
-                  Direkter Website-Link zu dieser digitalen Pocketcard ({standard.shortTitle}):
-                </div>
-                <div className="p-1.5 bg-white rounded border mb-1.5">
-                  <a href={websiteDirectUrl} className="text-primary fw-semibold text-break text-decoration-underline" style={{ fontSize: '0.7rem', lineHeight: 1.3 }}>
-                    {websiteDirectUrl}
-                  </a>
-                </div>
-                <div className="small text-secondary" style={{ fontSize: '0.68rem' }}>
-                  <span className="fw-semibold text-dark me-1">Schnellwahl (Alle 6 Standards):</span>
-                  <a href={websiteQuickHubUrl} className="text-primary text-decoration-underline">
-                    {websiteQuickHubUrl}
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 4. QM-Dokumentation & Klinische Verbindlichkeit */}
-          <div className="a4-std-section-box">
-            <div className="fw-bold text-dark text-uppercase mb-1.5 d-flex align-items-center gap-1.5" style={{ fontSize: '0.74rem' }}>
-              <i className="bi bi-folder2-open text-primary"></i>
-              <span>QM-Dokumentation &amp; Klinische Gültigkeit:</span>
-            </div>
-            <div className="a4-std-two-col-grid" style={{ fontSize: '0.71rem', lineHeight: 1.35 }}>
-              <div>
-                <div><strong>Herausgeber:</strong> Universitätsmedizin Frankfurt &bull; Pflegedirektion</div>
-                <div><strong>Standard / Thema:</strong> {standard.shortTitle}</div>
-              </div>
-              <div>
-                <div><strong>Pflegestandard:</strong> Evidenzbasiert &bull; UMF QM-geprüft</div>
-                <div><strong>Gültigkeit:</strong> Klinikweit &bull; Stationäre &amp; Intensivpflege (Stand: 2026)</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {renderFooterBar('Seite 2 / 2')}
-      </div>
-    </div>
-  );
-}
-
-// -------------------------------------------------------------
-// Component: Beautified Pocketcard (Minimal Info + Great Pictures + Scannable QR)
-// -------------------------------------------------------------
-function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf }) {
-  const [selectedDocIndex, setSelectedDocIndex] = useState(0);
-  const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
-  const [isModalMaximized, setIsModalMaximized] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null);
-  const isPdfPopupStandard = standard.id === 'zvk' || standard.id === 'isolation';
-  const documents = standard.sopDocuments || null;
-  const activeDoc = (documents && documents[selectedDocIndex]) ? documents[selectedDocIndex] : null;
-  const rawPdfUrl = activeDoc
-    ? activeDoc.pdfUrl
-    : (standard.pdfUrl || (standard.id === 'zvk' ? 'assets/zvk-sop-verfahrensanweisung.pdf' : (standard.id === 'isolation' ? 'assets/isolation-sop-verfahrensanweisung.pdf' : 'assets/umf-expertenstandards-folien.pdf')));
-  const pdfBaseUrl = rawPdfUrl.split('#')[0];
-  const pdfUrl = rawPdfUrl;
-
-  return (
-    <div className="mb-4">
-      {/* DEDICATED A4 PRINT & PDF SHEET (Used when clicking Print or PDF) */}
-      <StandardA4PrintSheet standard={standard} />
-
-      {/* THE INTERACTIVE SCREEN POCKETCARD */}
-      <div className="pocketcard-printable-view pocketcard-screen-view" id={`pocketcard-${standard.id}`}>
-        {/* 1. Hospital Header Bar */}
-        <div className="pocketcard-print-header flex-wrap gap-2">
-          <div className="d-flex align-items-center gap-2 gap-sm-3 min-w-0">
-            <div className="bg-white rounded px-1.5 py-1 shadow-sm d-flex align-items-center flex-shrink-0">
-              <img src="assets/umf-logo.jpg" alt="Universitätsmedizin Frankfurt" height="32" />
-            </div>
-            <div className="min-w-0">
-              <div className="fw-bold text-white text-uppercase text-truncate" style={{ fontSize: '0.84rem', letterSpacing: '0.3px' }}>
-                Universitätsmedizin Frankfurt
-              </div>
-              <div className="text-white-50 text-truncate" style={{ fontSize: '0.7rem' }}>
-                Pflegedirektion &bull; Digitale Pocketcard
-              </div>
-            </div>
-          </div>
-
-          <div className="ms-auto">
-            <span className={`pocketcard-badge-pill ${standard.id}`}>
+          <div className="d-flex align-items-center gap-2">
+            <span className="badge rounded-pill text-white px-2.5 py-1 fw-bold" style={{ backgroundColor: standard.accentColor, fontSize: '0.75rem' }}>
               <i className={`bi ${standard.icon} me-1`}></i> {standard.shortTitle}
+            </span>
+            <span className="badge bg-white text-dark fw-bold px-2 py-1" style={{ fontSize: '0.68rem' }}>
+              Seite 1 / 2
             </span>
           </div>
         </div>
 
-        {/* 2. Pocketcard Main Content Area */}
-        <div className="p-3 p-sm-4 bg-white">
-          {/* Title & Document Identification */}
-          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 pb-2 border-bottom gap-2">
-            <div>
-              {standard.id === 'isolation' ? (
-                <div className="d-flex align-items-center gap-2 mb-1 flex-wrap">
-                  <span
-                    className="badge rounded-pill fw-bold text-uppercase d-inline-flex align-items-center gap-1.5"
-                    style={{
-                      backgroundColor: 'rgba(2, 132, 199, 0.1)',
-                      color: '#0284c7',
-                      border: '1px solid rgba(2, 132, 199, 0.25)',
-                      fontSize: '0.72rem',
-                      letterSpacing: '0.4px',
-                      padding: '4px 10px'
-                    }}
-                  >
-                    <i className="bi bi-shield-check"></i> Klinische Verfahrensanweisung (SOP)
-                  </span>
-                  <span
-                    className="badge rounded-pill fw-semibold"
-                    style={{
-                      backgroundColor: '#f1f5f9',
-                      color: '#475569',
-                      fontSize: '0.7rem',
-                      border: '1px solid #e2e8f0',
-                      padding: '4px 8px'
-                    }}
-                  >
-                    Hygieneplan &bull; UKF QM
-                  </span>
-                </div>
-              ) : (
-                <span className="text-muted small text-uppercase fw-bold" style={{ letterSpacing: '0.5px', fontSize: '0.72rem' }}>
-                  {standard.id === 'zvk' ? 'Klinische Verfahrensanweisung (SOP)' : 'Expertenstandard in der Pflege'}
-                </span>
-              )}
-              <h4
-                className="fw-bold mb-0 mt-1"
-                style={{
-                  fontSize: 'clamp(1.05rem, 3vw, 1.35rem)',
-                  color: standard.id === 'isolation' ? '#0c4a6e' : '#1e293b'
-                }}
-              >
-                {standard.topic}
-              </h4>
+        <div className="a4-std-body">
+          {/* Title & Lead Box */}
+          <div className="a4-std-title-box" style={{ borderLeftColor: standard.accentColor }}>
+            <div className="d-flex justify-content-between align-items-center mb-0.5">
+              <div className="text-uppercase fw-bold text-primary small" style={{ fontSize: '0.66rem' }}>
+                Intensivmedizinischer Standard &bull; Verfahrensanweisung ITS
+              </div>
+              <span className="badge bg-light text-secondary border px-1.5 py-0.5" style={{ fontSize: '0.62rem' }}>
+                Stand: 2026
+              </span>
+            </div>
+            <h4 className="fw-bold text-dark mb-1" style={{ fontSize: '1.02rem', lineHeight: '1.25' }}>
+              {standard.topic}
+            </h4>
+            <div className="text-secondary small" style={{ fontSize: '0.74rem', lineHeight: '1.3' }}>
+              {standard.leadText}
             </div>
           </div>
 
-          {/* 3. The Pictures / SOP PDF Viewer Section */}
-          <div className="row g-3 mb-3">
-            {standard.id === 'zvk' || standard.id === 'isolation' ? (
-              /* ZVK & Isolation: Direct SOP PDF Viewer at the top */
-              <div className="col-12">
-                <div className="clinical-picture-card h-100 d-flex flex-column shadow-sm rounded-4 overflow-hidden border">
-                  {/* Card Header: Official SOP document */}
-                  <div
-                    className="d-flex flex-wrap justify-content-between align-items-center px-3 py-2.5 border-bottom gap-2"
-                    style={{
-                      background: standard.id === 'isolation'
-                        ? 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f8fafc 100%)'
-                        : undefined,
-                      backgroundColor: standard.id !== 'isolation' ? '#f8f9fa' : undefined,
-                      borderBottomColor: standard.id === 'isolation' ? '#bae6fd' : '#dee2e6'
-                    }}
-                  >
-                    <div className="d-flex align-items-center gap-2.5">
-                      <span
-                        className="rounded-3 d-inline-flex align-items-center justify-content-center shadow-2xs"
-                        style={{
-                          width: '32px',
-                          height: '32px',
-                          backgroundColor: '#fee2e2',
-                          color: '#dc2626',
-                          border: '1px solid #fecaca'
-                        }}
-                      >
-                        <i className="bi bi-file-earmark-pdf-fill fs-5"></i>
-                      </span>
-                      <div>
-                        <span
-                          className="fw-bold d-block"
-                          style={{
-                            fontSize: '0.94rem',
-                            color: standard.id === 'isolation' ? '#0c4a6e' : '#212529',
-                            lineHeight: 1.25
-                          }}
-                        >
-                          <span className="d-none d-md-inline">
-                            {activeDoc ? activeDoc.title : `Verfahrensanweisung & SOP: ${standard.shortTitle}`}
-                          </span>
-                          <span className="d-inline d-md-none">
-                            {standard.id === 'isolation' ? 'Verfahrensanweisungen & Hygienepläne' : (activeDoc ? activeDoc.title : standard.topic)}
-                          </span>
-                        </span>
-                        {standard.id === 'isolation' && (
-                          <span className="text-muted small" style={{ fontSize: '0.7rem' }}>
-                            Universitätsmedizin Frankfurt &bull; Pflegedirektion &bull; Gültiges QM-Dokument
-                          </span>
-                        )}
-                      </div>
-                    </div>
+          {/* Rationale: Patientensicherheit ITS */}
+          {standard.whyImportant && standard.whyImportant.length > 0 && (
+            <div className="p-2 rounded border bg-light" style={{ fontSize: '0.72rem' }}>
+              <strong className="text-success d-flex align-items-center gap-1 mb-1" style={{ fontSize: '0.74rem' }}>
+                <i className="bi bi-shield-check"></i>
+                <span>Warum ist das wichtig? (Patientensicherheit ITS):</span>
+              </strong>
+              <div className="row g-1">
+                {standard.whyImportant.map((item, idx) => (
+                  <div key={idx} className="col-6 d-flex align-items-start gap-1">
+                    <i className="bi bi-check2 text-success flex-shrink-0 mt-0.5" style={{ fontSize: '0.72rem' }}></i>
+                    <span className="text-secondary" style={{ lineHeight: '1.25' }}>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
-                    <div className="d-none d-md-flex align-items-center gap-2 flex-wrap">
-                      {activeDoc && activeDoc.date && (
-                        <span
-                          className="badge px-3 py-1.5 small d-inline-flex align-items-center gap-1.5 rounded-pill shadow-sm fw-bold"
-                          style={{
-                            background: selectedDocIndex === 0
-                              ? 'linear-gradient(135deg, #fef08a 0%, #fde047 100%)'
-                              : 'linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%)',
-                            color: selectedDocIndex === 0 ? '#713f12' : '#064e3b',
-                            border: selectedDocIndex === 0 ? '1.5px solid #eab308' : '1.5px solid #10b981',
-                            fontSize: '0.82rem',
-                            letterSpacing: '0.2px'
-                          }}
-                        >
-                          <i className={`bi ${selectedDocIndex === 0 ? 'bi-calendar-check-fill text-warning' : 'bi-calendar-check-fill text-success'}`}></i>
-                          <span>
-                            Gültig ab: <span className="text-decoration-underline">{activeDoc.date}</span>
-                            {activeDoc.version ? ` (Ver. ${activeDoc.version})` : ''}
-                          </span>
-                        </span>
-                      )}
+          {/* Media & Scannable QR Code Row */}
+          <div className="row g-2 align-items-stretch">
+            <div className="col-7">
+              <div className="p-1.5 border rounded-3 bg-white h-100 d-flex flex-column align-items-center justify-content-center">
+                <img
+                  src={standard.image}
+                  alt={standard.topic}
+                  className="w-100 rounded-2 border"
+                  style={{ maxHeight: '160px', objectFit: 'contain' }}
+                />
+                <div className="text-muted mt-1 text-center font-monospace" style={{ fontSize: '0.63rem' }}>
+                  Gerätekonfiguration &amp; Praxisaufbau ({standard.shortTitle})
+                </div>
+              </div>
+            </div>
+
+            <div className="col-5">
+              <div className="p-2 border rounded-3 bg-light text-center h-100 d-flex flex-column align-items-center justify-content-center">
+                <div className="fw-bold text-dark small text-uppercase mb-1" style={{ fontSize: '0.64rem' }}>
+                  <i className="bi bi-qr-code text-primary me-1"></i>Direkt-Simulator
+                </div>
+                <div className="p-1 bg-white border rounded shadow-2xs d-inline-block">
+                  <QrCodeCanvas
+                    value={websiteDirectUrl}
+                    size={105}
+                    color={standard.accentColor}
+                    className="mx-auto"
+                  />
+                </div>
+                <div className="text-muted font-monospace mt-1" style={{ fontSize: '0.62rem', lineHeight: '1.2' }}>
+                  Mit Smartphone scannen &bull; Interaktive Ansicht &amp; Check
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 4 Phasen der Verfahrensanweisung */}
+          {standard.clinicalFocus && standard.clinicalFocus.length > 0 && (
+            <div className="p-2 border rounded-3 bg-white">
+              <div className="fw-bold text-dark small text-uppercase mb-1.5 d-flex align-items-center gap-1" style={{ fontSize: '0.72rem' }}>
+                <i className="bi bi-diagram-3-fill text-primary"></i>
+                <span>4 Strukturierte Phasen der Verfahrensanweisung:</span>
+              </div>
+              <div className="row g-1.5">
+                {standard.clinicalFocus.map((f, idx) => (
+                  <div key={idx} className="col-6">
+                    <div className="p-1.5 rounded border bg-light h-100" style={{ fontSize: '0.7rem', borderLeft: `3px solid ${standard.accentColor}` }}>
+                      <strong className="text-dark d-block text-truncate mb-0.5" style={{ fontSize: '0.72rem' }}>
+                        <i className={`bi ${f.icon || 'bi-check-circle'} me-1 text-primary`}></i>
+                        {f.phase}
+                      </strong>
+                      <span className="text-secondary" style={{ fontSize: '0.67rem', lineHeight: '1.2', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        {f.detail}
+                      </span>
                     </div>
                   </div>
+                ))}
+              </div>
+            </div>
+          )}
 
-                  {/* Document Switcher: ONLY for standards with multiple documents (e.g. Hygiene) - Desktop Only */}
-                  {documents && documents.length > 1 && (
-                    <div
-                      className="px-3 py-2.5 border-bottom d-none d-md-block"
-                      style={{
-                        background: 'linear-gradient(to right, #f8fafc, #f1f5f9)',
-                        borderBottomColor: '#e2e8f0'
-                      }}
-                    >
-                      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
-                        <div className="d-flex align-items-center gap-2">
-                          <span
-                            className="badge rounded-pill fw-bold text-uppercase d-inline-flex align-items-center gap-1.5 shadow-2xs"
-                            style={{
-                              backgroundColor: '#ffffff',
-                              color: '#0284c7',
-                              border: '1px solid #bae6fd',
-                              fontSize: '0.72rem',
-                              letterSpacing: '0.4px',
-                              padding: '5px 10px'
-                            }}
-                          >
-                            <i className="bi bi-collection-fill"></i> Dokumenten-Auswahl ({documents.length})
-                          </span>
-                          <span className="text-secondary small d-none d-sm-inline" style={{ fontSize: '0.74rem' }}>
-                            Umschalten per Klick
-                          </span>
-                        </div>
-                        <span className="text-muted small d-inline-flex align-items-center gap-1" style={{ fontSize: '0.72rem' }}>
-                          <i className="bi bi-hand-index-thumb text-primary"></i>
-                          <span>Tippen zum Wechseln</span>
+          {/* Wichtigste Handlungsschritte (Minimal-Info) */}
+          <div className="p-2.5 bg-light rounded-3 border">
+            <div className="fw-bold text-dark small text-uppercase mb-1.5 d-flex align-items-center gap-1" style={{ fontSize: '0.72rem' }}>
+              <i className="bi bi-list-check text-primary"></i>
+              <span>Wichtigste Handlungsschritte (Minimal-Info):</span>
+            </div>
+            <div className="d-flex flex-column gap-1">
+              {standard.keyPoints && standard.keyPoints.slice(0, 6).map((pt, i) => (
+                <div key={i} className="p-1 px-1.5 rounded bg-white border small d-flex align-items-start gap-1.5" style={{ fontSize: '0.73rem' }}>
+                  <span className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0 mt-0.5" style={{ width: '17px', height: '17px', backgroundColor: standard.accentColor, fontSize: '0.64rem' }}>
+                    {i + 1}
+                  </span>
+                  <span style={{ lineHeight: '1.3' }}>{pt}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Page 1 Footer Bar */}
+        <div className="a4-std-page-footer">
+          <div className="d-flex justify-content-between text-muted small" style={{ fontSize: '0.65rem' }}>
+            <span>Klinische Intensivpflege &bull; QM-System</span>
+            <span>Gültiger Stand: 2026 &bull; Seite 1 / 2</span>
+          </div>
+        </div>
+      </div>
+
+      {/* PAGE 2: SICHERHEITS-CHECKLISTE, RICHTWERTE, TROUBLESHOOTING & QM-FREIGABE */}
+      <div className="a4-std-page a4-std-page-2" id={`pocketcard-a4-page2-${standard.id}`}>
+        {/* Spectrum Top Accent Bar */}
+        <div style={{ height: '4px', background: 'linear-gradient(90deg, #dc2626 0%, #16a34a 20%, #ea580c 40%, #7c3aed 60%, #0284c7 80%, #facc15 100%)' }} />
+
+        {/* Header Bar */}
+        <div className="a4-std-header-bar" style={{ backgroundColor: '#002b47' }}>
+          <div className="fw-bold text-white small d-flex align-items-center gap-2">
+            <i className={`bi ${standard.icon}`}></i>
+            <span>{standard.topic} (Fortsetzung &amp; Checkliste)</span>
+          </div>
+          <div className="d-flex align-items-center gap-1.5">
+            <span className="badge rounded-pill text-white px-2 py-0.5 fw-bold" style={{ backgroundColor: standard.accentColor, fontSize: '0.7rem' }}>
+              {standard.shortTitle}
+            </span>
+            <span className="badge bg-white text-dark fw-bold px-2 py-0.5" style={{ fontSize: '0.68rem' }}>
+              Seite 2 / 2
+            </span>
+          </div>
+        </div>
+
+        <div className="a4-std-body">
+          {/* 1. Schicht-Sicherheits-Checkliste */}
+          <div className="p-2.5 bg-white border rounded-3">
+            <div className="fw-bold text-dark small text-uppercase mb-1.5 d-flex align-items-center justify-content-between">
+              <span><i className="bi bi-clipboard2-check text-success me-1"></i>Schicht-Sicherheits-Checkliste (ITS):</span>
+              <span className="text-muted font-monospace" style={{ fontSize: '0.62rem' }}>Alle Punkte vor Freigabe prüfen</span>
+            </div>
+            <div className="row g-1">
+              {standard.checklist && standard.checklist.map((item, idx) => (
+                <div key={idx} className="col-6">
+                  <div className="p-1 px-1.5 rounded border bg-light small d-flex align-items-center gap-1.5" style={{ fontSize: '0.71rem', minHeight: '30px' }}>
+                    <span className="border rounded bg-white text-muted d-inline-flex align-items-center justify-content-center flex-shrink-0" style={{ width: '14px', height: '14px', fontSize: '0.6rem' }}>
+                      &#x25A2;
+                    </span>
+                    <span className="badge bg-secondary text-white py-0.5 px-1" style={{ fontSize: '0.58rem' }}>
+                      {typeof item === 'object' ? (item.cat || 'ITS') : 'ITS'}
+                    </span>
+                    <span className="text-truncate" style={{ lineHeight: '1.2' }}>
+                      {typeof item === 'object' ? item.text : item}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 2. Klinische Richt- & Grenzwerte (Tabelle) */}
+          <div className="p-2.5 bg-white border rounded-3">
+            <div className="fw-bold text-dark small text-uppercase mb-1.5 d-flex align-items-center justify-content-between">
+              <span><i className="bi bi-speedometer2 text-primary me-1"></i>Klinische Richt- &amp; Grenzwerte:</span>
+              <span className="badge bg-light text-primary border" style={{ fontSize: '0.62rem' }}>Grenzwerte &amp; Alarme</span>
+            </div>
+            <div className="table-responsive mb-0">
+              <table className="table table-sm table-bordered mb-0 small" style={{ fontSize: '0.71rem' }}>
+                <thead className="table-light">
+                  <tr>
+                    <th style={{ width: '32%' }}>Messgröße / Parameter</th>
+                    <th style={{ width: '28%' }}>Ziel- / Normwert</th>
+                    <th style={{ width: '40%' }}>Klinische Relevanz / Toleranz</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {standard.parameters && standard.parameters.map((p, idx) => (
+                    <tr key={idx}>
+                      <td className="fw-semibold text-dark">{p.label}</td>
+                      <td>
+                        <span className="badge rounded-pill text-white fw-bold" style={{ backgroundColor: standard.accentColor, fontSize: '0.67rem' }}>
+                          {p.target || p.val || 'Normbereich'}
                         </span>
-                      </div>
-                      <div className="d-flex flex-wrap gap-2.5">
-                        {documents.map((doc, idx) => {
-                          const isSelected = selectedDocIndex === idx;
-                          const activeGradient = idx === 0
-                            ? 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)'
-                            : 'linear-gradient(135deg, #0d9488 0%, #047857 100%)';
-                          const glowShadow = isSelected
-                            ? (idx === 0
-                                ? '0 5px 16px rgba(2, 132, 199, 0.4)'
-                                : '0 5px 16px rgba(13, 148, 136, 0.4)')
-                            : '0 2px 6px rgba(0,0,0,0.06)';
-                          const inactiveBg = idx === 0 ? '#f0f9ff' : '#f0fdf4';
-                          const inactiveBorder = idx === 0 ? '#7dd3fc' : '#86efac';
-                          const inactiveText = idx === 0 ? '#0369a1' : '#047857';
+                      </td>
+                      <td className="text-secondary">{p.note || 'Gemäß ärztlicher Verordnung'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
 
+          {/* 3. Troubleshooting, Alarme & Notfallmaßnahmen */}
+          <div className="p-2.5 bg-white border rounded-3">
+            <div className="fw-bold text-dark small text-uppercase mb-1.5 d-flex align-items-center gap-1">
+              <i className="bi bi-exclamation-triangle-fill text-danger"></i>
+              <span>Troubleshooting &amp; Notfallmaßnahmen:</span>
+            </div>
+            <div className="d-flex flex-column gap-1">
+              {standard.troubleshooting && standard.troubleshooting.map((t, idx) => (
+                <div key={idx} className="p-1.5 border rounded bg-light small" style={{ fontSize: '0.71rem', borderLeft: '3.5px solid #dc2626' }}>
+                  <div className="d-flex align-items-center justify-content-between mb-0.5">
+                    <strong className="text-danger">
+                      <i className="bi bi-bell-fill me-1"></i>{t.problem}
+                    </strong>
+                    <span className="badge bg-danger bg-opacity-10 text-danger" style={{ fontSize: '0.6rem' }}>Alarm</span>
+                  </div>
+                  <div className="text-secondary mb-0.5" style={{ fontSize: '0.68rem' }}>
+                    <strong>Ursache:</strong> {t.cause}
+                  </div>
+                  <div className="text-dark" style={{ fontSize: '0.69rem' }}>
+                    <strong className="text-primary">&rarr; Sofortmaßnahme:</strong> {t.action}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 4. QM-Schichtkontrolle & Dokumentationsfeld (Sign-off) */}
+          <div className="p-2 rounded-3 border bg-light">
+            <div className="fw-bold text-dark small text-uppercase mb-1" style={{ fontSize: '0.66rem' }}>
+              <i className="bi bi-pen-fill text-secondary me-1"></i>QM-Dokumentation &amp; Schichtkontrolle (Handzeichen):
+            </div>
+            <div className="row g-1 small" style={{ fontSize: '0.67rem' }}>
+              <div className="col-5">
+                <div className="p-1 border rounded bg-white text-muted">
+                  Prüfung durchgeführt: __________________
+                </div>
+              </div>
+              <div className="col-4">
+                <div className="p-1 border rounded bg-white text-muted">
+                  Datum / Zeit: ___________________
+                </div>
+              </div>
+              <div className="col-3">
+                <div className="p-1 border rounded bg-white text-muted">
+                  Visum: ___________
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Page 2 Footer Bar */}
+        <div className="a4-std-page-footer">
+          <div className="d-flex justify-content-between text-muted small" style={{ fontSize: '0.65rem' }}>
+            <span>QM-Dokumentation Intensivpflege &bull; Gültig für alle Intensivstationen</span>
+            <span>Seite 2 / 2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
+// Component: BeautifiedPocketcard (Interactive Screen Pocketcard)
+// -------------------------------------------------------------
+function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf }) {
+  const [previewImage, setPreviewImage] = useState(null);
+
+  const websiteDirectUrl = (typeof window !== 'undefined' && window.location && window.location.origin)
+    ? `${window.location.origin}${window.location.pathname}#/${standard.id}`
+    : `https://intensivpflege-standards.web.app/#/${standard.id}`;
+
+  return (
+    <div className="mb-4">
+      {/* Hidden dedicated print sheet */}
+      <StandardA4PrintSheet standard={standard} />
+
+      {/* Screen Pocketcard View */}
+      <div className="pocketcard-printable-view pocketcard-screen-view shadow-md rounded-4 overflow-hidden border" id={`pocketcard-${standard.id}`} style={{ borderColor: `${standard.accentColor}40` }}>
+        {/* Hospital Header Bar */}
+        <div className="pocketcard-print-header flex-wrap gap-2 p-3 p-sm-3.5" style={{ background: standard.bannerGradient || 'linear-gradient(135deg, #001a2e 0%, #0369a1 100%)' }}>
+          <div className="d-flex align-items-center gap-2 gap-sm-3 min-w-0">
+            <div className="rounded-3 p-2 shadow-sm d-flex align-items-center justify-content-center text-white flex-shrink-0" style={{ background: 'rgba(255, 255, 255, 0.22)', width: '40px', height: '40px', backdropFilter: 'blur(4px)' }}>
+              <i className={`bi ${standard.icon || 'bi-heart-pulse-fill'} fs-5`}></i>
+            </div>
+            <div className="min-w-0">
+              <div className="fw-black text-white text-uppercase text-truncate" style={{ fontSize: '0.92rem', letterSpacing: '0.4px' }}>
+                Klinische Intensivstandards
+              </div>
+              <div className="text-white text-opacity-80 text-truncate" style={{ fontSize: '0.72rem' }}>
+                Evidenzbasierte Leitfäden &bull; QM-Geprüft 2026
+              </div>
+            </div>
+          </div>
+
+          <div className="ms-auto flex-shrink-0">
+            <span className="badge rounded-pill bg-white px-3 py-1.5 fw-bold shadow-2xs" style={{ color: standard.accentColor, fontSize: '0.82rem' }}>
+              <i className={`bi ${standard.icon} me-1.5`}></i>{standard.shortTitle}
+            </span>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="p-3 p-sm-4" style={{ background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)' }}>
+          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 pb-2 border-bottom gap-2">
+            <div>
+              <span className="badge rounded-pill fw-bold text-uppercase px-2.5 py-1 mb-1 shadow-2xs d-inline-flex align-items-center gap-1" style={{ backgroundColor: `${standard.accentColor}18`, color: standard.accentColor, border: `1px solid ${standard.accentColor}38`, fontSize: '0.72rem' }}>
+                <i className="bi bi-shield-check"></i>Verfahrensanweisung &amp; Gerätestandard
+              </span>
+              <h4 className="fw-black mb-0 text-dark" style={{ fontSize: 'clamp(1.15rem, 3.5vw, 1.45rem)', letterSpacing: '0.2px' }}>
+                {standard.topic}
+              </h4>
+            </div>
+            <span className="badge rounded-pill px-2.5 py-1 small fw-semibold shadow-2xs" style={{ backgroundColor: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1' }}>
+              Version {standard.version || '004'} &bull; Gültig ITS
+            </span>
+          </div>
+
+          {/* Photo Strip with Click-to-Zoom */}
+          <div className="row g-3 mb-3">
+            <div className="col-12">
+              <div className="clinical-picture-card shadow-sm rounded-4 overflow-hidden border" style={{ borderColor: `${standard.accentColor}35` }}>
+                <div className="d-flex justify-content-between align-items-center px-3 py-2 border-bottom" style={{ background: `linear-gradient(135deg, ${standard.accentColor}12 0%, #ffffff 100%)` }}>
+                  <span className="fw-bold text-dark d-flex align-items-center gap-2 small">
+                    <span className="rounded-circle p-1 d-inline-flex align-items-center justify-content-center text-white" style={{ width: '22px', height: '22px', backgroundColor: standard.accentColor }}>
+                      <i className="bi bi-camera-fill" style={{ fontSize: '0.68rem' }}></i>
+                    </span>
+                    <span>Klinische Geräteausstattung &amp; Praxisaufbau</span>
+                  </span>
+                  <span className="badge bg-white text-secondary border px-2.5 py-1 small rounded-pill shadow-2xs" style={{ cursor: 'pointer' }} onClick={() => setPreviewImage({ src: standard.image, title: standard.topic })}>
+                    <i className="bi bi-zoom-in me-1 text-primary"></i>Vergrößern
+                  </span>
+                </div>
+
+                <div
+                  className="p-2 text-center bg-white d-flex align-items-center justify-content-center position-relative"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setPreviewImage({ src: standard.image, title: standard.topic, subtitle: standard.leadText })}
+                  title="Klicken für Vollbildansicht"
+                >
+                  <img
+                    src={standard.image}
+                    alt={standard.topic}
+                    className="img-fluid rounded-3 shadow-xs"
+                    style={{ maxHeight: '380px', width: '100%', objectFit: 'cover' }}
+                  />
+                  <div className="position-absolute bottom-0 end-0 m-3 no-print">
+                    <span className="badge text-white rounded-pill px-3 py-1.5 shadow-sm" style={{ backgroundColor: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(4px)', fontSize: '0.75rem' }}>
+                      <i className="bi bi-arrows-fullscreen me-1.5"></i>Vollbild
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Minimal-Info & QR-Code Row */}
+          <div className="row g-3 align-items-stretch mb-3">
+            <div className="col-lg-7 col-md-6">
+              <div
+                className="p-3.5 rounded-4 border h-100 d-flex flex-column justify-content-between shadow-2xs"
+                style={{
+                  background: `linear-gradient(135deg, #ffffff 0%, ${standard.accentColor}06 50%, ${standard.accentColor}12 100%)`,
+                  borderColor: `${standard.accentColor}35`
+                }}
+              >
+                <div>
+                  {standard.whyImportant && (
+                    <div className="p-3 mb-2.5 rounded-3 border shadow-2xs" style={{ background: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)', borderLeft: '5px solid #16a34a', borderColor: '#86efac' }}>
+                      <div className="fw-bold text-success small mb-2 d-flex align-items-center gap-1.5">
+                        <span className="rounded-circle p-1 d-inline-flex align-items-center justify-content-center text-white" style={{ width: '22px', height: '22px', backgroundColor: '#16a34a' }}>
+                          <i className="bi bi-shield-check" style={{ fontSize: '0.75rem' }}></i>
+                        </span>
+                        <span style={{ fontSize: '0.86rem' }}>Warum ist das wichtig? (Patientensicherheit ITS):</span>
+                      </div>
+                      <div className="row g-2 small text-dark">
+                        {standard.whyImportant.map((why, wi) => {
+                          const whyIcons = [
+                            { icon: 'bi-shield-check', color: '#16a34a', bg: '#dcfce7', border: '#86efac' },
+                            { icon: 'bi-heart-pulse-fill', color: '#dc2626', bg: '#fee2e2', border: '#fca5a5' },
+                            { icon: 'bi-activity', color: '#0284c7', bg: '#e0f2fe', border: '#7dd3fc' },
+                            { icon: 'bi-exclamation-triangle-fill', color: '#ea580c', bg: '#ffedd5', border: '#fdba74' },
+                            { icon: 'bi-check2-all', color: '#7c3aed', bg: '#f3e8ff', border: '#d8b4fe' },
+                            { icon: 'bi-droplet-half', color: '#0891b2', bg: '#cffafe', border: '#67e8f9' }
+                          ];
+                          const wStyle = whyIcons[wi % whyIcons.length];
                           return (
-                            <button
-                              key={doc.id}
-                              type="button"
-                              className={`btn btn-sm rounded-pill px-3 py-2 fw-semibold d-flex align-items-center gap-2.5 transition-all flex-grow-1 flex-sm-grow-0 justify-content-between justify-content-sm-center ${
-                                isSelected ? 'text-white' : 'hover-shadow'
-                              }`}
-                              style={{
-                                fontSize: '0.84rem',
-                                background: isSelected ? activeGradient : inactiveBg,
-                                borderColor: isSelected ? 'transparent' : inactiveBorder,
-                                color: isSelected ? '#ffffff' : inactiveText,
-                                boxShadow: glowShadow,
-                                minHeight: '44px',
-                                border: '1.5px solid'
-                              }}
-                              onClick={() => setSelectedDocIndex(idx)}
-                            >
-                              <div className="d-flex align-items-center gap-2">
+                            <div key={wi} className="col-12 col-sm-6">
+                              <div
+                                className="p-2 rounded-2 border d-flex align-items-center gap-2 h-100 shadow-2xs"
+                                style={{ backgroundColor: wStyle.bg, borderColor: wStyle.border }}
+                              >
                                 <span
-                                  className="rounded-circle d-inline-flex align-items-center justify-content-center flex-shrink-0"
-                                  style={{
-                                    width: '26px',
-                                    height: '26px',
-                                    backgroundColor: isSelected ? 'rgba(255,255,255,0.25)' : '#ffffff',
-                                    color: isSelected ? '#ffffff' : (idx === 0 ? '#0284c7' : '#0d9488'),
-                                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-                                  }}
+                                  className="rounded-circle p-1 d-inline-flex align-items-center justify-content-center text-white flex-shrink-0"
+                                  style={{ width: '22px', height: '22px', backgroundColor: wStyle.color, boxShadow: `0 2px 4px ${wStyle.color}45` }}
                                 >
-                                  <i className={`bi ${idx === 0 ? 'bi-file-earmark-medical-fill' : 'bi-shield-check'}`}></i>
+                                  <i className={`bi ${wStyle.icon}`} style={{ fontSize: '0.7rem' }}></i>
                                 </span>
-                                <span className="fw-bold">{doc.shortTitle}</span>
-                              </div>
-                              <div className="d-flex align-items-center gap-1.5">
-                                <span
-                                  className="badge rounded-pill fw-bold shadow-2xs"
-                                  style={{
-                                    fontSize: '0.74rem',
-                                    backgroundColor: idx === 0 ? '#fef08a' : '#a7f3d0',
-                                    color: idx === 0 ? '#854d0e' : '#064e3b',
-                                    border: idx === 0 ? '1px solid #facc15' : '1px solid #34d399'
-                                  }}
-                                >
-                                  <i className="bi bi-calendar3 me-1"></i>{doc.date}
-                                </span>
-                                <span
-                                  className="badge rounded-pill fw-semibold"
-                                  style={{
-                                    fontSize: '0.7rem',
-                                    backgroundColor: isSelected ? 'rgba(255, 255, 255, 0.22)' : '#ffffff',
-                                    color: isSelected ? '#ffffff' : '#475569',
-                                    border: isSelected ? '1px solid rgba(255, 255, 255, 0.35)' : '1px solid #cbd5e1'
-                                  }}
-                                >
-                                  {doc.pageCount} S.
+                                <span style={{ fontSize: '0.82rem', lineHeight: '1.35', fontWeight: 600, color: '#1e293b' }}>
+                                  {why}
                                 </span>
                               </div>
-                            </button>
+                            </div>
                           );
                         })}
                       </div>
                     </div>
                   )}
 
-                  {/* Body: Direct SOP PDF Viewer */}
-                  <div>
-                    {/* Desktop / Tablet: Interactive PDF iframe embed */}
-                    <div className="d-none d-md-block position-relative bg-white" style={{ minHeight: '520px', height: '520px' }}>
-                      <iframe
-                        key={pdfBaseUrl}
-                        src={`${pdfBaseUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
-                        title={`PDF Schulungsillustration ${activeDoc ? activeDoc.title : standard.shortTitle}`}
-                        className="w-100 h-100 border-0 d-block"
-                        style={{ minHeight: '520px', overflowY: 'auto' }}
-                      />
-                      <div className="position-absolute bottom-0 end-0 m-3 no-print" data-html2canvas-ignore="true">
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-dark bg-opacity-90 backdrop-blur text-white shadow rounded-pill py-1 px-3 d-flex align-items-center gap-1 hover-lift"
-                          style={{ fontSize: '0.78rem' }}
-                          onClick={() => setIsPdfModalOpen(true)}
-                        >
-                          <i className="bi bi-arrows-fullscreen"></i>
-                          <span>Vollbild öffnen</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Mobile Smartphone: High-Performance, Touch-Friendly Native PDF Cards */}
-                    <div className="d-block d-md-none p-2 p-sm-3 bg-light">
-                      {documents && documents.length > 1 ? (
-                        /* DUAL-DOCUMENT PRESENTATION (Hygiene / Isolation) */
-                        <div className="d-flex flex-column gap-3">
-                          {/* Top Orientation Bar */}
-                          <div className="p-2.5 bg-white rounded-4 border shadow-2xs text-start">
-                            <div className="d-flex align-items-center justify-content-between gap-2">
-                              <span
-                                className="badge rounded-pill fw-bold text-uppercase d-inline-flex align-items-center gap-1.5 shadow-2xs"
-                                style={{
-                                  backgroundColor: '#f0fdf4',
-                                  color: '#047857',
-                                  border: '1px solid #86efac',
-                                  fontSize: '0.74rem',
-                                  padding: '5px 10px'
-                                }}
-                              >
-                                <i className="bi bi-shield-check"></i> 2 Offizielle QM-Dokumente
-                              </span>
-                              <span className="badge rounded-pill bg-light text-secondary border px-2 py-1" style={{ fontSize: '0.68rem' }}>
-                                UMF Klinikum
-                              </span>
-                            </div>
-                            <div className="text-secondary small mt-1.5" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
-                              Für den Stations- &amp; Intensivalltag stehen Ihnen zwei verbindliche Richtlinien direkt zur Verfügung:
-                            </div>
-                          </div>
-
-                          {/* CARD 1: SOP ALLGEMEINE ISOLATION & REINIGUNG */}
-                          <div
-                            className="p-3 bg-white rounded-4 shadow-sm text-start position-relative overflow-hidden"
-                            style={{
-                              border: '1.5px solid #7dd3fc',
-                              background: 'linear-gradient(150deg, #ffffff 0%, #f0f9ff 60%, #e0f2fe 100%)'
-                            }}
-                          >
-                            <div className="d-flex align-items-center justify-content-between gap-2 mb-2">
-                              <div className="d-flex align-items-center gap-2">
-                                <span
-                                  className="rounded-circle d-inline-flex align-items-center justify-content-center text-white shadow-2xs flex-shrink-0"
-                                  style={{
-                                    width: '32px',
-                                    height: '32px',
-                                    background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)'
-                                  }}
-                                >
-                                  <i className="bi bi-file-earmark-medical-fill"></i>
-                                </span>
-                                <div>
-                                  <span className="badge bg-white text-primary border border-primary border-opacity-25 rounded-pill px-2 py-0.5 fw-bold" style={{ fontSize: '0.68rem', letterSpacing: '0.3px' }}>
-                                    DOKUMENT 1 &bull; ALLGEMEINE SOP
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-
-                            <h6 className="fw-bold mb-1.5" style={{ color: '#0369a1', fontSize: '0.96rem', lineHeight: 1.3 }}>
-                              Allgemeines Vorgehen bei Isolation und Reinigung
-                            </h6>
-
-                            <div className="d-flex flex-wrap align-items-center gap-1.5 mb-2">
-                              <span
-                                className="badge rounded-pill fw-bold shadow-2xs"
-                                style={{
-                                  backgroundColor: '#fef08a',
-                                  color: '#713f12',
-                                  border: '1px solid #facc15',
-                                  fontSize: '0.74rem'
-                                }}
-                              >
-                                <i className="bi bi-calendar-check-fill text-warning me-1"></i>
-                                Stand: 19.08.2019 (Ver. 003)
-                              </span>
-                              <span className="badge rounded-pill bg-white text-secondary border px-2 py-1" style={{ fontSize: '0.7rem' }}>
-                                4 Seiten
-                              </span>
-                            </div>
-
-                            <p className="text-secondary small mb-2.5" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
-                              Offizielle UKF Verfahrensanweisung für Isolationsformen, PSA-Schutzkleidung (Kittel, Handschuhe, MNS/FFP2), Farbleitsystem &amp; Schlussdesinfektion.
-                            </p>
-
-                            <div className="d-flex flex-wrap gap-1 mb-3">
-                              <span className="badge rounded-pill bg-white text-primary border border-info border-opacity-50" style={{ fontSize: '0.68rem' }}>
-                                🚪 Farbleitsystem
-                              </span>
-                              <span className="badge rounded-pill bg-white text-primary border border-info border-opacity-50" style={{ fontSize: '0.68rem' }}>
-                                🧤 PSA-Vorgaben
-                              </span>
-                              <span className="badge rounded-pill bg-white text-primary border border-info border-opacity-50" style={{ fontSize: '0.68rem' }}>
-                                🧼 Schlussdesinfektion
-                              </span>
-                            </div>
-
-                            <div className="d-grid gap-1.5">
-                              <a
-                                href="assets/isolation-sop-verfahrensanweisung.pdf"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="btn btn-sm rounded-pill py-2 px-3 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2 text-white"
-                                style={{
-                                  background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
-                                  minHeight: '40px',
-                                  fontSize: '0.84rem'
-                                }}
-                              >
-                                <i className="bi bi-box-arrow-up-right"></i>
-                                <span>1. SOP im Vollbild öffnen (4 S.)</span>
-                              </a>
-                              <a
-                                href="assets/isolation-sop-verfahrensanweisung.pdf"
-                                download
-                                className="btn btn-sm btn-outline-primary rounded-pill py-1.5 px-3 fw-semibold d-flex align-items-center justify-content-center gap-1.5 bg-white"
-                                style={{ fontSize: '0.76rem', borderColor: '#bae6fd' }}
-                              >
-                                <i className="bi bi-download"></i>
-                                <span>PDF herunterladen</span>
-                              </a>
-                            </div>
-                          </div>
-
-                          {/* CARD 2: HYGIENEPLAN MRE (ERREGERSPEZIFISCH) */}
-                          <div
-                            className="p-3 bg-white rounded-4 shadow-sm text-start position-relative overflow-hidden"
-                            style={{
-                              border: '1.5px solid #86efac',
-                              background: 'linear-gradient(150deg, #ffffff 0%, #f0fdf4 60%, #dcfce7 100%)'
-                            }}
-                          >
-                            <div className="d-flex align-items-center justify-content-between gap-2 mb-2">
-                              <div className="d-flex align-items-center gap-2">
-                                <span
-                                  className="rounded-circle d-inline-flex align-items-center justify-content-center text-white shadow-2xs flex-shrink-0"
-                                  style={{
-                                    width: '32px',
-                                    height: '32px',
-                                    background: 'linear-gradient(135deg, #0d9488 0%, #047857 100%)'
-                                  }}
-                                >
-                                  <i className="bi bi-shield-check"></i>
-                                </span>
-                                <div>
-                                  <span className="badge bg-white text-success border border-success border-opacity-25 rounded-pill px-2 py-0.5 fw-bold" style={{ fontSize: '0.68rem', letterSpacing: '0.3px' }}>
-                                    DOKUMENT 2 &bull; ERREGERSPEZIFISCH
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-
-                            <h6 className="fw-bold mb-1.5" style={{ color: '#047857', fontSize: '0.96rem', lineHeight: 1.3 }}>
-                              Hygieneplan: Umgang mit multiresistenten Erregern (MRE)
-                            </h6>
-
-                            <div className="d-flex flex-wrap align-items-center gap-1.5 mb-2">
-                              <span
-                                className="badge rounded-pill fw-bold shadow-2xs"
-                                style={{
-                                  backgroundColor: '#a7f3d0',
-                                  color: '#064e3b',
-                                  border: '1px solid #34d399',
-                                  fontSize: '0.74rem'
-                                }}
-                              >
-                                <i className="bi bi-calendar-check-fill text-success me-1"></i>
-                                Aktueller Stand: 02.2026 (Ver. 012)
-                              </span>
-                              <span className="badge rounded-pill bg-white text-secondary border px-2 py-1" style={{ fontSize: '0.7rem' }}>
-                                5 Seiten
-                              </span>
-                            </div>
-
-                            <p className="text-secondary small mb-2.5" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
-                              Erregerspezifischer Hygieneplan für Stationen, ITS/IMC, Hämatologie-Onkologie &amp; Neonatologie bei Nachweis von MRSA, VRE, 3/4-MRGN sowie Clostridioides difficile.
-                            </p>
-
-                            <div className="d-flex flex-wrap gap-1 mb-3">
-                              <span className="badge rounded-pill bg-white text-success border border-success border-opacity-50" style={{ fontSize: '0.68rem' }}>
-                                🦠 MRSA &bull; VRE &bull; MRGN
-                              </span>
-                              <span className="badge rounded-pill bg-white text-success border border-success border-opacity-50" style={{ fontSize: '0.68rem' }}>
-                                🏥 ITS / IMC &bull; Hämatologie
-                              </span>
-                              <span className="badge rounded-pill bg-white text-success border border-success border-opacity-50" style={{ fontSize: '0.68rem' }}>
-                                🛡️ Spezifische Sanierung
-                              </span>
-                            </div>
-
-                            <div className="d-grid gap-1.5">
-                              <a
-                                href="assets/hygieneplan-multiresistente-erreger.pdf"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="btn btn-sm rounded-pill py-2 px-3 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2 text-white"
-                                style={{
-                                  background: 'linear-gradient(135deg, #0d9488 0%, #047857 100%)',
-                                  minHeight: '40px',
-                                  fontSize: '0.84rem'
-                                }}
-                              >
-                                <i className="bi bi-box-arrow-up-right"></i>
-                                <span>2. Hygieneplan im Vollbild öffnen (5 S.)</span>
-                              </a>
-                              <a
-                                href="assets/hygieneplan-multiresistente-erreger.pdf"
-                                download
-                                className="btn btn-sm btn-outline-success rounded-pill py-1.5 px-3 fw-semibold d-flex align-items-center justify-content-center gap-1.5 bg-white"
-                                style={{ fontSize: '0.76rem', borderColor: '#a7f3d0' }}
-                              >
-                                <i className="bi bi-download"></i>
-                                <span>PDF herunterladen</span>
-                              </a>
-                            </div>
-                          </div>
-
-                          <div className="text-center text-muted small" style={{ fontSize: '0.72rem' }}>
-                            <i className="bi bi-info-circle me-1 text-primary"></i>
-                            Beide Dokumente sind offizielle QM-Vorgaben der Universitätsmedizin Frankfurt.
-                          </div>
-                        </div>
-                      ) : (
-                        /* SINGLE DOCUMENT (ZVK & other standards) */
-                        <div className="bg-white p-3 rounded-4 shadow-sm border mb-2">
-                          <div className="d-inline-flex p-3 rounded-circle bg-danger bg-opacity-10 text-danger mb-2">
-                            <i className="bi bi-file-earmark-pdf-fill fs-1"></i>
-                          </div>
-                          <h6 className="fw-bold text-dark mb-1">
-                            {activeDoc ? activeDoc.title : standard.topic}
-                          </h6>
-                          {activeDoc && activeDoc.date && (
-                            <div
-                              className="d-inline-flex align-items-center gap-1.5 px-3 py-1.5 rounded-pill mb-2 fw-bold shadow-2xs"
-                              style={{
-                                background: 'linear-gradient(135deg, #fef08a 0%, #fde047 100%)',
-                                color: '#713f12',
-                                border: '1.5px solid #eab308',
-                                fontSize: '0.8rem'
-                              }}
-                            >
-                              <i className="bi bi-calendar-check-fill text-warning"></i>
-                              <span>Gültiger Stand: {activeDoc.date} {activeDoc.version ? `(Ver. ${activeDoc.version})` : ''}</span>
-                            </div>
-                          )}
-                          <div className="text-muted small mb-3">
-                            {activeDoc
-                              ? activeDoc.lead
-                              : (standard.id === 'zvk'
-                                ? 'Offizielle Verfahrensanweisung ZVK (10 Seiten)'
-                                : 'Allgemeines Vorgehen bei Isolation und Reinigung (4 Seiten)')}
-                          </div>
-
-                          <div className="alert alert-info py-2 px-3 small text-start d-flex align-items-center gap-2 mb-3">
-                            <i className="bi bi-phone text-info fs-5 flex-shrink-0"></i>
-                            <span style={{ fontSize: '0.8rem' }}>Für flüssiges Scrollen &amp; Zoom am Smartphone tippen Sie auf den Button, um das PDF im systemeigenen PDF-Viewer zu öffnen.</span>
-                          </div>
-
-                          <div className="d-grid gap-2">
-                            <a
-                              href={pdfUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="btn btn-danger rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-bold shadow-sm"
-                            >
-                              <i className="bi bi-box-arrow-up-right fs-5"></i>
-                              <span>PDF im Vollbild öffnen ({activeDoc ? `${activeDoc.pageCount} S.` : (standard.id === 'zvk' ? '10 S.' : '4 S.')})</span>
-                            </a>
-                            <a
-                              href={pdfUrl}
-                              download
-                              className="btn btn-outline-secondary rounded-pill py-2 d-flex align-items-center justify-content-center gap-2 fw-semibold small"
-                            >
-                              <i className="bi bi-download"></i>
-                              <span>PDF Datei herunterladen</span>
-                            </a>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Fallback image for html2pdf / print */}
-                  <img
-                    src={standard.image}
-                    alt={`Illustration ${standard.shortTitle}`}
-                    className="clinical-picture-img print-only-preview d-none"
-                  />
-
-                  {/* Bottom Action Strip (Desktop/Tablet Only, hidden on mobile) */}
-                  <div
-                    className="px-3 py-2 border-top d-none d-md-flex flex-wrap justify-content-between align-items-center gap-2"
-                    style={{
-                      background: standard.id === 'isolation'
-                        ? 'linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%)'
-                        : undefined,
-                      backgroundColor: standard.id !== 'isolation' ? '#f8f9fa' : undefined,
-                      borderColor: standard.id === 'isolation' ? '#bae6fd' : '#dee2e6'
-                    }}
-                  >
-                    <div className="d-flex align-items-center gap-2 small">
-                      <i className="bi bi-file-earmark-check-fill text-success fs-6"></i>
-                      <span className="text-secondary">
-                        Gültige Version im QM-System
-                      </span>
-                      {activeDoc && activeDoc.date && (
-                        <span
-                          className="badge px-2.5 py-1 rounded-pill fw-bold shadow-2xs ms-1"
-                          style={{
-                            background: standard.id === 'isolation'
-                              ? (selectedDocIndex === 0
-                                  ? 'linear-gradient(135deg, #fef08a 0%, #fde047 100%)'
-                                  : 'linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%)')
-                              : '#e2e8f0',
-                            color: standard.id === 'isolation'
-                              ? (selectedDocIndex === 0 ? '#713f12' : '#064e3b')
-                              : '#334155',
-                            border: standard.id === 'isolation'
-                              ? (selectedDocIndex === 0 ? '1px solid #eab308' : '1px solid #10b981')
-                              : '1px solid #cbd5e1',
-                            fontSize: '0.76rem'
-                          }}
-                        >
-                          <i className="bi bi-calendar-check-fill me-1"></i>Stand: {activeDoc.date}
-                        </span>
-                      )}
-                    </div>
-                    <div className="d-flex align-items-center gap-2">
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-outline-dark rounded-pill px-2.5 py-1"
-                        style={{ fontSize: '0.76rem' }}
-                        onClick={() => setIsPdfModalOpen(true)}
-                      >
-                        <i className="bi bi-arrows-fullscreen me-1"></i>Vollbild
-                      </button>
-                      <a
-                        href={pdfUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-sm rounded-pill px-3 py-1 fw-bold text-white shadow-2xs"
-                        style={{
-                          fontSize: '0.78rem',
-                          background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
-                          border: 'none'
-                        }}
-                      >
-                        <i className="bi bi-file-earmark-pdf-fill me-1"></i>PDF öffnen ({activeDoc ? `${activeDoc.pageCount} S.` : (standard.id === 'zvk' ? '10 S.' : '4 S.')})
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              /* First 4 Standards (Dekubitus, Sturz, Schmerz, Ernährung): Single clean clinical graphic with clear header & click-to-popup */
-              <div className="col-12">
-                <div className="clinical-picture-card shadow-sm rounded-3 overflow-hidden">
-                  <div className="d-flex justify-content-between align-items-center px-3 py-2 bg-light border-bottom">
-                    <span className="fw-bold text-dark d-flex align-items-center gap-2" style={{ fontSize: '0.92rem' }}>
-                      <i className="bi bi-heart-pulse-fill text-danger"></i>
-                      <span>Klinische Praxis &amp; Handlungsschritte: {standard.shortTitle}</span>
-                    </span>
-                    <span className="badge bg-white text-secondary border px-2 py-1 small">
-                      <i className="bi bi-zoom-in me-1"></i>Klicken zum Vergrößern
-                    </span>
-                  </div>
-
-                  <div
-                    className="p-2 p-sm-3 text-center bg-white d-flex align-items-center justify-content-center position-relative"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => setPreviewImage({ src: standard.graphicImage, title: standard.topic, subtitle: 'Klinische Praxis & Handlungsschritte (Infografik)' })}
-                    title="Klicken für vergrößerte Pop-up-Ansicht"
-                  >
-                    <img
-                      src={standard.graphicImage}
-                      alt={`Klinische Grafik ${standard.shortTitle}`}
-                      className="clinical-picture-img rounded-3 shadow-sm"
-                      style={{
-                        maxHeight: '520px',
-                        height: 'auto',
-                        width: '100%',
-                        objectFit: 'contain'
-                      }}
-                    />
-                    <div className="position-absolute bottom-0 end-0 m-3 no-print">
-                      <span className="badge bg-dark bg-opacity-75 text-white rounded-pill px-3 py-2 shadow-sm" style={{ fontSize: '0.78rem' }}>
-                        <i className="bi bi-zoom-in me-1"></i>Bild vergrößern
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* 4. Minimal Info Action Steps & Right Container (Picture for ZVK/Isolation, QR Code for others) */}
-          <div className="row g-3 align-items-stretch mb-3">
-            {/* Minimal Info: Essential Clinical Focus Points */}
-            <div className="col-lg-7 col-md-6">
-              <div className="p-3 rounded-3 border bg-light h-100 d-flex flex-column justify-content-between">
-                <div>
-                  {standard.whyImportant && (
-                    <div className="p-2 mb-2 bg-white rounded-3 border shadow-sm">
-                      <div className="fw-bold text-success small mb-1 d-flex align-items-center gap-1">
-                        <i className="bi bi-shield-check"></i>
-                        <span>Warum ist das wichtig?</span>
-                      </div>
-                      {standard.id === 'isolation' ? (
-                        <div className="row g-1.5 small mt-1">
-                          {standard.whyImportant.map((why, wi) => {
-                            const whyStyles = [
-                              { bg: '#eff6ff', border: '#bfdbfe', text: '#1e40af', icon: 'bi-shield-fill-x', iconColor: '#2563eb' },
-                              { bg: '#f0fdf4', border: '#bbf7d0', text: '#166534', icon: 'bi-heart-pulse-fill', iconColor: '#16a34a' },
-                              { bg: '#fffbeb', border: '#fef3c7', text: '#92400e', icon: 'bi-people-fill', iconColor: '#d97706' },
-                              { bg: '#faf5ff', border: '#e9d5ff', text: '#6b21a8', icon: 'bi-stars', iconColor: '#9333ea' }
-                            ];
-                            const s = whyStyles[wi] || { bg: '#f8fafc', border: '#e2e8f0', text: '#334155', icon: 'bi-check-circle-fill', iconColor: '#10b981' };
-                            return (
-                              <div key={wi} className="col-sm-6">
-                                <div
-                                  className="p-1.5 rounded-2 d-flex align-items-center gap-1.5 h-100"
-                                  style={{ backgroundColor: s.bg, border: `1px solid ${s.border}` }}
-                                >
-                                  <i className={`bi ${s.icon} flex-shrink-0`} style={{ color: s.iconColor, fontSize: '0.85rem' }}></i>
-                                  <span style={{ fontSize: '0.78rem', color: s.text, fontWeight: '500', lineHeight: 1.25 }}>{why}</span>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      ) : (
-                        <div className="row g-1 small text-secondary">
-                          {standard.whyImportant.map((why, wi) => (
-                            <div key={wi} className="col-sm-6 d-flex align-items-center gap-1">
-                              <i className="bi bi-check2 text-success flex-shrink-0"></i>
-                              <span style={{ fontSize: '0.8rem' }}>{why}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  <div className="fw-bold text-dark small text-uppercase mb-2 d-flex align-items-center gap-1">
-                    <i className="bi bi-list-check text-primary"></i>
-                    <span>Wichtigste Handlungsschritte ({standard.id === 'zvk' ? 'DAS IST WICHTIG' : 'Minimal-Info'}):</span>
+                  <div className="fw-bold text-dark small text-uppercase mb-2 d-flex align-items-center gap-1.5">
+                    <i className="bi bi-list-check" style={{ color: standard.accentColor, fontSize: '1.05rem' }}></i>
+                    <span>Wichtigste Handlungsschritte (Minimal-Info):</span>
                   </div>
                   <div className="d-flex flex-column gap-2 mb-2">
                     {standard.keyPoints && standard.keyPoints.map((pt, i) => {
-                      if (standard.id === 'isolation') {
-                        const isoIcons = [
-                          { icon: 'bi-search', color: '#0284c7' },
-                          { icon: 'bi-person-badge-fill', color: '#0369a1' },
-                          { icon: 'bi-hand-index-thumb-fill', color: '#dc2626', alert: 'C. diff: Zuerst Seife!' },
-                          { icon: 'bi-shield-check', color: '#0d9488' },
-                          { icon: 'bi-box-seam-fill', color: '#8b5cf6' },
-                          { icon: 'bi-trash3-fill', color: '#64748b' }
-                        ];
-                        const meta = isoIcons[i] || { icon: 'bi-check-circle', color: standard.accentColor };
-                        return (
-                          <div
-                            key={i}
-                            className="keypoint-item d-flex align-items-start gap-2 p-2 rounded-2 bg-white border shadow-2xs"
-                            style={{ borderLeft: `3.5px solid ${meta.color}` }}
-                          >
-                            <span
-                              className="badge rounded-circle d-inline-flex align-items-center justify-content-center flex-shrink-0"
-                              style={{ width: '24px', height: '24px', backgroundColor: meta.color, color: '#fff', fontSize: '0.74rem' }}
-                            >
-                              <i className={`bi ${meta.icon}`}></i>
-                            </span>
-                            <div className="flex-grow-1" style={{ fontSize: '0.83rem', lineHeight: '1.35' }}>
-                              <span>{pt}</span>
-                              {meta.alert && (
-                                <span className="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 ms-1.5 fw-bold" style={{ fontSize: '0.7rem' }}>
-                                  <i className="bi bi-exclamation-triangle-fill me-1"></i>{meta.alert}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      }
+                      const stepPalette = [
+                        { color: '#0284c7', bg: 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%)', border: '#bae6fd', icon: 'bi-gear-wide-connected', tag: 'Vorbereitung' },
+                        { color: '#16a34a', bg: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)', border: '#bbf7d0', icon: 'bi-shield-check', tag: 'Sicherheit' },
+                        { color: '#ea580c', bg: 'linear-gradient(135deg, #ffffff 0%, #fff7ed 100%)', border: '#fed7aa', icon: 'bi-sliders', tag: 'Einstellung' },
+                        { color: '#dc2626', bg: 'linear-gradient(135deg, #ffffff 0%, #fef2f2 100%)', border: '#fecaca', icon: 'bi-bell-fill', tag: 'Alarme' },
+                        { color: '#7c3aed', bg: 'linear-gradient(135deg, #ffffff 0%, #faf5ff 100%)', border: '#ddd6fe', icon: 'bi-check2-circle', tag: 'Verifikation' },
+                        { color: '#0891b2', bg: 'linear-gradient(135deg, #ffffff 0%, #ecfeff 100%)', border: '#a5f3fc', icon: 'bi-clipboard-pulse', tag: 'Monitoring' }
+                      ];
+                      const sStyle = stepPalette[i % stepPalette.length];
                       return (
-                        <div key={i} className="keypoint-item">
+                        <div
+                          key={i}
+                          className="keypoint-item p-2.5 rounded-3 border small d-flex align-items-start gap-2.5 shadow-2xs"
+                          style={{
+                            fontSize: '0.84rem',
+                            background: sStyle.bg,
+                            borderLeft: `5px solid ${sStyle.color}`,
+                            borderColor: sStyle.border
+                          }}
+                        >
                           <span
-                            className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0"
-                            style={{ width: '22px', height: '22px', backgroundColor: standard.accentColor, fontSize: '0.75rem' }}
+                            className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0 mt-0.5"
+                            style={{
+                              width: '24px',
+                              height: '24px',
+                              backgroundColor: sStyle.color,
+                              fontSize: '0.74rem',
+                              fontWeight: 700,
+                              boxShadow: `0 2px 6px ${sStyle.color}45`
+                            }}
                           >
                             {i + 1}
                           </span>
-                          <span style={{ fontSize: '0.85rem' }}>{pt}</span>
+                          <div className="flex-grow-1 min-w-0">
+                            <div className="d-flex align-items-center gap-1.5 mb-0.5">
+                              <span
+                                className="badge rounded-pill fw-bold text-uppercase shadow-2xs"
+                                style={{
+                                  backgroundColor: '#ffffff',
+                                  color: sStyle.color,
+                                  border: `1px solid ${sStyle.border}`,
+                                  fontSize: '0.62rem',
+                                  padding: '2px 6px'
+                                }}
+                              >
+                                <i className={`bi ${sStyle.icon} me-1`}></i>Schritt {i + 1}
+                              </span>
+                            </div>
+                            <span style={{ lineHeight: '1.4', fontWeight: 500 }} className="text-dark d-block">
+                              {pt}
+                            </span>
+                          </div>
                         </div>
                       );
                     })}
                   </div>
                 </div>
 
-                {/* QM footnote */}
-                <div className="pt-2 border-top small text-muted d-flex align-items-center justify-content-between">
-                  <span>
-                    <i className="bi bi-info-circle me-1"></i> QM-Verfahrensanweisung
-                  </span>
-                  <span className="text-muted">
-                    Universitätsmedizin Frankfurt
-                  </span>
+                <div className="pt-2.5 border-top small text-muted d-flex align-items-center justify-content-between" style={{ fontSize: '0.72rem', borderColor: `${standard.accentColor}25` }}>
+                  <span><i className="bi bi-info-circle me-1" style={{ color: standard.accentColor }}></i>QM-Verfahrensanweisung ITS</span>
+                  <span className="fw-semibold text-dark">Evidenzbasierte Pflegepraxis</span>
                 </div>
               </div>
             </div>
 
-            {/* Right Area: Klinische Praxis & Handlungsschritte Picture for ZVK & Isolation (No QR Code), or Scannable QR Code for the other 4 tiles */}
+            {/* Right: Crisp Scannable Single QR Code */}
             <div className="col-lg-5 col-md-6">
-              {standard.id === 'zvk' || standard.id === 'isolation' ? (
-                <div className="p-3 rounded-4 border bg-white h-100 text-center d-flex flex-column align-items-center justify-content-between shadow-sm">
-                  <div
-                    className="d-flex justify-content-between align-items-center w-100 mb-2 pb-2 px-1"
-                    style={{ borderBottom: standard.id === 'isolation' ? '1.5px solid #e0f2fe' : '1px solid #dee2e6' }}
-                  >
-                    <span className="fw-bold text-dark d-flex align-items-center gap-2 text-start" style={{ fontSize: '0.86rem' }}>
-                      <span
-                        className="rounded-circle d-inline-flex align-items-center justify-content-center flex-shrink-0"
-                        style={{
-                          width: '26px',
-                          height: '26px',
-                          backgroundColor: standard.id === 'isolation' ? 'rgba(2, 132, 199, 0.12)' : 'rgba(220, 38, 38, 0.1)',
-                          color: standard.id === 'isolation' ? '#0284c7' : '#dc2626'
-                        }}
-                      >
-                        <i className={`bi ${standard.id === 'isolation' ? 'bi-shield-fill-check' : 'bi-heart-pulse-fill'}`}></i>
-                      </span>
-                      <span style={{ color: standard.id === 'isolation' ? '#0c4a6e' : '#212529' }}>
-                        Klinische Praxis &amp; Handlungsschritte
-                      </span>
-                    </span>
-                    <span
-                      className="badge rounded-pill px-2.5 py-1 small flex-shrink-0 fw-semibold"
-                      style={{
-                        backgroundColor: standard.id === 'isolation' ? '#e0f2fe' : '#f8f9fa',
-                        color: standard.id === 'isolation' ? '#0369a1' : '#64748b',
-                        border: standard.id === 'isolation' ? '1px solid #bae6fd' : '1px solid #dee2e6'
-                      }}
-                    >
-                      <i className="bi bi-zoom-in me-1"></i>Vergrößern
-                    </span>
-                  </div>
-
-                  <div
-                    className="position-relative w-100 flex-grow-1 d-flex align-items-center justify-content-center bg-white rounded-3 p-1"
-                    style={{ cursor: 'pointer', minHeight: '260px' }}
-                    onClick={() => setPreviewImage({
-                      src: standard.graphicImage,
-                      title: standard.topic,
-                      subtitle: `Klinische Praxis & Handlungsschritte: ${standard.shortTitle}`
-                    })}
-                    title="Klicken für vergrößerte Pop-up-Ansicht"
-                  >
-                    <img
-                      src={standard.graphicImage}
-                      alt={`Klinische Praxis & Handlungsschritte: ${standard.shortTitle}`}
-                      className="img-fluid rounded shadow-sm"
-                      style={{ maxHeight: '300px', width: '100%', objectFit: 'contain' }}
-                    />
-                    <div className="position-absolute bottom-0 end-0 m-2 no-print">
-                      <span className="badge bg-dark bg-opacity-75 text-white rounded-pill px-3 py-1 shadow-sm" style={{ fontSize: '0.72rem' }}>
-                        <i className="bi bi-zoom-in me-1"></i>Bild vergrößern
-                      </span>
-                    </div>
-                  </div>
-
-                  <div
-                    className="small mt-2 border-top pt-2 w-100 d-flex align-items-center justify-content-center gap-1.5"
-                    style={{
-                      fontSize: '0.76rem',
-                      borderColor: standard.id === 'isolation' ? '#e0f2fe' : '#e2e8f0',
-                      color: standard.id === 'isolation' ? '#0369a1' : '#64748b',
-                      fontWeight: standard.id === 'isolation' ? '600' : 'normal'
-                    }}
-                  >
-                    <i className={`bi ${standard.id === 'isolation' ? 'bi-shield-check text-success fs-6' : 'bi-shield-check text-success'}`}></i>
-                    <span>
-                      {standard.id === 'isolation'
-                        ? 'Hygienemaßnahmen • Vorgehen bei MRE, VRE, MRGN, MRSA & C. diff.'
-                        : 'Aseptische Durchführung • Checkliste Verbandswechsel & Spülen'}
-                    </span>
-                  </div>
+              <div
+                className="p-3.5 rounded-4 border h-100 text-center d-flex flex-column align-items-center justify-content-center shadow-sm"
+                style={{
+                  background: `linear-gradient(135deg, #ffffff 0%, ${standard.accentColor}08 50%, ${standard.accentColor}15 100%)`,
+                  borderColor: `${standard.accentColor}40`
+                }}
+              >
+                <div className="small fw-bold text-uppercase mb-2 d-inline-flex align-items-center gap-1.5 px-3 py-1 rounded-pill bg-white shadow-2xs border" style={{ color: standard.accentColor, borderColor: `${standard.accentColor}35` }}>
+                  <i className="bi bi-qr-code"></i>
+                  <span>Pocketcard scannen</span>
                 </div>
-              ) : (
-                /* Other 4 standards: Crisp Scannable Single QR Code */
-                <div className="p-3 rounded-3 border bg-white h-100 text-center d-flex flex-column align-items-center justify-content-center">
-                  <div className="small fw-bold text-uppercase text-secondary mb-1">
-                    <i className="bi bi-qr-code me-1 text-dark"></i> Schulungsvideo scannen
-                  </div>
 
-                  {/* Single Scannable QR Code */}
-                  <div className="p-2 bg-light rounded-3 border shadow-sm my-1">
-                    <QrCodeCanvas
-                      value={standard.videoUrl}
-                      size={135}
-                      color={standard.accentColor}
-                      className={`pocket-qr-${standard.id}`}
-                    />
-                  </div>
-
-                  <div className="small text-muted font-monospace mt-1" style={{ fontSize: '0.72rem' }}>
-                    Kamera auf QR-Code richten • YouTube Video
-                  </div>
+                <div className="p-2.5 bg-white rounded-3 border shadow-sm my-1" style={{ borderColor: `${standard.accentColor}35` }}>
+                  <QrCodeCanvas
+                    value={websiteDirectUrl}
+                    size={140}
+                    color={standard.accentColor}
+                    className={`pocket-qr-${standard.id}`}
+                  />
                 </div>
-              )}
+
+                <div className="small text-muted font-monospace mt-1.5" style={{ fontSize: '0.72rem' }}>
+                  <i className="bi bi-camera me-1"></i>Smartphone-Kamera auf QR-Code richten
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* 5. Pocketcard QM Footer */}
-          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center pt-2 border-top text-muted gap-1 text-center text-sm-start" style={{ fontSize: '0.72rem' }}>
-            <span>Universitätsmedizin Frankfurt &bull; Pflegedirektion &bull; Expertenstandards im Pflegeprozess</span>
-            <span>QM-Dokumentation &bull; Stand: 2026</span>
-          </div>
-
-          {/* 6. Action Toolbar (Only on screen, ignored when exporting PDF / printing) */}
-          <div className="d-flex flex-column flex-sm-row flex-wrap align-items-stretch align-items-sm-center justify-content-between gap-2 mt-3 pt-3 border-top no-print w-100" data-html2canvas-ignore="true">
-            {/* Primary Document Actions: Download PDF & Print grouped together */}
-            <div className="d-flex flex-column flex-sm-row flex-wrap align-items-stretch align-items-sm-center gap-2 w-100 w-sm-auto">
-              <div className="btn-group shadow-sm rounded-pill overflow-hidden w-100 w-sm-auto" role="group">
+          {/* Action Toolbar: Colorful & Mobile-Optimized */}
+          <div className="mt-3 pt-3 border-top no-print w-100" data-html2canvas-ignore="true">
+            <div className="row g-2">
+              <div className="col-6 col-sm-3">
                 <button
-                  className="btn btn-primary btn-sm px-3 py-2 fw-bold d-flex align-items-center justify-content-center gap-1.5 flex-grow-1"
-                  style={{ minHeight: '44px', flex: '1 1 50%' }}
-                  onClick={() => onDownloadPdf(standard, false)}
-                  title="Pocketcard als PDF-Datei herunterladen"
+                  className="btn btn-sm text-white rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100"
+                  style={{ backgroundColor: standard.accentColor, borderColor: standard.accentColor, minHeight: '42px', fontSize: '0.82rem' }}
+                  onClick={() => onDownloadPdf(standard)}
+                  title="Pocketcard als PDF-Datei speichern"
                 >
-                  <i className="bi bi-file-earmark-arrow-down-fill fs-6"></i>
+                  <i className="bi bi-file-earmark-arrow-down-fill"></i>
                   <span>PDF speichern</span>
                 </button>
+              </div>
+              <div className="col-6 col-sm-3">
                 <button
-                  className="btn btn-dark btn-sm px-3 py-2 fw-bold d-flex align-items-center justify-content-center gap-1.5 border-start border-white border-opacity-25 flex-grow-1"
-                  style={{ minHeight: '44px', flex: '1 1 50%' }}
+                  className="btn btn-sm btn-dark rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100"
+                  style={{ minHeight: '42px', fontSize: '0.82rem', backgroundColor: '#0f172a' }}
                   onClick={() => window.print()}
                   title="Drucken / Als PDF drucken"
                 >
-                  <i className="bi bi-printer-fill fs-6"></i>
+                  <i className="bi bi-printer-fill"></i>
                   <span>Drucken</span>
                 </button>
               </div>
-            </div>
-
-            {/* Secondary Utilities: QR PNG (only for video standards) & Link */}
-            <div
-              className="d-grid d-sm-flex align-items-center gap-2 w-100 w-sm-auto"
-              style={{ gridTemplateColumns: (standard.id === 'zvk' || standard.id === 'isolation') ? '1fr' : '1fr 1fr' }}
-            >
-              {standard.id !== 'zvk' && standard.id !== 'isolation' && (
+              <div className="col-6 col-sm-3">
                 <button
-                  className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-1.5"
-                  style={{ minHeight: '42px' }}
+                  className="btn btn-sm rounded-pill py-2 px-2 fw-semibold shadow-sm d-flex align-items-center justify-content-center gap-1.5 bg-white w-100"
+                  style={{ minHeight: '42px', fontSize: '0.82rem', borderColor: standard.accentColor, color: standard.accentColor }}
                   onClick={() => onDownloadQr(standard)}
                   title="QR-Code als Bilddatei speichern"
                 >
                   <i className="bi bi-qr-code"></i>
                   <span>QR-Bild</span>
                 </button>
-              )}
-              <button
-                className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 fw-semibold d-flex align-items-center justify-content-center gap-1.5"
-                style={{ minHeight: '42px' }}
-                onClick={() => onCopy(standard.videoUrl, 'Link')}
-                title="Link kopieren"
-              >
-                <i className="bi bi-link-45deg"></i>
-                <span>Link kopieren</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* PDF POP-UP MODAL (with Maximize/Minimize and Full Page Scrolling) */}
-      {isPdfModalOpen && (
-        <div
-          className="modal show d-block no-print"
-          tabIndex="-1"
-          style={{
-            backgroundColor: 'rgba(15, 23, 42, 0.75)',
-            zIndex: 1070,
-            backdropFilter: 'blur(4px)'
-          }}
-          data-html2canvas-ignore="true"
-        >
-          <div
-            className={`modal-dialog modal-dialog-centered ${isModalMaximized ? 'modal-fullscreen p-0 m-0' : 'modal-xl'}`}
-            style={isModalMaximized ? { width: '100vw', height: '100vh', maxWidth: '100%' } : { maxHeight: '90vh' }}
-          >
-            <div
-              className="modal-content border-0 shadow-2xl rounded-4 overflow-hidden d-flex flex-column"
-              style={isModalMaximized ? { height: '100vh', borderRadius: 0 } : { height: '85vh' }}
-            >
-              {/* Modal Header */}
-              <div className="modal-header bg-dark text-white py-2 px-3 d-flex align-items-center justify-content-between">
-                <div className="d-flex align-items-center gap-2 overflow-hidden">
-                  <i className="bi bi-file-earmark-pdf-fill text-danger fs-5"></i>
-                  <div>
-                    <h6 className="modal-title fw-bold mb-0 text-truncate" style={{ fontSize: '0.95rem' }}>
-                      {activeDoc ? activeDoc.title : (standard.title || standard.topic)}
-                    </h6>
-                    <div className="text-white-50 small" style={{ fontSize: '0.72rem' }}>
-                      Universitätsmedizin Frankfurt {activeDoc && activeDoc.date ? `• Stand: ${activeDoc.date} (Ver. ${activeDoc.version})` : ''} &bull; Scrolling &amp; Vollbild
-                    </div>
-                  </div>
-                </div>
-
-                {/* Modal Controls: Maximize, Minimize, Open Tab, Download, Close */}
-                <div className="d-flex align-items-center gap-2 flex-shrink-0">
-                  {/* Maximize / Minimize Toggle */}
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-outline-light rounded-pill px-2 py-1"
-                    onClick={() => setIsModalMaximized(!isModalMaximized)}
-                    title={isModalMaximized ? 'Minimieren / Standardgröße' : 'Maximieren / Vollbild'}
-                  >
-                    <i className={`bi ${isModalMaximized ? 'bi-fullscreen-exit' : 'bi-arrows-fullscreen'} me-1`}></i>
-                    <span className="small d-none d-sm-inline">{isModalMaximized ? 'Minimieren' : 'Maximieren'}</span>
-                  </button>
-
-                  {/* Open in new tab */}
-                  <a
-                    href={pdfUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-sm btn-outline-light rounded-pill px-2 py-1"
-                    title="In neuem Browser-Tab öffnen"
-                  >
-                    <i className="bi bi-box-arrow-up-right"></i>
-                  </a>
-
-                  {/* Download button */}
-                  <a
-                    href={pdfUrl}
-                    download
-                    className="btn btn-sm btn-primary rounded-pill px-3 py-1 shadow-sm"
-                    title="PDF herunterladen"
-                  >
-                    <i className="bi bi-download me-1"></i>
-                    <span className="small d-none d-sm-inline">Download</span>
-                  </a>
-
-                  {/* Close button */}
-                  <button
-                    type="button"
-                    className="btn-close btn-close-white ms-1"
-                    onClick={() => {
-                      setIsPdfModalOpen(false);
-                      setIsModalMaximized(false);
-                    }}
-                    title="Schließen"
-                  ></button>
-                </div>
               </div>
-
-              {/* Modal Document Switcher (if multiple docs available) */}
-              {documents && documents.length > 1 && (
-                <div className="bg-black bg-opacity-75 px-3 py-1.5 border-bottom border-secondary d-flex align-items-center gap-2 flex-wrap">
-                  <span className="text-white-50 small fw-bold text-uppercase" style={{ fontSize: '0.7rem' }}>
-                    Dokument:
-                  </span>
-                  {documents.map((doc, idx) => {
-                    const isSelected = selectedDocIndex === idx;
-                    const activeGrad = idx === 0
-                      ? 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)'
-                      : 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)';
-                    return (
-                      <button
-                        key={doc.id}
-                        type="button"
-                        className={`btn btn-xs rounded-pill px-2.5 py-1 fw-semibold d-inline-flex align-items-center gap-1.5 ${
-                          isSelected
-                            ? 'text-white shadow-sm'
-                            : 'btn-outline-light'
-                        }`}
-                        style={{
-                          fontSize: '0.76rem',
-                          background: isSelected ? activeGrad : 'transparent',
-                          borderColor: isSelected ? 'transparent' : 'rgba(255,255,255,0.3)'
-                        }}
-                        onClick={() => setSelectedDocIndex(idx)}
-                      >
-                        <i className={`bi ${idx === 0 ? 'bi-file-earmark-medical' : 'bi-shield-check'}`}></i>
-                        <span>{doc.shortTitle}</span>
-                        <span className="badge rounded-pill bg-white bg-opacity-25 text-white" style={{ fontSize: '0.68rem' }}>
-                          {doc.date} &bull; {doc.pageCount} S.
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Modal Body with Scrolling PDF Viewport on Desktop & Mobile Native View on Phones */}
-              <div className="modal-body p-0 flex-grow-1 bg-secondary bg-opacity-10 position-relative d-flex flex-column overflow-hidden">
-                {/* Desktop: Interactive PDF iframe */}
-                <iframe
-                  key={pdfBaseUrl}
-                  src={`${pdfBaseUrl}#page=${standard.pdfPage || 1}&toolbar=1&navpanes=1&scrollbar=1&view=FitH`}
-                  title={`PDF Dokument ${activeDoc ? activeDoc.title : standard.shortTitle}`}
-                  className="w-100 h-100 border-0 flex-grow-1 d-none d-md-block"
-                  style={{ minHeight: '100%', overflowY: 'auto' }}
-                />
-
-                {/* Mobile Smartphone: High-Res Poster Image + Direct Mobile PDF Viewer Launcher */}
-                <div className="d-block d-md-none p-3 overflow-auto flex-grow-1 text-center bg-white">
-                  <div className="mb-3">
-                    <img
-                      src={standard.image}
-                      alt={standard.shortTitle}
-                      className="img-fluid rounded-3 shadow-sm border mb-2"
-                      style={{ maxHeight: '55vh', objectFit: 'contain' }}
-                    />
-                  </div>
-                  <div className="d-grid gap-2 mb-2">
-                    <a
-                      href={pdfUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-danger rounded-pill py-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2"
-                    >
-                      <i className="bi bi-box-arrow-up-right fs-5"></i>
-                      <span>PDF im mobilen Reader öffnen</span>
-                    </a>
-                    <a
-                      href={pdfUrl}
-                      download
-                      className="btn btn-outline-secondary rounded-pill py-2 fw-semibold d-flex align-items-center justify-content-center gap-2 small"
-                    >
-                      <i className="bi bi-download"></i>
-                      <span>Original-PDF herunterladen</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              {/* Modal Footer */}
-              <div className="modal-footer bg-white py-2 px-3 d-flex justify-content-between align-items-center">
-                <div className="small text-muted d-flex align-items-center gap-2">
-                  <i className="bi bi-info-circle text-primary"></i>
-                  <span className="d-none d-md-inline">Nutzen Sie das Mausrad oder die Scrollleiste zum Scrollen durch alle Seiten des Dokuments.</span>
-                  <span className="d-inline d-md-none">Optimiert für Mobilgeräte: Original-PDF im systemeigenen Reader öffnen.</span>
-                </div>
+              <div className="col-6 col-sm-3">
                 <button
-                  type="button"
-                  className="btn btn-sm btn-secondary rounded-pill px-3"
-                  onClick={() => {
-                    setIsPdfModalOpen(false);
-                    setIsModalMaximized(false);
-                  }}
+                  className="btn btn-sm btn-outline-secondary rounded-pill py-2 px-2 fw-semibold shadow-sm d-flex align-items-center justify-content-center gap-1.5 bg-white w-100"
+                  style={{ minHeight: '42px', fontSize: '0.82rem' }}
+                  onClick={() => onCopy(websiteDirectUrl, 'Link')}
+                  title="Link kopieren"
                 >
-                  Schließen
+                  <i className="bi bi-link-45deg fs-6 text-primary"></i>
+                  <span>Link kopieren</span>
                 </button>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* IMAGE PREVIEW POP-UP MODAL (For First 4 Standards on Image Click) */}
+      {/* Image Preview Modal */}
       {previewImage && (
         <div
           className="modal show d-block no-print"
           tabIndex="-1"
-          style={{
-            backgroundColor: 'rgba(15, 23, 42, 0.85)',
-            zIndex: 1080,
-            backdropFilter: 'blur(5px)'
-          }}
+          style={{ backgroundColor: 'rgba(15, 23, 42, 0.85)', zIndex: 1080 }}
           onClick={() => setPreviewImage(null)}
         >
-          <div
-            className="modal-dialog modal-dialog-centered modal-lg"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-content border-0 shadow-2xl rounded-4 overflow-hidden">
-              <div className="modal-header bg-dark text-white py-2 px-3 d-flex align-items-center justify-content-between">
-                <div>
-                  <h6 className="modal-title fw-bold mb-0">{previewImage.title}</h6>
-                  <span className="text-white-50 small" style={{ fontSize: '0.72rem' }}>{previewImage.subtitle}</span>
-                </div>
-                <button
-                  type="button"
-                  className="btn-close btn-close-white"
-                  onClick={() => setPreviewImage(null)}
-                  title="Schließen"
-                ></button>
+          <div className="modal-dialog modal-dialog-centered modal-xl">
+            <div className="modal-content border-0 rounded-4 overflow-hidden shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header bg-dark text-white py-2 px-3">
+                <h6 className="modal-title fw-bold mb-0 text-truncate">{previewImage.title}</h6>
+                <button type="button" className="btn-close btn-close-white" onClick={() => setPreviewImage(null)}></button>
               </div>
-              <div className="modal-body p-3 bg-white text-center">
-                <img
-                  src={previewImage.src}
-                  alt={previewImage.title}
-                  className="img-fluid rounded-3 shadow-sm"
-                  style={{ maxHeight: '75vh', objectFit: 'contain' }}
-                />
-              </div>
-              <div className="modal-footer bg-light py-2 px-3 d-flex justify-content-between align-items-center">
-                <small className="text-muted">Klicken Sie außerhalb des Bildes oder auf Schließen zum Beenden.</small>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-secondary rounded-pill px-4"
-                  onClick={() => setPreviewImage(null)}
-                >
-                  Schließen
-                </button>
+              <div className="modal-body p-2 text-center bg-black">
+                <img src={previewImage.src} alt={previewImage.title} className="img-fluid rounded-3" style={{ maxHeight: '80vh', objectFit: 'contain' }} />
               </div>
             </div>
           </div>
@@ -3172,117 +3613,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
 }
 
 // -------------------------------------------------------------
-// Component: Replicate EXACT Slide Design from the PDF (PowerPoint View)
-// -------------------------------------------------------------
-function PdfSlideCard({ standard, onCopy, onDownloadQr, onDownloadPdf }) {
-  return (
-    <div className="pdf-slide-card mb-4" id={`slide-card-${standard.id}`}>
-      {/* Slide Header: Navy blue banner like the PDF */}
-      <div className="pdf-slide-header">
-        <div className="d-flex align-items-center gap-3">
-          <div className="bg-white rounded px-2 py-1 shadow-sm d-flex align-items-center">
-            <img src="assets/umf-logo.jpg" alt="Universitätsmedizin Frankfurt" height="32" />
-          </div>
-          <h5 className="pdf-slide-header-title">{standard.title}</h5>
-        </div>
-      </div>
-
-      {/* Slide Content Area (Exact Layout from PDF) */}
-      <div className="p-4 bg-white">
-        <div className="row g-3 align-items-center">
-          {/* Left Box: Process intro, Colored Standard Pill & Instructions */}
-          <div className="col-lg-6 col-md-6">
-            <div className="pdf-bordered-box">
-              <p className="mb-0 text-dark fw-medium" style={{ fontSize: '1rem', lineHeight: '1.6' }}>
-                {standard.leadText}
-              </p>
-
-              {/* Prominent Standard Pill Box */}
-              <div className={`pdf-standard-pill ${standard.id}`}>
-                {standard.topic}
-              </div>
-
-              {/* Instructions */}
-              <p className="mb-0 text-dark" style={{ fontSize: '0.92rem', lineHeight: '1.55' }}>
-                {standard.instructions}
-              </p>
-            </div>
-          </div>
-
-          {/* Middle Arrow (Like the PDF arrow pointing to QR code) */}
-          <div className="col-lg-1 d-none d-lg-flex justify-content-center">
-            <div className="pdf-slide-arrow">
-              <svg width="48" height="36" viewBox="0 0 48 36" fill={standard.accentColor} style={{ display: 'block' }}>
-                <path d="M0 12h24V0l24 18-24 18V24H0z" />
-              </svg>
-            </div>
-          </div>
-
-          {/* Right Box: Double-bordered Cartoon Illustration + Crisp Square QR Code */}
-          <div className="col-lg-5 col-md-6">
-            <div className="pdf-bordered-box text-center">
-              {/* Double-bordered Cartoon Illustration */}
-              <div className="pdf-illustration-frame">
-                <img
-                  src={standard.image}
-                  alt={standard.shortTitle}
-                  className="pdf-illustration-img"
-                />
-              </div>
-
-              {/* Crisp Generated QR Code (Guaranteed single, scannable base64 image) */}
-              <div className="p-3 bg-light rounded-3 d-inline-block mx-auto border shadow-sm mb-2">
-                <QrCodeCanvas
-                  value={standard.videoUrl}
-                  size={155}
-                  color={standard.accentColor}
-                  className={`slide-qr-${standard.id}`}
-                />
-              </div>
-
-              <div className="small text-muted mb-2 font-monospace" style={{ fontSize: '0.75rem' }}>
-                <i className="bi bi-qr-code me-1"></i> QR-Code scannen &bull; Video ansehen
-              </div>
-
-              <div className="d-flex flex-wrap justify-content-center gap-2 no-print" data-html2canvas-ignore="true">
-                {onDownloadPdf && (
-                  <button
-                    className="btn btn-sm btn-primary rounded-pill py-1.5 px-3 shadow-sm d-inline-flex align-items-center gap-1"
-                    style={{ minHeight: '38px' }}
-                    onClick={() => onDownloadPdf(standard, true)}
-                    title="Original-Folie als PDF-Datei (Querformat) herunterladen"
-                  >
-                    <i className="bi bi-file-earmark-pdf-fill"></i>
-                    <span>Folie als PDF</span>
-                  </button>
-                )}
-                <button
-                  className="btn btn-sm btn-outline-dark rounded-pill py-1.5 px-3 d-inline-flex align-items-center gap-1"
-                  style={{ minHeight: '38px' }}
-                  onClick={() => onDownloadQr(standard)}
-                >
-                  <i className="bi bi-download"></i>
-                  <span>QR PNG</span>
-                </button>
-                <button
-                  className="btn btn-sm btn-outline-secondary rounded-pill py-1.5 px-3 d-inline-flex align-items-center gap-1"
-                  style={{ minHeight: '38px' }}
-                  onClick={() => onCopy(standard.videoUrl, 'YouTube Link')}
-                >
-                  <i className="bi bi-link-45deg"></i>
-                  <span>Link</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// -------------------------------------------------------------
-// Component: Dedicated Separate Page for Each Standard
+// Component: StandardDetailPage (Assembles full interactive view)
 // -------------------------------------------------------------
 function StandardDetailPage({ standard, onNavigate, showToast }) {
   const allStandards = Object.values(UMF_STANDARDS);
@@ -3296,7 +3627,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
   };
 
   const downloadQrImage = (std) => {
-    const container = document.querySelector(`.pocket-qr-${std.id}`) || document.querySelector(`.slide-qr-${std.id}`) || document.querySelector(`.detail-qr-${std.id}`);
+    const container = document.querySelector(`.pocket-qr-${std.id}`);
     if (!container) return;
     const img = container.querySelector('img');
     const canvas = container.querySelector('canvas');
@@ -3309,7 +3640,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
     if (!url) return;
     const a = document.createElement('a');
     a.href = url;
-    a.download = `QR-Code-${std.shortTitle}-UMF.png`;
+    a.download = `QR-Code-${std.shortTitle}-Intensivstandard.png`;
     a.click();
     showToast('QR-Code Bild heruntergeladen!');
   };
@@ -3326,12 +3657,12 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
           <a
             href="#/"
             className="btn-all-kacheln"
-            title="Zurück zur Übersicht aller 6 Expertenstandards"
+            title="Zurück zur Übersicht der 5 Intensivstandards"
           >
             <span className="icon-badge">
               <i className="bi bi-grid-fill"></i>
             </span>
-            <span>Alle 6 Kacheln</span>
+            <span>Alle 5 Kacheln</span>
             <i className="bi bi-arrow-left text-muted ms-1" style={{ fontSize: '0.82rem' }}></i>
           </a>
 
@@ -3344,8 +3675,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
               title="Aktuelle Ansicht als PDF-Dokument herunterladen"
             >
               <i className="bi bi-file-earmark-arrow-down-fill"></i>
-              <span className="d-none d-sm-inline">PDF herunterladen</span>
-              <span className="d-inline d-sm-none">PDF</span>
+              <span>PDF herunterladen</span>
             </button>
             <button
               className="btn btn-dark btn-sm px-3.5 py-1.5 fw-semibold d-flex align-items-center gap-1.5 border-start border-white border-opacity-25"
@@ -3359,7 +3689,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
           </div>
         </div>
 
-        {/* Horizontally scrollable quick-switch pills for all standards on desktop */}
+        {/* Quick-switch pills for all 5 standards on desktop */}
         <div className="quick-switcher-bar w-100 py-1">
           {allStandards.map(s => {
             const isActive = s.id === standard.id;
@@ -3382,7 +3712,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                       }
                 }
                 onClick={() => onNavigate(s.id)}
-                title={isActive ? `${s.shortTitle} (Aktuell geöffnet)` : `Zu ${s.shortTitle} wechseln`}
+                title={isActive ? `${s.shortTitle} (Aktiv)` : `Zu ${s.shortTitle} wechseln`}
               >
                 <span
                   className="icon-bubble"
@@ -3397,7 +3727,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                 {isActive && (
                   <span
                     className="badge rounded-pill bg-white text-dark ms-1 shadow-2xs fw-bold text-uppercase"
-                    style={{ fontSize: '0.62rem', padding: '2.5px 6.5px', letterSpacing: '0.3px' }}
+                    style={{ fontSize: '0.62rem', padding: '2.5px 6.5px' }}
                   >
                     Aktiv
                   </span>
@@ -3408,7 +3738,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
         </div>
       </div>
 
-      {/* 1. CLINICAL POCKETCARD VIEW */}
+      {/* 1. CLINICAL POCKETCARD SCREEN VIEW */}
       <BeautifiedPocketcard
         standard={standard}
         onCopy={copyToClipboard}
@@ -3416,462 +3746,121 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
         onDownloadPdf={downloadPdf}
       />
 
-      {/* 2. EMBEDDED TRAINING VIDEO & NURSING PROCESS */}
-      <div className="row g-4 mt-1 no-print">
-        {/* Left Column: Responsive 16:9 Video Player OR ZVK SOP Card */}
-        <div className="col-lg-7">
-          <div className="card border shadow-sm rounded-4 p-4 bg-white h-100">
-            {standard.id === 'isolation' ? (
-              <div>
-                <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                  <h5 className="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
-                    <span className="p-1.5 rounded-3 bg-primary bg-opacity-10 text-primary d-inline-flex">
-                      <i className="bi bi-shield-check fs-5"></i>
-                    </span>
-                    <span>Verfahrensanweisungen &amp; Hygienepläne</span>
-                  </h5>
-                </div>
+      {/* 2. STANDARD-SPECIFIC INTERACTIVE DIAGNOSTIC / SIMULATOR TOOL */}
+      {standard.id === 'beatmung' && (
+        <VentilatorCircuitComponent standard={standard} />
+      )}
 
-                {/* 1. Official QM Documents List */}
-                <div className="p-3 bg-light rounded-4 border mb-3">
-                  <div className="fw-bold small text-uppercase text-secondary mb-2 d-flex align-items-center gap-1.5">
-                    <i className="bi bi-folder2-open text-primary"></i>
-                    <span>QM-Dokumente im Universitätsklinikum Frankfurt:</span>
-                  </div>
-                  <div className="d-flex flex-column gap-2.5">
-                    <div
-                      className="d-flex justify-content-between align-items-center p-3 rounded-3 shadow-2xs small"
-                      style={{
-                        background: 'linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%)',
-                        border: '1.5px solid #bae6fd',
-                        borderLeft: '4.5px solid #0284c7'
-                      }}
-                    >
-                      <div className="d-flex align-items-start gap-2.5">
-                        <span
-                          className="p-2 rounded-circle mt-0.5 d-inline-flex flex-shrink-0 shadow-2xs"
-                          style={{ backgroundColor: '#e0f2fe', color: '#0284c7' }}
-                        >
-                          <i className="bi bi-file-earmark-medical-fill fs-6"></i>
-                        </span>
-                        <div>
-                          <div className="fw-bold text-dark" style={{ fontSize: '0.9rem' }}>
-                            Dokument 1: Allgemeines Vorgehen bei Isolation und Reinigung
-                          </div>
-                          <div className="text-muted mt-0.5" style={{ fontSize: '0.78rem' }}>
-                            Freigabe: Kempf, Volkhard &bull; AutorInnen: Bayer, Comoli, Hiller, Lerche
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-end flex-shrink-0 ms-2 d-flex flex-column align-items-end gap-1">
-                        <span
-                          className="badge rounded-pill fw-semibold"
-                          style={{ backgroundColor: '#e0f2fe', color: '#0369a1', border: '1px solid #bae6fd', fontSize: '0.73rem' }}
-                        >
-                          Ver. 003 &bull; 4 Seiten
-                        </span>
-                        <span
-                          className="badge px-2.5 py-1 rounded-pill fw-bold shadow-2xs d-inline-flex align-items-center gap-1"
-                          style={{
-                            background: 'linear-gradient(135deg, #fef08a 0%, #fde047 100%)',
-                            color: '#713f12',
-                            border: '1px solid #eab308',
-                            fontSize: '0.78rem'
-                          }}
-                        >
-                          <i className="bi bi-calendar-check-fill text-warning"></i>19.08.2019
-                        </span>
-                      </div>
-                    </div>
-                    <div
-                      className="d-flex justify-content-between align-items-center p-3 rounded-3 shadow-2xs small"
-                      style={{
-                        background: 'linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%)',
-                        border: '1.5px solid #a7f3d0',
-                        borderLeft: '4.5px solid #0d9488'
-                      }}
-                    >
-                      <div className="d-flex align-items-start gap-2.5">
-                        <span
-                          className="p-2 rounded-circle mt-0.5 d-inline-flex flex-shrink-0 shadow-2xs"
-                          style={{ backgroundColor: '#ccfbf1', color: '#0d9488' }}
-                        >
-                          <i className="bi bi-shield-fill-check fs-6"></i>
-                        </span>
-                        <div>
-                          <div className="fw-bold text-dark" style={{ fontSize: '0.9rem' }}>
-                            Dokument 2: Hygieneplan: Umgang mit multiresistenten Erregern (MRE)
-                          </div>
-                          <div className="text-muted mt-0.5" style={{ fontSize: '0.78rem' }}>
-                            Häma-Onko (Station+TK), ITS/IMC, Neonatologie
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-end flex-shrink-0 ms-2 d-flex flex-column align-items-end gap-1">
-                        <span
-                          className="badge rounded-pill fw-semibold"
-                          style={{ backgroundColor: '#ccfbf1', color: '#0f766e', border: '1px solid #99f6e4', fontSize: '0.73rem' }}
-                        >
-                          Ver. 012 &bull; 5 Seiten
-                        </span>
-                        <span
-                          className="badge px-2.5 py-1 rounded-pill fw-bold shadow-2xs d-inline-flex align-items-center gap-1"
-                          style={{
-                            background: 'linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%)',
-                            color: '#064e3b',
-                            border: '1px solid #10b981',
-                            fontSize: '0.78rem'
-                          }}
-                        >
-                          <i className="bi bi-calendar-check-fill text-success"></i>02.2026
-                        </span>
-                      </div>
-                    </div>
-                    <div
-                      className="d-flex justify-content-between align-items-center p-2 rounded-3 small"
-                      style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}
-                    >
-                      <span className="d-flex align-items-center gap-1.5 text-secondary">
-                        <i className="bi bi-hospital text-primary"></i>
-                        <span><strong>Gültigkeitsbereich:</strong> Häma-Onkologie &bull; ITS / IMC &bull; Neonatologie &bull; Klinikweit</span>
-                      </span>
-                      <span className="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill">
-                        Klinikweit
-                      </span>
-                    </div>
-                  </div>
-                </div>
+      {standard.id === 'befeuchtung-invasiv' && (
+        <HumidifierComponent standard={standard} />
+      )}
 
-                {/* 2. Visual Farbleitsystem & Door Signage Guidance */}
-                <div
-                  className="p-3 rounded-4 border mb-3 shadow-2xs"
-                  style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', borderColor: '#e2e8f0' }}
-                >
-                  <div className="fw-bold text-dark small text-uppercase mb-2.5 d-flex align-items-center justify-content-between">
-                    <span className="d-flex align-items-center gap-1.5">
-                      <i className="bi bi-signpost-split-fill text-primary"></i>
-                      <span>Offizielles UKF-Farbleitsystem (Türbeschilderung):</span>
-                    </span>
-                    <span className="badge bg-white text-secondary border px-2 py-1 small rounded-pill shadow-2xs">UKF Standard</span>
-                  </div>
-                  <div className="row g-2.5">
-                    <div className="col-sm-6">
-                      <div
-                        className="p-2.5 rounded-3 h-100 shadow-2xs"
-                        style={{
-                          background: 'linear-gradient(135deg, #fefce8 0%, #fef9c3 100%)',
-                          border: '1.5px solid #fef08a'
-                        }}
-                      >
-                        <div className="d-flex align-items-center gap-1.5 mb-1.5">
-                          <span
-                            className="badge rounded-pill fw-bold text-dark px-2.5 py-1 shadow-2xs"
-                            style={{ backgroundColor: '#facc15', border: '1px solid #eab308' }}
-                          >
-                            <i className="bi bi-door-closed-fill me-1"></i>Außen: Gelb
-                          </span>
-                          <span className="small fw-bold text-dark">Vor dem Betreten</span>
-                        </div>
-                        <p className="text-secondary small mb-0" style={{ fontSize: '0.8rem', lineHeight: 1.4 }}>
-                          Schutzkleidung (PSA) <strong>vor Betreten des Zimmers</strong> anlegen: Schutzkittel, Handschuhe, ggf. FFP2/MNS.
-                        </p>
-                      </div>
-                    </div>
-                    <div className="col-sm-6">
-                      <div
-                        className="p-2.5 rounded-3 h-100 shadow-2xs"
-                        style={{
-                          background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)',
-                          border: '1.5px solid #fbcfe8'
-                        }}
-                      >
-                        <div className="d-flex align-items-center gap-1.5 mb-1.5">
-                          <span
-                            className="badge rounded-pill fw-bold text-white px-2.5 py-1 shadow-2xs"
-                            style={{ backgroundColor: '#ec4899', border: '1px solid #db2777' }}
-                          >
-                            <i className="bi bi-box-arrow-right me-1"></i>Innen: Pink
-                          </span>
-                          <span className="small fw-bold text-dark">Vor dem Verlassen</span>
-                        </div>
-                        <p className="text-secondary small mb-0" style={{ fontSize: '0.8rem', lineHeight: 1.4 }}>
-                          Schutzkleidung <strong>im Zimmer ablegen</strong> und sofort verwerfen. Gründliche Händedesinfektion vor Verlassen!
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+      {standard.id === 'hfnc' && (
+        <RoxIndexCalculatorComponent standard={standard} />
+      )}
 
-                {/* 3. Clinical Pathogen Quick-Guide (4 Erreger-Farbkarten) */}
-                <div className="mb-3">
-                  <div className="fw-bold text-dark small text-uppercase mb-2 d-flex align-items-center gap-1.5">
-                    <i className="bi bi-shield-shaded text-primary"></i>
-                    <span>Erreger-Schnellübersicht &amp; Schutzstufen (MRE-Matrix):</span>
-                  </div>
-                  <div className="row g-2">
-                    <div className="col-sm-6">
-                      <div
-                        className="p-2.5 rounded-3 shadow-2xs h-100 border-start border-4 border-primary"
-                        style={{ background: 'linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%)', border: '1px solid #bae6fd' }}
-                      >
-                        <div className="d-flex align-items-center justify-content-between mb-1">
-                          <strong className="text-primary small d-flex align-items-center gap-1">
-                            <i className="bi bi-virus"></i> VRE &amp; MRSA
-                          </strong>
-                          <span className="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2" style={{ fontSize: '0.7rem' }}>Kontaktisolation</span>
-                        </div>
-                        <div className="text-secondary small" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
-                          Einzelzimmer (oder Kohorte). Schutzkittel &amp; Handschuhe. MRSA: 5 Tage gezielte Dekolonisation nach Schema.
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-sm-6">
-                      <div
-                        className="p-2.5 rounded-3 shadow-2xs h-100 border-start border-4"
-                        style={{ background: 'linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%)', border: '1px solid #bbf7d0', borderLeftColor: '#0d9488' }}
-                      >
-                        <div className="d-flex align-items-center justify-content-between mb-1">
-                          <strong className="small d-flex align-items-center gap-1" style={{ color: '#0d9488' }}>
-                            <i className="bi bi-bug-fill"></i> 3MRGN &amp; 4MRGN
-                          </strong>
-                          <span className="badge text-white rounded-pill px-2" style={{ backgroundColor: '#0d9488', fontSize: '0.7rem' }}>Erregerstatus</span>
-                        </div>
-                        <div className="text-secondary small" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
-                          3MRGN: Bereichsabhängig. 4MRGN: Strikte Einzelzimmer-Isolation! Alles patientennahe Material nach Verlegung verwerfen.
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-sm-6">
-                      <div
-                        className="p-2.5 rounded-3 shadow-2xs h-100 border-start border-4 border-danger"
-                        style={{ background: 'linear-gradient(135deg, #fef2f2 0%, #ffffff 100%)', border: '1px solid #fecaca', borderLeftColor: '#dc2626' }}
-                      >
-                        <div className="d-flex align-items-center justify-content-between mb-1">
-                          <strong className="text-danger small d-flex align-items-center gap-1">
-                            <i className="bi bi-exclamation-triangle-fill"></i> Clostridioides difficile
-                          </strong>
-                          <span className="badge bg-danger text-white rounded-pill px-2" style={{ fontSize: '0.7rem' }}>⚠️ SPOREN!</span>
-                        </div>
-                        <div className="text-dark small fw-medium" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
-                          Sporen sind <strong>alkoholfest</strong>: Zwingend <strong>1. Händewaschen mit Seife</strong>, danach <strong>2. Händedesinfektion</strong>!
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-sm-6">
-                      <div
-                        className="p-2.5 rounded-3 shadow-2xs h-100 border-start border-4"
-                        style={{ background: 'linear-gradient(135deg, #faf5ff 0%, #ffffff 100%)', border: '1px solid #e9d5ff', borderLeftColor: '#7c3aed' }}
-                      >
-                        <div className="d-flex align-items-center justify-content-between mb-1">
-                          <strong className="small d-flex align-items-center gap-1" style={{ color: '#7c3aed' }}>
-                            <i className="bi bi-lungs-fill" style={{ color: '#7c3aed' }}></i> Viren (Noro, Rota, TBC, RSV)
-                          </strong>
-                          <span className="badge rounded-pill px-2" style={{ backgroundColor: '#f3e8ff', color: '#6d28d9', fontSize: '0.7rem' }}>Aerosol &amp; Schmiere</span>
-                        </div>
-                        <div className="text-secondary small" style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
-                          FFP2-/MNS-Maske vor Betreten. Schutzkittel &amp; Handschuhe. Viruzides Hände- &amp; Flächendesinfektionsmittel.
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+      {standard.id === 'arterie' && (
+        <ArterialWaveformComponent standard={standard} />
+      )}
 
-                {/* 4. Why is this important? */}
-                <div className="p-3 bg-white rounded-4 border shadow-2xs">
-                  <div className="fw-bold text-success small mb-2.5 d-flex align-items-center gap-1.5">
-                    <i className="bi bi-shield-check fs-6"></i>
-                    <span>Warum ist das wichtig? (Patienten- &amp; Personalschutz)</span>
-                  </div>
-                  <div className="row g-2 small">
-                    <div className="col-sm-6">
-                      <div className="p-2 rounded-2 d-flex align-items-center gap-2" style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe' }}>
-                        <i className="bi bi-shield-fill-x text-primary fs-6 flex-shrink-0"></i>
-                        <span className="fw-semibold" style={{ color: '#1e40af', fontSize: '0.8rem' }}>Nosokomiale Infektionen stoppen</span>
-                      </div>
-                    </div>
-                    <div className="col-sm-6">
-                      <div className="p-2 rounded-2 d-flex align-items-center gap-2" style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}>
-                        <i className="bi bi-heart-pulse-fill text-success fs-6 flex-shrink-0"></i>
-                        <span className="fw-semibold" style={{ color: '#166534', fontSize: '0.8rem' }}>Patient &amp; Personal wirksam schützen</span>
-                      </div>
-                    </div>
-                    <div className="col-sm-6">
-                      <div className="p-2 rounded-2 d-flex align-items-center gap-2" style={{ backgroundColor: '#fffbeb', border: '1px solid #fef3c7' }}>
-                        <i className="bi bi-link-45deg text-warning fs-6 flex-shrink-0"></i>
-                        <span className="fw-semibold" style={{ color: '#92400e', fontSize: '0.8rem' }}>MRE-Übertragungsketten unterbrechen</span>
-                      </div>
-                    </div>
-                    <div className="col-sm-6">
-                      <div className="p-2 rounded-2 d-flex align-items-center gap-2" style={{ backgroundColor: '#faf5ff', border: '1px solid #e9d5ff' }}>
-                        <i className="bi bi-lightning-charge-fill fs-6 flex-shrink-0" style={{ color: '#7c3aed' }}></i>
-                        <span className="fw-semibold" style={{ color: '#6b21a8', fontSize: '0.8rem' }}>Schnelle Handlungssicherheit im Dienst</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : standard.id === 'zvk' ? (
-              <div>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <h5 className="fw-bold mb-0 text-dark">
-                    <i className="bi bi-file-earmark-medical-fill text-danger me-2"></i>
-                    Verfahrensanweisung &amp; SOP (10 Seiten)
-                  </h5>
-                </div>
+      {standard.id === 'evd' && (
+        <EvdLevelingComponent standard={standard} />
+      )}
 
-                <div className="p-3 bg-light rounded-3 border mb-3">
-                  <div className="fw-bold small text-uppercase text-secondary mb-2">
-                    <i className="bi bi-folder2-open me-1 text-primary"></i> QM-Dokumente:
-                  </div>
-                  <div className="d-flex flex-column gap-2">
-                    <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
-                      <span className="fw-semibold">Verfahrensanweisung ZVK</span>
-                      <span className="badge bg-secondary">Ver. 002 / 09.2024</span>
-                    </div>
-                    <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
-                      <span className="fw-semibold">OMW ZVK Verbandswechsel</span>
-                      <span className="badge bg-secondary">Ver. 001 / 07.2026</span>
-                    </div>
-                    <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
-                      <span className="fw-semibold">OMW - Infusionsfilter</span>
-                      <span className="badge bg-secondary">Ver. 001 / 08.2025</span>
-                    </div>
-                    <div className="d-flex justify-content-between align-items-center bg-white p-2 rounded border small">
-                      <span className="fw-semibold">Standard-Infusionsschema ITS</span>
-                      <span className="badge bg-secondary">Gültig ITS</span>
-                    </div>
-                  </div>
-                </div>
+      {/* 3. INTERACTIVE SHIFT SAFETY CHECKLIST */}
+      <ShiftChecklistSection
+        checklist={standard.checklist}
+        standardTitle={standard.shortTitle}
+        accentColor={standard.accentColor}
+        standardId={standard.id}
+      />
 
-                <div className="p-3 bg-white rounded-3 border">
-                  <div className="fw-bold text-success small mb-2 d-flex align-items-center gap-1">
-                    <i className="bi bi-shield-check"></i> Warum ist das wichtig? (Intensivstation)
-                  </div>
-                  <div className="row g-2 small text-secondary">
-                    <div className="col-sm-6 d-flex align-items-center gap-2">
-                      <i className="bi bi-check-circle-fill text-success"></i> Sichere Medikamentengabe
-                    </div>
-                    <div className="col-sm-6 d-flex align-items-center gap-2">
-                      <i className="bi bi-check-circle-fill text-success"></i> Sichere Blutentnahme
-                    </div>
-                    <div className="col-sm-6 d-flex align-items-center gap-2">
-                      <i className="bi bi-check-circle-fill text-success"></i> Weniger Komplikationen (CRBSI)
-                    </div>
-                    <div className="col-sm-6 d-flex align-items-center gap-2">
-                      <i className="bi bi-check-circle-fill text-success"></i> Mehr Patientensicherheit
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <h5 className="fw-bold mb-0 text-dark">
-                    <i className="bi bi-play-circle-fill text-danger me-2"></i>
-                    Schulungsvideo: {standard.shortTitle}
-                  </h5>
-                  <a
-                    href={standard.videoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-sm btn-outline-danger rounded-pill px-3"
-                  >
-                    <i className="bi bi-youtube me-1"></i> YouTube
-                  </a>
-                </div>
+      {/* 4. CLINICAL REFERENCE PARAMETERS */}
+      <ClinicalParametersTable
+        parameters={standard.parameters}
+        accentColor={standard.accentColor}
+      />
 
-                <div className="video-responsive-wrapper mb-3">
-                  <iframe
-                    src={`https://www.youtube-nocookie.com/embed/${standard.videoId}?rel=0&modestbranding=1`}
-                    title={standard.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
+      {/* 5. TROUBLESHOOTING & ALARM GUIDE */}
+      <TroubleshootingSection
+        troubleshooting={standard.troubleshooting}
+        accentColor={standard.accentColor}
+      />
 
-                <small className="text-muted">
-                  Dieses Video wird automatisch aufgerufen, wenn der QR-Code der Pocketcard mit einem Smartphone gescannt wird.
-                </small>
-              </div>
-            )}
+      {/* 6. STRUCTURED HANDLUNGSSCHRITTE IM PFLEGEPROZESS */}
+      <div className="card border shadow-sm rounded-4 p-3 p-sm-4 bg-white mb-4 no-print" style={{ borderColor: `${standard.accentColor}35` }}>
+        <div className="d-flex align-items-center gap-2.5 mb-3 pb-2 border-bottom">
+          <div
+            className="rounded-3 p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0"
+            style={{ width: '36px', height: '36px', backgroundColor: standard.accentColor, boxShadow: `0 2px 8px ${standard.accentColor}45` }}
+          >
+            <i className="bi bi-check2-circle fs-5"></i>
+          </div>
+          <div>
+            <span className="badge rounded-pill fw-bold text-uppercase px-2.5 py-0.5 mb-0.5 d-inline-block shadow-2xs" style={{ backgroundColor: `${standard.accentColor}18`, color: standard.accentColor, fontSize: '0.68rem', border: `1px solid ${standard.accentColor}35` }}>
+              Praxis-Leitfaden
+            </span>
+            <h5 className="fw-bold mb-0 text-dark" style={{ fontSize: '1.05rem' }}>
+              Strukturierte Handlungsschritte im Pflegeprozess ({standard.shortTitle})
+            </h5>
           </div>
         </div>
 
-        {/* Right Column: Handlungsschritte im Pflegeprozess */}
-        <div className="col-lg-5">
-          <div className="card border shadow-sm rounded-4 p-4 bg-white h-100">
-            <h5 className="fw-bold mb-3 text-dark d-flex align-items-center gap-2">
-              <i className="bi bi-check2-circle text-success fs-5"></i>
-              <span>Handlungsschritte im Pflegeprozess</span>
-            </h5>
-
-            {standard.id === 'isolation' ? (
-              <div className="d-flex flex-column gap-2.5">
-                {standard.clinicalFocus.map((item, idx) => {
-                  const stepStyles = [
-                    { border: '#f59e0b', bg: '#fffbeb', badgeBg: '#fef3c7', badgeColor: '#b45309', icon: 'bi-door-closed-fill', tag: 'UKF Farbleitsystem' },
-                    { border: '#0284c7', bg: '#f0f9ff', badgeBg: '#e0f2fe', badgeColor: '#0369a1', icon: 'bi-person-badge-fill', tag: 'Schutzkleidung (PSA)' },
-                    { border: '#dc2626', bg: '#fef2f2', badgeBg: '#fee2e2', badgeColor: '#b91c1c', icon: 'bi-hand-index-thumb-fill', tag: 'Besonderheit C. diff!' },
-                    { border: '#8b5cf6', bg: '#faf5ff', badgeBg: '#f3e8ff', badgeColor: '#6d28d9', icon: 'bi-trash3-fill', tag: 'Material & Entsorgung' },
-                    { border: '#10b981', bg: '#f0fdf4', badgeBg: '#dcfce7', badgeColor: '#15803d', icon: 'bi-stars', tag: 'Schlussdesinfektion' }
-                  ];
-                  const style = stepStyles[idx] || { border: standard.accentColor, bg: '#f8fafc', badgeBg: '#e2e8f0', badgeColor: '#334155', icon: 'bi-check-circle', tag: `Schritt ${idx + 1}` };
-                  return (
-                    <div
-                      key={idx}
-                      className="p-3 rounded-3 border-start border-4 shadow-2xs"
-                      style={{ borderLeftColor: style.border, backgroundColor: style.bg, borderTop: '1px solid #f1f5f9', borderRight: '1px solid #f1f5f9', borderBottom: '1px solid #f1f5f9' }}
+        <div className="d-flex flex-column gap-2.5">
+          {standard.clinicalFocus && standard.clinicalFocus.map((item, idx) => {
+            const phasePalette = [
+              { color: '#0284c7', bg: 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%)', border: '#bae6fd', icon: 'bi-box-seam-fill', badgeBg: '#e0f2fe' },
+              { color: '#16a34a', bg: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)', border: '#bbf7d0', icon: 'bi-play-circle-fill', badgeBg: '#dcfce7' },
+              { color: '#ea580c', bg: 'linear-gradient(135deg, #ffffff 0%, #fff7ed 100%)', border: '#fed7aa', icon: 'bi-eye-fill', badgeBg: '#ffedd5' },
+              { color: '#7c3aed', bg: 'linear-gradient(135deg, #ffffff 0%, #faf5ff 100%)', border: '#ddd6fe', icon: 'bi-shield-check', badgeBg: '#f3e8ff' },
+              { color: '#dc2626', bg: 'linear-gradient(135deg, #ffffff 0%, #fef2f2 100%)', border: '#fecaca', icon: 'bi-exclamation-triangle-fill', badgeBg: '#fee2e2' },
+              { color: '#0d9488', bg: 'linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%)', border: '#99f6e4', icon: 'bi-clipboard-check-fill', badgeBg: '#ccfbf1' }
+            ];
+            const pStyle = phasePalette[idx % phasePalette.length];
+            return (
+              <div
+                key={idx}
+                className="p-3 rounded-3 border-start border-5 shadow-2xs"
+                style={{
+                  borderLeftColor: pStyle.color,
+                  background: pStyle.bg,
+                  borderTop: `1px solid ${pStyle.border}`,
+                  borderRight: `1px solid ${pStyle.border}`,
+                  borderBottom: `1px solid ${pStyle.border}`
+                }}
+              >
+                <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1.5">
+                  <div className="d-flex align-items-center gap-2">
+                    <span
+                      className="rounded-3 p-1.5 d-inline-flex align-items-center justify-content-center text-white flex-shrink-0"
+                      style={{ width: '28px', height: '28px', backgroundColor: pStyle.color, boxShadow: `0 2px 6px ${pStyle.color}45` }}
                     >
-                      <div className="d-flex align-items-center justify-content-between mb-1.5 flex-wrap gap-1">
-                        <div className="d-flex align-items-center gap-2">
-                          <span
-                            className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0"
-                            style={{ width: '24px', height: '24px', backgroundColor: style.border, fontSize: '0.78rem' }}
-                          >
-                            <i className={`bi ${style.icon}`}></i>
-                          </span>
-                          <strong className="small text-dark" style={{ fontSize: '0.88rem' }}>{item.phase}</strong>
-                        </div>
-                        <span className="badge rounded-pill fw-semibold" style={{ backgroundColor: style.badgeBg, color: style.badgeColor, fontSize: '0.7rem' }}>
-                          {style.tag}
-                        </span>
-                      </div>
-                      <div className="text-secondary small ps-1" style={{ fontSize: '0.82rem', lineHeight: '1.45' }}>
-                        {item.detail}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="d-flex flex-column gap-2">
-                {standard.clinicalFocus.map((item, idx) => (
-                  <div key={idx} className="p-3 rounded-3 bg-light border">
-                    <div className="d-flex align-items-center gap-2 mb-1">
-                      <span
-                        className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center"
-                        style={{ width: '24px', height: '24px', backgroundColor: standard.accentColor }}
-                      >
-                        {idx + 1}
-                      </span>
-                      <strong className="small text-dark">{item.phase}</strong>
-                    </div>
-                    <div className="text-secondary small ps-4" style={{ lineHeight: '1.45' }}>
-                      {item.detail}
-                    </div>
+                      <i className={`bi ${pStyle.icon}`} style={{ fontSize: '0.82rem' }}></i>
+                    </span>
+                    <strong className="text-dark small" style={{ fontSize: '0.94rem' }}>{item.phase}</strong>
                   </div>
-                ))}
+                  <span
+                    className="badge rounded-pill fw-bold text-uppercase shadow-2xs"
+                    style={{ backgroundColor: pStyle.badgeBg, color: pStyle.color, border: `1px solid ${pStyle.border}`, fontSize: '0.67rem' }}
+                  >
+                    Phase {idx + 1}
+                  </span>
+                </div>
+                <div className="text-secondary small ps-1" style={{ lineHeight: '1.5', fontSize: '0.85rem', color: '#334155' }}>
+                  {item.detail}
+                </div>
               </div>
-            )}
-          </div>
+            );
+          })}
         </div>
       </div>
     </div>
   );
 }
 
+
 // -------------------------------------------------------------
-// Component: All 5 QR Codes Presentation / Pocketcards Hub
+// Component: All 5 QR Codes Hub / Pocketcards Overview
 // -------------------------------------------------------------
 function AllQrCodesView({ standards, onSelectStandard, showToast }) {
   const list = Object.values(standards);
@@ -3883,7 +3872,7 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
   };
 
   const downloadQrImage = (std) => {
-    const container = document.querySelector(`.pocket-qr-${std.id}`) || document.querySelector(`.detail-qr-${std.id}`);
+    const container = document.querySelector(`.pocket-qr-${std.id}`);
     if (!container) return;
     const img = container.querySelector('img');
     const canvas = container.querySelector('canvas');
@@ -3896,7 +3885,7 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
     if (!url) return;
     const a = document.createElement('a');
     a.href = url;
-    a.download = `QR-Code-${std.shortTitle}-UMF.png`;
+    a.download = `QR-Code-${std.shortTitle}-Intensivstandard.png`;
     a.click();
     showToast('QR-Code Bild heruntergeladen!');
   };
@@ -3909,7 +3898,9 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
     <div>
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 no-print">
         <div>
-          <h2 className="fw-bold mb-1 text-dark" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)' }}>Alle Pocketcards der Universitätsmedizin Frankfurt</h2>
+          <h2 className="fw-bold mb-1 text-dark" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.75rem)' }}>
+            Alle 5 Klinischen Intensiv-Pocketcards
+          </h2>
           <p className="text-muted mb-0 small">
             Die offiziellen digitalen Pflege-Pocketcards mit scannbaren QR-Codes, Minimal-Info und klinischen Praxisgrafiken.
           </p>
@@ -3925,7 +3916,6 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
         </button>
       </div>
 
-      {/* Render list of pocketcards */}
       <div className="d-flex flex-column gap-4">
         {list.map((std) => (
           <div key={std.id} className="page-break">
@@ -3942,73 +3932,110 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
   );
 }
 
-/// -------------------------------------------------------------
-// Component: Universal-Karte (A4-Pocketcard & ATM-Scheckkarte)
 // -------------------------------------------------------------
-function UniversalCardInteractiveCard({ isAtm = false, onSelectStandard }) {
+// Component: UniversalCardInteractiveCard (12 × 8 cm Pocketcard)
+// -------------------------------------------------------------
+function UniversalCardInteractiveCard({ isAtm = true, onSelectStandard }) {
+  const baseOrigin = (typeof window !== 'undefined' && window.location && window.location.origin)
+    ? `${window.location.origin}${window.location.pathname}`
+    : 'https://intensivpflege-standards.web.app/';
+  const normalizedBase = baseOrigin.endsWith('/') ? baseOrigin : `${baseOrigin}/`;
+  const portalUrl = `${normalizedBase}#/quick-hub`;
+
   return (
-    <div className={`universal-card-interactive-box ${isAtm ? 'atm-size' : ''} mx-auto position-relative`}>
-      <div className="universal-card-inner position-relative w-100">
+    <div
+      className="universal-card-interactive-box atm-size mx-auto position-relative"
+      id="universal-card-interactive-card"
+      style={{
+        border: '1.5px solid #cbd5e1',
+        borderRadius: '16px',
+        overflow: 'hidden',
+        boxShadow: '0 16px 38px -8px rgba(0, 39, 61, 0.22), 0 0 0 1px rgba(2, 132, 199, 0.12)',
+        maxWidth: '640px',
+        background: '#ffffff'
+      }}
+    >
+      <div className="universal-card-inner position-relative w-100" style={{ lineHeight: 0 }}>
+        {/* The Exact 12x8 cm Graphic uploaded by user */}
         <img
-          src={isAtm ? "assets/universal-card-12x8.jpg?v=20261020-02" : "assets/universal-card-umf.jpg?v=20261020-02"}
-          alt="Universitätsmedizin Frankfurt - Klinische Pflegestandards Universal-Pocketcard"
-          className="universal-card-img"
+          src="assets/universal-card-12x8.jpg"
+          alt="Intensivkompass Digital – Digitale Pocketcard für die Intensivpflege (12 × 8 cm)"
+          className="universal-card-img w-100 d-block"
+          style={{ imageRendering: '-webkit-optimize-contrast', aspectRatio: '1024 / 682' }}
         />
 
-        {/* 1. Dekubitusprophylaxe Hotspot */}
+        {/* 1. Beatmung vorbereiten & Gerätecheck Hotspot */}
         <div
           className="universal-card-hotspot"
-          style={{ left: '1.2%', top: '41.2%', width: '57.0%', height: '8.4%' }}
-          onClick={() => onSelectStandard('dekubitus')}
-          title="1. Dekubitusprophylaxe aufrufen"
+          style={{ left: '1.5%', top: '26.2%', width: '61.0%', height: '10.8%', borderRadius: '50rem' }}
+          onClick={() => onSelectStandard('beatmung')}
+          title="1. Beatmung vorbereiten & Gerätecheck aufrufen"
         />
 
-        {/* 2. Sturzprophylaxe Hotspot */}
+        {/* 2. Aktive Befeuchtung – invasive Beatmung Hotspot */}
         <div
           className="universal-card-hotspot"
-          style={{ left: '1.2%', top: '49.8%', width: '57.0%', height: '8.4%' }}
-          onClick={() => onSelectStandard('sturz')}
-          title="2. Sturzprophylaxe aufrufen"
+          style={{ left: '1.5%', top: '37.6%', width: '61.0%', height: '10.8%', borderRadius: '50rem' }}
+          onClick={() => onSelectStandard('befeuchtung-invasiv')}
+          title="2. Aktive Befeuchtung – invasive Beatmung aufrufen"
         />
 
-        {/* 3. Schmerzmanagement Hotspot */}
+        {/* 3. Aktive Befeuchtung – nasaler High-Flow Hotspot */}
         <div
           className="universal-card-hotspot"
-          style={{ left: '1.2%', top: '58.4%', width: '57.0%', height: '8.4%' }}
-          onClick={() => onSelectStandard('schmerz')}
-          title="3. Schmerzmanagement aufrufen"
+          style={{ left: '1.5%', top: '49.1%', width: '61.0%', height: '10.8%', borderRadius: '50rem' }}
+          onClick={() => onSelectStandard('hfnc')}
+          title="3. Aktive Befeuchtung – nasaler High-Flow aufrufen"
         />
 
-        {/* 4. Ernährungsmanagement Hotspot */}
+        {/* 4. Arterielles Druckmesssystem Hotspot */}
         <div
           className="universal-card-hotspot"
-          style={{ left: '1.2%', top: '67.0%', width: '57.0%', height: '8.4%' }}
-          onClick={() => onSelectStandard('ernaehrung')}
-          title="4. Ernährungsmanagement aufrufen"
+          style={{ left: '1.5%', top: '60.5%', width: '61.0%', height: '10.8%', borderRadius: '50rem' }}
+          onClick={() => onSelectStandard('arterie')}
+          title="4. Arterielles Druckmesssystem aufrufen"
         />
 
-        {/* 5. ZVK Intensivpflege Hotspot */}
+        {/* 5. Externe Ventrikeldrainage (EVD) Hotspot */}
         <div
           className="universal-card-hotspot"
-          style={{ left: '1.2%', top: '75.6%', width: '57.0%', height: '8.4%' }}
-          onClick={() => onSelectStandard('zvk')}
-          title="5. ZVK Intensivpflege & SOP aufrufen"
+          style={{ left: '1.5%', top: '72.0%', width: '61.0%', height: '10.8%', borderRadius: '50rem' }}
+          onClick={() => onSelectStandard('evd')}
+          title="5. Externe Ventrikeldrainage (EVD) aufrufen"
         />
 
-        {/* 6. Isolation & Hygiene Hotspot */}
+        {/* Real Crisp Functional Scannable QR Code Overlay */}
         <div
-          className="universal-card-hotspot"
-          style={{ left: '1.2%', top: '84.2%', width: '57.0%', height: '8.4%' }}
-          onClick={() => onSelectStandard('isolation')}
-          title="6. Isolation & Hygiene aufrufen"
-        />
+          style={{
+            position: 'absolute',
+            left: '72.8%',
+            top: '34.5%',
+            width: '17.1%',
+            height: '25.2%',
+            pointerEvents: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 4,
+            padding: '2px',
+            backgroundColor: '#ffffff',
+            borderRadius: '4px'
+          }}
+        >
+          <QrCodeCanvas
+            value={portalUrl}
+            size={120}
+            color="#001833"
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
 
-        {/* QR Code & 'HIER SCANNEN' Hotspot */}
+        {/* Right QR Portal & HIER SCANNEN Hotspot */}
         <div
           className="universal-card-hotspot"
-          style={{ left: '61.5%', top: '30.5%', width: '28.0%', height: '53.0%', borderRadius: '24px' }}
+          style={{ left: '67.0%', top: '27.0%', width: '29.0%', height: '57.0%', borderRadius: '1.2rem' }}
           onClick={() => onSelectStandard('quick-hub')}
-          title="Hier scannen / Schnellzugriff für Pflegestandards & SOPs öffnen"
+          title="Schnellzugriff auf digitale Pocketcards öffnen"
         />
       </div>
     </div>
@@ -4016,78 +4043,509 @@ function UniversalCardInteractiveCard({ isAtm = false, onSelectStandard }) {
 }
 
 // -------------------------------------------------------------
-// Component: Universal-Karte Native A4 Clinical Sheet (Full Page DIN A4)
+// Component: UniversalCardA4Native (DIN A4 Format with 5 Current Tiles)
+// -------------------------------------------------------------
+// Component: UniversalCardA4Native (DIN A4 Format with 2 Points, QR Code per Point & Device Pictures)
 // -------------------------------------------------------------
 function UniversalCardA4Native({ onSelectStandard }) {
+  const baseOrigin = (typeof window !== 'undefined' && window.location && window.location.origin)
+    ? `${window.location.origin}${window.location.pathname}`
+    : 'https://intensivpflege-standards.web.app/';
+  const normalizedBase = baseOrigin.endsWith('/') ? baseOrigin : `${baseOrigin}/`;
+  const portalUrl = `${normalizedBase}#/quick-hub`;
+
+  const leftTiles = [
+    {
+      id: 'beatmung',
+      nr: '1',
+      title: 'Beatmungsgerät & Check',
+      shortTag: 'Dräger Evita V500',
+      icon: 'bi-lungs-fill',
+      color: '#0284c7',
+      bgGrad: 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 55%, #e0f2fe 100%)',
+      borderColor: '#bae6fd',
+      image: 'assets/device-beatmung.jpg',
+      point1: 'Dichtigkeitsprüfung: Pre-Use Check (< 100 ml/min Leckage) vor Patientenkontakt',
+      qr1: `${normalizedBase}#/beatmung`,
+      point2: 'ZGV & Notfallbereitschaft: O₂/Druckluft 3,0–4,5 bar & Beatmungsbeutel am Bett',
+      qr2: `${normalizedBase}#/beatmung`
+    },
+    {
+      id: 'befeuchtung-invasiv',
+      nr: '2',
+      title: 'Aktive Befeuchtung (Invasiv)',
+      shortTag: 'MR850 / 37 °C',
+      icon: 'bi-droplet-half',
+      color: '#16a34a',
+      bgGrad: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 55%, #dcfce7 100%)',
+      borderColor: '#bbf7d0',
+      image: 'assets/device-befeuchtung.jpg',
+      point1: 'Sollwerte: 37 °C & 100 % r.F. (44 mg/L H₂O) am patientennahen Y-Stück',
+      qr1: `${normalizedBase}#/befeuchtung-invasiv`,
+      point2: 'Gefälle & Kondensatschutz: Kammer unter Bettniveau & beheizter Schlauch',
+      qr2: `${normalizedBase}#/befeuchtung-invasiv`
+    },
+    {
+      id: 'hfnc',
+      nr: '3',
+      title: 'High-Flow-Therapie (HFNC)',
+      shortTag: 'Airvo 2 / 50 L/min',
+      icon: 'bi-wind',
+      color: '#ea580c',
+      bgGrad: 'linear-gradient(135deg, #ffffff 0%, #fff7ed 55%, #ffedd5 100%)',
+      borderColor: '#fed7aa',
+      image: 'assets/device-hfnc.jpg',
+      point1: 'Flussrate & Prongs: 20–60 L/min Flow; Prongs max. 50 % der Nares ausfüllen',
+      qr1: `${normalizedBase}#/hfnc`,
+      point2: 'ROX-Index: Ziel ≥ 4,88 (Kritischer Alarmwert < 3,85: sofort Arzt rufen!)',
+      qr2: `${normalizedBase}#/hfnc`
+    }
+  ];
+
+  const rightTiles = [
+    {
+      id: 'arterie',
+      nr: '4',
+      title: 'Arterielles Drucksystem',
+      shortTag: '300 mmHg / Transducer',
+      icon: 'bi-activity',
+      color: '#dc2626',
+      bgGrad: 'linear-gradient(135deg, #ffffff 0%, #fff1f2 55%, #fee2e2 100%)',
+      borderColor: '#fecaca',
+      image: 'assets/device-arterie.jpg',
+      point1: 'Nullpunkt & Druckbeutel: 4. ICR Herzhöhe nullen & Manschette auf 300 mmHg',
+      qr1: `${normalizedBase}#/arterie`,
+      point2: 'Fast-Flush-Dämpfungstest: 1,5–2 Nachschwingungen & dicrote Kerbe prüfen',
+      qr2: `${normalizedBase}#/arterie`
+    },
+    {
+      id: 'evd',
+      nr: '5',
+      title: 'Externe Ventrikeldrainage (EVD)',
+      shortTag: 'Laser Tragus / ICP',
+      icon: 'bi-diagram-3-fill',
+      color: '#7c3aed',
+      bgGrad: 'linear-gradient(135deg, #ffffff 0%, #faf5ff 55%, #ede9fe 100%)',
+      borderColor: '#ddd6fe',
+      image: 'assets/device-evd.jpg',
+      point1: 'Laser-Nivellierung: Nullpunkt exakt auf Tragus / Foramen Monroi ausrichten',
+      qr1: `${normalizedBase}#/evd`,
+      point2: 'KLEMPFLICHT & ICP: Vor jeder Umlagerung zudrehen; ICP-Ziel 5–15 mmHg',
+      qr2: `${normalizedBase}#/evd`
+    },
+    {
+      id: 'checklist',
+      nr: '6',
+      title: 'Schicht-Sicherheits-Checkliste',
+      shortTag: 'ITS Monitoring & STK',
+      icon: 'bi-clipboard2-check-fill',
+      color: '#0891b2',
+      bgGrad: 'linear-gradient(135deg, #ffffff 0%, #ecfeff 55%, #cffafe 100%)',
+      borderColor: '#a5f3fc',
+      image: 'assets/pocket-icu-monitor.jpg',
+      point1: 'Schichtübergabe-Check: Alarmgrenzen, Tubuslage, Druckbeutel & Notstromnetz',
+      qr1: `${normalizedBase}#/quick-hub`,
+      point2: 'Bettplatz-Sicherheit: Absauganlage (-0,6 bar) & Notfallequipment verifizieren',
+      qr2: `${normalizedBase}#/quick-hub`
+    }
+  ];
+
+  const renderCard = (tile) => (
+    <div
+      key={tile.id}
+      className="a4-procedure-tile rounded-3 border p-2 position-relative shadow-2xs d-flex justify-content-between align-items-stretch mb-2"
+      style={{
+        background: tile.bgGrad,
+        borderColor: tile.borderColor,
+        borderLeft: `5px solid ${tile.color}`,
+        cursor: 'pointer',
+        minHeight: '112px',
+        transition: 'all 0.18s ease'
+      }}
+      onClick={() => {
+        if (tile.id === 'checklist') {
+          onSelectStandard('quick-hub');
+        } else {
+          onSelectStandard(tile.id);
+        }
+      }}
+      title={`Klicken zum Öffnen: ${tile.title}`}
+    >
+      {/* Left Section: Number + Title + The 2 Points (each with its QR code) */}
+      <div className="d-flex flex-column justify-content-between pe-1.5 min-w-0 flex-grow-1">
+        {/* Title Bar */}
+        <div className="d-flex align-items-center gap-1.5 mb-1.5 min-w-0">
+          <span
+            className="badge rounded-circle text-white d-flex align-items-center justify-content-center flex-shrink-0 fw-black shadow-2xs"
+            style={{
+              width: '24px',
+              height: '24px',
+              backgroundColor: tile.color,
+              fontSize: '0.8rem'
+            }}
+          >
+            {tile.nr}
+          </span>
+          <h6 className="fw-black text-dark mb-0 text-truncate" style={{ fontSize: '0.90rem', letterSpacing: '-0.2px' }}>
+            {tile.title} <span style={{ color: tile.color }}>&gt;</span>
+          </h6>
+        </div>
+
+        {/* Point 1: Text + Dedicated QR Code */}
+        <div
+          className="d-flex align-items-center justify-content-between p-1 px-1.5 rounded-2 mb-1"
+          style={{ backgroundColor: 'rgba(255, 255, 255, 0.88)', border: `1px solid ${tile.color}30` }}
+        >
+          <div className="d-flex align-items-start gap-1.5 pe-1.5 min-w-0">
+            <i className="bi bi-check-circle-fill flex-shrink-0" style={{ color: tile.color, fontSize: '0.8rem', marginTop: '1px' }}></i>
+            <span className="text-secondary fw-semibold a4-point-text" style={{ fontSize: '0.72rem', lineHeight: '1.25' }}>
+              {tile.point1}
+            </span>
+          </div>
+          <div className="d-flex flex-column align-items-center flex-shrink-0 bg-white p-0.5 rounded border shadow-2xs">
+            <QrCodeCanvas
+              value={tile.qr1}
+              size={36}
+              color={tile.color}
+            />
+            <span style={{ fontSize: '0.48rem', fontWeight: 700, color: tile.color, lineHeight: 1 }}>P1</span>
+          </div>
+        </div>
+
+        {/* Point 2: Text + Dedicated QR Code */}
+        <div
+          className="d-flex align-items-center justify-content-between p-1 px-1.5 rounded-2"
+          style={{ backgroundColor: 'rgba(255, 255, 255, 0.88)', border: `1px solid ${tile.color}30` }}
+        >
+          <div className="d-flex align-items-start gap-1.5 pe-1.5 min-w-0">
+            <i className="bi bi-check-circle-fill flex-shrink-0" style={{ color: tile.color, fontSize: '0.8rem', marginTop: '1px' }}></i>
+            <span className="text-secondary fw-semibold a4-point-text" style={{ fontSize: '0.72rem', lineHeight: '1.25' }}>
+              {tile.point2}
+            </span>
+          </div>
+          <div className="d-flex flex-column align-items-center flex-shrink-0 bg-white p-0.5 rounded border shadow-2xs">
+            <QrCodeCanvas
+              value={tile.qr2}
+              size={36}
+              color={tile.color}
+            />
+            <span style={{ fontSize: '0.48rem', fontWeight: 700, color: tile.color, lineHeight: 1 }}>P2</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Section: Clinical Equipment Picture (Zero Persons) */}
+      <div className="a4-device-thumb-col d-flex flex-column align-items-center justify-content-center flex-shrink-0 ps-1.5 border-start">
+        <div
+          className="rounded-3 overflow-hidden border shadow-2xs w-100 h-100 position-relative"
+          style={{ minHeight: '84px', backgroundColor: '#e2e8f0' }}
+        >
+          <img
+            src={tile.image}
+            alt={tile.title}
+            className="w-100 h-100 d-block"
+            style={{ objectFit: 'cover', objectPosition: 'center' }}
+          />
+          <div
+            className="position-absolute bottom-0 start-0 end-0 py-0.5 text-center text-white fw-bold a4-thumb-tag"
+            style={{ background: 'rgba(0, 0, 0, 0.58)', fontSize: '0.52rem', letterSpacing: '0.2px' }}
+          >
+            {tile.shortTag}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="a4-native-card mx-auto position-relative overflow-hidden" id="universal-card-a4-sheet">
-      <img
-        src="assets/universal-card-a4.jpg?v=20261026-10"
-        alt="Universitätsklinikum Frankfurt - Klinische Pflegestandards Universal-Pocketcard DIN A4"
-        className="w-100 h-auto d-block a4-card-main-img"
+    <div
+      className="a4-native-card mx-auto position-relative overflow-hidden"
+      id="universal-card-a4-sheet"
+      style={{
+        background: '#ffffff',
+        border: '1.5px solid #cbd5e1',
+        borderRadius: '16px',
+        boxShadow: '0 12px 32px rgba(0, 43, 71, 0.14)'
+      }}
+    >
+      {/* Background Clinic Campus Picture (Soft architectural watermark) */}
+      <div
+        className="position-absolute bottom-0 start-0 end-0 pointer-events-none"
+        style={{
+          height: '240px',
+          zIndex: 0,
+          opacity: 0.12,
+          overflow: 'hidden'
+        }}
+      >
+        <img
+          src="assets/clinic-campus-bg.jpg"
+          alt="Klinik-Campus"
+          className="w-100 h-100 d-block"
+          style={{ objectFit: 'cover', objectPosition: 'center 40%' }}
+        />
+        <div
+          className="position-absolute top-0 start-0 end-0 bottom-0"
+          style={{
+            background: 'linear-gradient(to top, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.95) 75%, #ffffff 100%)'
+          }}
+        />
+      </div>
+
+      {/* 6-Color Spectrum Ribbon */}
+      <div
+        style={{
+          height: '5px',
+          width: '100%',
+          position: 'relative',
+          zIndex: 1,
+          background: 'linear-gradient(90deg, #dc2626 0%, #16a34a 20%, #ea580c 40%, #7c3aed 60%, #0284c7 80%, #facc15 100%)'
+        }}
       />
 
-      {/* 1. Dekubitusprophylaxe Hotspot */}
+      {/* Header Bar */}
       <div
-        className="universal-card-hotspot"
-        style={{ left: '0.5%', top: '19.5%', width: '39.5%', height: '18.5%' }}
-        onClick={() => onSelectStandard('dekubitus')}
-        title="1. Dekubitusprophylaxe aufrufen"
-      />
+        className="px-3 px-md-4 py-2 d-flex flex-wrap align-items-center justify-content-between text-white gap-2 position-relative"
+        style={{
+          zIndex: 1,
+          background: 'linear-gradient(135deg, #001a2e 0%, #003354 45%, #0284c7 100%)',
+          borderBottom: '2px solid rgba(56, 189, 248, 0.45)'
+        }}
+      >
+        <div className="d-flex align-items-center gap-2.5">
+          <div
+            className="rounded p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0"
+            style={{
+              width: '36px',
+              height: '36px',
+              background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
+              boxShadow: '0 3px 10px rgba(56, 189, 248, 0.45)'
+            }}
+          >
+            <i className="bi bi-heart-pulse-fill fs-5"></i>
+          </div>
+          <div>
+            <div className="fw-black text-white text-uppercase" style={{ fontSize: '0.96rem', letterSpacing: '0.4px', lineHeight: 1.2 }}>
+              Klinische Intensivstandards &amp; Leitfäden
+            </div>
+            <div style={{ fontSize: '0.72rem', color: '#bae6fd', fontWeight: 500 }}>
+              Digitale Pflege-Pocketcard &bull; Evidenzbasierte Leitfäden &bull; DIN A4 Poster
+            </div>
+          </div>
+        </div>
 
-      {/* 2. Sturzprophylaxe Hotspot */}
-      <div
-        className="universal-card-hotspot"
-        style={{ left: '0.5%', top: '38.5%', width: '39.5%', height: '18.5%' }}
-        onClick={() => onSelectStandard('sturz')}
-        title="2. Sturzprophylaxe aufrufen"
-      />
+        <div className="d-flex align-items-center gap-1.5 ms-auto">
+          <span
+            className="badge rounded-pill fw-bold text-uppercase"
+            style={{
+              backgroundColor: 'rgba(56, 189, 248, 0.25)',
+              color: '#e0f2fe',
+              border: '1px solid rgba(56, 189, 248, 0.45)',
+              fontSize: '0.7rem',
+              padding: '4px 9px'
+            }}
+          >
+            <i className="bi bi-shield-check text-warning me-1"></i>QM-Geprüft 2026
+          </span>
+          <span
+            className="badge rounded-pill fw-bold text-uppercase"
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              color: '#ffffff',
+              border: '1px solid rgba(255, 255, 255, 0.35)',
+              fontSize: '0.7rem',
+              padding: '4px 9px'
+            }}
+          >
+            5 Intensivstandards + Checkliste
+          </span>
+        </div>
+      </div>
 
-      {/* 3. Schmerzmanagement Hotspot */}
+      {/* Sub-Header: Yellow Sticky Note + Center Banner + 4 Checkmarks */}
       <div
-        className="universal-card-hotspot"
-        style={{ left: '0.5%', top: '57.5%', width: '39.5%', height: '18.5%' }}
-        onClick={() => onSelectStandard('schmerz')}
-        title="3. Schmerzmanagement aufrufen"
-      />
+        className="px-3 py-2 d-flex flex-wrap align-items-center justify-content-between position-relative gap-2"
+        style={{
+          zIndex: 1,
+          background: 'linear-gradient(90deg, #f0f9ff 0%, #ffffff 50%, #f0fdf4 100%)',
+          borderBottom: '1.5px solid #cbd5e1'
+        }}
+      >
+        {/* Left: Yellow sticky note */}
+        <div className="a4-yellow-note shadow-sm">
+          <div className="a4-note-pin"><i className="bi bi-pin-angle-fill text-danger"></i></div>
+          <div className="fw-bold text-dark" style={{ lineHeight: 1.25 }}>
+            Wissen<br/>
+            Sicherheit<br/>
+            Qualität<br/>
+            <span style={{ fontSize: '0.72rem', fontWeight: 600 }}>in der Pflege</span>
+          </div>
+        </div>
 
-      {/* 4. Ernährungsmanagement Hotspot */}
-      <div
-        className="universal-card-hotspot"
-        style={{ left: '60.5%', top: '19.5%', width: '39.0%', height: '18.5%' }}
-        onClick={() => onSelectStandard('ernaehrung')}
-        title="4. Ernährungsmanagement aufrufen"
-      />
+        {/* Center: Title Banner */}
+        <div className="text-center flex-grow-1 px-2">
+          <h3 className="mb-0 fw-black text-uppercase" style={{ fontSize: 'clamp(1rem, 2.5vw, 1.32rem)', color: '#00273d', letterSpacing: '0.02em' }}>
+            Klinische Intensivstandards
+          </h3>
+          <div
+            className="text-uppercase fw-bold text-white d-inline-block px-3 py-0.5 rounded-pill shadow-sm mt-1"
+            style={{
+              background: 'linear-gradient(90deg, #dc2626 0%, #e11d48 50%, #b91c1c 100%)',
+              fontSize: '0.75rem',
+              letterSpacing: '0.04em'
+            }}
+          >
+            SOP – Schnellzugriff
+          </div>
+        </div>
 
-      {/* 5. ZVK Intensivpflege Hotspot */}
-      <div
-        className="universal-card-hotspot"
-        style={{ left: '60.5%', top: '38.5%', width: '39.0%', height: '18.5%' }}
-        onClick={() => onSelectStandard('zvk')}
-        title="5. ZVK Intensivpflege aufrufen"
-      />
+        {/* Right: 4 Checkmarks */}
+        <div className="text-start ps-2 d-none d-sm-block" style={{ fontSize: '0.72rem', lineHeight: 1.25 }}>
+          <div className="text-dark fw-bold"><i className="bi bi-check-lg text-primary me-1"></i> Aktuell</div>
+          <div className="text-dark fw-bold"><i className="bi bi-check-lg text-primary me-1"></i> Einfach</div>
+          <div className="text-dark fw-bold"><i className="bi bi-check-lg text-primary me-1"></i> Schnell</div>
+          <div className="text-dark fw-bold"><i className="bi bi-check-lg text-primary me-1"></i> Zuverlässig</div>
+        </div>
+      </div>
 
-      {/* 6. Isolation & Hygiene Hotspot */}
-      <div
-        className="universal-card-hotspot"
-        style={{ left: '60.5%', top: '57.5%', width: '39.0%', height: '18.5%' }}
-        onClick={() => onSelectStandard('isolation')}
-        title="6. Isolation & Hygiene aufrufen"
-      />
+      {/* Main 3-Column Body: Left 3 Cards | Center Phone Scanner | Right 3 Cards */}
+      <div className="p-2.5 p-md-3 position-relative" style={{ zIndex: 1 }}>
+        <div className="row g-2.5 align-items-center">
+          {/* Left Column (Standards 1, 2, 3) */}
+          <div className="col-12 col-md-5 col-lg-5 d-flex flex-column">
+            {leftTiles.map((t) => renderCard(t))}
+          </div>
 
-      {/* Center QR Scanner Hotspot */}
+          {/* Center Column: Iconic Smartphone Mockup with Large QR Code */}
+          <div className="col-12 col-md-2 col-lg-2 d-flex flex-column justify-content-center my-2 my-md-0 px-md-1">
+            <div
+              className="a4-center-phone-mockup mx-auto p-2 rounded-4 shadow-sm border position-relative d-flex flex-column align-items-center text-center w-100"
+              style={{
+                background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 50%, #f0f9ff 100%)',
+                borderColor: '#93c5fd',
+                maxWidth: '220px'
+              }}
+            >
+              {/* Phone Speaker Notch */}
+              <div
+                className="rounded-pill mb-1.5"
+                style={{ width: '38px', height: '4px', backgroundColor: '#94a3b8' }}
+              />
+
+              {/* Center Phone Screen Header */}
+              <div className="mb-1.5">
+                <span
+                  className="badge rounded-pill fw-bold text-uppercase px-2 py-0.5 shadow-2xs"
+                  style={{ background: 'linear-gradient(135deg, #001f3f 0%, #0284c7 100%)', color: '#ffffff', fontSize: '0.58rem', letterSpacing: '0.3px' }}
+                >
+                  <i className="bi bi-qr-code-scan me-1 text-warning"></i>SCAN-PORTAL
+                </span>
+              </div>
+
+              {/* Large Central QR Code */}
+              <div
+                className="p-1.5 bg-white rounded-3 border shadow-sm mb-1.5 position-relative"
+                style={{ borderColor: '#bae6fd' }}
+              >
+                <QrCodeCanvas
+                  value={portalUrl}
+                  size={120}
+                  color="#00273d"
+                />
+              </div>
+
+              {/* Action Pill Button: HIER SCANNEN */}
+              <button
+                type="button"
+                className="btn btn-primary rounded-pill w-100 py-1 px-2 fw-black text-uppercase shadow-sm d-flex align-items-center justify-content-center gap-1 mb-1 border-0"
+                style={{
+                  background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+                  fontSize: '0.74rem',
+                  letterSpacing: '0.3px'
+                }}
+                onClick={() => onSelectStandard('quick-hub')}
+              >
+                <i className="bi bi-camera-fill"></i>
+                <span>HIER SCANNEN</span>
+              </button>
+
+              <div className="fw-black text-dark" style={{ fontSize: '0.76rem', lineHeight: 1.2 }}>
+                Intensiv-Standards
+              </div>
+              <div className="text-secondary fw-semibold" style={{ fontSize: '0.62rem' }}>
+                Schnell &bull; Einfach &bull; Aktuell
+              </div>
+
+              <div className="mt-1 text-muted" style={{ fontSize: '0.58rem', lineHeight: 1.15 }}>
+                Kamera scannen für Simulatoren &amp; Checklisten
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column (Standards 4, 5, 6) */}
+          <div className="col-12 col-md-5 col-lg-5 d-flex flex-column">
+            {rightTiles.map((t) => renderCard(t))}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Quality Pillars Ribbon */}
       <div
-        className="universal-card-hotspot"
-        style={{ left: '40.5%', top: '23.5%', width: '19.0%', height: '36.0%', borderRadius: '16px' }}
-        onClick={() => onSelectStandard('quick-hub')}
-        title="QR-Code scannen oder antippen für Schnellzugriff"
-      />
+        className="px-3 py-1.5 d-flex flex-wrap align-items-center justify-content-center gap-2 position-relative"
+        style={{
+          zIndex: 1,
+          background: 'rgba(248, 250, 252, 0.92)',
+          borderTop: '1.5px solid #e2e8f0'
+        }}
+      >
+        <span className="badge rounded-pill bg-white text-secondary border px-2.5 py-1 shadow-2xs fw-bold" style={{ fontSize: '0.66rem' }}>
+          <i className="bi bi-check2-circle text-primary me-1"></i>Standardisiert
+        </span>
+        <span className="badge rounded-pill bg-white text-secondary border px-2.5 py-1 shadow-2xs fw-bold" style={{ fontSize: '0.66rem' }}>
+          <i className="bi bi-shield-check text-success me-1"></i>Patientensicherheit
+        </span>
+        <span className="badge rounded-pill bg-white text-secondary border px-2.5 py-1 shadow-2xs fw-bold" style={{ fontSize: '0.66rem' }}>
+          <i className="bi bi-people-fill text-warning me-1"></i>Qualität in der Pflege
+        </span>
+        <span className="badge rounded-pill bg-white text-secondary border px-2.5 py-1 shadow-2xs fw-bold" style={{ fontSize: '0.66rem' }}>
+          <i className="bi bi-lightbulb-fill text-warning me-1"></i>Wissensmanagement
+        </span>
+        <span className="badge rounded-pill bg-white text-secondary border px-2.5 py-1 shadow-2xs fw-bold" style={{ fontSize: '0.66rem' }}>
+          <i className="bi bi-gear-wide-connected text-primary me-1"></i>Aktuelle SOPs
+        </span>
+        <span className="badge rounded-pill bg-white text-secondary border px-2.5 py-1 shadow-2xs fw-bold" style={{ fontSize: '0.66rem' }}>
+          <i className="bi bi-book-fill text-danger me-1"></i>Immer verfügbar
+        </span>
+      </div>
+
+      {/* QM Footer Bar */}
+      <div
+        className="px-3 py-1.5 d-flex flex-wrap align-items-center justify-content-between text-muted position-relative"
+        style={{
+          zIndex: 1,
+          background: 'rgba(241, 245, 249, 0.95)',
+          borderTop: '1px solid #e2e8f0',
+          fontSize: '0.65rem'
+        }}
+      >
+        <div className="d-flex align-items-center gap-2">
+          <span><i className="bi bi-file-earmark-check-fill text-success me-1"></i>QM-Intensivdokumentation</span>
+          <span>&bull;</span>
+          <span>Evidenzbasierte Leitlinien &bull; Gültig 2026</span>
+        </div>
+        <div>
+          Gültig für alle operativen, internistischen &amp; interdisziplinären Intensivstationen (ITS)
+        </div>
+      </div>
     </div>
   );
 }
 
+// -------------------------------------------------------------
+// Component: UniversalCardView (U-Card Page)
+// -------------------------------------------------------------
 function UniversalCardView({ standards, onSelectStandard, showToast }) {
-  const [cardFormat, setCardFormat] = useState('atm'); // 'both' | 'a4' | 'atm'
+  const [cardFormat, setCardFormat] = useState('atm');
   const [isMobile, setIsMobile] = useState(
     typeof window !== 'undefined' ? window.innerWidth < 768 : false
   );
@@ -4102,20 +4560,20 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
   const effectiveFormat = isMobile ? 'atm' : cardFormat;
   const list = Object.values(standards);
+
   const cardUrl = (typeof window !== 'undefined' && window.location)
     ? `${window.location.origin}${window.location.pathname}#/quick-hub`
-    : 'https://umf-nursing-standards.web.app/#/quick-hub';
-  const shareTitle = 'Universitätsmedizin Frankfurt – Universal-Pocketcard (Pflegestandards & SOPs)';
-  const shareText = `Universitätsmedizin Frankfurt – Universal-Pocketcard (Pflegestandards & SOPs direkt öffnen): ${cardUrl}`;
+    : 'https://intensivpflege-standards.web.app/#/quick-hub';
+  const shareTitle = 'Intensivkompass Digital – Pocketcard für die Intensivpflege';
+  const shareText = `Intensivkompass Digital – Pocketcard für die Intensivpflege (Standards & SOPs direkt öffnen): ${cardUrl}`;
 
   const handleShareCard = async () => {
     if (navigator.share) {
       try {
-        // Attempt to share the ATM card image file along with text/URL if supported by device
         try {
-          const response = await fetch('assets/universal-card-umf.jpg');
+          const response = await fetch('assets/universal-card-12x8.jpg');
           const blob = await response.blob();
-          const file = new File([blob], 'UMF-Universal-Karte.jpg', { type: 'image/jpeg' });
+          const file = new File([blob], 'Intensivkompass-Digital-Pocketcard-12x8.jpg', { type: 'image/jpeg' });
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
               title: shareTitle,
@@ -4126,11 +4584,11 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
             return;
           }
         } catch (imgErr) {
-          // Fallback to URL/text share below
+          // Fallback to text/URL share below
         }
         await navigator.share({
           title: shareTitle,
-          text: 'Universitätsmedizin Frankfurt – Alle Pflege-Expertenstandards & SOPs:',
+          text: 'Intensivkompass Digital – Klinische Intensivstandards & SOPs:',
           url: cardUrl
         });
       } catch (err) {
@@ -4146,437 +4604,212 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
   const handleCopyShareLink = () => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(cardUrl).then(() => {
-        showToast('Link zur Universal-Karte in die Zwischenablage kopiert!');
+        showToast('Link zur Pocketcard in die Zwischenablage kopiert!');
       });
     } else {
       showToast('Link: ' + cardUrl);
     }
   };
 
-  // Synchronize active format class to document body for automatic Ctrl+P isolation
-  useEffect(() => {
-    const activeFmt = isMobile ? 'atm' : cardFormat;
-    document.body.classList.remove('active-format-a4', 'active-format-atm');
-    let dynStyle = document.getElementById('dynamic-card-page-style');
-    if (!dynStyle) {
-      dynStyle = document.createElement('style');
-      dynStyle.id = 'dynamic-card-page-style';
-      document.head.appendChild(dynStyle);
-    }
-    if (activeFmt === 'atm') {
-      document.body.classList.add('active-format-atm');
-      dynStyle.textContent = `@media print { @page { size: portrait; margin: 10mm; } }`;
-    } else {
-      document.body.classList.add('active-format-a4');
-      dynStyle.textContent = `@media print { @page { size: A4 landscape; margin: 10mm; } html, body { margin: 0 !important; padding: 0 !important; height: 190mm !important; max-height: 190mm !important; overflow: hidden !important; } }`;
-    }
-    return () => {
-      document.body.classList.remove('active-format-a4', 'active-format-atm', 'printing-a4', 'printing-atm');
-      const s = document.getElementById('dynamic-card-page-style');
-      if (s) s.remove();
-    };
-  }, [cardFormat, isMobile]);
-
-  // Guaranteed print isolation: Only the chosen card is sent to the printer
   const handlePrint = (format) => {
-    const targetFormat = isMobile ? 'atm' : (format || effectiveFormat);
-    const isAtm = targetFormat === 'atm';
-    document.body.classList.remove('printing-a4', 'printing-atm');
-    document.body.classList.add(isAtm ? 'printing-atm' : 'printing-a4');
-
-    let dynStyle = document.getElementById('dynamic-card-page-style');
-    if (!dynStyle) {
-      dynStyle = document.createElement('style');
-      dynStyle.id = 'dynamic-card-page-style';
-      document.head.appendChild(dynStyle);
-    }
+    const isAtm = (format || cardFormat) === 'atm';
+    document.body.classList.remove('printing-a4', 'printing-atm', 'active-format-a4', 'active-format-atm');
     if (isAtm) {
-      dynStyle.textContent = `@media print { @page { size: portrait; margin: 10mm; } }`;
+      document.body.classList.add('printing-atm', 'active-format-atm');
     } else {
-      dynStyle.textContent = `@media print { @page { size: A4 landscape; margin: 10mm; } html, body { margin: 0 !important; padding: 0 !important; height: 190mm !important; max-height: 190mm !important; overflow: hidden !important; } }`;
+      document.body.classList.add('printing-a4', 'active-format-a4');
     }
-
-    const cleanup = () => {
-      document.body.classList.remove('printing-a4', 'printing-atm');
-      window.removeEventListener('afterprint', cleanup);
-    };
-    window.addEventListener('afterprint', cleanup);
-    setTimeout(cleanup, 4000);
-
     window.print();
+    setTimeout(() => {
+      document.body.classList.remove('printing-a4', 'printing-atm');
+    }, 1000);
   };
 
-  const downloadCardImage = () => {
-    const a = document.createElement('a');
-    const isAtm = isMobile || cardFormat === 'atm';
-    a.href = isAtm ? 'assets/universal-card-12x8.jpg' : 'assets/universal-card-a4.jpg';
-    a.download = isAtm ? 'UMF-Universal-Pocketcard-12x8cm.jpg' : 'UMF-Universal-Pocketcard-A4.jpg';
-    a.click();
-    showToast(isAtm ? 'Universal-Pocketcard (12 × 8 cm) Bild heruntergeladen!' : 'Universal-Pocketcard A4 Bild heruntergeladen!');
-  };
-
-  const downloadPdf = (format = cardFormat) => {
-    const targetFormat = isMobile ? 'atm' : (format === 'both' ? 'a4' : format);
-    const isAtm = targetFormat === 'atm';
-    const elementId = isAtm ? 'universal-card-atm-printable' : 'universal-card-a4-sheet';
-    const element = document.getElementById(elementId) || document.getElementById('universal-card-a4-printable');
-    if (!element) {
-      handlePrint(targetFormat);
+  const downloadPdf = () => {
+    if (!window.html2pdf) {
+      handlePrint(effectiveFormat);
       return;
     }
-    showToast(isAtm ? 'Pocketcard-PDF (3× auf A4) wird erstellt...' : 'A4 Universal-Pocketcard PDF wird erstellt...');
-    if (window.html2pdf) {
-      const savedScrollX = window.scrollX || window.pageXOffset || 0;
-      const savedScrollY = window.scrollY || window.pageYOffset || 0;
-      window.scrollTo(0, 0);
-      const opt = {
-        margin: isAtm ? [6, 10, 6, 10] : [10, 10, 10, 10],
-        filename: isAtm ? 'UMF-Universal-Pocketcard-12x8cm.pdf' : 'UMF-Universal-Pocketcard-A4.pdf',
-        image: { type: 'jpeg', quality: 1.0 },
-        pagebreak: { mode: [] },
-        html2canvas: { scale: 3.0, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
-        jsPDF: {
-          unit: 'mm',
-          format: 'a4',
-          orientation: isAtm ? 'portrait' : 'landscape'
-        }
-      };
-      const worker = window.html2pdf().set(opt).from(element);
-      worker
-        .toContainer()
-        .then(() => {
-          if (worker.prop.overlay) {
-            worker.prop.overlay.style.cssText = isAtm
-              ? 'position:fixed !important;top:0px !important;left:0px !important;right:auto !important;bottom:auto !important;width:760px !important;height:auto !important;overflow:visible !important;opacity:0 !important;pointer-events:none !important;z-index:-9999 !important;background:#ffffff !important;'
-              : 'position:fixed !important;top:0px !important;left:0px !important;right:auto !important;bottom:auto !important;width:1108px !important;height:760px !important;overflow:hidden !important;opacity:0 !important;pointer-events:none !important;z-index:-9999 !important;background:#ffffff !important;';
-          }
-          if (worker.prop.container) {
-            worker.prop.container.style.margin = '0px';
-            worker.prop.container.style.left = '0px';
-            worker.prop.container.style.top = '0px';
-            if (isAtm) {
-              worker.prop.container.style.width = '760px';
-              worker.prop.container.style.maxWidth = '760px';
-              const clonedAtm = worker.prop.container.querySelector('#universal-card-atm-printable');
-              if (clonedAtm) {
-                clonedAtm.style.width = '760px';
-                clonedAtm.style.maxWidth = '760px';
-                clonedAtm.style.padding = '4px 0px';
-                clonedAtm.style.border = 'none';
-                clonedAtm.style.boxShadow = 'none';
-              }
-              const pdfOnlyElements = worker.prop.container.querySelectorAll('.atm-pdf-only');
-              pdfOnlyElements.forEach(el => {
-                el.style.display = 'block';
-              });
-              const cards = worker.prop.container.querySelectorAll('.universal-card-interactive-box.atm-size');
-              cards.forEach(c => {
-                c.style.width = '480px';
-                c.style.maxWidth = '480px';
-                c.style.height = '320px';
-                c.style.margin = '4px auto';
-                c.style.border = '1.5px dashed #004767';
-                c.style.borderRadius = '8px';
-                c.style.boxShadow = 'none';
-              });
-              const hints = worker.prop.container.querySelectorAll('.atm-cutout-hint');
-              hints.forEach(h => {
-                h.style.display = 'block';
-                h.style.fontSize = '10px';
-                h.style.textAlign = 'center';
-                h.style.color = '#64748b';
-                h.style.margin = '1px 0 4px 0';
-              });
-            } else {
-              // A4 Landscape Single Page Isolation with 1 cm (10mm) border
-              worker.prop.container.style.cssText = 'position:relative !important;top:0px !important;left:0px !important;right:auto !important;margin:0px !important;padding:0px !important;width:1108px !important;height:760px !important;max-height:760px !important;overflow:hidden !important;background:#ffffff !important;opacity:1 !important;visibility:visible !important;';
-              const clonedSheet = worker.prop.container.querySelector('#universal-card-a4-sheet') || worker.prop.container.querySelector('.a4-native-card') || worker.prop.container;
-              if (clonedSheet) {
-                clonedSheet.style.cssText = 'width:1108px !important;max-width:1108px !important;height:760px !important;max-height:760px !important;margin:0px !important;padding:0px !important;border:none !important;border-radius:0px !important;box-shadow:none !important;overflow:hidden !important;background:#ffffff !important;';
-              }
-              const img = worker.prop.container.querySelector('img.a4-card-main-img') || worker.prop.container.querySelector('img');
-              if (img) {
-                img.style.cssText = 'width:1108px !important;max-width:1108px !important;height:760px !important;max-height:760px !important;object-fit:contain !important;display:block !important;margin:0 auto !important;padding:0 !important;';
-              }
-              const hotspots = worker.prop.container.querySelectorAll('.universal-card-hotspot');
-              hotspots.forEach(h => { h.style.display = 'none'; });
-            }
-          }
-        })
-        .then(() => worker.toCanvas())
-        .then(() => worker.toPdf())
-        .then(() => worker.save())
-        .then(() => {
-          window.scrollTo(savedScrollX, savedScrollY);
-          showToast(isAtm ? 'Pocketcards-PDF (3× auf A4) erfolgreich heruntergeladen!' : 'A4 Universal-Pocketcard PDF erfolgreich heruntergeladen!');
-        })
-        .catch((err) => {
-          console.error('PDF error:', err);
-          window.scrollTo(savedScrollX, savedScrollY);
-          handlePrint(targetFormat);
-        });
-    } else {
-      handlePrint(targetFormat);
+    const isAtm = effectiveFormat === 'atm';
+    const targetId = isAtm ? 'universal-card-interactive-card' : 'universal-card-a4-sheet';
+    const element = document.getElementById(targetId);
+    if (!element) {
+      handlePrint(effectiveFormat);
+      return;
     }
+    showToast(isAtm ? 'Erstelle Intensivkompass Pocketcard PDF...' : 'Erstelle DIN A4 PDF...');
+    const opt = {
+      margin: isAtm ? [0, 0, 0, 0] : [6, 6, 6, 6],
+      filename: isAtm ? 'Intensivkompass_Digital_Pocketcard_12x8.pdf' : 'Klinische_Universal_A4_Uebersicht.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'mm', format: isAtm ? [120, 80] : 'a4', orientation: 'landscape' }
+    };
+    window.html2pdf().set(opt).from(element).save().then(() => {
+      showToast('PDF erfolgreich heruntergeladen!');
+    }).catch(() => {
+      handlePrint(effectiveFormat);
+    });
   };
 
   return (
-    <div className="py-2">
-      {/* Mobile Header Banner (SOP & Expertenstandards Schnellwahl – Exact match to requested banner) */}
-      <div className="d-block d-md-none mb-2.5 no-print" data-html2canvas-ignore="true">
-        <div
-          className="rounded-4 overflow-hidden shadow-sm"
-          style={{ border: '1px solid rgba(147, 197, 253, 0.7)' }}
-        >
-          <img
-            src="assets/qh-header-banner.jpg"
-            alt="SOP & Expertenstandards Schnellwahl – Universitätsmedizin Frankfurt"
-            className="w-100 d-block"
-            style={{ height: 'auto', objectFit: 'cover' }}
-          />
+    <div className="py-2 py-md-3">
+      {/* Quick Hub Header Bar (in mobile view of Universal Card) */}
+      <div
+        className="quick-hub-top-header p-3 mb-2.5 rounded-4 shadow-sm text-white d-block d-lg-none no-print"
+        style={{
+          background: 'linear-gradient(135deg, #001a2e 0%, #003354 45%, #0284c7 100%)',
+          border: '1.5px solid rgba(56, 189, 248, 0.35)'
+        }}
+      >
+        <div className="d-flex align-items-center gap-2.5">
+          <div
+            className="rounded-3 p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0"
+            style={{
+              width: '38px',
+              height: '38px',
+              background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
+              boxShadow: '0 2px 8px rgba(56, 189, 248, 0.4)'
+            }}
+          >
+            <i className="bi bi-heart-pulse-fill fs-5"></i>
+          </div>
+          <div>
+            <div className="d-flex align-items-center gap-1.5 mb-0.5">
+              <span
+                className="badge rounded-pill fw-bold text-uppercase"
+                style={{
+                  backgroundColor: 'rgba(56, 189, 248, 0.25)',
+                  color: '#e0f2fe',
+                  border: '1px solid rgba(56, 189, 248, 0.45)',
+                  fontSize: '0.65rem'
+                }}
+              >
+                <i className="bi bi-shield-check text-warning me-1"></i>QM-Geprüft 2026
+              </span>
+              <span
+                className="badge rounded-pill fw-bold text-uppercase d-none d-sm-inline-block"
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  color: '#ffffff',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  fontSize: '0.65rem'
+                }}
+              >
+                5 Intensiv-Standards
+              </span>
+            </div>
+            <h3 className="fw-black text-white mb-0" style={{ fontSize: 'clamp(1.05rem, 3.5vw, 1.45rem)', letterSpacing: '0.2px' }}>
+              Klinische Intensivstandards &amp; Leitfäden
+            </h3>
+          </div>
         </div>
       </div>
 
-      {/* Top Action Toolbar (Desktop only: hidden in mobile view) */}
-      <div className="universal-card-top-toolbar d-none d-md-flex flex-column flex-lg-row justify-content-between align-items-stretch align-items-lg-center mb-2 gap-2 no-print">
-        {/* Left: Back Button */}
-        <div className="d-flex justify-content-between align-items-center gap-2">
-          <a href="#/quick-hub" className="btn btn-outline-dark btn-sm rounded-pill px-3 py-1 shadow-sm d-flex align-items-center gap-2 fw-semibold" style={{ minHeight: '36px', fontSize: '0.8rem' }}>
-            <i className="bi bi-arrow-left"></i>
-            <span>Schnellwahl</span>
-          </a>
-        </div>
-
-        {/* Center: Format Selector Pills (Desktop only: hidden on mobile) */}
-        <div className="mobile-segmented-control mx-auto mx-lg-auto w-100 d-none d-md-flex" role="group" style={{ maxWidth: '460px', padding: '0.2rem' }}>
+      {/* Desktop Top Format Switcher & Actions */}
+      <div className="d-none d-lg-flex flex-row justify-content-between align-items-center mb-3 gap-2 no-print">
+        <div className="btn-group shadow-sm rounded-pill p-1 bg-white border" role="group">
           <button
             type="button"
-            className={`btn btn-sm ${effectiveFormat === 'atm' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            style={{ fontSize: '0.76rem', minHeight: '34px', padding: '0.2rem 0.5rem' }}
+            className={`btn btn-sm ${cardFormat === 'atm' ? 'btn-primary text-white shadow-sm fw-bold' : 'btn-light border-0 text-secondary'}`}
+            style={{ fontSize: '0.78rem', minHeight: '36px', padding: '0.3rem 0.85rem' }}
             onClick={() => setCardFormat('atm')}
-            title="Kompaktes Pocketcard-Format (12 × 8 cm)"
           >
-            <i className="bi bi-credit-card-2-front"></i>
-            <span className="d-none d-sm-inline">Pocketcard (12 &times; 8 cm)</span>
-            <span className="d-inline d-sm-none">12 &times; 8 cm</span>
+            <i className="bi bi-credit-card-2-front me-1"></i>
+            <span>Pocketcard (12 × 8 cm)</span>
           </button>
           <button
             type="button"
-            disabled={isMobile}
-            className={`btn btn-sm ${effectiveFormat === 'a4' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            style={{
-              fontSize: '0.76rem',
-              minHeight: '34px',
-              padding: '0.2rem 0.5rem',
-              opacity: isMobile ? 0.35 : 1,
-              cursor: isMobile ? 'not-allowed' : 'pointer'
-            }}
-            onClick={() => {
-              if (isMobile) {
-                showToast('A4-Format ist nur in der Desktop-Ansicht verfügbar');
-                return;
-              }
-              setCardFormat('a4');
-            }}
-            title={isMobile ? 'A4-Pocketcard ist nur in der Desktop-Ansicht verfügbar' : 'A4-Format für Stationsaushang und Dokumentenmappe'}
+            className={`btn btn-sm ${cardFormat === 'a4' ? 'btn-primary text-white shadow-sm fw-bold' : 'btn-light border-0 text-secondary'}`}
+            style={{ fontSize: '0.78rem', minHeight: '36px', padding: '0.3rem 0.85rem' }}
+            onClick={() => setCardFormat('a4')}
           >
-            <i className="bi bi-file-earmark-text"></i>
-            <span className="d-none d-sm-inline">A4-Pocketcard</span>
-            <span className="d-inline d-sm-none">A4-Karte</span>
-          </button>
-          <button
-            type="button"
-            disabled={isMobile}
-            className={`btn btn-sm ${effectiveFormat === 'both' ? 'btn-dark shadow-sm' : 'btn-light border-0 text-secondary'}`}
-            style={{
-              fontSize: '0.76rem',
-              minHeight: '34px',
-              padding: '0.2rem 0.5rem',
-              opacity: isMobile ? 0.35 : 1,
-              cursor: isMobile ? 'not-allowed' : 'pointer'
-            }}
-            onClick={() => {
-              if (isMobile) {
-                showToast('Seitenansicht ist nur in der Desktop-Ansicht verfügbar');
-                return;
-              }
-              setCardFormat('both');
-            }}
-            title={isMobile ? 'Seitenansicht ist nur in der Desktop-Ansicht verfügbar' : 'A4-Pocketcard und Scheckkarten-Format gleichzeitig anzeigen'}
-          >
-            <i className="bi bi-columns"></i>
-            <span className="d-none d-sm-inline">Beide Formate</span>
-            <span className="d-inline d-sm-none">Beide</span>
+            <i className="bi bi-file-earmark-text me-1"></i>
+            <span>DIN A4</span>
           </button>
         </div>
 
-        {/* Right: Symmetrical Action Buttons (Desktop only: hidden in mobile view) */}
-        <div className="universal-card-top-actions d-none d-md-flex align-items-center gap-1.5">
+        <div className="d-flex align-items-center gap-1.5">
           <button
-            className="btn btn-primary btn-sm rounded-pill px-2.5 py-1 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5"
+            className="btn btn-primary btn-sm rounded-pill px-3 py-1.5 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1"
             style={{ minHeight: '36px', fontSize: '0.78rem' }}
-            onClick={() => downloadPdf(isMobile ? 'atm' : (cardFormat === 'both' ? 'a4' : cardFormat))}
-            title="Universal-Pocketcard als PDF-Dokument herunterladen"
-          >
-            <i className="bi bi-file-earmark-arrow-down-fill"></i>
-            <span>PDF</span>
-          </button>
-          <button
-            className="btn btn-dark btn-sm rounded-pill px-2.5 py-1 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5"
-            style={{ minHeight: '36px', fontSize: '0.78rem' }}
-            onClick={() => handlePrint(isMobile ? 'atm' : (cardFormat === 'atm' ? 'atm' : 'a4'))}
-            title={isMobile || cardFormat === 'atm' ? 'Nur Pocketcard (12 × 8 cm) drucken' : 'Nur A4-Pocketcard drucken'}
+            onClick={() => handlePrint(cardFormat)}
           >
             <i className="bi bi-printer-fill"></i>
             <span>Drucken</span>
           </button>
           <button
-            className="btn btn-outline-secondary rounded-pill px-2.5 py-1 shadow-sm btn-sm fw-semibold d-flex align-items-center justify-content-center gap-1.5 bg-white"
+            className="btn btn-outline-secondary rounded-pill px-3 py-1.5 shadow-sm btn-sm fw-semibold d-flex align-items-center justify-content-center gap-1 bg-white"
             style={{ minHeight: '36px', fontSize: '0.78rem' }}
-            onClick={downloadCardImage}
-            title="Pocketcard als hochauflösendes Bild herunterladen"
+            onClick={downloadPdf}
           >
-            <i className="bi bi-image"></i>
-            <span>Bild</span>
+            <i className="bi bi-file-earmark-pdf"></i>
+            <span>PDF</span>
           </button>
           <button
-            className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-1 shadow-sm btn-sm d-none d-lg-flex align-items-center justify-content-center gap-1"
+            className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-1.5 shadow-sm btn-sm d-flex align-items-center justify-content-center gap-1"
             style={{ minHeight: '36px', fontSize: '0.78rem' }}
             onClick={() => onSelectStandard('quick-hub')}
-            title="Die Zielseite aller 6 Standards testen"
           >
             <i className="bi bi-box-arrow-up-right"></i>
-            <span>Zielseite</span>
+            <span>Hub</span>
           </button>
         </div>
       </div>
 
-      {/* Main Container */}
-      <div className="d-flex flex-column align-items-center justify-content-center my-1 gap-3">
-        {/* 1. THE A4-FORMAT UNIVERSAL POCKETCARD (Desktop Only) */}
-        {!isMobile && (effectiveFormat === 'a4' || effectiveFormat === 'both') && (
-          <div className="w-100 p-2 bg-white rounded-4 border shadow-sm d-none d-md-block" id="universal-card-a4-printable" style={{ maxWidth: '890px' }}>
-            <div
-              className="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center mb-2 px-3 py-2 rounded-3 gap-2 no-print shadow-sm"
-              data-html2canvas-ignore="true"
-              style={{
-                background: 'linear-gradient(135deg, #bae6fd 0%, #dbeafe 52%, #e0e7ff 100%)',
-                border: '1px solid #60a5fa'
-              }}
-            >
-              <div className="d-flex align-items-center gap-2 min-w-0">
-                <div className="bg-white p-1 rounded-2 shadow-sm d-flex align-items-center flex-shrink-0" style={{ border: '1px solid #93c5fd' }}>
-                  <img src="assets/umf-logo.jpg" alt="UMF" height="24" className="rounded" />
-                </div>
-                <div className="min-w-0">
-                  <h5 className="fw-bold mb-0 text-truncate" style={{ fontSize: '0.88rem', lineHeight: 1.2, color: '#00273d' }}>
-                    Universal-Pocketcard
-                  </h5>
-                  <div className="text-truncate" style={{ fontSize: '0.72rem', lineHeight: 1.15, color: '#0c4a6e' }}>
-                    Universitätsmedizin Frankfurt
-                  </div>
-                </div>
-              </div>
+      {/* Format Specification Hint Badge (Desktop only) */}
+      <div className="text-center no-print mb-2 d-none d-lg-block">
+        <div className="badge rounded-pill bg-white text-secondary border shadow-2xs px-3 py-1.5 fw-medium d-inline-flex align-items-center gap-1.5">
+          {effectiveFormat === 'atm' ? (
+            <>
+              <i className="bi bi-credit-card-2-front-fill text-primary"></i>
+              <span className="text-dark fw-bold">Intensivkompass Digital – Pocketcard (120 × 80 mm)</span>
+              <span className="text-muted d-none d-sm-inline">&bull; Doppelseitig laminiert &bull; Kitteltaschen-Standard &bull; Praxisnahe Themen</span>
+            </>
+          ) : (
+            <>
+              <i className="bi bi-file-earmark-pdf-fill text-danger"></i>
+              <span className="text-dark fw-bold">DIN A4 Gesamt-Übersicht (297 × 210 mm)</span>
+              <span className="text-muted d-none d-sm-inline">&bull; Evidenzbasierte Verfahrensanweisungen &bull; Stationsaushang</span>
+            </>
+          )}
+        </div>
+      </div>
 
-              <div className="d-flex flex-wrap align-items-center justify-content-between justify-content-md-end gap-2">
-                <div className="d-flex align-items-center gap-1">
-                  <span className="badge rounded-pill fw-semibold px-2 py-1" style={{ fontSize: '0.68rem', color: '#00273d', background: 'rgba(255,255,255,0.9)', border: '1px solid #93c5fd' }}>
-                    <i className="bi bi-aspect-ratio me-1 text-primary"></i> DIN A4
-                  </span>
-                  <span className="badge rounded-pill fw-semibold font-monospace px-2 py-1 text-dark" style={{ fontSize: '0.68rem', background: '#dcfce7', border: '1px solid #86efac' }}>
-                    <i className="bi bi-shield-check me-1 text-success"></i> QM-geprüft
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-warning text-dark rounded-pill px-3 py-1 shadow-sm fw-bold d-flex align-items-center gap-1 no-print ms-auto ms-md-0"
-                  style={{ fontSize: '0.75rem', minHeight: '34px' }}
-                  onClick={() => handlePrint('a4')}
-                  title="Nur die A4-Pocketcard drucken"
-                >
-                  <i className="bi bi-printer-fill"></i>
-                  <span>A4 drucken</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Render Crisp Native A4 Card */}
+      {/* Card Presentation */}
+      <div className="d-flex flex-column align-items-center justify-content-center my-2 gap-3">
+        {effectiveFormat === 'a4' ? (
+          <div className="w-100 p-1 p-sm-2 bg-white rounded-4 border shadow-sm" style={{ maxWidth: '940px' }} id="universal-card-a4-printable">
             <UniversalCardA4Native onSelectStandard={onSelectStandard} />
           </div>
-        )}
+        ) : (
+          <div className="w-100 p-2 p-sm-3.5 rounded-4 border shadow-sm d-flex flex-column align-items-center u-card-pedestal" style={{ maxWidth: '640px' }} id="universal-card-atm-printable">
+            <UniversalCardInteractiveCard isAtm={true} onSelectStandard={onSelectStandard} />
 
-        {/* 2. THE POCKETCARD / ATM-FORMAT (Always visible on mobile; on desktop visible for 'atm' or 'both') */}
-        {(isMobile || effectiveFormat === 'atm' || effectiveFormat === 'both') && (
-          <div className="w-100 p-3 p-md-4 bg-white rounded-4 border shadow-sm d-flex flex-column align-items-center" id="universal-card-atm-printable" style={{ maxWidth: '540px' }}>
-            {/* Header Row: Shown on Website, hidden in PDF & Print */}
-            <div className="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom w-100 gap-2 no-print" data-html2canvas-ignore="true">
-              <div className="d-flex align-items-center gap-2 min-w-0">
-                <div className="bg-light p-1 rounded-3 border d-flex align-items-center flex-shrink-0">
-                  <img src="assets/umf-logo.jpg" alt="UMF" height="26" className="rounded" />
-                </div>
-                <div className="min-w-0">
-                  <h5 className="fw-bold text-dark mb-0 text-truncate" style={{ fontSize: '0.92rem', lineHeight: 1.2 }}>
-                    Pocketcard
-                  </h5>
-                </div>
-              </div>
-
-              <span className="badge bg-warning bg-opacity-25 text-dark border border-warning px-2 py-1 rounded-pill small fw-bold flex-shrink-0" style={{ fontSize: '0.72rem' }}>
-                <i className="bi bi-credit-card-2-front me-1"></i> 12 &times; 8 cm
-              </span>
-            </div>
-
-            {/* Pocketcard 1 (Shown on Website, PDF & Print) */}
-            <div className="w-100 d-flex justify-content-center">
-              <UniversalCardInteractiveCard isAtm={true} onSelectStandard={onSelectStandard} />
-            </div>
-
-            {/* Print/PDF-only cutout guide 1 */}
-            <div className="atm-cutout-hint">
-              ✂️ Entlang der gestrichelten Linie ausschneiden (Format: 12 &times; 8 cm)
-            </div>
-
-            {/* Pocketcards 2 & 3: ONLY shown in PDF and Print (Hidden on Website) */}
-            <div className="atm-pdf-only w-100">
-              <div className="w-100 d-flex justify-content-center mt-3 mt-print-0">
-                <UniversalCardInteractiveCard isAtm={true} onSelectStandard={onSelectStandard} />
-              </div>
-              <div className="atm-cutout-hint">
-                ✂️ Entlang der gestrichelten Linie ausschneiden (Format: 12 &times; 8 cm)
-              </div>
-
-              <div className="w-100 d-flex justify-content-center mt-3 mt-print-0">
-                <UniversalCardInteractiveCard isAtm={true} onSelectStandard={onSelectStandard} />
-              </div>
-              <div className="atm-cutout-hint">
-                ✂️ Entlang der gestrichelten Linie ausschneiden (Format: 12 &times; 8 cm)
-              </div>
-            </div>
-
-            {/* Symmetrical Share & Action Buttons (No 'Karte teilen' header text) */}
-            <div className="w-100 mt-3 pt-3 border-top no-print" data-html2canvas-ignore="true">
+            {/* Symmetrical Share & Action Buttons: WhatsApp, Teilen, Link, PDF */}
+            <div className="w-100 mt-3 pt-2.5 border-top no-print" data-html2canvas-ignore="true">
               <div className="row g-2">
-                {/* WhatsApp Share */}
-                <div className="col-6 col-sm-4">
+                {/* WhatsApp Share Button */}
+                <div className="col-6 col-sm-3">
                   <a
                     href={`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn-sm rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2 text-white w-100"
-                    style={{ backgroundColor: '#25D366', borderColor: '#25D366', minHeight: '40px', fontSize: '0.82rem' }}
-                    title="Universal-Karte per WhatsApp teilen"
+                    className="btn btn-sm rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 text-white w-100 text-decoration-none"
+                    style={{ backgroundColor: '#25D366', borderColor: '#25D366', minHeight: '42px', fontSize: '0.82rem' }}
+                    title="Pocketcard per WhatsApp teilen"
                   >
-                    <i className="bi bi-whatsapp"></i>
+                    <i className="bi bi-whatsapp fs-6"></i>
                     <span>WhatsApp</span>
                   </a>
                 </div>
 
                 {/* Native Social Media / System Share */}
-                <div className="col-6 col-sm-4">
+                <div className="col-6 col-sm-3">
                   <button
                     type="button"
-                    className="btn btn-sm btn-primary rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2 w-100"
-                    style={{ backgroundColor: '#004767', borderColor: '#004767', minHeight: '40px', fontSize: '0.82rem' }}
+                    className="btn btn-sm btn-primary rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100"
+                    style={{ backgroundColor: '#004767', borderColor: '#004767', minHeight: '42px', fontSize: '0.82rem' }}
                     onClick={handleShareCard}
                     title="Über Social Media oder andere Apps teilen"
                   >
@@ -4586,323 +4819,332 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                 </div>
 
                 {/* Copy Link */}
-                <div className="col-6 col-sm-4">
+                <div className="col-6 col-sm-3">
                   <button
                     type="button"
-                    className="btn btn-sm btn-outline-dark rounded-pill py-2 px-2 fw-semibold shadow-sm d-flex align-items-center justify-content-center gap-1 bg-white w-100"
-                    style={{ minHeight: '40px', fontSize: '0.82rem' }}
+                    className="btn btn-sm btn-outline-dark rounded-pill py-2 px-2 fw-semibold shadow-sm d-flex align-items-center justify-content-center gap-1.5 bg-white w-100"
+                    style={{ minHeight: '42px', fontSize: '0.82rem' }}
                     onClick={handleCopyShareLink}
-                    title="Link kopieren"
+                    title="Link in die Zwischenablage kopieren"
                   >
-                    <i className="bi bi-link-45deg fs-6"></i>
+                    <i className="bi bi-link-45deg fs-5"></i>
                     <span>Link kopieren</span>
                   </button>
                 </div>
 
-                {/* Print ATM Card on Desktop / PDF Download on Mobile */}
-                <div className="col-6 col-sm-12">
-                  {/* Shown in Mobile View (< 768px): PDF Button replaces Drucken */}
+                {/* PDF Download */}
+                <div className="col-6 col-sm-3">
                   <button
                     type="button"
-                    className="btn btn-sm btn-primary rounded-pill py-2 px-3 shadow-sm fw-bold d-flex d-md-none align-items-center justify-content-center gap-2 w-100"
-                    style={{ minHeight: '40px', fontSize: '0.82rem' }}
+                    className="btn btn-sm btn-danger rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100"
+                    style={{ minHeight: '42px', fontSize: '0.82rem' }}
                     onClick={() => downloadPdf('atm')}
-                    title="Universal-Pocketcard als PDF-Dokument herunterladen"
+                    title="Pocketcard als PDF herunterladen"
                   >
-                    <i className="bi bi-file-earmark-arrow-down-fill"></i>
+                    <i className="bi bi-file-earmark-pdf-fill"></i>
                     <span>PDF</span>
-                  </button>
-
-                  {/* Shown in Desktop View (>= 768px): Print Button */}
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-dark rounded-pill py-2 px-3 shadow-sm fw-bold d-none d-md-flex align-items-center justify-content-center gap-2 w-100"
-                    style={{ minHeight: '40px', fontSize: '0.82rem' }}
-                    onClick={() => handlePrint('atm')}
-                    title="Nur die Scheckkarte drucken"
-                  >
-                    <i className="bi bi-printer-fill"></i>
-                    <span>Drucken</span>
                   </button>
                 </div>
               </div>
 
-              <div className="small text-muted text-center mt-2 pt-1" style={{ fontSize: '0.75rem' }}>
+              <div className="small text-muted text-center mt-2.5 pt-1" style={{ fontSize: '0.74rem' }}>
                 <i className="bi bi-check2-circle text-success me-1"></i>
-                Kompakt &bull; 100% scannbar
+                Pocketcard (12 × 8 cm) &bull; 100% scannbar &bull; Kitteltaschen-Standard
               </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* Direct Quick Tap Grid of the 5 Standards (Desktop only, hidden on mobile view) */}
+      <div className="mt-4 pt-3 border-top no-print d-none d-lg-block">
+        <h6 className="fw-bold text-dark mb-2.5 d-flex align-items-center gap-2">
+          <i className="bi bi-grid-fill text-primary"></i>
+          <span>Direktzugriff auf alle 5 Intensivstandards:</span>
+        </h6>
+        <div className="row g-2">
+          {list.map((std) => (
+            <div key={std.id} className="col-sm-6 col-lg">
+              <div
+                className="p-2.5 bg-white rounded-3 border shadow-2xs h-100 d-flex align-items-center justify-content-between gap-2 standard-tile-tap"
+                style={{
+                  cursor: 'pointer',
+                  borderLeft: `4px solid ${std.accentColor}`,
+                  transition: 'transform 0.15s ease, box-shadow 0.15s ease'
+                }}
+                onClick={() => onSelectStandard(std.id)}
+                title={`Klicken für: ${std.title}`}
+              >
+                <div className="d-flex align-items-center gap-2 min-w-0">
+                  <div
+                    className="rounded-circle d-flex align-items-center justify-content-center text-white flex-shrink-0"
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      backgroundColor: std.accentColor,
+                      boxShadow: `0 2px 6px ${std.accentColor}44`
+                    }}
+                  >
+                    <i className={`bi ${std.icon}`}></i>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="fw-bold small text-dark text-truncate" style={{ fontSize: '0.82rem' }}>
+                      {std.shortTitle}
+                    </div>
+                    <div className="text-secondary small text-truncate" style={{ fontSize: '0.68rem' }}>
+                      {std.version ? `Ver. ${std.version}` : 'Intensivstandard'}
+                    </div>
+                  </div>
+                </div>
+                <i className="bi bi-arrow-right-short text-muted fs-5"></i>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
 
-// Backward compatibility alias
-const MagicCardView = UniversalCardView;
-
 // -------------------------------------------------------------
-// Component: Quick Hub (Target Landing Page Opened by Magic Card Scan)
+// Component: QuickHubView (Target of Universal Card QR Code)
 // -------------------------------------------------------------
-function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
-  const orderedIds = ['dekubitus', 'sturz', 'schmerz', 'ernaehrung', 'zvk', 'isolation'];
+function QuickHubView({ standards, onSelectStandard, onLogout }) {
+  const orderedIds = ['beatmung', 'befeuchtung-invasiv', 'hfnc', 'arterie', 'evd'];
   const list = orderedIds
     .map((id) => standards[id])
     .filter(Boolean);
 
   const cardThemeMap = {
-    dekubitus: {
-      badgeText: 'EXPERTENSTANDARD',
-      badgeBg: '#fde8ef',
-      badgeColor: '#d81b60',
-      displayTitle: 'Dekubitusprophylaxe',
-      iconImg: 'assets/qh-icon-dekubitus.jpg',
-      rightImg: 'assets/qh-dekubitus.jpg',
-      cardBg: 'linear-gradient(135deg, #ffffff 0%, #fff1f6 55%, #fdf2f8 100%)',
-      cardBorder: '#fbcfe8',
-      cardShadow: 'rgba(190, 24, 93, 0.12)'
-    },
-    sturz: {
-      badgeText: 'EXPERTENSTANDARD',
-      badgeBg: '#e6f6e6',
-      badgeColor: '#2e7d32',
-      displayTitle: 'Sturzprophylaxe',
-      iconImg: 'assets/qh-icon-sturz.jpg',
-      rightImg: 'assets/qh-sturz.jpg',
-      cardBg: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 55%, #ecfdf5 100%)',
-      cardBorder: '#bbf7d0',
-      cardShadow: 'rgba(22, 163, 74, 0.12)'
-    },
-    schmerz: {
-      badgeText: 'EXPERTENSTANDARD',
-      badgeBg: '#fff0e5',
-      badgeColor: '#d9531e',
-      displayTitle: 'Schmerzmanagement',
-      iconImg: 'assets/qh-icon-schmerz.jpg',
-      rightImg: 'assets/qh-schmerz.jpg',
-      cardBg: 'linear-gradient(135deg, #ffffff 0%, #fff7ed 55%, #ffedd5 100%)',
-      cardBorder: '#fed7aa',
-      cardShadow: 'rgba(234, 88, 12, 0.12)'
-    },
-    ernaehrung: {
-      badgeText: 'EXPERTENSTANDARD',
-      badgeBg: '#e3f2fd',
-      badgeColor: '#0277bd',
-      displayTitle: 'Ernährungsmanagement',
-      iconImg: 'assets/qh-icon-ernaehrung.jpg',
-      rightImg: 'assets/qh-ernaehrung.jpg',
+    beatmung: {
+      badgeText: 'RESPIRATION & BEATMUNG',
+      badgeBg: '#e0f2fe',
+      badgeColor: '#0284c7',
+      displayTitle: '1. Beatmungsgerät & Gerätecheck',
+      rightImg: 'assets/card-beatmung.jpg',
+      icon: 'bi-lungs-fill',
       cardBg: 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 55%, #e0f2fe 100%)',
+      cardBgSolid: '#f0f9ff',
       cardBorder: '#bae6fd',
-      cardShadow: 'rgba(2, 132, 199, 0.12)'
+      cardShadow: 'rgba(2, 132, 199, 0.2)',
+      gradient: 'linear-gradient(135deg, #001f3f 0%, #0284c7 100%)'
     },
-    zvk: {
-      badgeText: 'SOP & LEITFADEN',
-      badgeBg: '#fde8ef',
-      badgeColor: '#d81b60',
-      displayTitle: 'ZVK Intensivpflege',
-      iconImg: 'assets/qh-icon-zvk.jpg',
-      rightImg: 'assets/qh-zvk.jpg',
-      cardBg: 'linear-gradient(135deg, #ffffff 0%, #fff1f2 55%, #ffe4e6 100%)',
-      cardBorder: '#fecdd3',
-      cardShadow: 'rgba(220, 38, 38, 0.12)'
+    'befeuchtung-invasiv': {
+      badgeText: 'INVASIVE BEATMUNG',
+      badgeBg: '#dcfce7',
+      badgeColor: '#16a34a',
+      displayTitle: '2. Aktive Befeuchtung (Invasiv)',
+      rightImg: 'assets/card-befeuchtung.jpg',
+      icon: 'bi-droplet-half',
+      cardBg: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 55%, #dcfce7 100%)',
+      cardBgSolid: '#f0fdf4',
+      cardBorder: '#bbf7d0',
+      cardShadow: 'rgba(22, 163, 74, 0.2)',
+      gradient: 'linear-gradient(135deg, #064e3b 0%, #16a34a 100%)'
     },
-    isolation: {
-      badgeText: 'SOP & LEITFADEN',
-      badgeBg: '#e0f4ff',
-      badgeColor: '#0277bd',
-      displayTitle: 'Isolation & Hygiene',
-      iconImg: 'assets/qh-icon-isolation.jpg',
-      rightImg: 'assets/qh-isolation.jpg',
+    hfnc: {
+      badgeText: 'HIGH-FLOW THERAPIE',
+      badgeBg: '#ffedd5',
+      badgeColor: '#ea580c',
+      displayTitle: '3. High-Flow (HFNC) & ROX',
+      rightImg: 'assets/card-hfnc.jpg',
+      icon: 'bi-wind',
+      cardBg: 'linear-gradient(135deg, #ffffff 0%, #fff7ed 55%, #ffedd5 100%)',
+      cardBgSolid: '#fff7ed',
+      cardBorder: '#fed7aa',
+      cardShadow: 'rgba(234, 88, 12, 0.2)',
+      gradient: 'linear-gradient(135deg, #431407 0%, #ea580c 100%)'
+    },
+    arterie: {
+      badgeText: 'HÄMODYNAMIK ITS',
+      badgeBg: '#fee2e2',
+      badgeColor: '#dc2626',
+      displayTitle: '4. Arterielles Drucksystem',
+      rightImg: 'assets/card-arterie.jpg',
+      icon: 'bi-activity',
+      cardBg: 'linear-gradient(135deg, #ffffff 0%, #fff1f2 55%, #fee2e2 100%)',
+      cardBgSolid: '#fff1f2',
+      cardBorder: '#fecaca',
+      cardShadow: 'rgba(220, 38, 38, 0.2)',
+      gradient: 'linear-gradient(135deg, #450a0a 0%, #dc2626 100%)'
+    },
+    evd: {
+      badgeText: 'NEURO-INTENSIV',
+      badgeBg: '#f3e8ff',
+      badgeColor: '#7c3aed',
+      displayTitle: '5. Externe Ventrikeldrainage (EVD)',
+      rightImg: 'assets/card-evd.jpg',
+      icon: 'bi-diagram-3-fill',
       cardBg: 'linear-gradient(135deg, #ffffff 0%, #faf5ff 55%, #f3e8ff 100%)',
-      cardBorder: '#e9d5ff',
-      cardShadow: 'rgba(124, 58, 237, 0.12)'
+      cardBgSolid: '#faf5ff',
+      cardBorder: '#ddd6fe',
+      cardShadow: 'rgba(124, 58, 237, 0.2)',
+      gradient: 'linear-gradient(135deg, #2e1065 0%, #7c3aed 100%)'
     }
   };
 
   return (
-    <div className="py-1 py-md-3 w-100">
-      {/* Mobile Header Banner (Exact match to uploaded Quick Hub design) */}
-      <div className="d-block d-md-none mb-2.5">
-        <div
-          className="rounded-4 overflow-hidden shadow-sm"
-          style={{ border: '1px solid rgba(147, 197, 253, 0.7)' }}
-        >
-          <img
-            src="assets/qh-header-banner.jpg"
-            alt="SOP & Expertenstandards Schnellwahl – Universitätsmedizin Frankfurt"
-            className="w-100 d-block"
-            style={{ height: 'auto', objectFit: 'cover' }}
-          />
-        </div>
-      </div>
-
-      {/* Desktop Header Banner */}
+    <div className="quick-hub-screen-container d-flex flex-column justify-content-between">
+      {/* Quick Hub Header Bar */}
       <div
-        className="d-none d-md-flex p-3 rounded-4 mb-3 shadow-sm flex-wrap justify-content-between align-items-center gap-2 position-relative overflow-hidden"
+        className="quick-hub-top-header p-3 mb-3 rounded-4 shadow-sm text-white"
         style={{
-          background: 'linear-gradient(135deg, #bae6fd 0%, #dbeafe 52%, #e0e7ff 100%)',
-          border: '1.5px solid #60a5fa',
-          minHeight: '86px'
+          background: 'linear-gradient(135deg, #001a2e 0%, #003354 45%, #0284c7 100%)',
+          border: '1.5px solid rgba(56, 189, 248, 0.35)'
         }}
       >
-        <div
-          className="position-absolute top-0 end-0 bottom-0 pointer-events-none"
-          style={{ width: '280px', zIndex: 0 }}
-        >
-          <img
-            src="assets/qh-header-right.jpg"
-            alt=""
-            className="w-100 h-100"
-            style={{ objectFit: 'cover', objectPosition: 'right center' }}
-          />
+        <div className="d-flex align-items-center gap-2.5">
           <div
-            className="position-absolute top-0 start-0 bottom-0"
+            className="rounded-3 p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0"
             style={{
-              width: '90px',
-              background: 'linear-gradient(90deg, #dbeafe 0%, rgba(219, 234, 254, 0) 100%)'
+              width: '38px',
+              height: '38px',
+              background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
+              boxShadow: '0 2px 8px rgba(56, 189, 248, 0.4)'
             }}
-          />
-        </div>
-
-        <div className="d-flex align-items-center gap-3 min-w-0 position-relative" style={{ zIndex: 1 }}>
-          <div className="bg-white px-2.5 py-1.5 rounded-3 shadow-sm d-flex align-items-center flex-shrink-0" style={{ border: '1px solid #bfdbfe' }}>
-            <img src="assets/umf-logo.jpg" alt="UMF" height="36" className="rounded" />
-          </div>
-          <div className="min-w-0">
-            <div className="fw-black text-uppercase text-truncate" style={{ fontSize: '1.08rem', color: '#00273d', lineHeight: 1.15, letterSpacing: '0.2px' }}>
-              SOP &amp; Expertenstandards Schnellwahl
-            </div>
-            <div className="fw-semibold text-truncate mt-0.5" style={{ fontSize: '0.84rem', color: '#0369a1' }}>
-              Universitätsmedizin Frankfurt
-            </div>
-          </div>
-        </div>
-
-        <div className="d-flex align-items-center gap-1.5 justify-content-end ms-auto position-relative" style={{ zIndex: 1 }}>
-          <button
-            type="button"
-            className="btn btn-sm btn-warning text-dark fw-bold rounded-pill px-3.5 py-2 shadow-sm d-flex align-items-center justify-content-center gap-1.5"
-            style={{ minHeight: '40px', fontSize: '0.82rem' }}
-            onClick={() => onSelectStandard('universal-karte')}
           >
-            <i className="bi bi-stars text-danger"></i>
-            <span>Universal-Karte</span>
-          </button>
+            <i className="bi bi-heart-pulse-fill fs-5"></i>
+          </div>
+          <div>
+            <div className="d-flex align-items-center gap-1.5 mb-0.5">
+              <span
+                className="badge rounded-pill fw-bold text-uppercase"
+                style={{
+                  backgroundColor: 'rgba(56, 189, 248, 0.25)',
+                  color: '#e0f2fe',
+                  border: '1px solid rgba(56, 189, 248, 0.45)',
+                  fontSize: '0.65rem'
+                }}
+              >
+                <i className="bi bi-shield-check text-warning me-1"></i>QM-Geprüft 2026
+              </span>
+              <span
+                className="badge rounded-pill fw-bold text-uppercase d-none d-sm-inline-block"
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                  color: '#ffffff',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  fontSize: '0.65rem'
+                }}
+              >
+                5 Intensiv-Standards
+              </span>
+            </div>
+            <h3 className="fw-black text-white mb-0" style={{ fontSize: 'clamp(1.05rem, 3.5vw, 1.45rem)', letterSpacing: '0.2px' }}>
+              Klinische Intensivstandards &amp; Leitfäden
+            </h3>
+          </div>
         </div>
       </div>
 
-      {/* 6 Illustrated Cards (Single-column stack on mobile matching screenshot, 2/3-col grid on desktop) */}
-      <div className="row g-2.5 g-md-3 justify-content-center">
+      {/* Cards List for All 5 Standards */}
+      <div className="quick-hub-cards-wrapper d-flex flex-column gap-2.5">
         {list.map((std) => {
           const theme = cardThemeMap[std.id] || {
-            badgeText: std.id === 'zvk' || std.id === 'isolation' ? 'SOP & LEITFADEN' : 'EXPERTENSTANDARD',
-            badgeBg: std.badgeBg || '#e0f2fe',
-            badgeColor: std.accentColor || '#0284c7',
-            displayTitle: std.shortTitle,
-            iconImg: `assets/qh-icon-${std.id}.jpg`,
-            rightImg: `assets/qh-${std.id}.jpg`
+            badgeText: 'INTENSIV-STANDARD',
+            badgeBg: '#e0f2fe',
+            badgeColor: '#0284c7',
+            displayTitle: std.title,
+            rightImg: std.image,
+            icon: std.icon,
+            cardBg: '#ffffff',
+            cardBgSolid: '#ffffff',
+            cardBorder: '#bae6fd',
+            cardShadow: 'rgba(0, 0, 0, 0.05)',
+            gradient: '#0284c7'
           };
 
           return (
-            <div key={std.id} className="col-12 col-md-6 col-xl-4">
+            <div
+              key={std.id}
+              className="quick-hub-label-card rounded-4 d-flex align-items-center justify-content-between position-relative overflow-hidden mb-1"
+              style={{
+                cursor: 'pointer',
+                background: theme.cardBg,
+                border: `1.5px solid ${theme.cardBorder}`,
+                borderLeft: `6px solid ${theme.badgeColor}`,
+                boxShadow: `0 6px 20px -3px ${theme.cardShadow}`,
+                minHeight: '88px',
+                padding: '0.85rem 1.15rem',
+                transition: 'all 0.22s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}
+              onClick={() => onSelectStandard(std.id)}
+              title={`Klicken zum Öffnen: ${theme.displayTitle}`}
+            >
+              {/* Right-Hand Clinical Illustration with smooth gradient fade */}
               <div
-                className="quick-hub-label-card rounded-4 h-100 d-flex align-items-center position-relative overflow-hidden"
-                onClick={() => onSelectStandard(std.id)}
+                className="position-absolute top-0 end-0 bottom-0 pointer-events-none"
                 style={{
-                  cursor: 'pointer',
-                  background: theme.cardBg || '#ffffff',
-                  border: `1.5px solid ${theme.cardBorder || 'rgba(226, 232, 240, 0.9)'}`,
-                  boxShadow: `0 4px 18px ${theme.cardShadow || 'rgba(15, 23, 42, 0.06)'}`,
-                  minHeight: '94px',
-                  padding: '0.75rem 0.85rem',
-                  transition: 'all 0.22s cubic-bezier(0.4, 0, 0.2, 1)'
+                  width: '46%',
+                  zIndex: 1,
+                  overflow: 'hidden'
                 }}
               >
-                {/* Right-hand clinical illustration + pastel wave + chevron from design */}
-                <div
-                  className="position-absolute top-0 end-0 bottom-0 pointer-events-none"
+                <img
+                  src={theme.rightImg}
+                  alt={theme.displayTitle}
+                  className="w-100 h-100 d-block"
                   style={{
-                    width: '47%',
-                    zIndex: 1
+                    objectFit: 'cover',
+                    objectPosition: 'center 40%'
+                  }}
+                />
+                {/* Smooth blend from solid card color into the image */}
+                <div
+                  className="position-absolute top-0 start-0 bottom-0"
+                  style={{
+                    width: '60%',
+                    background: `linear-gradient(90deg, ${theme.cardBgSolid} 0%, ${theme.cardBgSolid}e6 30%, transparent 100%)`
+                  }}
+                />
+              </div>
+
+              {/* Left Side: Icon + Title + Category Pill */}
+              <div className="d-flex align-items-center gap-3 min-w-0 position-relative pe-2" style={{ zIndex: 2, maxWidth: '78%' }}>
+                <div
+                  className="quick-hub-icon-box rounded-3 d-flex align-items-center justify-content-center text-white flex-shrink-0 shadow-sm"
+                  style={{
+                    width: '52px',
+                    height: '52px',
+                    background: theme.gradient,
+                    boxShadow: `0 4px 14px ${theme.badgeColor}55`
                   }}
                 >
-                  <img
-                    src={theme.rightImg}
-                    alt=""
-                    className="w-100 h-100 d-block"
-                    style={{
-                      objectFit: 'cover',
-                      objectPosition: 'right center'
-                    }}
-                  />
-                  {/* Smooth gradient blend into the white card background on the left */}
-                  <div
-                    className="position-absolute top-0 start-0 bottom-0"
-                    style={{
-                      width: '34%',
-                      background: 'linear-gradient(90deg, #ffffff 0%, rgba(255,255,255,0.82) 45%, rgba(255,255,255,0) 100%)'
-                    }}
-                  />
+                  <i className={`bi ${theme.icon} fs-3`}></i>
                 </div>
 
-                {/* Left Rounded Gradient Icon */}
-                <div
-                  className="flex-shrink-0 me-3 position-relative"
-                  style={{ zIndex: 2 }}
-                >
-                  <img
-                    src={theme.iconImg}
-                    alt={theme.displayTitle}
-                    style={{
-                      width: '56px',
-                      height: '56px',
-                      borderRadius: '14px',
-                      objectFit: 'cover',
-                      display: 'block'
-                    }}
-                  />
-                </div>
-
-                {/* Center Badge, Title */}
-                <div
-                  className="flex-grow-1 min-w-0 position-relative pe-5"
-                  style={{ zIndex: 2 }}
-                >
+                <div className="min-w-0">
                   <span
-                    className="badge rounded-pill text-uppercase fw-extrabold mb-1 d-inline-block"
+                    className="badge rounded-pill fw-bold text-uppercase mb-1 d-inline-block shadow-2xs"
                     style={{
-                      fontSize: '0.64rem',
-                      letterSpacing: '0.3px',
-                      padding: '0.26rem 0.6rem',
                       backgroundColor: theme.badgeBg,
-                      color: theme.badgeColor
+                      color: theme.badgeColor,
+                      fontSize: '0.64rem',
+                      letterSpacing: '0.4px',
+                      padding: '3.5px 9px',
+                      border: `1px solid ${theme.cardBorder}`
                     }}
                   >
                     {theme.badgeText}
                   </span>
-                  <h5
-                    className="fw-extrabold mb-0 text-truncate"
-                    style={{
-                      fontSize: '1.06rem',
-                      color: '#0c1e35',
-                      lineHeight: 1.2,
-                      fontWeight: 800
-                    }}
-                  >
+                  <h5 className="fw-black text-dark mb-0 text-truncate" style={{ fontSize: 'clamp(0.96rem, 2.7vw, 1.2rem)', letterSpacing: '-0.2px' }}>
                     {theme.displayTitle}
                   </h5>
-                  <div
-                    className="text-truncate mt-1"
-                    style={{
-                      fontSize: '0.75rem',
-                      color: '#4b5563',
-                      fontWeight: 500
-                    }}
-                  >
-                    Pflegedirektion &bull; Evidenzbasiert
-                  </div>
                 </div>
+              </div>
+
+              {/* Right Side: Round White Chevron / Arrow Indicator */}
+              <div
+                className="quick-hub-arrow-btn rounded-circle d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0 position-relative"
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  backgroundColor: theme.badgeColor,
+                  zIndex: 2,
+                  boxShadow: `0 3px 10px ${theme.badgeColor}66`
+                }}
+              >
+                <i className="bi bi-arrow-right-short fs-4"></i>
               </div>
             </div>
           );
@@ -4912,10 +5154,11 @@ function QuickHubView({ standards, onSelectStandard, onOpenScanner }) {
   );
 }
 
-// Mount into DOM
+// -------------------------------------------------------------
+// Application Bootstrap & Mounting
+// -------------------------------------------------------------
 const rootElement = document.getElementById('root');
 if (rootElement) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(<App />);
 }
-
