@@ -2944,30 +2944,53 @@ function exportStandardA4Pdf(std, showToast) {
 
   if (showToast) showToast(`Erstelle DIN A4 PDF für ${std.shortTitle}...`);
 
-  // Unhide print sheet so html2canvas can capture it
+  // Unhide print sheet and set explicit A4 dimensions (794px = 210mm at 96dpi)
   const prevDisplay = printSheet.style.display;
+  const prevWidth = printSheet.style.width;
+  const prevMaxWidth = printSheet.style.maxWidth;
+  const prevPosition = printSheet.style.position;
+
   printSheet.style.display = 'block';
+  printSheet.style.width = '794px';
+  printSheet.style.maxWidth = '794px';
+  printSheet.style.position = 'relative';
 
   const opt = {
     margin: [0, 0, 0, 0],
     filename: `Intensivstandard_${std.shortTitle}_DIN_A4.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true, logging: false },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      windowWidth: 794,
+      scrollX: 0,
+      scrollY: 0
+    },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    pagebreak: { mode: ['css', 'legacy'], avoid: ['.a4-std-page'] }
+    pagebreak: { mode: ['css', 'legacy'] }
   };
 
   if (window.html2pdf) {
     window.html2pdf().set(opt).from(printSheet).save().then(() => {
       printSheet.style.display = prevDisplay;
+      printSheet.style.width = prevWidth;
+      printSheet.style.maxWidth = prevMaxWidth;
+      printSheet.style.position = prevPosition;
       if (showToast) showToast('PDF erfolgreich heruntergeladen!');
     }).catch((err) => {
       printSheet.style.display = prevDisplay;
+      printSheet.style.width = prevWidth;
+      printSheet.style.maxWidth = prevMaxWidth;
+      printSheet.style.position = prevPosition;
       console.error('PDF error:', err);
       window.print();
     });
   } else {
     printSheet.style.display = prevDisplay;
+    printSheet.style.width = prevWidth;
+    printSheet.style.maxWidth = prevMaxWidth;
+    printSheet.style.position = prevPosition;
     window.print();
   }
 }
@@ -3139,6 +3162,9 @@ function StandardA4PrintSheet({ standard }) {
           </div>
         </div>
       </div>
+
+      {/* Explicit Page Break for HTML2PDF & Print */}
+      <div className="html2pdf__page-break" style={{ pageBreakAfter: 'always', breakAfter: 'page' }}></div>
 
       {/* PAGE 2: SICHERHEITS-CHECKLISTE, RICHTWERTE, TROUBLESHOOTING & QM-FREIGABE */}
       <div className="a4-std-page a4-std-page-2" id={`pocketcard-a4-page2-${standard.id}`}>
@@ -3744,45 +3770,53 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
       />
 
       {/* 2. STANDARD-SPECIFIC INTERACTIVE DIAGNOSTIC / SIMULATOR TOOL */}
-      {standard.id === 'beatmung' && (
-        <VentilatorCircuitComponent standard={standard} />
-      )}
+      <div className="no-print">
+        {standard.id === 'beatmung' && (
+          <VentilatorCircuitComponent standard={standard} />
+        )}
 
-      {standard.id === 'befeuchtung-invasiv' && (
-        <HumidifierComponent standard={standard} />
-      )}
+        {standard.id === 'befeuchtung-invasiv' && (
+          <HumidifierComponent standard={standard} />
+        )}
 
-      {standard.id === 'hfnc' && (
-        <RoxIndexCalculatorComponent standard={standard} />
-      )}
+        {standard.id === 'hfnc' && (
+          <RoxIndexCalculatorComponent standard={standard} />
+        )}
 
-      {standard.id === 'arterie' && (
-        <ArterialWaveformComponent standard={standard} />
-      )}
+        {standard.id === 'arterie' && (
+          <ArterialWaveformComponent standard={standard} />
+        )}
 
-      {standard.id === 'evd' && (
-        <EvdLevelingComponent standard={standard} />
-      )}
+        {standard.id === 'evd' && (
+          <EvdLevelingComponent standard={standard} />
+        )}
+      </div>
 
       {/* 3. INTERACTIVE SHIFT SAFETY CHECKLIST */}
-      <ShiftChecklistSection
-        checklist={standard.checklist}
-        standardTitle={standard.shortTitle}
-        accentColor={standard.accentColor}
-        standardId={standard.id}
-      />
+      <div className="no-print">
+        <ShiftChecklistSection
+          checklist={standard.checklist}
+          standardTitle={standard.shortTitle}
+          accentColor={standard.accentColor}
+          standardId={standard.id}
+        />
+      </div>
 
       {/* 4. CLINICAL REFERENCE PARAMETERS */}
-      <ClinicalParametersTable
-        parameters={standard.parameters}
-        accentColor={standard.accentColor}
-      />
+      <div className="no-print">
+        <ClinicalParametersTable
+          parameters={standard.parameters}
+          accentColor={standard.accentColor}
+        />
+      </div>
 
       {/* 5. TROUBLESHOOTING & ALARM GUIDE */}
-      <TroubleshootingSection
-        troubleshooting={standard.troubleshooting}
-        accentColor={standard.accentColor}
-      />
+      <div className="no-print">
+        <TroubleshootingSection
+          troubleshooting={standard.troubleshooting}
+          accentColor={standard.accentColor}
+        />
+      </div>
 
       {/* 6. STRUCTURED HANDLUNGSSCHRITTE IM PFLEGEPROZESS */}
       <div className="card border shadow-sm rounded-4 p-3 p-sm-4 bg-white mb-4 no-print" style={{ borderColor: `${standard.accentColor}35` }}>
@@ -4610,16 +4644,32 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
   const handlePrint = (format) => {
     const isAtm = (format || cardFormat) === 'atm';
+
+    // Inject dynamic @page style so browser uses exact orientation & margin
+    const existing = document.getElementById('dynamic-print-page-style');
+    if (existing) existing.remove();
+
+    const style = document.createElement('style');
+    style.id = 'dynamic-print-page-style';
+    style.innerHTML = isAtm
+      ? '@page { size: 120mm 80mm; margin: 0; }'
+      : '@page { size: A4 landscape; margin: 8mm; }';
+    document.head.appendChild(style);
+
     document.body.classList.remove('printing-a4', 'printing-atm', 'active-format-a4', 'active-format-atm');
     if (isAtm) {
       document.body.classList.add('printing-atm', 'active-format-atm');
     } else {
       document.body.classList.add('printing-a4', 'active-format-a4');
     }
+
     window.print();
+
     setTimeout(() => {
       document.body.classList.remove('printing-a4', 'printing-atm');
-    }, 1000);
+      const s = document.getElementById('dynamic-print-page-style');
+      if (s) s.remove();
+    }, 1500);
   };
 
   const downloadPdf = () => {
@@ -4635,16 +4685,46 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
       return;
     }
     showToast(isAtm ? 'Erstelle Intensivkompass Pocketcard PDF...' : 'Erstelle DIN A4 PDF...');
+
+    // Save previous dimensions to restore after export
+    const prevWidth = element.style.width;
+    const prevMaxWidth = element.style.maxWidth;
+    const prevHeight = element.style.height;
+
+    if (!isAtm) {
+      element.style.width = '1123px';
+      element.style.maxWidth = '1123px';
+      element.style.height = '794px';
+    }
+
     const opt = {
-      margin: isAtm ? [0, 0, 0, 0] : [6, 6, 6, 6],
+      margin: isAtm ? [0, 0, 0, 0] : [5, 5, 5, 5],
       filename: isAtm ? 'Intensivkompass_Digital_Pocketcard_12x8.pdf' : 'Klinische_Universal_A4_Uebersicht.pdf',
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        windowWidth: isAtm ? 800 : 1123,
+        scrollX: 0,
+        scrollY: 0
+      },
       jsPDF: { unit: 'mm', format: isAtm ? [120, 80] : 'a4', orientation: 'landscape' }
     };
+
     window.html2pdf().set(opt).from(element).save().then(() => {
+      if (!isAtm) {
+        element.style.width = prevWidth;
+        element.style.maxWidth = prevMaxWidth;
+        element.style.height = prevHeight;
+      }
       showToast('PDF erfolgreich heruntergeladen!');
     }).catch(() => {
+      if (!isAtm) {
+        element.style.width = prevWidth;
+        element.style.maxWidth = prevMaxWidth;
+        element.style.height = prevHeight;
+      }
       handlePrint(effectiveFormat);
     });
   };

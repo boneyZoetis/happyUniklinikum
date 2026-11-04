@@ -945,45 +945,7 @@ body {
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* =========================================================
-   PERFECT PRINT / PDF EXPORT STYLING (A4 / A5 POCKETCARD)
-   ========================================================= */
-@media print {
-  @page {
-    size: portrait;
-    margin: 8mm;
-  }
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  body {
-    background-color: #ffffff !important;
-    color: #000000 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-  .navbar-custom, .hospital-banner, button, .no-print, .no-print-area, footer {
-    display: none !important;
-  }
-  iframe {
-    display: none !important;
-  }
-  .print-only-preview {
-    display: block !important;
-  }
-  .pocketcard-printable-view {
-    border: 2px solid #004767 !important;
-    border-radius: 0.75rem !important;
-    box-shadow: none !important;
-    margin: 0 0 15mm 0 !important;
-    page-break-after: always;
-    page-break-inside: avoid;
-  }
-  .page-break {
-    page-break-after: always;
-  }
-}
+/* Note: Clean unified @media print styles are configured in the dedicated print section at the bottom of stylesheet */
 
 .print-only-preview {
   display: none !important;
@@ -2282,9 +2244,11 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
    ========================================================= */
 .pocketcard-a4-print-sheet {
   display: none;
-  width: 100%;
+  width: 794px;
+  max-width: 794px;
   margin: 0 auto;
   color: #0f172a;
+  background-color: #ffffff;
   font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -2293,16 +2257,37 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   flex-direction: column;
   justify-content: space-between;
   background-color: #ffffff;
-  border: 2px solid #004767;
-  border-radius: 10px;
+  border: 1.5px solid #004767;
+  border-radius: 8px;
   overflow: hidden;
-  width: 733px;
-  max-width: 733px;
-  height: 1048px;
-  max-height: 1048px;
+  width: 794px;
+  max-width: 794px;
+  height: 1118px;
+  min-height: 1118px;
+  max-height: 1118px;
   margin: 0 auto;
+  padding: 0;
   box-sizing: border-box;
   color: #0f172a;
+  position: relative;
+}
+
+.a4-std-page-1 {
+  page-break-after: always;
+  break-after: page;
+}
+
+.a4-std-page-2 {
+  page-break-after: auto;
+  break-after: auto;
+}
+
+.html2pdf__page-break {
+  height: 0;
+  margin: 0;
+  padding: 0;
+  page-break-after: always !important;
+  break-after: page !important;
 }
 
 /* Fix html2pdf internal overlay/container coordinates so PDF never shifts or clips */
@@ -2312,7 +2297,7 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   left: 0 !important;
   right: auto !important;
   bottom: auto !important;
-  width: 740px !important;
+  width: 794px !important;
   height: auto !important;
   overflow: visible !important;
   opacity: 0 !important;
@@ -2327,7 +2312,7 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   right: auto !important;
   margin: 0 !important;
   padding: 0 !important;
-  width: 733px !important;
+  width: 794px !important;
   background-color: #ffffff !important;
 }
 
@@ -2489,13 +2474,18 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   .hospital-banner,
   .mobile-bottom-nav,
   .mobile-transparent-footer,
+  .modern-footer,
+  footer,
   button:not(.a4-scan-cta-btn),
   .btn:not(.a4-scan-cta-btn),
+  .btn-all-kacheln,
+  .quick-switcher-bar,
   .no-print,
   .no-print-area,
-  footer,
   .mobile-segmented-control,
-  .pocketcard-screen-view {
+  .pocketcard-screen-view,
+  #section-shift-checklist,
+  .html2pdf__page-break {
     display: none !important;
   }
 
@@ -2514,13 +2504,17 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     justify-content: space-between !important;
     width: 194mm !important;
     max-width: 194mm !important;
-    height: 277mm !important;
-    max-height: 277mm !important;
+    height: 275mm !important;
+    max-height: 275mm !important;
     margin: 0 auto !important;
+    padding: 0 !important;
     box-shadow: none !important;
+    border: 1.5px solid #004767 !important;
+    border-radius: 8px !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     box-sizing: border-box !important;
+    overflow: hidden !important;
   }
 
   .a4-std-page-1 {
@@ -2551,7 +2545,7 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     display: none !important;
   }
 
-  /* --- 1. Universal-Karte A4 Print Mode Isolation (Full Page DIN A4 Landscape with 1 cm / 10 mm border) --- */
+  /* --- 1. Universal-Karte A4 Print Mode Isolation (Full Page DIN A4 Landscape) --- */
   body.printing-a4 #universal-card-atm-printable,
   body.active-format-a4:not(.printing-atm) #universal-card-atm-printable {
     display: none !important;
@@ -2562,18 +2556,18 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     margin: 0 !important;
     padding: 0 !important;
     background: #ffffff !important;
-    height: 190mm !important;
-    max-height: 190mm !important;
+    height: 194mm !important;
+    max-height: 194mm !important;
     overflow: hidden !important;
   }
 
   body.printing-a4 #universal-card-a4-printable,
   body.active-format-a4:not(.printing-atm) #universal-card-a4-printable {
     display: block !important;
-    width: 277mm !important;
-    max-width: 277mm !important;
-    height: 190mm !important;
-    max-height: 190mm !important;
+    width: 281mm !important;
+    max-width: 281mm !important;
+    height: 194mm !important;
+    max-height: 194mm !important;
     margin: 0 auto !important;
     padding: 0 !important;
     border: none !important;
@@ -2591,13 +2585,13 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 
   body.printing-a4 .a4-native-card,
   body.active-format-a4:not(.printing-atm) .a4-native-card {
-    max-width: 277mm !important;
-    width: 277mm !important;
-    height: 190mm !important;
-    max-height: 190mm !important;
+    max-width: 281mm !important;
+    width: 281mm !important;
+    height: 194mm !important;
+    max-height: 194mm !important;
     box-shadow: none !important;
-    border: none !important;
-    border-radius: 0 !important;
+    border: 1.5px solid #004767 !important;
+    border-radius: 8px !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     page-break-before: avoid !important;
@@ -2610,16 +2604,20 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     overflow: hidden !important;
   }
 
-  body.printing-a4 .a4-native-card img,
-  body.active-format-a4:not(.printing-atm) .a4-native-card img {
-    width: 277mm !important;
-    height: 190mm !important;
-    max-width: 277mm !important;
-    max-height: 190mm !important;
-    object-fit: contain !important;
+  body.printing-a4 .a4-device-thumb-col,
+  body.active-format-a4:not(.printing-atm) .a4-device-thumb-col {
+    width: 76px !important;
+    min-width: 76px !important;
+  }
+
+  body.printing-a4 .a4-device-thumb-col img,
+  body.active-format-a4:not(.printing-atm) .a4-device-thumb-col img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: cover !important;
     display: block !important;
-    margin: 0 auto !important;
-    padding: 0 !important;
   }
 
   body.printing-a4 .footer-accent-bar,
