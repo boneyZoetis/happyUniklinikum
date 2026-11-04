@@ -8,7 +8,7 @@ const { useState, useEffect, useRef, useMemo } = React;
 const UMF_STANDARDS = window.QRParser ? window.QRParser.UMF_STANDARDS : {};
 
 // Reusable QR Code Generator Component - Guaranteed Single Crisp Image with inline base64
-function QrCodeCanvas({ value, size = 160, color = '#0f172a', className = '', id = '' }) {
+function QrCodeCanvas({ value, size = 160, color = '#0f172a', className = '', id = '', style = {} }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -17,10 +17,11 @@ function QrCodeCanvas({ value, size = 160, color = '#0f172a', className = '', id
       if (window.QRCode) {
         try {
           const tempDiv = document.createElement('div');
+          const renderResolution = Math.max(size * 2, 240);
           new window.QRCode(tempDiv, {
             text: value,
-            width: size * 2,
-            height: size * 2,
+            width: renderResolution,
+            height: renderResolution,
             colorDark: color,
             colorLight: "#ffffff",
             correctLevel: window.QRCode.CorrectLevel.M
@@ -51,16 +52,24 @@ function QrCodeCanvas({ value, size = 160, color = '#0f172a', className = '', id
     }
   }, [value, size, color]);
 
+  const containerStyle = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    maxWidth: '100%',
+    maxHeight: '100%',
+    boxSizing: 'border-box',
+    ...(style.width ? {} : { width: `${size}px` }),
+    ...(style.height ? {} : { height: `${size}px` }),
+    ...style
+  };
+
   return (
     <div
       id={id}
       ref={containerRef}
       className={`qr-display-container ${className}`}
-      style={{
-        width: `${size}px`,
-        height: `${size}px`,
-        display: 'inline-block'
-      }}
+      style={containerStyle}
     />
   );
 }
@@ -3101,12 +3110,13 @@ function StandardA4PrintSheet({ standard }) {
                 <div className="fw-bold text-dark small text-uppercase mb-0.5" style={{ fontSize: '0.62rem' }}>
                   <i className="bi bi-qr-code text-primary me-1"></i>Direkt-Simulator
                 </div>
-                <div className="p-1 bg-white border rounded shadow-2xs d-inline-block">
+                <div className="p-1 bg-white border rounded shadow-2xs d-inline-flex align-items-center justify-content-center" style={{ maxWidth: '100%' }}>
                   <QrCodeCanvas
                     value={websiteDirectUrl}
                     size={80}
                     color={standard.accentColor}
                     className="mx-auto"
+                    style={{ maxWidth: '100%', height: 'auto', aspectRatio: '1 / 1' }}
                   />
                 </div>
                 <div className="text-muted font-monospace mt-0.5" style={{ fontSize: '0.59rem', lineHeight: '1.15' }}>
@@ -3546,12 +3556,13 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                   <span>Pocketcard scannen</span>
                 </div>
 
-                <div className="p-2.5 bg-white rounded-3 border shadow-sm my-1" style={{ borderColor: `${standard.accentColor}35` }}>
+                <div className="p-2.5 bg-white rounded-3 border shadow-sm my-1 d-inline-flex align-items-center justify-content-center" style={{ borderColor: `${standard.accentColor}35`, maxWidth: '100%' }}>
                   <QrCodeCanvas
                     value={websiteDirectUrl}
-                    size={140}
+                    size={130}
                     color={standard.accentColor}
                     className={`pocket-qr-${standard.id}`}
+                    style={{ maxWidth: '100%', height: 'auto', aspectRatio: '1 / 1' }}
                   />
                 </div>
 
@@ -4045,10 +4056,10 @@ function UniversalCardInteractiveCard({ isAtm = true, onSelectStandard }) {
         <div
           style={{
             position: 'absolute',
-            left: '72.8%',
-            top: '34.5%',
-            width: '17.1%',
-            height: '25.2%',
+            left: '73.0%',
+            top: '34.6%',
+            width: '16.9%',
+            height: '25.1%',
             pointerEvents: 'none',
             display: 'flex',
             alignItems: 'center',
@@ -4056,14 +4067,16 @@ function UniversalCardInteractiveCard({ isAtm = true, onSelectStandard }) {
             zIndex: 4,
             padding: '2px',
             backgroundColor: '#ffffff',
-            borderRadius: '4px'
+            borderRadius: '3px',
+            overflow: 'hidden',
+            boxSizing: 'border-box'
           }}
         >
           <QrCodeCanvas
             value={portalUrl}
-            size={120}
+            size={160}
             color="#001833"
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%' }}
           />
         </div>
 
@@ -4481,13 +4494,14 @@ function UniversalCardA4Native({ onSelectStandard }) {
 
               {/* Large Central QR Code */}
               <div
-                className="p-1.5 bg-white rounded-3 border shadow-sm mb-1.5 position-relative"
-                style={{ borderColor: '#bae6fd' }}
+                className="p-1.5 bg-white rounded-3 border shadow-sm mb-1.5 position-relative d-flex align-items-center justify-content-center"
+                style={{ borderColor: '#bae6fd', maxWidth: '100%' }}
               >
                 <QrCodeCanvas
                   value={portalUrl}
-                  size={120}
+                  size={105}
                   color="#00273d"
+                  style={{ maxWidth: '100%', height: 'auto', aspectRatio: '1 / 1' }}
                 />
               </div>
 
@@ -5049,10 +5063,10 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                   <div
                     style={{
                       position: 'absolute',
-                      left: '72.8%',
-                      top: '34.5%',
-                      width: '17.1%',
-                      height: '25.2%',
+                      left: '73.0%',
+                      top: '34.6%',
+                      width: '16.9%',
+                      height: '25.1%',
                       pointerEvents: 'none',
                       display: 'flex',
                       alignItems: 'center',
@@ -5060,14 +5074,16 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                       zIndex: 4,
                       padding: '2px',
                       backgroundColor: '#ffffff',
-                      borderRadius: '3px'
+                      borderRadius: '3px',
+                      overflow: 'hidden',
+                      boxSizing: 'border-box'
                     }}
                   >
                     <QrCodeCanvas
                       value={portalUrl}
-                      size={120}
+                      size={160}
                       color="#001833"
-                      style={{ width: '100%', height: '100%' }}
+                      style={{ width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%' }}
                     />
                   </div>
                 </div>
