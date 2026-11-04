@@ -5052,7 +5052,6 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           </div>
         </div>
       </div>
-      </div>
 
       {/* Direct Quick Tap Grid of the 5 Standards (Desktop only, hidden on mobile view) */}
       <div className="mt-4 pt-3 border-top no-print d-none d-lg-block">
