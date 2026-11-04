@@ -452,13 +452,15 @@ function App() {
           <div className="d-flex align-items-center gap-2 flex-shrink-0 ms-auto ms-sm-0">
             <button
               type="button"
-              className={`btn btn-sm ${currentRoute === 'universal-karte' || currentRoute === 'magic-card' ? 'btn-warning text-dark fw-bold' : 'btn-outline-warning text-white fw-bold'} rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5 magic-btn-glow`}
-              style={{ minHeight: '36px', fontSize: '0.78rem' }}
+              className={`btn-ucard-stylish btn-sm-ucard ${currentRoute === 'universal-karte' || currentRoute === 'magic-card' ? 'active-ucard' : ''}`}
               onClick={() => navigateTo('universal-karte')}
               title="Universal-Karte (U-Card) öffnen"
             >
-              <i className="bi bi-credit-card-2-front-fill text-danger"></i>
+              <span className="ucard-icon-badge">
+                <i className="bi bi-credit-card-2-front-fill"></i>
+              </span>
               <span>U-Card</span>
+              <i className="bi bi-stars ucard-sparkle"></i>
             </button>
 
             <button
@@ -1095,12 +1097,15 @@ function TilesOverview({ standards, onSelectStandard }) {
           <div className="d-flex align-items-center gap-2 ms-auto">
             <button
               type="button"
-              className="btn btn-warning text-dark fw-bold rounded-pill px-3.5 py-1.5 shadow-sm d-flex align-items-center gap-1.5"
-              style={{ minHeight: '38px', fontSize: '0.82rem' }}
+              className="btn-ucard-stylish"
               onClick={() => onSelectStandard('universal-karte')}
+              title="Universal-Karte (U-Card) öffnen"
             >
-              <i className="bi bi-credit-card-2-front-fill text-danger"></i>
+              <span className="ucard-icon-badge">
+                <i className="bi bi-credit-card-2-front-fill"></i>
+              </span>
               <span>U-Card</span>
+              <i className="bi bi-stars ucard-sparkle"></i>
             </button>
             <button
               type="button"
@@ -4993,46 +4998,63 @@ function QuickHubView({ standards, onSelectStandard, onLogout }) {
           border: '1.5px solid rgba(56, 189, 248, 0.35)'
         }}
       >
-        <div className="d-flex align-items-center gap-2.5">
-          <div
-            className="rounded-3 p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0"
-            style={{
-              width: '38px',
-              height: '38px',
-              background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
-              boxShadow: '0 2px 8px rgba(56, 189, 248, 0.4)'
-            }}
-          >
-            <i className="bi bi-heart-pulse-fill fs-5"></i>
-          </div>
-          <div>
-            <div className="d-flex align-items-center gap-1.5 mb-0.5">
-              <span
-                className="badge rounded-pill fw-bold text-uppercase"
-                style={{
-                  backgroundColor: 'rgba(56, 189, 248, 0.25)',
-                  color: '#e0f2fe',
-                  border: '1px solid rgba(56, 189, 248, 0.45)',
-                  fontSize: '0.65rem'
-                }}
-              >
-                <i className="bi bi-shield-check text-warning me-1"></i>QM-Geprüft 2026
-              </span>
-              <span
-                className="badge rounded-pill fw-bold text-uppercase d-none d-sm-inline-block"
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  color: '#ffffff',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  fontSize: '0.65rem'
-                }}
-              >
-                5 Intensiv-Standards
-              </span>
+        <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <div className="d-flex align-items-center gap-2.5">
+            <div
+              className="rounded-3 p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0"
+              style={{
+                width: '38px',
+                height: '38px',
+                background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
+                boxShadow: '0 2px 8px rgba(56, 189, 248, 0.4)'
+              }}
+            >
+              <i className="bi bi-heart-pulse-fill fs-5"></i>
             </div>
-            <h3 className="fw-black text-white mb-0" style={{ fontSize: 'clamp(1.05rem, 3.5vw, 1.45rem)', letterSpacing: '0.2px' }}>
-              Klinische Intensivstandards &amp; Leitfäden
-            </h3>
+            <div>
+              <div className="d-flex align-items-center gap-1.5 mb-0.5">
+                <span
+                  className="badge rounded-pill fw-bold text-uppercase"
+                  style={{
+                    backgroundColor: 'rgba(56, 189, 248, 0.25)',
+                    color: '#e0f2fe',
+                    border: '1px solid rgba(56, 189, 248, 0.45)',
+                    fontSize: '0.65rem'
+                  }}
+                >
+                  <i className="bi bi-shield-check text-warning me-1"></i>QM-Geprüft 2026
+                </span>
+                <span
+                  className="badge rounded-pill fw-bold text-uppercase d-none d-sm-inline-block"
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    color: '#ffffff',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    fontSize: '0.65rem'
+                  }}
+                >
+                  5 Intensiv-Standards
+                </span>
+              </div>
+              <h3 className="fw-black text-white mb-0" style={{ fontSize: 'clamp(1.05rem, 3.5vw, 1.45rem)', letterSpacing: '0.2px' }}>
+                Klinische Intensivstandards &amp; Leitfäden
+              </h3>
+            </div>
+          </div>
+
+          <div className="d-flex align-items-center gap-2 ms-auto">
+            <button
+              type="button"
+              className="btn-ucard-stylish"
+              onClick={() => onSelectStandard('universal-karte')}
+              title="Universal-Karte (U-Card) öffnen"
+            >
+              <span className="ucard-icon-badge">
+                <i className="bi bi-credit-card-2-front-fill"></i>
+              </span>
+              <span>U-Card</span>
+              <i className="bi bi-stars ucard-sparkle"></i>
+            </button>
           </div>
         </div>
       </div>

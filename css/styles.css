@@ -758,22 +758,138 @@ body {
 .footer-category-pill.pill-isolation:hover { background: var(--isolation-color); border-color: var(--isolation-color); }
 .footer-category-pill.pill-zvk:hover { background: var(--zvk-color); border-color: var(--zvk-color); }
 .footer-category-pill.pill-magic:hover {
-  background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
-  border-color: #f59e0b;
-  color: #000000 !important;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+  border-color: #d946ef;
+  color: #ffffff !important;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5);
 }
 
-/* Magic Button Glow in Top Navigation */
+/* =========================================================
+   ULTRA-STYLISH U-CARD BUTTON & BADGE
+   High-end Electric Violet / Radiant Fuchsia Glassmorphism
+   ========================================================= */
+.btn-ucard-stylish {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 45%, #d946ef 100%) !important;
+  color: #ffffff !important;
+  font-weight: 750 !important;
+  font-size: 0.83rem !important;
+  letter-spacing: 0.3px;
+  border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+  border-radius: 9999px !important;
+  padding: 0.42rem 1.15rem !important;
+  min-height: 38px;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.45), 0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  text-decoration: none !important;
+  cursor: pointer;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  user-select: none;
+}
+
+.btn-ucard-stylish::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: skewX(-25deg);
+  transition: left 0.65s ease;
+  pointer-events: none;
+}
+
+.btn-ucard-stylish:hover {
+  transform: translateY(-2px) scale(1.025);
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 45%, #c026d3 100%) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.65), 0 3px 8px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+  color: #ffffff !important;
+}
+
+.btn-ucard-stylish:hover::before {
+  left: 140%;
+}
+
+.btn-ucard-stylish:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.45) !important;
+}
+
+.btn-ucard-stylish .ucard-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  font-size: 0.76rem;
+  color: #ffffff;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.btn-ucard-stylish:hover .ucard-icon-badge {
+  transform: rotate(-8deg) scale(1.1);
+  background: rgba(255, 255, 255, 0.32);
+}
+
+.btn-ucard-stylish .ucard-sparkle {
+  color: #fef08a;
+  font-size: 0.8rem;
+  text-shadow: 0 0 6px rgba(254, 240, 138, 0.8);
+  animation: ucard-sparkle-pulse 2s infinite ease-in-out;
+  line-height: 1;
+}
+
+@keyframes ucard-sparkle-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.22); opacity: 1; filter: drop-shadow(0 0 4px #fde047); }
+}
+
+/* Compact Navbar Variant */
+.btn-ucard-stylish.btn-sm-ucard {
+  min-height: 34px;
+  padding: 0.32rem 0.95rem !important;
+  font-size: 0.78rem !important;
+}
+
+.btn-ucard-stylish.btn-sm-ucard .ucard-icon-badge {
+  width: 20px;
+  height: 20px;
+  font-size: 0.7rem;
+}
+
+/* Active Highlight when currentRoute is universal-karte */
+.btn-ucard-stylish.active-ucard {
+  background: linear-gradient(135deg, #4338ca 0%, #6d28d9 45%, #a21caf 100%) !important;
+  border-color: #fde047 !important;
+  box-shadow: 0 0 0 2px rgba(253, 224, 71, 0.4), 0 6px 20px rgba(139, 92, 246, 0.6) !important;
+}
+
+/* Magic Button Glow in Top Navigation (Legacy / Backwards Compatibility) */
 .magic-btn-glow {
   transition: all 0.25s ease;
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-  border: 1px solid #f59e0b;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 45%, #d946ef 100%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4) !important;
 }
 
 .magic-btn-glow:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4) !important;
-  background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6) !important;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 45%, #c026d3 100%) !important;
 }
 
 /* =========================================================
@@ -1605,31 +1721,31 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
 }
 
-/* 2. U-Card Button - Soft Emerald Green Border & Accent (Subtle, Not Hard) */
+/* 2. U-Card Button - Stylish Royal Violet & Iris Accent */
 .mobile-footer-btn.universal-btn {
-  color: #065f46;
-  border: 1px solid rgba(16, 185, 129, 0.55);
-  background: rgba(16, 185, 129, 0.05);
+  color: #6366f1;
+  border: 1px solid rgba(139, 92, 246, 0.55);
+  background: rgba(139, 92, 246, 0.08);
 }
 
 .mobile-footer-btn.universal-btn .mobile-footer-btn-icon {
-  background: rgba(16, 185, 129, 0.15);
-  color: #059669;
-  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(139, 92, 246, 0.16);
+  color: #7c3aed;
+  border-color: rgba(139, 92, 246, 0.4);
 }
 
 .mobile-footer-btn.universal-btn.active {
-  background: rgba(16, 185, 129, 0.18);
-  color: #047857;
-  border-color: rgba(5, 150, 105, 0.7);
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.22) 0%, rgba(217, 70, 239, 0.22) 100%);
+  color: #6d28d9;
+  border-color: rgba(139, 92, 246, 0.85);
+  box-shadow: 0 2px 10px rgba(139, 92, 246, 0.35);
 }
 
 .mobile-footer-btn.universal-btn.active .mobile-footer-btn-icon {
-  background: #059669;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
   color: #ffffff;
-  border-color: #059669;
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.5);
 }
 
 /* 3. Logout Button - Clearly Visible Soft Red Border */
