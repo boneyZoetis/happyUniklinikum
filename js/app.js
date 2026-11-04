@@ -4817,52 +4817,78 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
     <div className="py-2 py-md-3">
       {/* Quick Hub Header Bar (in mobile view of Universal Card) */}
       <div
-        className="quick-hub-top-header p-3 mb-2.5 rounded-4 shadow-sm text-white d-block d-lg-none no-print"
+        className="quick-hub-top-header p-3 mb-2.5 rounded-4 shadow-sm text-white d-block d-lg-none no-print position-relative overflow-hidden w-100 mx-auto"
         style={{
-          background: 'linear-gradient(135deg, #001a2e 0%, #003354 45%, #0284c7 100%)',
-          border: '1.5px solid rgba(56, 189, 248, 0.35)'
+          background: 'linear-gradient(135deg, #001a2e 0%, #003354 40%, #026ca8 75%, #0284c7 100%)',
+          border: '1.5px solid rgba(56, 189, 248, 0.4)',
+          boxShadow: '0 8px 24px -4px rgba(0, 31, 63, 0.3), 0 2px 8px rgba(56, 189, 248, 0.15)',
+          maxWidth: '640px'
         }}
       >
-        <div className="d-flex align-items-center gap-2.5">
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '3.5px',
+            background: 'linear-gradient(90deg, #0284c7 0%, #16a34a 25%, #ea580c 50%, #dc2626 75%, #7c3aed 100%)'
+          }}
+        />
+        <div className="d-flex align-items-center gap-3">
           <div
-            className="rounded-3 p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0"
+            className="rounded-3 p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0 shadow-sm"
             style={{
-              width: '38px',
-              height: '38px',
+              width: '42px',
+              height: '42px',
               background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
-              boxShadow: '0 2px 8px rgba(56, 189, 248, 0.4)'
+              boxShadow: '0 4px 14px rgba(56, 189, 248, 0.45)',
+              border: '1.5px solid rgba(255, 255, 255, 0.4)'
             }}
           >
-            <i className="bi bi-heart-pulse-fill fs-5"></i>
+            <i className="bi bi-heart-pulse-fill fs-4"></i>
           </div>
-          <div>
-            <div className="d-flex align-items-center gap-1.5 mb-0.5">
+          <div className="min-w-0 flex-grow-1">
+            <div className="d-flex flex-wrap align-items-center gap-1.5 mb-1">
               <span
-                className="badge rounded-pill fw-bold text-uppercase"
+                className="badge rounded-pill fw-bold text-uppercase d-inline-flex align-items-center gap-1 shadow-2xs"
                 style={{
-                  backgroundColor: 'rgba(56, 189, 248, 0.25)',
-                  color: '#e0f2fe',
-                  border: '1px solid rgba(56, 189, 248, 0.45)',
-                  fontSize: '0.65rem'
+                  backgroundColor: 'rgba(255, 255, 255, 0.18)',
+                  backdropFilter: 'blur(8px)',
+                  color: '#ffffff',
+                  border: '1px solid rgba(255, 255, 255, 0.32)',
+                  fontSize: '0.67rem',
+                  letterSpacing: '0.4px',
+                  padding: '3px 8.5px'
                 }}
               >
-                <i className="bi bi-shield-check text-warning me-1"></i>QM-Geprüft 2026
+                <i className="bi bi-shield-check text-warning"></i>QM-GEPRÜFT 2026
               </span>
               <span
-                className="badge rounded-pill fw-bold text-uppercase d-none d-sm-inline-block"
+                className="badge rounded-pill fw-bold text-uppercase d-inline-flex align-items-center gap-1 shadow-2xs"
                 style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  color: '#ffffff',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  fontSize: '0.65rem'
+                  backgroundColor: 'rgba(56, 189, 248, 0.22)',
+                  color: '#e0f2fe',
+                  border: '1px solid rgba(56, 189, 248, 0.42)',
+                  fontSize: '0.67rem',
+                  letterSpacing: '0.3px',
+                  padding: '3px 8.5px'
                 }}
               >
-                5 Intensiv-Standards
+                <i className="bi bi-credit-card-2-front text-info"></i>Pocketcard
               </span>
             </div>
-            <h3 className="fw-black text-white mb-0" style={{ fontSize: 'clamp(1.05rem, 3.5vw, 1.45rem)', letterSpacing: '0.2px' }}>
-              Klinische Intensivstandards &amp; Leitfäden
-            </h3>
+            <h4
+              className="fw-black text-white mb-0"
+              style={{
+                fontSize: 'clamp(1.05rem, 3.8vw, 1.32rem)',
+                letterSpacing: '-0.2px',
+                lineHeight: 1.25,
+                textShadow: '0 2px 6px rgba(0, 26, 46, 0.35)'
+              }}
+            >
+              Intensivkompass Digital (Pocketcard)
+            </h4>
           </div>
         </div>
       </div>
@@ -5234,61 +5260,91 @@ function QuickHubView({ standards, onSelectStandard, onLogout }) {
   };
 
   return (
-    <div className="quick-hub-screen-container d-flex flex-column justify-content-between">
-      {/* Quick Hub Header Bar */}
+    <div className="quick-hub-screen-container d-flex flex-column justify-content-between w-100 mx-auto" style={{ maxWidth: '580px' }}>
+      {/* Quick Hub Header Bar - Beautified with multi-color accent, glowing icon, and matching tile width */}
       <div
-        className="quick-hub-top-header p-3 mb-3 rounded-4 shadow-sm text-white"
+        className="quick-hub-top-header p-3 p-sm-3.5 mb-3 rounded-4 shadow-sm text-white position-relative overflow-hidden w-100 mx-auto"
         style={{
-          background: 'linear-gradient(135deg, #001a2e 0%, #003354 45%, #0284c7 100%)',
-          border: '1.5px solid rgba(56, 189, 248, 0.35)'
+          background: 'linear-gradient(135deg, #001a2e 0%, #003354 40%, #026ca8 75%, #0284c7 100%)',
+          border: '1.5px solid rgba(56, 189, 248, 0.4)',
+          boxShadow: '0 8px 24px -4px rgba(0, 31, 63, 0.3), 0 2px 8px rgba(56, 189, 248, 0.15)',
+          maxWidth: '580px'
         }}
       >
-        <div className="d-flex align-items-center gap-2.5">
+        {/* Top 5-Standard Multi-Color Accent Glow Line */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '3.5px',
+            background: 'linear-gradient(90deg, #0284c7 0%, #16a34a 25%, #ea580c 50%, #dc2626 75%, #7c3aed 100%)'
+          }}
+        />
+
+        <div className="d-flex align-items-center gap-3">
+          {/* Blue Glowing Heart-Pulse Icon */}
           <div
-            className="rounded-3 p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0"
+            className="rounded-3 p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0 shadow-sm"
             style={{
-              width: '38px',
-              height: '38px',
+              width: '44px',
+              height: '44px',
               background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
-              boxShadow: '0 2px 8px rgba(56, 189, 248, 0.4)'
+              boxShadow: '0 4px 14px rgba(56, 189, 248, 0.45)',
+              border: '1.5px solid rgba(255, 255, 255, 0.4)'
             }}
           >
-            <i className="bi bi-heart-pulse-fill fs-5"></i>
+            <i className="bi bi-heart-pulse-fill fs-4"></i>
           </div>
-          <div>
-            <div className="d-flex align-items-center gap-1.5 mb-0.5">
+
+          <div className="min-w-0 flex-grow-1">
+            <div className="d-flex flex-wrap align-items-center gap-1.5 mb-1">
               <span
-                className="badge rounded-pill fw-bold text-uppercase"
+                className="badge rounded-pill fw-bold text-uppercase d-inline-flex align-items-center gap-1 shadow-2xs"
                 style={{
-                  backgroundColor: 'rgba(56, 189, 248, 0.25)',
-                  color: '#e0f2fe',
-                  border: '1px solid rgba(56, 189, 248, 0.45)',
-                  fontSize: '0.65rem'
+                  backgroundColor: 'rgba(255, 255, 255, 0.18)',
+                  backdropFilter: 'blur(8px)',
+                  color: '#ffffff',
+                  border: '1px solid rgba(255, 255, 255, 0.32)',
+                  fontSize: '0.67rem',
+                  letterSpacing: '0.4px',
+                  padding: '3px 8.5px'
                 }}
               >
-                <i className="bi bi-shield-check text-warning me-1"></i>QM-Geprüft 2026
+                <i className="bi bi-shield-check text-warning"></i>QM-GEPRÜFT 2026
               </span>
               <span
-                className="badge rounded-pill fw-bold text-uppercase d-none d-sm-inline-block"
+                className="badge rounded-pill fw-bold text-uppercase d-inline-flex align-items-center gap-1 shadow-2xs"
                 style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  color: '#ffffff',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  fontSize: '0.65rem'
+                  backgroundColor: 'rgba(56, 189, 248, 0.22)',
+                  color: '#e0f2fe',
+                  border: '1px solid rgba(56, 189, 248, 0.42)',
+                  fontSize: '0.67rem',
+                  letterSpacing: '0.3px',
+                  padding: '3px 8.5px'
                 }}
               >
-                5 Intensiv-Standards
+                <i className="bi bi-check2-circle text-info"></i>5 Intensiv-Standards
               </span>
             </div>
-            <h3 className="fw-black text-white mb-0" style={{ fontSize: 'clamp(1.05rem, 3.5vw, 1.45rem)', letterSpacing: '0.2px' }}>
+            <h4
+              className="fw-black text-white mb-0"
+              style={{
+                fontSize: 'clamp(1.05rem, 3.8vw, 1.32rem)',
+                letterSpacing: '-0.2px',
+                lineHeight: 1.25,
+                textShadow: '0 2px 6px rgba(0, 26, 46, 0.35)'
+              }}
+            >
               Klinische Intensivstandards &amp; Leitfäden
-            </h3>
+            </h4>
           </div>
         </div>
       </div>
 
       {/* Cards List for All 5 Standards */}
-      <div className="quick-hub-cards-wrapper d-flex flex-column gap-2.5">
+      <div className="quick-hub-cards-wrapper d-flex flex-column gap-2.5 w-100 mx-auto" style={{ maxWidth: '580px' }}>
         {list.map((std) => {
           const theme = cardThemeMap[std.id] || {
             badgeText: 'INTENSIV-STANDARD',
@@ -5399,6 +5455,48 @@ function QuickHubView({ standards, onSelectStandard, onLogout }) {
             </div>
           );
         })}
+      </div>
+
+      {/* Blended Clinical ICU Patient Monitor Illustration */}
+      <div
+        className="quick-hub-monitor-box mt-3 mb-2 w-100 position-relative overflow-hidden text-center mx-auto"
+        style={{
+          borderRadius: '20px',
+          boxShadow: '0 8px 24px -4px rgba(2, 132, 199, 0.16)',
+          border: '1.5px solid rgba(186, 230, 253, 0.55)',
+          background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 249, 255, 0.7) 100%)',
+          maxWidth: '580px'
+        }}
+      >
+        <img
+          src="assets/quick-hub-monitor.jpg"
+          alt="Intensivpflege Patientenmonitor &amp; Bettplatz"
+          className="w-100 d-block"
+          style={{
+            objectFit: 'cover',
+            maxHeight: '270px',
+            maskImage: 'linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)'
+          }}
+        />
+        <div
+          className="position-absolute bottom-0 start-0 end-0 py-1.5 px-3 d-flex align-items-center justify-content-center gap-1.5"
+          style={{
+            background: 'linear-gradient(to top, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0) 100%)'
+          }}
+        >
+          <span
+            className="badge rounded-pill fw-semibold"
+            style={{
+              background: 'rgba(2, 132, 199, 0.12)',
+              color: '#0369a1',
+              fontSize: '0.68rem',
+              border: '1px solid rgba(2, 132, 199, 0.22)'
+            }}
+          >
+            <i className="bi bi-activity text-danger me-1"></i>Patientenmonitoring &bull; Evidenzbasierte Leitfäden
+          </span>
+        </div>
       </div>
     </div>
   );
