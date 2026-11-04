@@ -2379,10 +2379,10 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 }
 
 .a4-std-body {
-  padding: 10px 14px;
+  padding: 6px 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 5px;
   background-color: #ffffff;
   flex-grow: 1;
 }
@@ -2527,6 +2527,7 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   .mobile-bottom-nav,
   .mobile-transparent-footer,
   .modern-footer,
+  .copy-feedback-toast,
   footer,
   button:not(.a4-scan-cta-btn),
   .btn:not(.a4-scan-cta-btn),

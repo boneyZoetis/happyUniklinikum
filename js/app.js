@@ -357,7 +357,7 @@ function App() {
       <>
         <LoginPage onLogin={handleLogin} targetRoute={currentRoute} />
         {toast && (
-          <div className="copy-feedback-toast">
+          <div className="copy-feedback-toast no-print" data-html2canvas-ignore="true">
             <div className="alert alert-dark shadow-lg d-flex align-items-center gap-2 mb-0 py-2 px-3 border-0">
               <i className="bi bi-info-circle-fill text-primary fs-5"></i>
               <span>{toast}</span>
@@ -372,7 +372,7 @@ function App() {
     <div className="d-flex flex-column min-vh-100">
       {/* Toast Feedback */}
       {toast && (
-        <div className="copy-feedback-toast">
+        <div className="copy-feedback-toast no-print" data-html2canvas-ignore="true">
           <div className="alert alert-dark shadow-lg d-flex align-items-center gap-2 mb-0 py-2 px-3 border-0">
             <i className="bi bi-check-circle-fill text-success fs-5"></i>
             <span>{toast}</span>
@@ -2942,18 +2942,39 @@ function exportStandardA4Pdf(std, showToast) {
     return;
   }
 
-  if (showToast) showToast(`Erstelle DIN A4 PDF für ${std.shortTitle}...`);
-
-  // Unhide print sheet and set explicit A4 dimensions (794px = 210mm at 96dpi)
+  // Save all previous styles
   const prevDisplay = printSheet.style.display;
+  const prevPosition = printSheet.style.position;
+  const prevTop = printSheet.style.top;
+  const prevLeft = printSheet.style.left;
+  const prevZIndex = printSheet.style.zIndex;
   const prevWidth = printSheet.style.width;
   const prevMaxWidth = printSheet.style.maxWidth;
-  const prevPosition = printSheet.style.position;
+  const prevMargin = printSheet.style.margin;
+  const prevBackground = printSheet.style.background;
 
+  // Position FIXED at (0, 0) on viewport with exact 794px width (prevents clipping on mobile/narrow screens)
   printSheet.style.display = 'block';
+  printSheet.style.position = 'fixed';
+  printSheet.style.top = '0px';
+  printSheet.style.left = '0px';
+  printSheet.style.zIndex = '999999';
   printSheet.style.width = '794px';
   printSheet.style.maxWidth = '794px';
-  printSheet.style.position = 'relative';
+  printSheet.style.margin = '0';
+  printSheet.style.background = '#ffffff';
+
+  const restoreStyles = () => {
+    printSheet.style.display = prevDisplay;
+    printSheet.style.position = prevPosition;
+    printSheet.style.top = prevTop;
+    printSheet.style.left = prevLeft;
+    printSheet.style.zIndex = prevZIndex;
+    printSheet.style.width = prevWidth;
+    printSheet.style.maxWidth = prevMaxWidth;
+    printSheet.style.margin = prevMargin;
+    printSheet.style.background = prevBackground;
+  };
 
   const opt = {
     margin: [0, 0, 0, 0],
@@ -2973,24 +2994,15 @@ function exportStandardA4Pdf(std, showToast) {
 
   if (window.html2pdf) {
     window.html2pdf().set(opt).from(printSheet).save().then(() => {
-      printSheet.style.display = prevDisplay;
-      printSheet.style.width = prevWidth;
-      printSheet.style.maxWidth = prevMaxWidth;
-      printSheet.style.position = prevPosition;
+      restoreStyles();
       if (showToast) showToast('PDF erfolgreich heruntergeladen!');
     }).catch((err) => {
-      printSheet.style.display = prevDisplay;
-      printSheet.style.width = prevWidth;
-      printSheet.style.maxWidth = prevMaxWidth;
-      printSheet.style.position = prevPosition;
+      restoreStyles();
       console.error('PDF error:', err);
       window.print();
     });
   } else {
-    printSheet.style.display = prevDisplay;
-    printSheet.style.width = prevWidth;
-    printSheet.style.maxWidth = prevMaxWidth;
-    printSheet.style.position = prevPosition;
+    restoreStyles();
     window.print();
   }
 }
@@ -3010,28 +3022,28 @@ function StandardA4PrintSheet({ standard }) {
       {/* PAGE 1: AUFBAU, KLINISCHE PHASEN & KERN-HANDLUNGSSCHRITTE */}
       <div className="a4-std-page a4-std-page-1" id={`pocketcard-a4-page1-${standard.id}`}>
         {/* Spectrum Top Accent Bar */}
-        <div style={{ height: '4px', background: 'linear-gradient(90deg, #dc2626 0%, #16a34a 20%, #ea580c 40%, #7c3aed 60%, #0284c7 80%, #facc15 100%)' }} />
+        <div style={{ height: '3px', background: 'linear-gradient(90deg, #dc2626 0%, #16a34a 20%, #ea580c 40%, #7c3aed 60%, #0284c7 80%, #facc15 100%)' }} />
 
         {/* Header Bar */}
-        <div className="a4-std-header-bar" style={{ backgroundColor: '#002b47' }}>
+        <div className="a4-std-header-bar" style={{ backgroundColor: '#002b47', padding: '6px 14px' }}>
           <div className="d-flex align-items-center gap-2">
-            <div className="rounded p-1 d-flex align-items-center justify-content-center text-white" style={{ background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)', width: '30px', height: '30px' }}>
-              <i className="bi bi-heart-pulse-fill"></i>
+            <div className="rounded p-1 d-flex align-items-center justify-content-center text-white" style={{ background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)', width: '26px', height: '26px' }}>
+              <i className="bi bi-heart-pulse-fill" style={{ fontSize: '0.8rem' }}></i>
             </div>
             <div>
-              <div className="fw-bold text-white text-uppercase" style={{ fontSize: '0.82rem', letterSpacing: '0.35px' }}>
+              <div className="fw-bold text-white text-uppercase" style={{ fontSize: '0.78rem', letterSpacing: '0.3px' }}>
                 Klinische Intensivstandards &amp; Leitfäden
               </div>
-              <div className="text-white-50" style={{ fontSize: '0.67rem' }}>
+              <div className="text-white-50" style={{ fontSize: '0.64rem' }}>
                 Evidenzbasierte Verfahrensanweisungen &bull; Digitale Pflege-Pocketcard (DIN A4)
               </div>
             </div>
           </div>
           <div className="d-flex align-items-center gap-2">
-            <span className="badge rounded-pill text-white px-2.5 py-1 fw-bold" style={{ backgroundColor: standard.accentColor, fontSize: '0.75rem' }}>
+            <span className="badge rounded-pill text-white px-2 py-0.5 fw-bold" style={{ backgroundColor: standard.accentColor, fontSize: '0.72rem' }}>
               <i className={`bi ${standard.icon} me-1`}></i> {standard.shortTitle}
             </span>
-            <span className="badge bg-white text-dark fw-bold px-2 py-1" style={{ fontSize: '0.68rem' }}>
+            <span className="badge bg-white text-dark fw-bold px-2 py-0.5" style={{ fontSize: '0.65rem' }}>
               Seite 1 / 2
             </span>
           </div>
@@ -3039,35 +3051,35 @@ function StandardA4PrintSheet({ standard }) {
 
         <div className="a4-std-body">
           {/* Title & Lead Box */}
-          <div className="a4-std-title-box" style={{ borderLeftColor: standard.accentColor }}>
+          <div className="a4-std-title-box" style={{ borderLeftColor: standard.accentColor, padding: '5px 10px' }}>
             <div className="d-flex justify-content-between align-items-center mb-0.5">
-              <div className="text-uppercase fw-bold text-primary small" style={{ fontSize: '0.66rem' }}>
+              <div className="text-uppercase fw-bold text-primary small" style={{ fontSize: '0.64rem' }}>
                 Intensivmedizinischer Standard &bull; Verfahrensanweisung ITS
               </div>
-              <span className="badge bg-light text-secondary border px-1.5 py-0.5" style={{ fontSize: '0.62rem' }}>
+              <span className="badge bg-light text-secondary border px-1.5 py-0.5" style={{ fontSize: '0.60rem' }}>
                 Stand: 2026
               </span>
             </div>
-            <h4 className="fw-bold text-dark mb-1" style={{ fontSize: '1.02rem', lineHeight: '1.25' }}>
+            <h4 className="fw-bold text-dark mb-0.5" style={{ fontSize: '0.94rem', lineHeight: '1.2' }}>
               {standard.topic}
             </h4>
-            <div className="text-secondary small" style={{ fontSize: '0.74rem', lineHeight: '1.3' }}>
+            <div className="text-secondary small" style={{ fontSize: '0.68rem', lineHeight: '1.25' }}>
               {standard.leadText}
             </div>
           </div>
 
           {/* Rationale: Patientensicherheit ITS */}
           {standard.whyImportant && standard.whyImportant.length > 0 && (
-            <div className="p-2 rounded border bg-light" style={{ fontSize: '0.72rem' }}>
-              <strong className="text-success d-flex align-items-center gap-1 mb-1" style={{ fontSize: '0.74rem' }}>
+            <div className="p-1.5 rounded border bg-light" style={{ fontSize: '0.68rem' }}>
+              <strong className="text-success d-flex align-items-center gap-1 mb-0.5" style={{ fontSize: '0.70rem' }}>
                 <i className="bi bi-shield-check"></i>
                 <span>Warum ist das wichtig? (Patientensicherheit ITS):</span>
               </strong>
               <div className="row g-1">
                 {standard.whyImportant.map((item, idx) => (
                   <div key={idx} className="col-6 d-flex align-items-start gap-1">
-                    <i className="bi bi-check2 text-success flex-shrink-0 mt-0.5" style={{ fontSize: '0.72rem' }}></i>
-                    <span className="text-secondary" style={{ lineHeight: '1.25' }}>{item}</span>
+                    <i className="bi bi-check2 text-success flex-shrink-0 mt-0.5" style={{ fontSize: '0.68rem' }}></i>
+                    <span className="text-secondary" style={{ lineHeight: '1.2' }}>{item}</span>
                   </div>
                 ))}
               </div>
@@ -3075,35 +3087,35 @@ function StandardA4PrintSheet({ standard }) {
           )}
 
           {/* Media & Scannable QR Code Row */}
-          <div className="row g-2 align-items-stretch">
+          <div className="row g-1.5 align-items-stretch">
             <div className="col-7">
-              <div className="p-1.5 border rounded-3 bg-white h-100 d-flex flex-column align-items-center justify-content-center">
+              <div className="p-1 border rounded-3 bg-white h-100 d-flex flex-column align-items-center justify-content-center">
                 <img
                   src={standard.image}
                   alt={standard.topic}
                   className="w-100 rounded-2 border"
-                  style={{ maxHeight: '160px', objectFit: 'contain' }}
+                  style={{ maxHeight: '105px', objectFit: 'contain' }}
                 />
-                <div className="text-muted mt-1 text-center font-monospace" style={{ fontSize: '0.63rem' }}>
+                <div className="text-muted mt-0.5 text-center font-monospace" style={{ fontSize: '0.60rem' }}>
                   Gerätekonfiguration &amp; Praxisaufbau ({standard.shortTitle})
                 </div>
               </div>
             </div>
 
             <div className="col-5">
-              <div className="p-2 border rounded-3 bg-light text-center h-100 d-flex flex-column align-items-center justify-content-center">
-                <div className="fw-bold text-dark small text-uppercase mb-1" style={{ fontSize: '0.64rem' }}>
+              <div className="p-1.5 border rounded-3 bg-light text-center h-100 d-flex flex-column align-items-center justify-content-center">
+                <div className="fw-bold text-dark small text-uppercase mb-0.5" style={{ fontSize: '0.62rem' }}>
                   <i className="bi bi-qr-code text-primary me-1"></i>Direkt-Simulator
                 </div>
                 <div className="p-1 bg-white border rounded shadow-2xs d-inline-block">
                   <QrCodeCanvas
                     value={websiteDirectUrl}
-                    size={105}
+                    size={80}
                     color={standard.accentColor}
                     className="mx-auto"
                   />
                 </div>
-                <div className="text-muted font-monospace mt-1" style={{ fontSize: '0.62rem', lineHeight: '1.2' }}>
+                <div className="text-muted font-monospace mt-0.5" style={{ fontSize: '0.59rem', lineHeight: '1.15' }}>
                   Mit Smartphone scannen &bull; Interaktive Ansicht &amp; Check
                 </div>
               </div>
@@ -3112,20 +3124,20 @@ function StandardA4PrintSheet({ standard }) {
 
           {/* 4 Phasen der Verfahrensanweisung */}
           {standard.clinicalFocus && standard.clinicalFocus.length > 0 && (
-            <div className="p-2 border rounded-3 bg-white">
-              <div className="fw-bold text-dark small text-uppercase mb-1.5 d-flex align-items-center gap-1" style={{ fontSize: '0.72rem' }}>
+            <div className="p-1.5 border rounded-3 bg-white">
+              <div className="fw-bold text-dark small text-uppercase mb-1 d-flex align-items-center gap-1" style={{ fontSize: '0.68rem' }}>
                 <i className="bi bi-diagram-3-fill text-primary"></i>
                 <span>4 Strukturierte Phasen der Verfahrensanweisung:</span>
               </div>
-              <div className="row g-1.5">
+              <div className="row g-1">
                 {standard.clinicalFocus.map((f, idx) => (
                   <div key={idx} className="col-6">
-                    <div className="p-1.5 rounded border bg-light h-100" style={{ fontSize: '0.7rem', borderLeft: `3px solid ${standard.accentColor}` }}>
-                      <strong className="text-dark d-block text-truncate mb-0.5" style={{ fontSize: '0.72rem' }}>
+                    <div className="p-1 rounded border bg-light h-100" style={{ fontSize: '0.66rem', borderLeft: `3px solid ${standard.accentColor}` }}>
+                      <strong className="text-dark d-block text-truncate mb-0.5" style={{ fontSize: '0.68rem' }}>
                         <i className={`bi ${f.icon || 'bi-check-circle'} me-1 text-primary`}></i>
                         {f.phase}
                       </strong>
-                      <span className="text-secondary" style={{ fontSize: '0.67rem', lineHeight: '1.2', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      <span className="text-secondary" style={{ fontSize: '0.63rem', lineHeight: '1.15', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                         {f.detail}
                       </span>
                     </div>
@@ -3136,18 +3148,18 @@ function StandardA4PrintSheet({ standard }) {
           )}
 
           {/* Wichtigste Handlungsschritte (Minimal-Info) */}
-          <div className="p-2.5 bg-light rounded-3 border">
-            <div className="fw-bold text-dark small text-uppercase mb-1.5 d-flex align-items-center gap-1" style={{ fontSize: '0.72rem' }}>
+          <div className="p-1.5 bg-light rounded-3 border">
+            <div className="fw-bold text-dark small text-uppercase mb-1 d-flex align-items-center gap-1" style={{ fontSize: '0.68rem' }}>
               <i className="bi bi-list-check text-primary"></i>
               <span>Wichtigste Handlungsschritte (Minimal-Info):</span>
             </div>
-            <div className="d-flex flex-column gap-1">
+            <div className="d-flex flex-column gap-0.5">
               {standard.keyPoints && standard.keyPoints.slice(0, 6).map((pt, i) => (
-                <div key={i} className="p-1 px-1.5 rounded bg-white border small d-flex align-items-start gap-1.5" style={{ fontSize: '0.73rem' }}>
-                  <span className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0 mt-0.5" style={{ width: '17px', height: '17px', backgroundColor: standard.accentColor, fontSize: '0.64rem' }}>
+                <div key={i} className="p-0.5 px-1.5 rounded bg-white border small d-flex align-items-start gap-1" style={{ fontSize: '0.67rem' }}>
+                  <span className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0 mt-0.5" style={{ width: '15px', height: '15px', backgroundColor: standard.accentColor, fontSize: '0.58rem' }}>
                     {i + 1}
                   </span>
-                  <span style={{ lineHeight: '1.3' }}>{pt}</span>
+                  <span style={{ lineHeight: '1.2' }}>{pt}</span>
                 </div>
               ))}
             </div>
@@ -3155,8 +3167,8 @@ function StandardA4PrintSheet({ standard }) {
         </div>
 
         {/* Page 1 Footer Bar */}
-        <div className="a4-std-page-footer">
-          <div className="d-flex justify-content-between text-muted small" style={{ fontSize: '0.65rem' }}>
+        <div className="a4-std-page-footer" style={{ padding: '5px 14px' }}>
+          <div className="d-flex justify-content-between text-muted small" style={{ fontSize: '0.64rem' }}>
             <span>Klinische Intensivpflege &bull; QM-System</span>
             <span>Gültiger Stand: 2026 &bull; Seite 1 / 2</span>
           </div>
@@ -3169,19 +3181,19 @@ function StandardA4PrintSheet({ standard }) {
       {/* PAGE 2: SICHERHEITS-CHECKLISTE, RICHTWERTE, TROUBLESHOOTING & QM-FREIGABE */}
       <div className="a4-std-page a4-std-page-2" id={`pocketcard-a4-page2-${standard.id}`}>
         {/* Spectrum Top Accent Bar */}
-        <div style={{ height: '4px', background: 'linear-gradient(90deg, #dc2626 0%, #16a34a 20%, #ea580c 40%, #7c3aed 60%, #0284c7 80%, #facc15 100%)' }} />
+        <div style={{ height: '3px', background: 'linear-gradient(90deg, #dc2626 0%, #16a34a 20%, #ea580c 40%, #7c3aed 60%, #0284c7 80%, #facc15 100%)' }} />
 
         {/* Header Bar */}
-        <div className="a4-std-header-bar" style={{ backgroundColor: '#002b47' }}>
-          <div className="fw-bold text-white small d-flex align-items-center gap-2">
+        <div className="a4-std-header-bar" style={{ backgroundColor: '#002b47', padding: '6px 14px' }}>
+          <div className="fw-bold text-white small d-flex align-items-center gap-2" style={{ fontSize: '0.78rem' }}>
             <i className={`bi ${standard.icon}`}></i>
             <span>{standard.topic} (Fortsetzung &amp; Checkliste)</span>
           </div>
           <div className="d-flex align-items-center gap-1.5">
-            <span className="badge rounded-pill text-white px-2 py-0.5 fw-bold" style={{ backgroundColor: standard.accentColor, fontSize: '0.7rem' }}>
+            <span className="badge rounded-pill text-white px-2 py-0.5 fw-bold" style={{ backgroundColor: standard.accentColor, fontSize: '0.68rem' }}>
               {standard.shortTitle}
             </span>
-            <span className="badge bg-white text-dark fw-bold px-2 py-0.5" style={{ fontSize: '0.68rem' }}>
+            <span className="badge bg-white text-dark fw-bold px-2 py-0.5" style={{ fontSize: '0.65rem' }}>
               Seite 2 / 2
             </span>
           </div>
@@ -3189,22 +3201,22 @@ function StandardA4PrintSheet({ standard }) {
 
         <div className="a4-std-body">
           {/* 1. Schicht-Sicherheits-Checkliste */}
-          <div className="p-2.5 bg-white border rounded-3">
-            <div className="fw-bold text-dark small text-uppercase mb-1.5 d-flex align-items-center justify-content-between">
+          <div className="p-1.5 bg-white border rounded-3">
+            <div className="fw-bold text-dark small text-uppercase mb-1 d-flex align-items-center justify-content-between">
               <span><i className="bi bi-clipboard2-check text-success me-1"></i>Schicht-Sicherheits-Checkliste (ITS):</span>
-              <span className="text-muted font-monospace" style={{ fontSize: '0.62rem' }}>Alle Punkte vor Freigabe prüfen</span>
+              <span className="text-muted font-monospace" style={{ fontSize: '0.60rem' }}>Alle Punkte vor Freigabe prüfen</span>
             </div>
             <div className="row g-1">
               {standard.checklist && standard.checklist.map((item, idx) => (
                 <div key={idx} className="col-6">
-                  <div className="p-1 px-1.5 rounded border bg-light small d-flex align-items-center gap-1.5" style={{ fontSize: '0.71rem', minHeight: '30px' }}>
-                    <span className="border rounded bg-white text-muted d-inline-flex align-items-center justify-content-center flex-shrink-0" style={{ width: '14px', height: '14px', fontSize: '0.6rem' }}>
+                  <div className="p-0.5 px-1 rounded border bg-light small d-flex align-items-center gap-1" style={{ fontSize: '0.65rem', minHeight: '22px' }}>
+                    <span className="border rounded bg-white text-muted d-inline-flex align-items-center justify-content-center flex-shrink-0" style={{ width: '12px', height: '12px', fontSize: '0.55rem' }}>
                       &#x25A2;
                     </span>
-                    <span className="badge bg-secondary text-white py-0.5 px-1" style={{ fontSize: '0.58rem' }}>
+                    <span className="badge bg-secondary text-white py-0.5 px-1" style={{ fontSize: '0.55rem' }}>
                       {typeof item === 'object' ? (item.cat || 'ITS') : 'ITS'}
                     </span>
-                    <span className="text-truncate" style={{ lineHeight: '1.2' }}>
+                    <span className="text-truncate" style={{ lineHeight: '1.15' }}>
                       {typeof item === 'object' ? item.text : item}
                     </span>
                   </div>
@@ -3214,30 +3226,30 @@ function StandardA4PrintSheet({ standard }) {
           </div>
 
           {/* 2. Klinische Richt- & Grenzwerte (Tabelle) */}
-          <div className="p-2.5 bg-white border rounded-3">
-            <div className="fw-bold text-dark small text-uppercase mb-1.5 d-flex align-items-center justify-content-between">
+          <div className="p-1.5 bg-white border rounded-3">
+            <div className="fw-bold text-dark small text-uppercase mb-1 d-flex align-items-center justify-content-between">
               <span><i className="bi bi-speedometer2 text-primary me-1"></i>Klinische Richt- &amp; Grenzwerte:</span>
-              <span className="badge bg-light text-primary border" style={{ fontSize: '0.62rem' }}>Grenzwerte &amp; Alarme</span>
+              <span className="badge bg-light text-primary border" style={{ fontSize: '0.60rem' }}>Grenzwerte &amp; Alarme</span>
             </div>
             <div className="table-responsive mb-0">
-              <table className="table table-sm table-bordered mb-0 small" style={{ fontSize: '0.71rem' }}>
+              <table className="table table-sm table-bordered mb-0 small" style={{ fontSize: '0.66rem' }}>
                 <thead className="table-light">
                   <tr>
-                    <th style={{ width: '32%' }}>Messgröße / Parameter</th>
-                    <th style={{ width: '28%' }}>Ziel- / Normwert</th>
-                    <th style={{ width: '40%' }}>Klinische Relevanz / Toleranz</th>
+                    <th style={{ width: '32%', padding: '2px 5px' }}>Messgröße / Parameter</th>
+                    <th style={{ width: '28%', padding: '2px 5px' }}>Ziel- / Normwert</th>
+                    <th style={{ width: '40%', padding: '2px 5px' }}>Klinische Relevanz / Toleranz</th>
                   </tr>
                 </thead>
                 <tbody>
                   {standard.parameters && standard.parameters.map((p, idx) => (
                     <tr key={idx}>
-                      <td className="fw-semibold text-dark">{p.label}</td>
-                      <td>
-                        <span className="badge rounded-pill text-white fw-bold" style={{ backgroundColor: standard.accentColor, fontSize: '0.67rem' }}>
+                      <td className="fw-semibold text-dark" style={{ padding: '2px 5px' }}>{p.label}</td>
+                      <td style={{ padding: '2px 5px' }}>
+                        <span className="badge rounded-pill text-white fw-bold" style={{ backgroundColor: standard.accentColor, fontSize: '0.65rem' }}>
                           {p.target || p.val || 'Normbereich'}
                         </span>
                       </td>
-                      <td className="text-secondary">{p.note || 'Gemäß ärztlicher Verordnung'}</td>
+                      <td className="text-secondary" style={{ padding: '2px 5px' }}>{p.note || 'Gemäß ärztlicher Verordnung'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -3246,24 +3258,24 @@ function StandardA4PrintSheet({ standard }) {
           </div>
 
           {/* 3. Troubleshooting, Alarme & Notfallmaßnahmen */}
-          <div className="p-2.5 bg-white border rounded-3">
-            <div className="fw-bold text-dark small text-uppercase mb-1.5 d-flex align-items-center gap-1">
+          <div className="p-1.5 bg-white border rounded-3">
+            <div className="fw-bold text-dark small text-uppercase mb-1 d-flex align-items-center gap-1" style={{ fontSize: '0.68rem' }}>
               <i className="bi bi-exclamation-triangle-fill text-danger"></i>
               <span>Troubleshooting &amp; Notfallmaßnahmen:</span>
             </div>
-            <div className="d-flex flex-column gap-1">
+            <div className="d-flex flex-column gap-0.5">
               {standard.troubleshooting && standard.troubleshooting.map((t, idx) => (
-                <div key={idx} className="p-1.5 border rounded bg-light small" style={{ fontSize: '0.71rem', borderLeft: '3.5px solid #dc2626' }}>
+                <div key={idx} className="p-1 px-1.5 border rounded bg-light small" style={{ fontSize: '0.66rem', borderLeft: '3px solid #dc2626' }}>
                   <div className="d-flex align-items-center justify-content-between mb-0.5">
-                    <strong className="text-danger">
+                    <strong className="text-danger" style={{ fontSize: '0.67rem' }}>
                       <i className="bi bi-bell-fill me-1"></i>{t.problem}
                     </strong>
-                    <span className="badge bg-danger bg-opacity-10 text-danger" style={{ fontSize: '0.6rem' }}>Alarm</span>
+                    <span className="badge bg-danger bg-opacity-10 text-danger" style={{ fontSize: '0.58rem' }}>Alarm</span>
                   </div>
-                  <div className="text-secondary mb-0.5" style={{ fontSize: '0.68rem' }}>
+                  <div className="text-secondary mb-0.5" style={{ fontSize: '0.64rem', lineHeight: '1.2' }}>
                     <strong>Ursache:</strong> {t.cause}
                   </div>
-                  <div className="text-dark" style={{ fontSize: '0.69rem' }}>
+                  <div className="text-dark" style={{ fontSize: '0.65rem', lineHeight: '1.2' }}>
                     <strong className="text-primary">&rarr; Sofortmaßnahme:</strong> {t.action}
                   </div>
                 </div>
@@ -3272,11 +3284,11 @@ function StandardA4PrintSheet({ standard }) {
           </div>
 
           {/* 4. QM-Schichtkontrolle & Dokumentationsfeld (Sign-off) */}
-          <div className="p-2 rounded-3 border bg-light">
-            <div className="fw-bold text-dark small text-uppercase mb-1" style={{ fontSize: '0.66rem' }}>
+          <div className="p-1.5 rounded-3 border bg-light">
+            <div className="fw-bold text-dark small text-uppercase mb-0.5" style={{ fontSize: '0.64rem' }}>
               <i className="bi bi-pen-fill text-secondary me-1"></i>QM-Dokumentation &amp; Schichtkontrolle (Handzeichen):
             </div>
-            <div className="row g-1 small" style={{ fontSize: '0.67rem' }}>
+            <div className="row g-1 small" style={{ fontSize: '0.65rem' }}>
               <div className="col-5">
                 <div className="p-1 border rounded bg-white text-muted">
                   Prüfung durchgeführt: __________________
@@ -3297,8 +3309,8 @@ function StandardA4PrintSheet({ standard }) {
         </div>
 
         {/* Page 2 Footer Bar */}
-        <div className="a4-std-page-footer">
-          <div className="d-flex justify-content-between text-muted small" style={{ fontSize: '0.65rem' }}>
+        <div className="a4-std-page-footer" style={{ padding: '5px 14px' }}>
+          <div className="d-flex justify-content-between text-muted small" style={{ fontSize: '0.64rem' }}>
             <span>QM-Dokumentation Intensivpflege &bull; Gültig für alle Intensivstationen</span>
             <span>Seite 2 / 2</span>
           </div>
@@ -4690,11 +4702,35 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
     if (isAtm) {
       const prevDisplay = element.style.display;
       const prevPosition = element.style.position;
+      const prevTop = element.style.top;
+      const prevLeft = element.style.left;
+      const prevZIndex = element.style.zIndex;
       const prevWidth = element.style.width;
+      const prevMaxWidth = element.style.maxWidth;
+      const prevMargin = element.style.margin;
+      const prevBackground = element.style.background;
 
       element.style.display = 'block';
-      element.style.position = 'relative';
+      element.style.position = 'fixed';
+      element.style.top = '0px';
+      element.style.left = '0px';
+      element.style.zIndex = '999999';
       element.style.width = '794px';
+      element.style.maxWidth = '794px';
+      element.style.margin = '0';
+      element.style.background = '#ffffff';
+
+      const restoreStyles = () => {
+        element.style.display = prevDisplay;
+        element.style.position = prevPosition;
+        element.style.top = prevTop;
+        element.style.left = prevLeft;
+        element.style.zIndex = prevZIndex;
+        element.style.width = prevWidth;
+        element.style.maxWidth = prevMaxWidth;
+        element.style.margin = prevMargin;
+        element.style.background = prevBackground;
+      };
 
       const opt = {
         margin: [0, 0, 0, 0],
@@ -4712,25 +4748,48 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
       };
 
       window.html2pdf().set(opt).from(element).save().then(() => {
-        element.style.display = prevDisplay;
-        element.style.position = prevPosition;
-        element.style.width = prevWidth;
+        restoreStyles();
         showToast('Pocketcard DIN A4 PDF erfolgreich heruntergeladen!');
       }).catch((err) => {
-        element.style.display = prevDisplay;
-        element.style.position = prevPosition;
-        element.style.width = prevWidth;
+        restoreStyles();
         console.error('PDF error:', err);
         handlePrint('atm');
       });
     } else {
+      const prevDisplay = element.style.display;
+      const prevPosition = element.style.position;
+      const prevTop = element.style.top;
+      const prevLeft = element.style.left;
+      const prevZIndex = element.style.zIndex;
       const prevWidth = element.style.width;
       const prevMaxWidth = element.style.maxWidth;
       const prevHeight = element.style.height;
+      const prevMargin = element.style.margin;
+      const prevBackground = element.style.background;
 
+      element.style.display = 'block';
+      element.style.position = 'fixed';
+      element.style.top = '0px';
+      element.style.left = '0px';
+      element.style.zIndex = '999999';
       element.style.width = '1123px';
       element.style.maxWidth = '1123px';
       element.style.height = '794px';
+      element.style.margin = '0';
+      element.style.background = '#ffffff';
+
+      const restoreStyles = () => {
+        element.style.display = prevDisplay;
+        element.style.position = prevPosition;
+        element.style.top = prevTop;
+        element.style.left = prevLeft;
+        element.style.zIndex = prevZIndex;
+        element.style.width = prevWidth;
+        element.style.maxWidth = prevMaxWidth;
+        element.style.height = prevHeight;
+        element.style.margin = prevMargin;
+        element.style.background = prevBackground;
+      };
 
       const opt = {
         margin: [0, 0, 0, 0],
@@ -4748,14 +4807,10 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
       };
 
       window.html2pdf().set(opt).from(element).save().then(() => {
-        element.style.width = prevWidth;
-        element.style.maxWidth = prevMaxWidth;
-        element.style.height = prevHeight;
+        restoreStyles();
         showToast('DIN A4 PDF erfolgreich heruntergeladen!');
       }).catch((err) => {
-        element.style.width = prevWidth;
-        element.style.maxWidth = prevMaxWidth;
-        element.style.height = prevHeight;
+        restoreStyles();
         console.error('PDF error:', err);
         handlePrint('a4');
       });
