@@ -53,6 +53,66 @@ body {
   z-index: 1020;
 }
 
+/* Brand Pill Button in Navbar (Intensivstandards Button) */
+.navbar-brand.brand-btn-stylish {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.35rem 0.95rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(56, 189, 248, 0.15) 100%);
+  border: 1.5px solid rgba(2, 132, 199, 0.28);
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none !important;
+}
+
+.navbar-brand.brand-btn-stylish:hover {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.16) 0%, rgba(56, 189, 248, 0.25) 100%);
+  border-color: rgba(2, 132, 199, 0.55);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.2), inset 0 1px 0 rgba(255, 255, 255, 1);
+  transform: translateY(-1.5px);
+}
+
+.navbar-brand.brand-btn-stylish:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.navbar-brand.brand-btn-stylish .brand-pulse-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.74rem;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);
+  flex-shrink: 0;
+  transition: transform 0.22s ease;
+}
+
+.navbar-brand.brand-btn-stylish:hover .brand-pulse-badge {
+  transform: scale(1.12) rotate(-8deg);
+  background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+}
+
+.navbar-brand.brand-btn-stylish .brand-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: live-pulse-dot 2s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes live-pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.85); }
+}
+
 .brand-dot {
   width: 10px;
   height: 10px;
@@ -63,12 +123,13 @@ body {
 }
 
 .brand-title {
-  font-weight: 800;
-  letter-spacing: -0.3px;
+  font-weight: 850;
+  letter-spacing: -0.2px;
   background: linear-gradient(135deg, #001f3f 0%, #0284c7 50%, #0d9488 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  font-size: clamp(1.02rem, 2.5vw, 1.25rem);
+  line-height: 1.1;
 }
 
 /* Hospital Sub-header / Main Top Header with rich colorful medical gradient */
@@ -422,20 +483,36 @@ body {
 
 .nav-standard-link.active {
   color: #ffffff !important;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  font-weight: 750;
 }
 
-.nav-standard-link.beatmung.active { background: var(--beatmung-color); }
-.nav-standard-link.befeuchtung-invasiv.active { background: var(--befeuchtung-color); }
-.nav-standard-link.hfnc.active { background: var(--hfnc-color); }
-.nav-standard-link.arterie.active { background: var(--arterie-color); }
-.nav-standard-link.evd.active { background: var(--evd-color); }
+.nav-standard-link.beatmung.active {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #3b82f6 100%);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
+}
+.nav-standard-link.befeuchtung-invasiv.active {
+  background: linear-gradient(135deg, #0369a1 0%, #0284c7 50%, #0ea5e9 100%);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45);
+}
+.nav-standard-link.hfnc.active {
+  background: linear-gradient(135deg, #c2410c 0%, #ea580c 50%, #f97316 100%);
+  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.45);
+}
+.nav-standard-link.arterie.active {
+  background: linear-gradient(135deg, #b91c1c 0%, #dc2626 50%, #ef4444 100%);
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.45);
+}
+.nav-standard-link.evd.active {
+  background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 50%, #8b5cf6 100%);
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.45);
+}
 
-.nav-standard-link.beatmung:not(.active) { color: var(--beatmung-color); }
-.nav-standard-link.befeuchtung-invasiv:not(.active) { color: var(--befeuchtung-color); }
-.nav-standard-link.hfnc:not(.active) { color: var(--hfnc-color); }
-.nav-standard-link.arterie:not(.active) { color: var(--arterie-color); }
-.nav-standard-link.evd:not(.active) { color: var(--evd-color); }
+.nav-standard-link.beatmung:not(.active) { color: var(--beatmung-color); border: 1px solid rgba(37, 99, 235, 0.2); }
+.nav-standard-link.befeuchtung-invasiv:not(.active) { color: var(--befeuchtung-color); border: 1px solid rgba(2, 132, 199, 0.2); }
+.nav-standard-link.hfnc:not(.active) { color: var(--hfnc-color); border: 1px solid rgba(234, 88, 12, 0.2); }
+.nav-standard-link.arterie:not(.active) { color: var(--arterie-color); border: 1px solid rgba(220, 38, 38, 0.2); }
+.nav-standard-link.evd:not(.active) { color: var(--evd-color); border: 1px solid rgba(124, 58, 237, 0.2); }
 
 /* Legacy mappings for backward compatibility */
 .nav-standard-link.dekubitus.active { background: var(--dekubitus-color); }
@@ -454,62 +531,262 @@ body {
 
 .nav-standard-link:not(.active):hover {
   background: #f1f5f9;
+  transform: translateY(-1px);
 }
 
 /* =========================================================
    TOP BREADCRUMB & STANDARD SWITCHER BUTTONS (BEAUTIFIED)
    ========================================================= */
 .btn-all-kacheln {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.45rem 1.15rem;
+  gap: 0.65rem;
+  padding: 0.45rem 1.25rem;
   min-height: 42px;
-  border-radius: 50rem;
-  background: #ffffff;
-  color: #0f172a;
-  font-weight: 700;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #001a2e 0%, #003354 50%, #0284c7 100%) !important;
+  color: #ffffff !important;
+  font-weight: 750;
   font-size: 0.84rem;
-  letter-spacing: 0.2px;
-  border: 1.5px solid #cbd5e1;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
-  text-decoration: none;
-  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.3px;
+  border: 1.5px solid rgba(56, 189, 248, 0.45) !important;
+  box-shadow: 0 4px 16px rgba(0, 39, 61, 0.25), 0 2px 6px rgba(2, 132, 199, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  text-decoration: none !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
   white-space: nowrap;
+  overflow: hidden;
+}
+
+.btn-all-kacheln::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-25deg);
+  transition: left 0.65s ease;
+  pointer-events: none;
 }
 
 .btn-all-kacheln:hover {
-  background: #f8fafc;
-  color: #0284c7;
-  border-color: #0284c7;
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.16);
-  transform: translateY(-1.5px);
+  background: linear-gradient(135deg, #00223d 0%, #0284c7 50%, #0369a1 100%) !important;
+  color: #ffffff !important;
+  border-color: rgba(56, 189, 248, 0.8) !important;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.45), 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  transform: translateY(-2px) scale(1.02);
+}
+
+.btn-all-kacheln:hover::before {
+  left: 140%;
 }
 
 .btn-all-kacheln:active {
-  transform: scale(0.97);
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 8px rgba(0, 39, 61, 0.3) !important;
 }
 
 .btn-all-kacheln .icon-badge {
   width: 26px;
   height: 26px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
   color: #ffffff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 0.76rem;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
-  transition: all 0.22s ease;
+  box-shadow: 0 2px 6px rgba(56, 189, 248, 0.4);
+  transition: all 0.25s ease;
   flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .btn-all-kacheln:hover .icon-badge {
+  transform: rotate(-10deg) scale(1.12);
+  background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+  box-shadow: 0 3px 10px rgba(56, 189, 248, 0.6);
+}
+
+.btn-all-kacheln .back-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  font-size: 0.72rem;
+  color: #bae6fd;
+  margin-left: 2px;
+  transition: transform 0.22s ease, background 0.22s ease;
+}
+
+.btn-all-kacheln:hover .back-arrow {
+  transform: translateX(-3px);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* =========================================================
+   ULTRA-STYLISH 5 KACHELN ACTION BUTTONS (.btn-kachel-open)
+   ========================================================= */
+.btn-kachel-open {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.42rem 1.15rem;
+  min-height: 36px;
+  border-radius: 9999px;
+  color: #ffffff !important;
+  font-weight: 750;
+  font-size: 0.81rem;
+  letter-spacing: 0.3px;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none !important;
+  cursor: pointer;
+  overflow: hidden;
+  user-select: none;
+}
+
+.btn-kachel-open::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: skewX(-25deg);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.btn-kachel-open:hover {
+  transform: translateY(-2px) scale(1.03);
+  filter: brightness(1.08);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+.btn-kachel-open:hover::before {
+  left: 140%;
+}
+
+.btn-kachel-open:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.btn-kachel-open .kachel-arrow-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  font-size: 0.72rem;
+  color: #ffffff;
+  transition: transform 0.22s ease;
+  flex-shrink: 0;
+}
+
+.btn-kachel-open:hover .kachel-arrow-badge {
+  transform: translateX(3px);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* =========================================================
+   ULTRA-STYLISH ALLE POCKETCARDS BUTTON (.btn-pocketcard-stylish)
+   ========================================================= */
+.btn-pocketcard-stylish {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background: #ffffff !important;
+  color: #0369a1 !important;
+  font-weight: 750 !important;
+  font-size: 0.8rem !important;
+  letter-spacing: 0.25px;
+  border: 1.5px solid rgba(56, 189, 248, 0.6) !important;
+  border-radius: 9999px !important;
+  padding: 0.38rem 1.05rem !important;
+  min-height: 36px;
+  box-shadow: 0 3px 12px rgba(2, 132, 199, 0.16), 0 1px 3px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  text-decoration: none !important;
+  cursor: pointer;
+  overflow: hidden;
+  user-select: none;
+}
+
+.btn-pocketcard-stylish::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.25), transparent);
+  transform: skewX(-25deg);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.btn-pocketcard-stylish:hover {
+  transform: translateY(-2px) scale(1.02);
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+  color: #0284c7 !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.3), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+.btn-pocketcard-stylish:hover::before {
+  left: 140%;
+}
+
+.btn-pocketcard-stylish:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.2) !important;
+}
+
+.btn-pocketcard-stylish .pocketcard-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
   background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
-  transform: rotate(-6deg);
+  color: #ffffff;
+  font-size: 0.72rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+  transition: transform 0.22s ease;
+}
+
+.btn-pocketcard-stylish:hover .pocketcard-icon-badge {
+  transform: rotate(-10deg) scale(1.1);
+  background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+}
+
+.btn-pocketcard-stylish .pocketcard-count-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  background: rgba(2, 132, 199, 0.12);
+  color: #0284c7;
+  border: 1px solid rgba(2, 132, 199, 0.25);
+  margin-left: 2px;
 }
 
 .quick-switcher-bar {

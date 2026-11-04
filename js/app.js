@@ -466,14 +466,16 @@ function App() {
             {currentRoute !== 'home' && currentRoute !== 'quick-hub' && (
               <button
                 type="button"
-                className="btn btn-sm btn-light text-dark fw-semibold rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5"
-                style={{ minHeight: '36px', fontSize: '0.78rem' }}
+                className="btn-pocketcard-stylish"
                 onClick={() => navigateTo('home')}
-                title="Zur Startseite / Home"
+                title="Zur Startseite der Klinischen Intensivstandards"
               >
-                <i className="bi bi-collection-fill text-primary"></i>
+                <span className="pocketcard-icon-badge">
+                  <i className="bi bi-collection-fill"></i>
+                </span>
                 <span className="d-none d-sm-inline">Alle Pocketcards</span>
                 <span className="d-inline d-sm-none">Karten</span>
+                <span className="pocketcard-count-badge d-none d-sm-inline">5</span>
               </button>
             )}
           </div>
@@ -487,13 +489,14 @@ function App() {
           <div className="d-flex align-items-center justify-content-between w-100 w-lg-auto">
             <a
               href="#/"
-              className="navbar-brand d-flex align-items-center gap-2 text-decoration-none text-dark me-2 py-0"
-              title="Zur Startübersicht"
+              className="navbar-brand brand-btn-stylish d-flex align-items-center gap-2 me-2 py-0"
+              title="Zur Startübersicht der Klinischen Intensivstandards"
             >
-              <span className="brand-dot"></span>
-              <span className="brand-title fw-bold" style={{ fontSize: '1.02rem', letterSpacing: '0.2px' }}>
-                Intensivstandards
+              <span className="brand-pulse-badge">
+                <i className="bi bi-heart-pulse-fill"></i>
               </span>
+              <span className="brand-title">Intensivstandards</span>
+              <span className="brand-live-dot" title="Aktiv &amp; QM-Geprüft 2026"></span>
             </a>
 
             {/* Mobile Controls: Logout only (Scan completely removed) */}
@@ -1269,16 +1272,17 @@ function TilesOverview({ standards, onSelectStandard }) {
 
                     <button
                       type="button"
-                      className="btn btn-sm rounded-pill px-3 py-1.5 fw-bold text-white shadow-sm d-inline-flex align-items-center gap-1.5 ms-auto"
+                      className="btn-kachel-open ms-auto"
                       style={{
                         background: enh.btnGradient,
-                        boxShadow: `0 4px 12px ${enh.btnShadow}`,
-                        border: 'none',
-                        fontSize: '0.8rem'
+                        boxShadow: `0 4px 14px ${enh.btnShadow}`
                       }}
+                      title={`${std.title} öffnen`}
                     >
                       <span>Details &amp; Kurven</span>
-                      <i className="bi bi-arrow-right"></i>
+                      <span className="kachel-arrow-badge">
+                        <i className="bi bi-arrow-right"></i>
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -3646,7 +3650,9 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
               <i className="bi bi-grid-fill"></i>
             </span>
             <span>Alle 5 Kacheln</span>
-            <i className="bi bi-arrow-left text-muted ms-1" style={{ fontSize: '0.82rem' }}></i>
+            <span className="back-arrow">
+              <i className="bi bi-arrow-left"></i>
+            </span>
           </a>
 
           {/* Grouped PDF & Print Button Pill */}
