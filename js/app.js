@@ -463,17 +463,19 @@ function App() {
               <i className="bi bi-stars ucard-sparkle"></i>
             </button>
 
-            <button
-              type="button"
-              className={`btn btn-sm ${currentRoute === 'home' || currentRoute === 'quick-hub' ? 'btn-primary text-white fw-bold' : 'btn-light text-dark fw-semibold'} rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5`}
-              style={{ minHeight: '36px', fontSize: '0.78rem' }}
-              onClick={() => navigateTo('home')}
-              title="Zur Startseite / Home"
-            >
-              <i className="bi bi-collection-fill text-primary"></i>
-              <span className="d-none d-sm-inline">Alle Pocketcards</span>
-              <span className="d-inline d-sm-none">Karten</span>
-            </button>
+            {currentRoute !== 'home' && currentRoute !== 'quick-hub' && (
+              <button
+                type="button"
+                className="btn btn-sm btn-light text-dark fw-semibold rounded-pill px-3 py-1.5 shadow-sm d-flex align-items-center gap-1.5"
+                style={{ minHeight: '36px', fontSize: '0.78rem' }}
+                onClick={() => navigateTo('home')}
+                title="Zur Startseite / Home"
+              >
+                <i className="bi bi-collection-fill text-primary"></i>
+                <span className="d-none d-sm-inline">Alle Pocketcards</span>
+                <span className="d-inline d-sm-none">Karten</span>
+              </button>
+            )}
           </div>
         </div>
       </header>
