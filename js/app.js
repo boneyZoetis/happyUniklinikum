@@ -4052,31 +4052,31 @@ function UniversalCardInteractiveCard({ isAtm = true, onSelectStandard }) {
           title="5. Externe Ventrikeldrainage (EVD) aufrufen"
         />
 
-        {/* Real Crisp Functional Scannable QR Code Overlay */}
+        {/* Real Crisp Functional Scannable QR Code Overlay - Exactly Centered on the Graphic White Box */}
         <div
           style={{
             position: 'absolute',
-            left: '73.0%',
-            top: '34.6%',
-            width: '16.9%',
-            height: '25.1%',
+            left: '70.5%',
+            top: '31.5%',
+            width: '21.6%',
+            height: '30.8%',
             pointerEvents: 'none',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 4,
-            padding: '2px',
+            padding: '3px',
             backgroundColor: '#ffffff',
-            borderRadius: '3px',
+            borderRadius: '6px',
             overflow: 'hidden',
             boxSizing: 'border-box'
           }}
         >
           <QrCodeCanvas
             value={portalUrl}
-            size={160}
+            size={180}
             color="#001833"
-            style={{ width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%' }}
+            style={{ width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
           />
         </div>
 
@@ -5059,31 +5059,31 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                     style={{ objectFit: 'cover' }}
                   />
 
-                  {/* Scannable Crisp QR Code Overlay */}
+                  {/* Scannable Crisp QR Code Overlay - Exactly Centered on the Graphic White Box */}
                   <div
                     style={{
                       position: 'absolute',
-                      left: '73.0%',
-                      top: '34.6%',
-                      width: '16.9%',
-                      height: '25.1%',
+                      left: '70.5%',
+                      top: '31.5%',
+                      width: '21.6%',
+                      height: '30.8%',
                       pointerEvents: 'none',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       zIndex: 4,
-                      padding: '2px',
+                      padding: '3px',
                       backgroundColor: '#ffffff',
-                      borderRadius: '3px',
+                      borderRadius: '6px',
                       overflow: 'hidden',
                       boxSizing: 'border-box'
                     }}
                   >
                     <QrCodeCanvas
                       value={portalUrl}
-                      size={160}
+                      size={180}
                       color="#001833"
-                      style={{ width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%' }}
+                      style={{ width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                     />
                   </div>
                 </div>
