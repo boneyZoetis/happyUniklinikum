@@ -836,15 +836,15 @@ const TILE_ENHANCEMENTS = {
     badgeBorder: '#bae6fd',
     badgeText: 'Intensiv-Standard ITS',
     titleColor: '#0369a1',
-    title: '1. Vorbereitung & Funktionsprüfung Beatmungsgerät',
-    lead: 'Fachgerechter Aufbau des Beatmungsschlauchsystems, Dichtigkeitsprüfung (Leckage < 100 ml/min) und präklinischer Gerätecheck vor Patientenkontakt.',
+    title: '1. Vorbereitung & Funktionsprüfung Beatmungsgerät (ELISA 600)',
+    lead: 'Fachgerechter Aufbau des Doppelschlauchsystems (ELISA 600), Dichtigkeitsprüfung (Leckage < 100 ml/min) und präklinischer Gerätecheck vor Patientenkontakt.',
     image: 'assets/card-beatmung.jpg',
-    imageOverlay: 'Gerätecheck & Patientensicherheit',
+    imageOverlay: 'ELISA 600 & Gerätecheck',
     quickBadges: [
-      { text: 'Gerätecheck & Dichtigkeit', icon: 'bi-shield-check', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
+      { text: 'ELISA 600 SOP', icon: 'bi-shield-check', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
       { text: 'ZGV 3.0–4.5 bar', icon: 'bi-gauge', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' }
     ],
-    imageSubtitle: 'Aseptischer Aufbau, Pre-Use Gerätecheck & lückenlose Notfallbereitschaft',
+    imageSubtitle: 'Aufbau Doppelschlauchsystem ELISA 600, Pre-Use Check & Notfallbereitschaft',
     goals: [
       { text: '🟢 Sicherheit', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
       { text: '🔴 Dichtigkeit', icon: 'bi-x-octagon-fill text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
@@ -2037,19 +2037,24 @@ function VentilatorCircuitComponent({ standard }) {
       {/* TAB 2: CIRCUIT SCHEMATIC */}
       {activeTab === 'circuit' && (
         <div className="p-3 bg-light rounded-4 border">
-          <div className="fw-bold text-dark small text-uppercase mb-2.5 d-flex align-items-center gap-1.5">
-            <i className="bi bi-diagram-3-fill text-primary"></i>
-            <span>Fachgerechter Aufbau des Doppelschlauchsystems (Inspiration &amp; Exspiration):</span>
+          <div className="fw-bold text-dark small text-uppercase mb-2.5 d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div className="d-flex align-items-center gap-1.5">
+              <i className="bi bi-diagram-3-fill text-primary"></i>
+              <span>FACHGERECHTER AUFBAU DES DOPPELSCHLAUCHSYSTEMS – ELISA 600:</span>
+            </div>
+            <span className="badge rounded-pill bg-white text-primary border px-2 py-0.5" style={{ fontSize: '0.65rem' }}>
+              6 Kernschritte
+            </span>
           </div>
 
           <div className="row g-2">
             {[
-              { num: '1', title: 'Zentrale Gasversorgung (ZGV)', desc: 'O2 & Druckluft-Schläuche fest verriegeln (3.0–4.5 bar).', icon: 'bi-plug-fill', color: '#0284c7' },
-              { num: '2', title: 'Bakterienfilter Geräteausgang', desc: 'Inspirationsfilter direkt an Inspirationsventil montieren.', icon: 'bi-shield-check', color: '#16a34a' },
-              { num: '3', title: 'Befeuchterkammer (MR850)', desc: 'Unterhalb Patientenniveau fixieren, mit Aqua dest. befüllen.', icon: 'bi-droplet-half', color: '#0891b2' },
-              { num: '4', title: 'Beheizter Inspirationsschenkel', desc: 'Heizdraht einklinken, Temperatursensor vor Y-Stück.', icon: 'bi-thermometer-sun', color: '#ea580c' },
-              { num: '5', title: 'Patientennahes Y-Stück', desc: 'Flowsensor (falls extern) & CO2-Küvette knickfrei anbringen.', icon: 'bi-activity', color: '#8b5cf6' },
-              { num: '6', title: 'Exspirationsschenkel & Ventil', desc: 'Exspirationsfilter vor Geräteeingang, Wasserfalle tiefster Punkt.', icon: 'bi-arrow-left-circle-fill', color: '#dc2626' }
+              { num: '1', title: '🔵 1. Zentrale Gasversorgung (ZGV)', desc: 'O₂- und Druckluftschläuche sicher anschließen. Versorgungsdruck gemäß Herstellervorgaben kontrollieren.', icon: 'bi-plug-fill', color: '#0284c7' },
+              { num: '2', title: '🟢 2. Doppelschlauchsystem', desc: 'Vormontiertes Doppelschlauchsystem mit integriertem Y-Stück auf Beschädigungen, Knicke und korrekten Sitz prüfen.', icon: 'bi-box-seam-fill', color: '#16a34a' },
+              { num: '3', title: '🔵 3. Inspirationsschenkel', desc: 'Inspirationsschlauch am vorgesehenen Geräteausgang sicher anschließen.', icon: 'bi-arrow-right-circle-fill', color: '#0284c7' },
+              { num: '4', title: '🟣 4. Exspirationsschenkel & Filter', desc: 'Exspirationsfilter am vorgesehenen Geräteanschluss einsetzen und Exspirationsschlauch sicher verbinden. Korrekten Sitz prüfen.', icon: 'bi-filter-circle-fill', color: '#7c3aed' },
+              { num: '5', title: '🟠 5. Patientennaher HMEF & Gänsegurgel', desc: 'HMEF am Y-Stück anschließen und mit der Gänsegurgel verbinden. Patientenseitigen Anschluss mit roter Verschlusskappe verschließen.', icon: 'bi-shield-fill-plus', color: '#ea580c' },
+              { num: '6', title: '🔴 6. Abschließende Systemkontrolle', desc: 'Alle Verbindungen auf festen Sitz, Knickfreiheit und sichtbare Beschädigungen prüfen.', icon: 'bi-check2-circle', color: '#dc2626' }
             ].map((s, idx) => (
               <div key={idx} className="col-sm-6 col-lg-4">
                 <div className="p-2.5 bg-white rounded-3 border shadow-2xs h-100" style={{ borderLeft: `3.5px solid ${s.color}` }}>
@@ -2057,7 +2062,7 @@ function VentilatorCircuitComponent({ standard }) {
                     <span className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center" style={{ width: '22px', height: '22px', backgroundColor: s.color, fontSize: '0.72rem' }}>
                       {s.num}
                     </span>
-                    <strong className="text-dark small" style={{ fontSize: '0.82rem' }}>{s.title}</strong>
+                    <strong className="text-dark small" style={{ fontSize: '0.80rem' }}>{s.title}</strong>
                   </div>
                   <div className="text-secondary small ps-4" style={{ fontSize: '0.76rem', lineHeight: '1.3' }}>
                     {s.desc}
@@ -2067,9 +2072,9 @@ function VentilatorCircuitComponent({ standard }) {
             ))}
           </div>
 
-          <div className="alert alert-info py-2 px-3 rounded-3 mt-3 small mb-0 d-flex align-items-center gap-2">
-            <i className="bi bi-info-circle-fill text-primary fs-5 flex-shrink-0"></i>
-            <span><strong>Goldene Regel:</strong> Vor jedem Einsatz Beatmungsbeutel (z.B. Ambu-Beutel) mit Maske &amp; PEEP-Ventil am Patientenbett bereithalten!</span>
+          <div className="alert alert-warning py-2 px-3 rounded-3 mt-3 small mb-0 d-flex align-items-center gap-2 border-warning" style={{ background: '#fffbeb' }}>
+            <i className="bi bi-lightbulb-fill text-warning fs-5 flex-shrink-0"></i>
+            <span><strong>💡 GOLDENE REGEL:</strong> Vor Patientenanschluss Geräte- und Dichtigkeitstest erfolgreich abschließen. Beatmungsbeutel mit Reservoir, ggf. PEEP-Ventil, passender Maske, O₂-Versorgung und funktionsfähige Absaugung bereithalten.</span>
           </div>
         </div>
       )}
@@ -3919,17 +3924,17 @@ function StandardA4PrintSheet({ standard }) {
             </div>
           </div>
 
-          {/* 4 Phasen der Verfahrensanweisung */}
+          {/* Phasen / Aufbau des Doppelschlauchsystems (ELISA 600) */}
           {standard.clinicalFocus && standard.clinicalFocus.length > 0 && (
             <div className="p-1.5 border rounded-3 bg-white">
               <div className="fw-bold text-dark small text-uppercase mb-1 d-flex align-items-center gap-1" style={{ fontSize: '0.68rem' }}>
                 <i className="bi bi-diagram-3-fill text-primary"></i>
-                <span>4 Strukturierte Phasen der Verfahrensanweisung:</span>
+                <span>{standard.id === 'beatmung' ? 'Aufbau Doppelschlauchsystem (ELISA 600):' : '4 Strukturierte Phasen der Verfahrensanweisung:'}</span>
               </div>
               <div className="row g-1">
                 {standard.clinicalFocus.map((f, idx) => (
-                  <div key={idx} className="col-6">
-                    <div className="p-1 rounded border bg-light h-100" style={{ fontSize: '0.66rem', borderLeft: `3px solid ${standard.accentColor}` }}>
+                  <div key={idx} className={standard.id === 'beatmung' ? 'col-4' : 'col-6'}>
+                    <div className="p-1 rounded border bg-light h-100" style={{ fontSize: '0.66rem', borderLeft: `3px solid ${f.color || standard.accentColor}` }}>
                       <strong className="text-dark d-block text-truncate mb-0.5" style={{ fontSize: '0.68rem' }}>
                         <i className={`bi ${f.icon || 'bi-check-circle'} me-1 text-primary`}></i>
                         {f.phase}
@@ -3941,6 +3946,12 @@ function StandardA4PrintSheet({ standard }) {
                   </div>
                 ))}
               </div>
+              {standard.id === 'beatmung' && standard.goldenRule && (
+                <div className="mt-1 p-1 px-1.5 rounded border small d-flex align-items-center gap-1.5" style={{ background: '#fef3c7', borderColor: '#fde68a', fontSize: '0.64rem' }}>
+                  <i className="bi bi-lightbulb-fill text-warning flex-shrink-0"></i>
+                  <span className="text-dark"><strong>GOLDENE REGEL:</strong> {standard.goldenRule}</span>
+                </div>
+              )}
             </div>
           )}
 
@@ -4663,21 +4674,23 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
         />
       </div>
 
-      {/* 6. STRUCTURED HANDLUNGSSCHRITTE IM PFLEGEPROZESS */}
+      {/* 6. STRUCTURED HANDLUNGSSCHRITTE / FACHGERECHTER AUFBAU DES DOPPELSCHLAUCHSYSTEMS – ELISA 600 */}
       <div className="card border shadow-sm rounded-4 p-3 p-sm-4 bg-white mb-4 no-print" style={{ borderColor: `${standard.accentColor}35` }}>
         <div className="d-flex align-items-center gap-2.5 mb-3 pb-2 border-bottom">
           <div
             className="rounded-3 p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0"
-            style={{ width: '36px', height: '36px', backgroundColor: standard.accentColor, boxShadow: `0 2px 8px ${standard.accentColor}45` }}
+            style={{ width: '38px', height: '38px', backgroundColor: standard.accentColor, boxShadow: `0 2px 8px ${standard.accentColor}45` }}
           >
-            <i className="bi bi-check2-circle fs-5"></i>
+            <i className={`bi ${standard.id === 'beatmung' ? 'bi-lungs-fill' : 'bi-check2-circle'} fs-5`}></i>
           </div>
           <div>
             <span className="badge rounded-pill fw-bold text-uppercase px-2.5 py-0.5 mb-0.5 d-inline-block shadow-2xs" style={{ backgroundColor: `${standard.accentColor}18`, color: standard.accentColor, fontSize: '0.68rem', border: `1px solid ${standard.accentColor}35` }}>
-              Praxis-Leitfaden
+              {standard.id === 'beatmung' ? 'Schlauchsystem-SOP • Elisa 600' : 'Praxis-Leitfaden'}
             </span>
             <h5 className="fw-bold mb-0 text-dark" style={{ fontSize: '1.05rem' }}>
-              Strukturierte Handlungsschritte im Pflegeprozess ({standard.shortTitle})
+              {standard.id === 'beatmung'
+                ? 'FACHGERECHTER AUFBAU DES DOPPELSCHLAUCHSYSTEMS – ELISA 600'
+                : `Strukturierte Handlungsschritte im Pflegeprozess (${standard.shortTitle})`}
             </h5>
           </div>
         </div>
@@ -4685,20 +4698,21 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
         <div className="d-flex flex-column gap-2.5">
           {standard.clinicalFocus && standard.clinicalFocus.map((item, idx) => {
             const phasePalette = [
-              { color: '#0284c7', bg: 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%)', border: '#bae6fd', icon: 'bi-box-seam-fill', badgeBg: '#e0f2fe' },
-              { color: '#16a34a', bg: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)', border: '#bbf7d0', icon: 'bi-play-circle-fill', badgeBg: '#dcfce7' },
-              { color: '#ea580c', bg: 'linear-gradient(135deg, #ffffff 0%, #fff7ed 100%)', border: '#fed7aa', icon: 'bi-eye-fill', badgeBg: '#ffedd5' },
-              { color: '#7c3aed', bg: 'linear-gradient(135deg, #ffffff 0%, #faf5ff 100%)', border: '#ddd6fe', icon: 'bi-shield-check', badgeBg: '#f3e8ff' },
-              { color: '#dc2626', bg: 'linear-gradient(135deg, #ffffff 0%, #fef2f2 100%)', border: '#fecaca', icon: 'bi-exclamation-triangle-fill', badgeBg: '#fee2e2' },
-              { color: '#0d9488', bg: 'linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%)', border: '#99f6e4', icon: 'bi-clipboard-check-fill', badgeBg: '#ccfbf1' }
+              { color: '#0284c7', bg: 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%)', border: '#bae6fd', icon: 'bi-plug-fill', badgeBg: '#e0f2fe' },
+              { color: '#16a34a', bg: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)', border: '#bbf7d0', icon: 'bi-box-seam-fill', badgeBg: '#dcfce7' },
+              { color: '#0284c7', bg: 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%)', border: '#bae6fd', icon: 'bi-arrow-right-circle-fill', badgeBg: '#e0f2fe' },
+              { color: '#7c3aed', bg: 'linear-gradient(135deg, #ffffff 0%, #faf5ff 100%)', border: '#ddd6fe', icon: 'bi-filter-circle-fill', badgeBg: '#f3e8ff' },
+              { color: '#ea580c', bg: 'linear-gradient(135deg, #ffffff 0%, #fff7ed 100%)', border: '#fed7aa', icon: 'bi-shield-fill-plus', badgeBg: '#ffedd5' },
+              { color: '#dc2626', bg: 'linear-gradient(135deg, #ffffff 0%, #fef2f2 100%)', border: '#fecaca', icon: 'bi-check2-circle', badgeBg: '#fee2e2' }
             ];
             const pStyle = phasePalette[idx % phasePalette.length];
+            const itemColor = item.color || pStyle.color;
             return (
               <div
                 key={idx}
                 className="p-3 rounded-3 border-start border-5 shadow-2xs"
                 style={{
-                  borderLeftColor: pStyle.color,
+                  borderLeftColor: itemColor,
                   background: pStyle.bg,
                   borderTop: `1px solid ${pStyle.border}`,
                   borderRight: `1px solid ${pStyle.border}`,
@@ -4709,17 +4723,17 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                   <div className="d-flex align-items-center gap-2">
                     <span
                       className="rounded-3 p-1.5 d-inline-flex align-items-center justify-content-center text-white flex-shrink-0"
-                      style={{ width: '28px', height: '28px', backgroundColor: pStyle.color, boxShadow: `0 2px 6px ${pStyle.color}45` }}
+                      style={{ width: '28px', height: '28px', backgroundColor: itemColor, boxShadow: `0 2px 6px ${itemColor}45` }}
                     >
-                      <i className={`bi ${pStyle.icon}`} style={{ fontSize: '0.82rem' }}></i>
+                      <i className={`bi ${item.icon || pStyle.icon}`} style={{ fontSize: '0.82rem' }}></i>
                     </span>
                     <strong className="text-dark small" style={{ fontSize: '0.94rem' }}>{item.phase}</strong>
                   </div>
                   <span
                     className="badge rounded-pill fw-bold text-uppercase shadow-2xs"
-                    style={{ backgroundColor: pStyle.badgeBg, color: pStyle.color, border: `1px solid ${pStyle.border}`, fontSize: '0.67rem' }}
+                    style={{ backgroundColor: pStyle.badgeBg, color: itemColor, border: `1px solid ${pStyle.border}`, fontSize: '0.67rem' }}
                   >
-                    Phase {idx + 1}
+                    {standard.id === 'beatmung' ? `Schritt ${idx + 1}` : `Phase ${idx + 1}`}
                   </span>
                 </div>
                 <div className="text-secondary small ps-1" style={{ lineHeight: '1.5', fontSize: '0.85rem', color: '#334155' }}>
@@ -4729,6 +4743,38 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
             );
           })}
         </div>
+
+        {/* GOLDENE REGEL Highlight Box (Beatmung) */}
+        {standard.id === 'beatmung' && (
+          <div
+            className="p-3 p-sm-3.5 rounded-3 border shadow-sm position-relative overflow-hidden mt-3"
+            style={{
+              background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 45%, #ffedd5 100%)',
+              borderColor: '#f59e0b',
+              borderLeft: '6px solid #d97706'
+            }}
+          >
+            <div className="d-flex align-items-center justify-content-between mb-1.5 flex-wrap gap-2">
+              <div className="d-flex align-items-center gap-2">
+                <span
+                  className="rounded-circle d-inline-flex align-items-center justify-content-center text-white flex-shrink-0"
+                  style={{ width: '28px', height: '28px', backgroundColor: '#d97706', boxShadow: '0 2px 6px rgba(217, 119, 6, 0.4)' }}
+                >
+                  <i className="bi bi-lightbulb-fill" style={{ fontSize: '0.85rem' }}></i>
+                </span>
+                <strong className="text-dark text-uppercase fw-bold" style={{ fontSize: '0.94rem', letterSpacing: '0.5px' }}>
+                  💡 GOLDENE REGEL
+                </strong>
+              </div>
+              <span className="badge bg-warning text-dark fw-bold px-2.5 py-1 rounded-pill shadow-2xs" style={{ fontSize: '0.68rem' }}>
+                STRIKT EINHALTEN
+              </span>
+            </div>
+            <p className="mb-0 text-dark fw-medium small ps-1" style={{ fontSize: '0.86rem', lineHeight: '1.45', color: '#1e293b' }}>
+              Vor Patientenanschluss Geräte- und Dichtigkeitstest erfolgreich abschließen. Beatmungsbeutel mit Reservoir, ggf. PEEP-Ventil, passender Maske, O₂-Versorgung und funktionsfähige Absaugung bereithalten.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

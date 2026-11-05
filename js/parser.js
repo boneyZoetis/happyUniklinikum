@@ -48,26 +48,43 @@ root.QRParser = (function () {
       ],
       clinicalFocus: [
         {
-          phase: '1. Sichtprüfung & Strom-/Gasversorgung (Schritte 1–2)',
+          phase: '1. Zentrale Gasversorgung (ZGV)',
           icon: 'bi-plug-fill',
-          detail: 'Sichtprüfung von Gehäuse, Display, Netzkabel und STK-Plakette. Notstromsteckdose (roter Punkt) und Akkustatus kontrollieren. O₂- und Druckluftanschlüsse sicher arretieren und Versorgungsdruck prüfen.'
+          color: '#0284c7',
+          detail: 'O₂- und Druckluftschläuche sicher anschließen. Versorgungsdruck gemäß Herstellervorgaben kontrollieren.'
         },
         {
-          phase: '2. Aseptischer Systemaufbau & Verschlusskappe (Schritt 3)',
-          icon: 'bi-lungs-fill',
-          detail: 'Doppelschlauchsystem mit vormontiertem Y-Stück und Exspirationsfilter anschließen. HMEF mit Gänsegurgel verbinden und patientenseitigen Konus mit roter Verschlusskappe luftdicht verschließen.'
+          phase: '2. Doppelschlauchsystem',
+          icon: 'bi-box-seam-fill',
+          color: '#16a34a',
+          detail: 'Vormontiertes Doppelschlauchsystem mit integriertem Y-Stück auf Beschädigungen, Knicke und korrekten Sitz prüfen.'
         },
         {
-          phase: '3. Gerätecheck & Kappen-Manöver bei ca. 94% (Schritt 4)',
-          icon: 'bi-check-circle-fill',
-          detail: 'Selbsttest mit verschlossenem System starten. Bei Displayaufforderung (ca. 94 %) rote Verschlusskappe kurz entfernen und bei Aufforderung wieder aufsetzen. Bis 100 % durchlaufen und „bestanden“ verifizieren.'
+          phase: '3. Inspirationsschenkel',
+          icon: 'bi-arrow-right-circle-fill',
+          color: '#0284c7',
+          detail: 'Inspirationsschlauch am vorgesehenen Geräteausgang sicher anschließen.'
         },
         {
-          phase: '4. Alarmgrenzen & Notfallequipment (Schritte 5–6)',
-          icon: 'bi-shield-fill-check',
-          detail: 'Pmax, MV-, Frequenz- und Apnoealarme patienten- und situationsgerecht einstellen. Manuellen Beatmungsbeutel (mit Reservoir/PEEP), passende Maske, O₂-Versorgung und funktionierende Absauganlage bereithalten.'
+          phase: '4. Exspirationsschenkel & Filter',
+          icon: 'bi-filter-circle-fill',
+          color: '#7c3aed',
+          detail: 'Exspirationsfilter am vorgesehenen Geräteanschluss einsetzen und Exspirationsschlauch sicher verbinden. Korrekten Sitz prüfen.'
+        },
+        {
+          phase: '5. Patientennaher HMEF & Gänsegurgel',
+          icon: 'bi-shield-fill-plus',
+          color: '#ea580c',
+          detail: 'HMEF am Y-Stück anschließen und mit der Gänsegurgel verbinden. Patientenseitigen Anschluss mit roter Verschlusskappe verschließen.'
+        },
+        {
+          phase: '6. Abschließende Systemkontrolle',
+          icon: 'bi-check2-circle',
+          color: '#dc2626',
+          detail: 'Alle Verbindungen auf festen Sitz, Knickfreiheit und sichtbare Beschädigungen prüfen.'
         }
       ],
+      goldenRule: 'Vor Patientenanschluss Geräte- und Dichtigkeitstest erfolgreich abschließen. Beatmungsbeutel mit Reservoir, ggf. PEEP-Ventil, passender Maske, O₂-Versorgung und funktionsfähige Absaugung bereithalten.',
       checklist: [
         'Schritt 1: Gehäuse, Display, Netzkabel, STK-Status und Notstrom-/Akkubetrieb geprüft',
         'Schritt 2: O₂- und Druckluftanschlüsse sicher verbunden, Versorgungsdruck normgerecht',
