@@ -4592,8 +4592,8 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                 style={{
                   width: '42px',
                   height: '42px',
-                  background: activeVideoFile ? 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)' : 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
-                  boxShadow: activeVideoFile ? '0 4px 12px rgba(2, 132, 199, 0.35)' : '0 4px 12px rgba(220, 38, 38, 0.35)'
+                  background: activeVideoFile ? `linear-gradient(135deg, ${standard.accentColor || '#0284c7'} 0%, ${standard.accentColor || '#0369a1'}dd 100%)` : 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
+                  boxShadow: activeVideoFile ? `0 4px 12px ${standard.badgeBg || 'rgba(2, 132, 199, 0.35)'}` : '0 4px 12px rgba(220, 38, 38, 0.35)'
                 }}
               >
                 <i className={`bi ${activeVideoFile ? 'bi-play-circle-fill' : 'bi-youtube'} fs-4`}></i>
@@ -4603,10 +4603,10 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                   <span
                     className="badge rounded-pill fw-bold text-uppercase px-2.5 py-1 shadow-2xs"
                     style={{
-                      backgroundColor: activeVideoFile ? '#e0f2fe' : '#fee2e2',
-                      color: activeVideoFile ? '#0369a1' : '#dc2626',
+                      backgroundColor: activeVideoFile ? (standard.badgeBg || '#e0f2fe') : '#fee2e2',
+                      color: activeVideoFile ? (standard.accentColor || '#0369a1') : '#dc2626',
                       fontSize: '0.70rem',
-                      border: activeVideoFile ? '1px solid #bae6fd' : '1px solid #fecaca'
+                      border: activeVideoFile ? `1px solid ${standard.badgeBorder || '#bae6fd'}` : '1px solid #fecaca'
                     }}
                   >
                     <i className="bi bi-play-circle-fill me-1"></i>
@@ -4683,13 +4683,18 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
               {hasMultipleVideos && (
                 <div className="mt-2.5 p-2 px-3 rounded-3 bg-light border d-flex align-items-center justify-content-between flex-wrap gap-2">
                   <span className="small text-secondary" style={{ fontSize: '0.78rem' }}>
-                    <i className="bi bi-info-circle me-1 text-primary"></i>
+                    <i className="bi bi-info-circle me-1" style={{ color: standard.accentColor || '#0284c7' }}></i>
                     Aktuell ausgewählt: <strong>{activeVideoIndex === 0 ? 'Teil 1: Aufbau & Schlauchsystem' : 'Teil 2: Optiflow-Nasenkanüle & Einstellung'}</strong>
                   </span>
                   <button
                     type="button"
-                    className="btn btn-sm btn-outline-danger rounded-pill px-3 py-1 fw-bold d-inline-flex align-items-center gap-1 shadow-2xs"
-                    style={{ fontSize: '0.76rem' }}
+                    className="btn btn-sm rounded-pill px-3 py-1 fw-bold d-inline-flex align-items-center gap-1.5 shadow-2xs transition-all"
+                    style={{
+                      fontSize: '0.76rem',
+                      background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+                      color: standard.accentColor || '#0284c7',
+                      border: `1.5px solid ${standard.accentColor || '#0284c7'}`
+                    }}
                     onClick={() => setActiveVideoIndex(activeVideoIndex === 0 ? 1 : 0)}
                   >
                     <span>{activeVideoIndex === 0 ? 'Zu Teil 2: Optiflow-Kanüle wechseln' : 'Zu Teil 1: Geräteaufbau wechseln'}</span>
