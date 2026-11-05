@@ -249,10 +249,10 @@ root.QRParser = (function () {
     arterie: {
       id: 'arterie',
       topic: 'Invasives arterielles Druckmesssystem',
-      title: 'Invasives arterielles Druckmesssystem – Vorbereitung, Nullabgleich & Fast-Flush-Test',
-      shortTitle: 'Arterieller Druck',
+      title: 'SOP Arterielles Druckmesssystem (Combitrans®) – Vorbereitung, 15-Schritte-Befüllung & Sicherheit',
+      shortTitle: 'Arterieller Druck (Combitrans®)',
       navTitle: 'Arterie',
-      category: 'Hämodynamisches Monitoring',
+      category: 'Hämodynamisches Monitoring & Anästhesiepflege',
       accentColor: '#dc2626',
       badgeBg: 'rgba(220, 38, 38, 0.12)',
       badgeBorder: '#f87171',
@@ -260,69 +260,90 @@ root.QRParser = (function () {
       icon: 'bi-activity',
       image: 'assets/card-arterie.jpg',
       graphicImage: 'assets/card-arterie.jpg',
-      leadText: 'Kontinuierliche invasive Beat-to-Beat-Blutdruckmessung: Blasenfreier Aufbau des Drucksets, millimetergenaue Höhenausrichtung am phlebostatischen Punkt, Nullabgleich gegen Atmosphäre und dynamische Dämpfungsprüfung mittels Fast-Flush-Test.',
-      instructions: 'Nivellieren Sie den Druckaufnehmer exakt auf den phlebostatischen Punkt (4. ICR / mittlere Axillarlinie). Führen Sie bei Schichtbeginn und nach jeder Lagerung einen Nullabgleich und Fast-Flush-Test durch.',
+      leadText: 'Gold-Standard für das Combitrans® (Fa. B. Braun) Druckmesssystem gemäß Leitlinie: Standardisierter 15-Schritte-Befüllungsprozess (initial max. 50 mmHg -> final 300 mmHg), Reservoir-Entlüftung im Uhrzeigersinn, Phlebostatischer Nullabgleich und strikte Vermeidung von Luftembolien im peripheren Endstromgebiet.',
+      instructions: 'WICHTIG: Drucksystem auspacken und VOR Befüllung ALLE Konnektionsstellen nachziehen! Befüllen Sie das System initial mit max. 50 mmHg Druckbeutel, um Blasenbildung zu verhindern. Erst nach vollständiger Entlüftung von Reservoir und Leitungen auf 300 mmHg aufpumpen und beide Nullpunkthähne querstellen!',
       whyImportant: [
-        'Präzise Hämodynamik (Exakte Erfassung von MAP, systolischem und diastolischem Blutdruck in Echtzeit)',
-        'Hydrostatische Messfehler eliminieren (1 cm Höhenabweichung des Sensors führt zu ca. 0,74 mmHg Messfehler)',
-        'Fehltherapien durch Über-/Unterdämpfung vermeiden (Verifikation der Kurvenqualität mittels Fast-Flush-Test)',
-        'Sicherheit vor Blutungskomplikationen (Sichere Luer-Lock-Verbindungen gegen unbemerktes Ausbluten)'
+        'Schutz vor Fingerischämie & Thromboembolie: Luft im System führt zum thromboembolischen Verschluss kleiner Arterien im Endstromgebiet und Nekrosen der Finger.',
+        'Fehlerfreie Hämodynamik: Luftbläschen dämpfen das System physikalisch – die Systole wird falsch zu niedrig und die Diastole falsch zu hoch angezeigt!',
+        'Präzise Beat-to-Beat-Blutdruckmessung: Kontinuierliche Verlässlichkeit von MAP, Systole und Diastole bei hämodynamisch instabilen Patienten.',
+        'Blutungssicherheit: Konsequentes Nachziehen aller Konnektionsstellen verhindert lebensgefährliche Diskonnektionen unter 300 mmHg Systemdruck.'
       ],
       keyPoints: [
-        'Vorbereitung & Spüllösung: 500 ml NaCl 0.9% in die Druckmanschette einspannen; Druckbeutel auf exakt 300 mmHg aufpumpen (gewährleistet 3 ml/h Dauerspülfluss zur Thrombenprävention).',
-        'Absolut blasenfreies Entlüften: Gesamtes System, Transducer und Dreiwegehähne langsam und ohne Schaumbildung spülen; selbst kleinste Mikroblasen führen zu starker Überdämpfung.',
-        'Phlebostatischer Punkt (Referenzebene): Transducer am Infusionsständer auf Herzniveau positionieren (Kreuzungspunkt 4. ICR mit der mittleren Axillarlinie).',
-        'Nullabgleich (Zeroing): Dreiwegehahn zum Patienten sperren, zur Atmosphäre öffnen, Kappe abnehmen, am Monitor „Zero / Null“ drücken, Bestätigung abwarten, steril rückschalten.',
-        'Fast-Flush-Test (Square-Wave-Test): Spüllasche für 1–2 Sekunden betätigen. Ideale Dämpfung zeigt Rechtecksignal mit 1,5 bis 2 Nachschwingungen und erhaltener dikroter Inzisur (Aortenklappenschluss).',
-        'Gefäß- & Perfusionskontrolle: Punktionsstelle (meist A. radialis) inspizieren; periphere Durchblutung (Puls, Rekapillarisierungszeit < 2s, Hautfarbe, Temperatur) stündlich dokumentieren.'
+        'Benötigtes Material: Infusionsständer, 500/1000 ml NaCl 0,9%, größenadaptierter Druckbeutel, Combitrans® (Fa. B. Braun) Drucksystem.',
+        'Konnektionen sichern: System aus Verpackung entnehmen und zwingend alle Konnektionsstellen fest nachziehen.',
+        'Initialer Befülldruck (max. 50 mmHg): Nach Konnektion und Flüssigkeitsspiegel in Tropfkammer den Druckbeutel auf maximal 50 mmHg aufpumpen (schonendes, blasenfreies Priming).',
+        'Optional 3. Druckleitung: Falls vorhanden, Zuleitung zur 3. optionalen Druckmessung sofort spülen und Klemme schließen.',
+        'Transducer & Nullpunkthähne: Transducer in Halteplatte einhängen, Nullpunkthahn zur Atmosphäre öffnen und beide Druckmesssysteme vorsichtig spülen, bis NaCl austritt.',
+        'Reservoir-Entlüftung: Reservoir unter Drehen und gleichzeitig leichtem Zug am Kolben füllen; Patientenhahn öffnen und durch Zurückdrehen mit leichtem Druck im Uhrzeigersinn vollständig entlüften.',
+        'Nochmaliges Spülen & 300 mmHg: Zwingend nochmals spülen, um letzte Restluft zu entfernen; beide Nullpunkthähne quer stellen und Druckbeutel auf 300 mmHg bringen.',
+        'Cave Fingerperfusion & Dämpfung: Stündliche Kontrolle der Fingerdurchblutung (Farbe, Puls, Rekapillarisierungszeit < 2s); Fast-Flush-Test zur Dämpfungskontrolle (1,5–2 Oszillationen).'
       ],
       clinicalFocus: [
         {
-          phase: '1. Vorbereitung und fachgerechter Aufbau des Druckmesssystems',
-          icon: 'bi-droplet-fill',
-          detail: 'Einlegen des NaCl 0.9%-Beutels in die Druckmanschette, Aufbau des 300 mmHg Systemdrucks, blasenfreies Entlüften der Druckleitung, Transducer-Kabel mit Monitormodul verbinden.'
+          phase: '1. Vorbereitung & Konnektionskontrolle (Combitrans®)',
+          icon: 'bi-wrench-adjustable',
+          detail: 'Bereitstellung von Infusionsständer, 500/1000 ml NaCl 0.9%, Druckbeutel und Combitrans® (B. Braun) System. NaCl-Beutel einhängen, Drucksystem entnehmen und ALLE Konnektionsstellen vor Inbetriebnahme fest nachziehen.'
         },
         {
-          phase: '2. Positionierung am phlebostatischen Punkt',
-          icon: 'bi-geo-alt-fill',
-          detail: 'Justieren des Druckaufnehmers am Stativ auf Herzniveau (4. ICR / mittlere Axillarlinie). Ausgleich bei jeder Verstellung des Kopfteils oder Betthöhe.'
+          phase: '2. Schonendes Befüllen bei max. 50 mmHg',
+          icon: 'bi-droplet-half',
+          detail: 'Rollenklemme schließen (bei 3. optionaler Leitung Klemme schließen). NaCl-Beutel konnektieren, Tropfkammer halb füllen. Druckbeutel auf maximal 50 mmHg aufpumpen. Transducer in Halteplatte einhängen, Nullpunkthahn zur Atmosphäre öffnen, Rollenklemme langsam öffnen und Systeme spülen, bis NaCl austritt.'
         },
         {
-          phase: '3. Nullabgleich gegen den Atmosphärendruck',
-          icon: 'bi-bullseye',
-          detail: 'Absperren der Patientenleitung, Öffnen der Entlüftungskappe zur Atmosphäre, Auslösen der Nullungsfunktion am Monitor, steriler Verschluss und Wiedereröffnung zum Patienten.'
+          phase: '3. Reservoir-Befüllung & Entlüftung im Uhrzeigersinn',
+          icon: 'bi-arrow-clockwise',
+          detail: 'Nullpunkthahn zur Atmosphäre schließen, Leitungen spülen. Patientenhahn zur Atmosphäre schließen: Reservoir unter Drehen und gleichzeitigem leichten Zug am Kolben langsam mit Spüllösung füllen. Patientenhahn öffnen, durch Zurückdrehen mit leichtem Druck im Uhrzeigersinn entlüften. Wichtig: Nochmaliges Spülen zur Restluftentfernung!'
         },
         {
-          phase: '4. Fast-Flush-Test & Dämpfungskontrolle',
-          icon: 'bi-graph-up',
-          detail: 'Manuelle Betätigung des Flush-Mechanismus zur Erzeugung eines Rechtecksignals. Zählen der Nachschwingungen (optimal 1,5–2), Behebung von Überdämpfung (Blasen/Koagel) oder Unterdämpfung.'
+          phase: '4. Enddruck 300 mmHg & Phlebostatische Nivellierung',
+          icon: 'bi-speedometer2',
+          detail: 'Beide Nullpunkthähne quer stellen, alle Klemmen öffnen und Druckbeutel auf 300 mmHg aufpumpen. Transducer am Infusionsständer auf Herzhöhe (phlebostatischer Punkt: 4. ICR / mittlere Axillarlinie) nivellieren und Monitor-Nullabgleich durchführen.'
         },
         {
-          phase: '5. Patientensicherheit & Alarmgrenzen',
-          icon: 'bi-shield-check',
-          detail: 'Sichtbarmachen aller Luer-Lock-Verbindungen (keine Verdeckung durch Bettzeug), enge Alarmgrenzen für MAP, Sys und Dia, Kontrolle der distalen Extremitätenperfusion.'
+          phase: '5. Fast-Flush-Test & Cave: Fingerischämie-Prävention',
+          icon: 'bi-shield-exclamation',
+          detail: 'Fast-Flush-Test auslösen (1,5–2 Nachschwingungen, erhaltene dikrote Kerbe). CAVE: Luft im System führt zu Thromboembolien im Endstromgebiet und Fingerischämie! Dämpfung verfälscht die Werte (Systole falsch zu tief, Diastole falsch zu hoch).'
         }
       ],
       checklist: [
-        'Druckbeutel mit 500 ml NaCl 0.9% auf exakt 300 mmHg aufgepumpt',
-        'Leitungssystem und Transducer absolut blasenfrei gespült',
-        'Transducer-Platte am Infusionsständer auf Herzhöhe (4. ICR / mittlere Axillarlinie) montiert',
-        'Nullabgleich zur Atmosphäre am Monitor erfolgreich durchgeführt („Zero OK“)',
-        'Fast-Flush-Test ausgelöst: 1,5 bis 2 Nachschwingungen (Square-Wave-Signal)',
-        'Dikrote Kerbe (Inzisur) in der arteriellen Pulskurve deutlich abgrenzbar',
-        'Alle Luer-Lock-Verschraubungen fest und vollständig sichtbar gelagert',
-        'Distale Perfusion der Hand/Extremität (Puls, Rekap < 2s, Wärme) intakt'
+        'Combitrans®-Drucksystem: Alle Konnektionsstellen vorab fest nachgezogen',
+        'Befüllung initial schonend bei max. 50 mmHg durchgeführt',
+        'Zuleitung zur 3. optionalen Druckmessung gespült und abgeklemmt',
+        'Reservoir unter Drehen blasenfrei gefüllt und im Uhrzeigersinn entlüftet',
+        'Nochmaliges Spülen zur vollständigen Elimination von Rest-Luft erfolgt',
+        'Beide Nullpunkthähne quer gestellt und Druckbeutel auf exakt 300 mmHg aufgepumpt',
+        'Transducer auf Herzniveau (4. ICR / mittlere Axillarlinie) nivelliert & genullt',
+        'Fast-Flush-Test: Sauberes Rechtecksignal & Fingerperfusion (Rekap < 2s) intakt'
       ],
       parameters: [
-        { label: 'Druckmanschette', target: '300 mmHg', note: 'Gewährleistet kontinuierlichen Mikrofluss von 3 ml/h' },
-        { label: 'Referenzebene', target: '4. ICR / Mittlere Axillarlinie', note: 'Phlebostatischer Punkt (Niveau rechter Vorhof)' },
-        { label: 'Nachschwingungen (Flush)', target: '1,5 – 2,0 Oszillationen', note: 'Optimale Dämpfung; < 1,5 = überdämpft, > 2 = unterdämpft' },
-        { label: 'MAD / MAP Zielwert', target: '≥ 65 mmHg (organabhängig)', note: 'Mittlerer arterieller Perfusionsdruck' }
+        { label: 'Initialer Befülldruck', target: 'Max. 50 mmHg', note: 'Schonendes, mikroblasenfreies Priming' },
+        { label: 'Betriebsdruck (Druckbeutel)', target: '300 mmHg', note: 'Gewährleistet 3 ml/h kontinuierlichen Spülfluss' },
+        { label: 'Referenzebene', target: '4. ICR / Mittlere Axillarlinie', note: 'Phlebostatischer Punkt (rechter Vorhof)' },
+        { label: 'Reservoir-Entlüftung', target: 'Im Uhrzeigersinn', note: 'Drehen mit leichtem Druck auf den Kolben' },
+        { label: 'Flush-Oszillationen', target: '1,5 – 2,0 Nachschwingungen', note: 'Optimale Dämpfung; < 1,5 = überdämpft, > 2 = unterdämpft' },
+        { label: 'Cave: Dämpfungseffekt', target: 'Sys falsch tief / Dia falsch hoch', note: 'Luftblasen dämpfen das Messsignal physikalisch' }
       ],
       troubleshooting: [
-        { problem: 'Kurve ist überdämpft (flach, keine dikrote Inzisur, Sys zu tief)', cause: 'Mikroblasen im Schlauch/Transducer, Blutkoagel an der Katheterspitze, abgeknicktes Handgelenk.', action: 'System nach Bläschen absuchen und spülen, Handgelenk in Neutralposition lagern (Schiene), Katheter aspirieren/spülen.' },
-        { problem: 'Kurve ist unterdämpft (überschießende Spitzen, Sys falsch hoch)', cause: 'Zu lange oder zu weiche Schläuche, zu viele Dreiwegehähne, Resonanzüberlagerung.', action: 'Schlauchverlängerungen entfernen, Hähne auf Minimum reduzieren, steife Druckleitungen verwenden.' },
-        { problem: 'Plötzlicher Druckabfall oder Null-Linie', cause: 'Hahn versehentlich geschlossen, Diskonnektion oder Katheter disloziert.', action: 'Sofort Einstichstelle und Hähne prüfen, Diskonnektion ausschließen (Lebensgefahr durch Blutung!), Sensor prüfen.' }
+        {
+          problem: 'Überdämpfte Druckkurve (flache Amplitude, keine dikrote Inzisur, Sys falsch tief, Dia falsch hoch)',
+          cause: 'Mikroblasen im Transducer oder Schlauchsystem, Blutkoagel am Katheter, abgeknicktes Handgelenk oder unzureichender Druck im Beutel (< 300 mmHg).',
+          action: 'Druckbeutel auf 300 mmHg prüfen. System sorgfältig auf Mikroblasen absuchen: Transducer und Reservoir nach SOP entlüften und spülen. Handgelenk in Neutralstellung schienen. Koagel aspirieren, niemals mit Hochdruck einspülen!'
+        },
+        {
+          problem: 'Unterdämpfte Druckkurve (überschießende Systolenspitzen / Ringing, Sys falsch hoch, Dia falsch tief)',
+          cause: 'Zu lange oder zu weiche Verlängerungsleitungen, überzählige Dreiwegehähne, Resonanzartefakte.',
+          action: 'Unnötige Hähne und Verlängerungen sofort entfernen. Kurze, starre Original-Druckschläuche verwenden. Fast-Flush wiederholen.'
+        },
+        {
+          problem: 'Cave: Blässe, Kälte oder Zyanose der Finger (Endstromgebiet-Ischämie)',
+          cause: 'Thromboembolischer Verschluss kleiner Arterien durch Luftblasen oder Katheterthromben, Gefäßspasmus oder Hämatomkompression.',
+          action: 'NOTFALL! Spülung sofort stoppen! Periphere Pulse und Rekapillarisierungszeit an allen Fingern prüfen. Sofort ärztlichen Dienst / Operateur informieren. Vorbereitung zur Katheterentfernung oder Gefäßdiagnostik (Doppler/Duplex).'
+        },
+        {
+          problem: 'Nullpunkt-Drift oder unplausible Druckwerte',
+          cause: 'Veränderung der Patientenlagerung (Bett verstellt) ohne Neujustierung des Transducers, Kabelzug oder lockere Konnektion.',
+          action: 'Transducer-Höhe am Stativ exakt auf den phlebostatischen Punkt (4. ICR / MAL) re-justieren. Alle Konnektionen nachziehen. Nullabgleich zur Atmosphäre am Monitor wiederholen.'
+        }
       ],
       interactiveType: 'arterial-wave'
     },
@@ -516,7 +537,7 @@ root.QRParser = (function () {
       return ICU_STANDARDS.hfnc;
     }
     // 4. Invasives arterielles Druckmesssystem
-    if (lower.includes('arterie') || lower.includes('arteriell') || lower.includes('druckmessung') || lower.includes('transducer') || lower.includes('fast-flush') || lower.includes('square-wave') || lower.includes('phlebostatisch')) {
+    if (lower.includes('arterie') || lower.includes('combitrans') || lower.includes('arteriell') || lower.includes('druckmessung') || lower.includes('transducer') || lower.includes('fast-flush') || lower.includes('square-wave') || lower.includes('phlebostatisch')) {
       return ICU_STANDARDS.arterie;
     }
     // 5. Externe Ventrikeldrainage (EVD)

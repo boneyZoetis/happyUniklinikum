@@ -954,32 +954,32 @@ const TILE_ENHANCEMENTS = {
     badgeBg: '#fee2e2',
     badgeColor: '#991b1b',
     badgeBorder: '#fecdd3',
-    badgeText: 'Monitoring & Diagnostik',
+    badgeText: 'Hämodynamik & Anästhesie',
     titleColor: '#991b1b',
-    title: '4. Invasives arterielles Druckmesssystem',
-    lead: 'Kontinuierliche Blutdruckmessung in Echtzeit, Nullabgleich auf Herzhöhe (Phlebostatischer Punkt) und Fast-Flush-Test zur Dämpfungskontrolle.',
+    title: '4. SOP Invasives Druckmesssystem (Combitrans®)',
+    lead: 'Combitrans® (B. Braun) Gold-Standard: 15-Schritte-Befüllung (50 -> 300 mmHg), Reservoir-Entlüftung im Uhrzeigersinn, phlebostatischer Nullabgleich & Cave: Fingerischämie.',
     image: 'assets/card-arterie.jpg',
-    imageOverlay: 'Fast-Flush & Nullpunkt',
+    imageOverlay: 'Combitrans® & 15-Schritte SOP',
     quickBadges: [
-      { text: 'Druckbeutel 300 mmHg', icon: 'bi-speedometer', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
-      { text: 'Spülrate 3 ml/h', icon: 'bi-droplet-half', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' }
+      { text: 'Combitrans® B. Braun', icon: 'bi-shield-check', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
+      { text: 'Initial max. 50 mmHg', icon: 'bi-speedometer', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' }
     ],
-    imageSubtitle: 'Laser-Nivellierung auf Phlebostatische Achse & Fast-Flush Rechtecktest',
+    imageSubtitle: '15-Schritte-Befüllung • Reservoir im Uhrzeigersinn entlüften • Cave: Fingerischämie',
     goals: [
-      { text: 'Echtzeit-Blutdruck', icon: 'bi-activity text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
-      { text: 'Aseptische BGA', icon: 'bi-droplet-fill text-primary', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' },
-      { text: 'Dämpfung prüfen', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' }
+      { text: 'Blasenfreies Priming', icon: 'bi-droplet-half text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
+      { text: 'Cave Fingerischämie', icon: 'bi-exclamation-octagon-fill text-warning', bg: '#fff7ed', color: '#c2410c', border: '#fed7aa' },
+      { text: 'Exakte Hämodynamik', icon: 'bi-activity text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' }
     ],
     actionSteps: [
-      { text: 'Druckbeutel auf 300 mmHg aufpumpen & Druckleitung vollständig blasenfrei entlüften', bold: 'Druckbeutel 300 mmHg:', icon: 'bi-speedometer2', iconBg: '#dc2626' },
-      { text: 'Druckaufnehmer mit Laserwaage auf 4. ICR / mittlere Axillarlinie (Herzniveau) nullen', bold: 'Nullabgleich (Laser):', icon: 'bi-crosshair', iconBg: '#0284c7' },
-      { text: 'Fast-Flush-Test durchführen: Sauberes Rechtecksignal mit 1.5–2 Oszillationen prüfen', bold: 'Fast-Flush & Dämpfung:', icon: 'bi-activity', iconBg: '#16a34a' }
+      { text: 'System auspacken und ALLE Konnektionsstellen vor Inbetriebnahme zwingend fest nachziehen!', bold: 'Konnektionen nachziehen:', icon: 'bi-wrench-adjustable', iconBg: '#dc2626' },
+      { text: 'Druckbeutel initial nur auf max. 50 mmHg aufpumpen (schonende blasenfreie Befüllung nach SOP Schritte 1–9)', bold: 'Befüllen bei 50 mmHg:', icon: 'bi-speedometer', iconBg: '#0284c7' },
+      { text: 'Reservoir unter Drehen füllen, im Uhrzeigersinn entlüften, nochmals spülen, Hähne querstellen & auf 300 mmHg bringen', bold: 'Reservoir & 300 mmHg:', icon: 'bi-arrow-clockwise', iconBg: '#16a34a' }
     ],
-    tagLabel: 'Kernschritte:',
+    tagLabel: 'SOP-Kriterien:',
     tagIcon: 'bi-crosshair',
     tagColor: '#dc2626',
     tagBorder: '#f87171',
-    tags: ['A. radialis/femoralis', 'Phlebostatischer Punkt', 'Fast-Flush-Test', 'Dicrote Kerbe', '300 mmHg'],
+    tags: ['Combitrans® B. Braun', '15-Schritte SOP', 'Initial max. 50 mmHg', 'Reservoir im Uhrzeigersinn', 'Enddruck 300 mmHg', 'Cave: Fingerischämie', 'Phlebostatischer Punkt'],
     btnGradient: 'linear-gradient(90deg, #b91c1c 0%, #dc2626 100%)',
     btnShadow: 'rgba(220, 38, 38, 0.28)'
   },
@@ -2540,9 +2540,16 @@ function RoxIndexCalculatorComponent({ standard }) {
 // =============================================================
 // INTERACTIVE CLINICAL COMPONENT 4: Invasives arterielles System
 // =============================================================
+// INTERACTIVE CLINICAL COMPONENT 4: Invasives arterielles System
+// Gold-Standard Combitrans® (Fa. B. Braun) – 15-Schritte-Befüllung,
+// Reservoir-Entlüftung, Fast-Flush & Cave: Fingerischämie
+// =============================================================
 function ArterialWaveformComponent({ standard }) {
   const [damping, setDamping] = useState('optimal'); // 'optimal' | 'overdamped' | 'underdamped'
   const [isFlushing, setIsFlushing] = useState(false);
+  const [activeTab, setActiveTab] = useState('steps'); // 'steps' | 'cave' | 'reservoir' | 'flush'
+  const [sopStepPhase, setSopStepPhase] = useState(1); // 1: Vorbereitung | 2: 50 mmHg | 3: Reservoir | 4: 300 mmHg
+  const [connectionCheck, setConnectionCheck] = useState(false);
 
   const triggerFlush = () => {
     setIsFlushing(true);
@@ -2552,79 +2559,154 @@ function ArterialWaveformComponent({ standard }) {
   };
 
   const readouts = {
-    optimal: { sys: 124, dia: 74, map: 91, note: 'Exakte reale Blutdruckwerte' },
-    overdamped: { sys: 104, dia: 84, map: 91, note: 'Systole FALSCH ZU TIEF, Diastole FALSCH ZU HOCH!' },
-    underdamped: { sys: 152, dia: 62, map: 92, note: 'Systole FALSCH ZU HOCH (Ringing), Diastole FALSCH ZU TIEF!' }
+    optimal: {
+      sys: 124,
+      dia: 74,
+      map: 91,
+      badge: 'Optimale Dämpfung',
+      badgeClass: 'bg-success text-white',
+      note: 'Reale Blutdruckwerte. 1,5 bis 2 Nachschwingungen nach Flush mit erhaltener dikroter Inzisur.'
+    },
+    overdamped: {
+      sys: 104,
+      dia: 84,
+      map: 91,
+      badge: 'Überdämpft (Luft / Koagel)',
+      badgeClass: 'bg-warning text-dark',
+      note: 'CAVE SOP: Systole FALSCH ZU TIEF (-20 mmHg), Diastole FALSCH ZU HOCH (+10 mmHg)! Pulsdruck künstlich verengt.'
+    },
+    underdamped: {
+      sys: 152,
+      dia: 62,
+      map: 92,
+      badge: 'Unterdämpft (Resonanz / Ringing)',
+      badgeClass: 'bg-danger text-white',
+      note: 'Systole FALSCH ZU HOCH (+28 mmHg), Diastole FALSCH ZU TIEF (-12 mmHg)! Überschießende Spitzenartefakte.'
+    }
   }[damping];
 
   return (
     <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
-      {/* Header */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-        <div className="d-flex align-items-center gap-2">
-          <span className="p-2 rounded-3 text-white d-inline-flex" style={{ background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)' }}>
-            <i className="bi bi-activity fs-5"></i>
+      {/* 1. Header with System Badge */}
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 pb-2 border-bottom">
+        <div className="d-flex align-items-center gap-2.5">
+          <span className="p-2.5 rounded-3 text-white d-inline-flex shadow-sm" style={{ background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)' }}>
+            <i className="bi bi-activity fs-4"></i>
           </span>
           <div>
-            <h5 className="fw-bold mb-0 text-dark">
-              Arterielle Pulskurve &amp; Fast-Flush-Test Simulator
-            </h5>
-            <div className="text-secondary small" style={{ fontSize: '0.76rem' }}>
-              Dämpfungsanalyse (Square Wave Test), Nullabgleich &amp; Fehlerkorrektur
+            <div className="d-flex align-items-center gap-2">
+              <h5 className="fw-black mb-0 text-dark">
+                Combitrans® Arterieller Druck-Simulator &amp; SOP
+              </h5>
+              <span className="badge rounded-pill fw-bold text-uppercase" style={{ backgroundColor: 'rgba(220, 38, 38, 0.12)', color: '#dc2626', fontSize: '0.66rem', border: '1px solid rgba(220, 38, 38, 0.3)' }}>
+                B. Braun Gold-Standard
+              </span>
+            </div>
+            <div className="text-secondary small" style={{ fontSize: '0.78rem' }}>
+              15-Schritte-Befüllung (50 &rarr; 300 mmHg) • Reservoir im Uhrzeigersinn entlüften • Cave: Fingerischämie
             </div>
           </div>
         </div>
 
+        {/* Connection Safety Verification Button */}
         <button
           type="button"
-          className="btn btn-danger rounded-pill px-3 py-1.5 fw-bold shadow-sm d-flex align-items-center gap-1.5"
-          style={{ minHeight: '36px', fontSize: '0.82rem' }}
-          onClick={triggerFlush}
-          disabled={isFlushing}
+          className={`btn btn-sm rounded-pill px-3 py-1.5 fw-bold shadow-sm d-flex align-items-center gap-2 ${connectionCheck ? 'btn-success text-white' : 'btn-outline-danger'}`}
+          style={{ minHeight: '36px', fontSize: '0.78rem' }}
+          onClick={() => setConnectionCheck(!connectionCheck)}
         >
-          <i className="bi bi-play-circle-fill"></i>
-          <span>{isFlushing ? 'Flush wird gezogen...' : 'Fast-Flush-Test auslösen'}</span>
+          <i className={`bi ${connectionCheck ? 'bi-check-all' : 'bi-wrench-adjustable'}`}></i>
+          <span>{connectionCheck ? 'Alle Konnektionen fest nachgezogen' : 'Konnektionsstellen nachziehen!'}</span>
         </button>
       </div>
 
-      {/* Monitor Display */}
-      <div className="rounded-4 p-3 mb-3 text-white position-relative overflow-hidden" style={{ backgroundColor: '#09131f', border: '1.5px solid #1e293b' }}>
-        <div className="d-flex justify-content-between align-items-center mb-1 px-1">
-          <span className="badge rounded-pill px-2.5 py-1 text-uppercase fw-bold" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.4)', fontSize: '0.68rem' }}>
-            <i className="bi bi-activity me-1"></i>ART 1 (A. radialis)
-          </span>
-          <span className="text-secondary small font-monospace" style={{ fontSize: '0.72rem' }}>
-            Skalierung: 0 – 200 mmHg &bull; 300 mmHg Druckbeutel
+      {/* 2. Mandatory Pre-Use Warning: Connection Check & Priming Rule */}
+      <div className={`p-3 rounded-4 mb-3 border d-flex align-items-start gap-2.5 ${connectionCheck ? 'bg-success bg-opacity-10 border-success' : 'bg-danger bg-opacity-10 border-danger'}`}>
+        <i className={`bi ${connectionCheck ? 'bi-shield-check text-success' : 'bi-exclamation-octagon-fill text-danger'} fs-4 flex-shrink-0 mt-0.5`}></i>
+        <div>
+          <strong className={`d-block small ${connectionCheck ? 'text-success' : 'text-danger'}`}>
+            {connectionCheck ? 'VORBEREITUNG KORREKT: ALLE KONNEKTIONSSTELLEN NACHGEZOGEN' : 'SICHERHEITS-PFLICHT VOR BEFÜLLUNG (SCHRITT 2 DER SOP)!'}
+          </strong>
+          <span className="small text-secondary" style={{ fontSize: '0.78rem', lineHeight: '1.4' }}>
+            Drucksystem aus der Verpackung entnehmen und <strong>ausnahmslos alle Konnektionsstellen fest nachziehen</strong>! Bei 300 mmHg Betriebsdruck droht sonst lebensgefährliche Leckage oder Blutaspiration. Befüllung initial nur bei <strong>max. 50 mmHg</strong> beginnen, um schaum- und blasenfreies Priming zu sichern!
           </span>
         </div>
+      </div>
 
-        {/* SVG Curve */}
-        <svg viewBox="0 0 600 170" className="w-100" style={{ maxHeight: '190px', display: 'block' }}>
+      {/* 3. Interactive Monitor Waveform Display */}
+      <div className="rounded-4 p-3 mb-3 text-white position-relative overflow-hidden" style={{ backgroundColor: '#09131f', border: '1.5px solid #1e293b' }}>
+        <div className="d-flex flex-wrap justify-content-between align-items-center mb-1.5 px-1 gap-2">
+          <div className="d-flex align-items-center gap-2">
+            <span className="badge rounded-pill px-2.5 py-1 text-uppercase fw-bold" style={{ backgroundColor: 'rgba(239, 68, 68, 0.25)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.45)', fontSize: '0.68rem' }}>
+              <i className="bi bi-activity me-1"></i>ART 1 (A. radialis)
+            </span>
+            <span className={`badge rounded-pill px-2.5 py-1 small fw-bold ${readouts.badgeClass}`} style={{ fontSize: '0.68rem' }}>
+              {readouts.badge}
+            </span>
+          </div>
+
+          <div className="d-flex align-items-center gap-2">
+            <span className="text-secondary small font-monospace d-none d-sm-inline" style={{ fontSize: '0.72rem' }}>
+              Druckbeutel: 300 mmHg • 3 ml/h Spülfluss
+            </span>
+            <button
+              type="button"
+              className="btn btn-danger btn-sm rounded-pill px-3 py-1 fw-bold shadow-xs d-flex align-items-center gap-1.5"
+              style={{ fontSize: '0.76rem' }}
+              onClick={triggerFlush}
+              disabled={isFlushing}
+            >
+              <i className="bi bi-play-circle-fill"></i>
+              <span>{isFlushing ? 'Flush wird gezogen...' : 'Fast-Flush auslösen'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Live Pressure Numbers Readout */}
+        <div className="d-flex align-items-baseline gap-3 mb-2 px-1">
+          <div>
+            <span className="text-muted small" style={{ fontSize: '0.7rem' }}>SYS / DIA (mmHg)</span>
+            <div className="fw-black" style={{ fontSize: '1.6rem', color: damping === 'optimal' ? '#ef4444' : (damping === 'overdamped' ? '#f97316' : '#eab308'), lineHeight: 1 }}>
+              {readouts.sys} / {readouts.dia}
+            </div>
+          </div>
+          <div className="border-start border-secondary border-opacity-40 ps-3">
+            <span className="text-muted small" style={{ fontSize: '0.7rem' }}>MAD (MAP)</span>
+            <div className="fw-bold text-white" style={{ fontSize: '1.25rem', lineHeight: 1 }}>
+              ({readouts.map})
+            </div>
+          </div>
+          <div className="ms-auto text-end small text-muted d-none d-md-block" style={{ fontSize: '0.72rem', maxWidth: '320px' }}>
+            {readouts.note}
+          </div>
+        </div>
+
+        {/* SVG Dynamic Waveform Display */}
+        <svg viewBox="0 0 600 150" className="w-100" style={{ maxHeight: '160px', display: 'block' }}>
           {/* Grid lines */}
-          <line x1="0" y1="25" x2="600" y2="25" stroke="#1e293b" strokeDasharray="3 3" />
-          <line x1="0" y1="65" x2="600" y2="65" stroke="#1e293b" strokeDasharray="3 3" />
-          <line x1="0" y1="110" x2="600" y2="110" stroke="#1e293b" strokeDasharray="3 3" />
-          <line x1="0" y1="145" x2="600" y2="145" stroke="#334155" strokeWidth="1" />
+          <line x1="0" y1="20" x2="600" y2="20" stroke="#1e293b" strokeDasharray="3 3" />
+          <line x1="0" y1="55" x2="600" y2="55" stroke="#1e293b" strokeDasharray="3 3" />
+          <line x1="0" y1="95" x2="600" y2="95" stroke="#1e293b" strokeDasharray="3 3" />
+          <line x1="0" y1="130" x2="600" y2="130" stroke="#334155" strokeWidth="1" />
 
-          {/* If Fast-Flush is currently triggered: Render Square Wave */}
           {isFlushing ? (
+            /* Square Wave Signal during Fast Flush */
             <g>
               <path
-                d="M 10 120 L 80 120 L 90 20 L 280 20 L 290 140 L 310 110 L 325 125 L 340 120 L 400 120 L 415 65 L 430 90 L 440 85 L 490 120 L 600 120"
+                d="M 10 110 L 80 110 L 90 15 L 280 15 L 290 125 L 310 95 L 325 112 L 340 108 L 400 108 L 415 50 L 430 75 L 440 70 L 490 108 L 600 108"
                 fill="none"
                 stroke="#ef4444"
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
-              <text x="140" y="45" fill="#fca5a5" fontSize="12" fontWeight="bold">300 mmHg Flush-Rechtecksignal</text>
+              <text x="130" y="38" fill="#fca5a5" fontSize="11" fontWeight="bold">300 mmHg Flush-Rechtecksignal &bull; 1,5–2 Oszillationen</text>
             </g>
           ) : (
-            /* Normal or Damped Curve */
             <g>
               {damping === 'optimal' && (
                 <path
-                  d="M 10 120 L 40 120 L 55 55 L 75 90 L 85 82 L 140 120 L 170 120 L 185 55 L 205 90 L 215 82 L 270 120 L 300 120 L 315 55 L 335 90 L 345 82 L 400 120 L 430 120 L 445 55 L 465 90 L 475 82 L 530 120 L 560 120"
+                  d="M 10 110 L 40 110 L 55 45 L 75 80 L 85 72 L 140 110 L 170 110 L 185 45 L 205 80 L 215 72 L 270 110 L 300 110 L 315 45 L 335 80 L 345 72 L 400 110 L 430 110 L 445 45 L 465 80 L 475 72 L 530 110 L 560 110"
                   fill="none"
                   stroke="#ef4444"
                   strokeWidth="2.5"
@@ -2635,7 +2717,7 @@ function ArterialWaveformComponent({ standard }) {
 
               {damping === 'overdamped' && (
                 <path
-                  d="M 10 120 L 40 120 L 60 75 L 140 120 L 170 120 L 190 75 L 270 120 L 300 120 L 320 75 L 400 120 L 430 120 L 450 75 L 530 120 L 560 120"
+                  d="M 10 110 L 40 110 L 60 65 L 140 110 L 170 110 L 190 65 L 270 110 L 300 110 L 320 65 L 400 110 L 430 110 L 450 65 L 530 110 L 560 110"
                   fill="none"
                   stroke="#f97316"
                   strokeWidth="2.5"
@@ -2646,7 +2728,7 @@ function ArterialWaveformComponent({ standard }) {
 
               {damping === 'underdamped' && (
                 <path
-                  d="M 10 120 L 40 120 L 50 35 L 60 110 L 70 65 L 80 95 L 90 85 L 140 120 L 170 120 L 180 35 L 190 110 L 200 65 L 210 95 L 220 85 L 270 120 L 300 120 L 310 35 L 320 110 L 330 65 L 340 95 L 350 85 L 400 120 L 430 120 L 440 35 L 450 110 L 460 65 L 470 95 L 480 85 L 530 120"
+                  d="M 10 110 L 40 110 L 50 25 L 60 100 L 70 55 L 80 85 L 90 75 L 140 110 L 170 110 L 180 25 L 190 100 L 200 55 L 210 85 L 220 75 L 270 110 L 300 110 L 310 25 L 320 100 L 330 55 L 340 85 L 350 75 L 400 110 L 430 110 L 440 25 L 450 100 L 460 55 L 470 85 L 480 75 L 530 110"
                   fill="none"
                   stroke="#eab308"
                   strokeWidth="2.5"
@@ -2654,91 +2736,351 @@ function ArterialWaveformComponent({ standard }) {
                   strokeLinejoin="round"
                 />
               )}
-
-              {/* Curve annotations */}
-              {damping === 'optimal' && (
-                <>
-                  <text x="60" y="45" fill="#f87171" fontSize="10" fontWeight="bold">Systole ({readouts.sys})</text>
-                  <text x="88" y="78" fill="#fca5a5" fontSize="9">Dicrote Kerbe (Inzisur)</text>
-                  <text x="142" y="135" fill="#f87171" fontSize="10">Diastole ({readouts.dia})</text>
-                </>
-              )}
             </g>
           )}
         </svg>
 
-        {/* Big Blood Pressure Display */}
-        <div className="d-flex flex-wrap justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-25">
-          <div className="d-flex align-items-baseline gap-2">
-            <span className="text-secondary small">BP:</span>
-            <span className="display-6 fw-black text-danger" style={{ fontSize: '1.9rem' }}>
-              {readouts.sys} / {readouts.dia}
-            </span>
-            <span className="fs-5 fw-bold text-white-50">({readouts.map})</span>
-            <span className="text-white-50 small">mmHg</span>
+        {/* Damping Selector Pills */}
+        <div className="d-flex flex-wrap justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-30 gap-2">
+          <div className="d-flex align-items-center gap-1.5 small text-secondary" style={{ fontSize: '0.72rem' }}>
+            <span>Kurvenzustand simulieren:</span>
           </div>
 
-          <div className="text-end">
-            <span className="badge rounded-pill px-3 py-1 fw-bold" style={{ backgroundColor: damping === 'optimal' ? '#166534' : '#991b1b' }}>
-              {readouts.note}
-            </span>
+          <div className="btn-group btn-group-sm" role="group">
+            <button
+              type="button"
+              className={`btn btn-xs rounded-pill px-2.5 py-1 ${damping === 'optimal' ? 'btn-success text-white fw-bold' : 'btn-outline-secondary text-white'}`}
+              style={{ fontSize: '0.72rem' }}
+              onClick={() => setDamping('optimal')}
+            >
+              <i className="bi bi-check-circle me-1"></i>Optimal (1,5–2 Schwingungen)
+            </button>
+            <button
+              type="button"
+              className={`btn btn-xs rounded-pill px-2.5 py-1 ms-1 ${damping === 'overdamped' ? 'btn-warning text-dark fw-bold' : 'btn-outline-secondary text-white'}`}
+              style={{ fontSize: '0.72rem' }}
+              onClick={() => setDamping('overdamped')}
+            >
+              <i className="bi bi-water me-1"></i>Überdämpft (Luftblase!)
+            </button>
+            <button
+              type="button"
+              className={`btn btn-xs rounded-pill px-2.5 py-1 ms-1 ${damping === 'underdamped' ? 'btn-danger text-white fw-bold' : 'btn-outline-secondary text-white'}`}
+              style={{ fontSize: '0.72rem' }}
+              onClick={() => setDamping('underdamped')}
+            >
+              <i className="bi bi-soundwave me-1"></i>Unterdämpft (Ringing)
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Damping Selector Pills */}
-      <div className="row g-2 mb-3">
-        {[
-          { key: 'optimal', title: '1. Optimal gedämpft', desc: '1.5–2 Oszillationen nach Flush, scharfe Inzisur. Reale Messwerte.', badge: 'Korrekt', color: '#16a34a', bg: '#f0fdf4', border: '#86efac' },
-          { key: 'overdamped', title: '2. Überdämpft (Overdamped)', desc: 'Abgeflacht, 0–1 Oszillation. Systole falsch niedrig! (Luftblase, Koagel, Knick)', badge: 'Fehlmessung!', color: '#dc2626', bg: '#fef2f2', border: '#fca5a5' },
-          { key: 'underdamped', title: '3. Unterdämpft (Ringing)', desc: '> 3 Oszillationen. Systole falsch hoch! (Zu lange/steife Schläuche, Hähne)', badge: 'Fehlmessung!', color: '#d97706', bg: '#fffbeb', border: '#fde047' }
-        ].map((d) => (
-          <div key={d.key} className="col-md-4">
-            <div
-              className={`p-3 rounded-4 border h-100 transition-all ${damping === d.key ? 'shadow-sm' : 'opacity-75'}`}
-              style={{
-                cursor: 'pointer',
-                backgroundColor: damping === d.key ? d.bg : '#ffffff',
-                borderColor: damping === d.key ? d.border : '#e2e8f0',
-                borderWidth: damping === d.key ? '2px' : '1px'
-              }}
-              onClick={() => setDamping(d.key)}
+      {/* 4. Tab Navigation for Deep Combitrans® SOP Content */}
+      <div className="d-flex flex-wrap gap-1.5 mb-3 p-1 rounded-3 bg-light border">
+        <button
+          type="button"
+          className={`btn btn-sm rounded-2 flex-grow-1 fw-bold ${activeTab === 'steps' ? 'btn-white bg-white text-danger shadow-xs' : 'text-secondary'}`}
+          style={{ fontSize: '0.74rem' }}
+          onClick={() => setActiveTab('steps')}
+        >
+          <i className="bi bi-list-ol me-1"></i>1. 15-Schritte-Befüllung (SOP)
+        </button>
+        <button
+          type="button"
+          className={`btn btn-sm rounded-2 flex-grow-1 fw-bold ${activeTab === 'cave' ? 'btn-white bg-white text-danger shadow-xs' : 'text-secondary'}`}
+          style={{ fontSize: '0.74rem' }}
+          onClick={() => setActiveTab('cave')}
+        >
+          <i className="bi bi-exclamation-triangle-fill me-1 text-warning"></i>2. Cave &amp; Risiken (Fingerischämie)
+        </button>
+        <button
+          type="button"
+          className={`btn btn-sm rounded-2 flex-grow-1 fw-bold ${activeTab === 'reservoir' ? 'btn-white bg-white text-danger shadow-xs' : 'text-secondary'}`}
+          style={{ fontSize: '0.74rem' }}
+          onClick={() => setActiveTab('reservoir')}
+        >
+          <i className="bi bi-arrow-clockwise me-1"></i>3. Reservoir-Entlüftung
+        </button>
+        <button
+          type="button"
+          className={`btn btn-sm rounded-2 flex-grow-1 fw-bold ${activeTab === 'materials' ? 'btn-white bg-white text-danger shadow-xs' : 'text-secondary'}`}
+          style={{ fontSize: '0.74rem' }}
+          onClick={() => setActiveTab('materials')}
+        >
+          <i className="bi bi-box-seam me-1"></i>4. Benötigte Materialien
+        </button>
+      </div>
+
+      {/* TAB CONTENT 1: Der offizielle 15-Schritte-Befüllungsprozess */}
+      {activeTab === 'steps' && (
+        <div className="p-3 bg-light rounded-4 border mb-2">
+          <div className="d-flex justify-content-between align-items-center mb-2.5">
+            <h6 className="fw-bold mb-0 text-dark small">
+              <i className="bi bi-list-check me-1 text-danger"></i>Offizielle 15-Schritte-Befüllung (Combitrans® Fa. B. Braun)
+            </h6>
+            <span className="badge rounded-pill bg-white text-danger border border-danger small" style={{ fontSize: '0.68rem' }}>
+              Phase {sopStepPhase} von 4
+            </span>
+          </div>
+
+          {/* Phase Selector Tabs */}
+          <div className="d-flex gap-1.5 mb-3">
+            <button
+              type="button"
+              className={`btn btn-sm rounded-pill flex-grow-1 fw-bold ${sopStepPhase === 1 ? 'btn-danger text-white shadow-xs' : 'btn-outline-secondary bg-white text-muted'}`}
+              style={{ fontSize: '0.72rem', padding: '4px 8px' }}
+              onClick={() => setSopStepPhase(1)}
             >
-              <div className="d-flex justify-content-between align-items-center mb-1">
-                <strong className="small" style={{ color: d.color }}>{d.title}</strong>
-                <span className="badge rounded-pill fw-bold" style={{ backgroundColor: d.color, color: '#ffffff', fontSize: '0.65rem' }}>{d.badge}</span>
+              Schritte 1–4: Vorbereitung
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm rounded-pill flex-grow-1 fw-bold ${sopStepPhase === 2 ? 'btn-danger text-white shadow-xs' : 'btn-outline-secondary bg-white text-muted'}`}
+              style={{ fontSize: '0.72rem', padding: '4px 8px' }}
+              onClick={() => setSopStepPhase(2)}
+            >
+              Schritte 5–9: 50 mmHg Priming
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm rounded-pill flex-grow-1 fw-bold ${sopStepPhase === 3 ? 'btn-danger text-white shadow-xs' : 'btn-outline-secondary bg-white text-muted'}`}
+              style={{ fontSize: '0.72rem', padding: '4px 8px' }}
+              onClick={() => setSopStepPhase(3)}
+            >
+              Schritte 10–14: Reservoir
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm rounded-pill flex-grow-1 fw-bold ${sopStepPhase === 4 ? 'btn-danger text-white shadow-xs' : 'btn-outline-secondary bg-white text-muted'}`}
+              style={{ fontSize: '0.72rem', padding: '4px 8px' }}
+              onClick={() => setSopStepPhase(4)}
+            >
+              Schritt 15: 300 mmHg Enddruck
+            </button>
+          </div>
+
+          {/* Phase Step Details */}
+          <div className="card rounded-3 p-3 bg-white border shadow-2xs mb-2">
+            {sopStepPhase === 1 && (
+              <div>
+                <span className="badge rounded-pill bg-secondary text-white mb-1.5 small">Phase 1: Vorbereitung &amp; Anschlüsse</span>
+                <h6 className="fw-black text-dark mb-2">Vorbereitende Klemmen- &amp; Tropfkammerjustierung</h6>
+                <ol className="small text-secondary ps-3 mb-2" style={{ fontSize: '0.78rem', lineHeight: '1.5' }}>
+                  <li><strong>Rollenklemme schließen</strong>.</li>
+                  <li><strong>Bei Vorhandensein von 3. Druckanschlussleitung</strong> &rarr; Klemme schließen.</li>
+                  <li><strong>Konnektion mit NaCl-Beutel</strong> herstellen.</li>
+                  <li><strong>Flüssigkeitsspiegel in der Tropfenkammer</strong> herstellen (ca. 1/3 bis 1/2 füllen).</li>
+                </ol>
+                <div className="p-2 rounded-2 bg-light border small text-muted">
+                  <i className="bi bi-info-circle text-primary me-1"></i>SOP-Regel: NaCl-Beutel mit Druckbeutel am Infusionsständer aufhängen; Drucksystem auspacken und <strong>alle Konnektionsstellen nachziehen</strong>!
+                </div>
               </div>
-              <div className="text-secondary small" style={{ fontSize: '0.75rem', lineHeight: '1.3' }}>
-                {d.desc}
+            )}
+
+            {sopStepPhase === 2 && (
+              <div>
+                <span className="badge rounded-pill bg-primary text-white mb-1.5 small">Phase 2: Schonendes Befüllen bei max. 50 mmHg</span>
+                <h6 className="fw-black text-dark mb-2">Sanftes Leitungspriming gegen Schaumbildung</h6>
+                <ol className="small text-secondary ps-3 mb-2" start="5" style={{ fontSize: '0.78rem', lineHeight: '1.5' }}>
+                  <li><strong>Druckbeutel auf max. 50 mmHg aufpumpen</strong> (schützt vor Turbulenzen und Mikroblasen!).</li>
+                  <li><strong>Transducer in die Halteplatte einhängen</strong> und Nullpunkthahn zur Atmosphäre öffnen.</li>
+                  <li><strong>Rollenklemme langsam öffnen</strong> und Zuleitung zur 3. optionalen Druckmessung spülen, Klemme wieder schließen.</li>
+                  <li><strong>Beide Druckmesssysteme vorsichtig spülen</strong>, bis NaCl am Nullpunkthahn austritt.</li>
+                  <li><strong>Nullpunkthahn zur Atmosphäre schließen</strong> und Leitungen langsam spülen, bis Flüssigkeit am Leitungsende austritt.</li>
+                </ol>
+                <div className="p-2 rounded-2 bg-primary bg-opacity-10 border border-primary small text-primary">
+                  <i className="bi bi-shield-check me-1"></i>Warum nur 50 mmHg? Hoher Druck (&gt; 50 mmHg) erzeugt Kavitation und Mikroblasen, die schwer entfernbar sind!
+                </div>
+              </div>
+            )}
+
+            {sopStepPhase === 3 && (
+              <div>
+                <span className="badge rounded-pill text-white mb-1.5 small" style={{ backgroundColor: '#c2410c' }}>Phase 3: Reservoir-Entlüftung &amp; Nachspülen</span>
+                <h6 className="fw-black text-dark mb-2">Blasenfreie Kolbenführung im Uhrzeigersinn</h6>
+                <ol className="small text-secondary ps-3 mb-2" start="10" style={{ fontSize: '0.78rem', lineHeight: '1.5' }}>
+                  <li><strong>Patient*innen-seitigen Hahn zur Atmosphäre schließen</strong>.</li>
+                  <li><strong>Reservoir</strong> &ndash; unter Drehen und mit gleichzeitig leichtem Zug am Kolben &ndash; langsam mit Spülung füllen.</li>
+                  <li><strong>Patient*innen-seitigen Hahn zur Atmosphäre öffnen</strong>.</li>
+                  <li><strong>Danach durch Zurückdrehen</strong> &ndash; und mit leichtem Druck auf den Kolben &ndash; <strong>im Uhrzeigersinn</strong> das Reservoir entlüften.</li>
+                  <li><strong>Wichtig: Nochmaliges Spülen</strong>, um Rest-Luft aus dem Reservoir und der Druckmessleitung restlos zu entfernen!</li>
+                </ol>
+                <div className="p-2 rounded-2 bg-danger bg-opacity-10 border border-danger small text-danger">
+                  <i className="bi bi-exclamation-triangle-fill me-1"></i>Sicherheits-Schwerpunkt: Restluft im Reservoir wandert unbemerkt zum Patienten! Schritt 14 (Nochmaliges Spülen) ist zwingend!
+                </div>
+              </div>
+            )}
+
+            {sopStepPhase === 4 && (
+              <div>
+                <span className="badge rounded-pill bg-success text-white mb-1.5 small">Phase 4: Finaler Betriebsdruck &amp; Betriebsmodus</span>
+                <h6 className="fw-black text-dark mb-2">Hähne querstellen &amp; 300 mmHg Betriebsdruck</h6>
+                <ol className="small text-secondary ps-3 mb-2" start="15" style={{ fontSize: '0.78rem', lineHeight: '1.5' }}>
+                  <li><strong>Beide Nullpunkthähne quer stellen</strong> (sicher verschließen).</li>
+                  <li><strong>Alle Klemmen öffnen</strong> (mit Ausnahme der optionalen 3. Druckmessung).</li>
+                  <li><strong>Druckbeutel auf exakt 300 mmHg aufpumpen</strong> (gewährleistet kontinuierliche Mikrodosierung von 3 ml/h zur Offenhaltung des Katheters).</li>
+                </ol>
+                <div className="p-2 rounded-2 bg-success bg-opacity-10 border border-success small text-success">
+                  <i className="bi bi-check-circle-fill me-1"></i>System ist nun einsatzbereit für phlebostatischen Nullabgleich (4. ICR / mittlere Axillarlinie) und Fast-Flush-Test!
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="d-flex justify-content-between align-items-center">
+            <button
+              type="button"
+              className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1"
+              disabled={sopStepPhase === 1}
+              onClick={() => setSopStepPhase(Math.max(1, sopStepPhase - 1))}
+              style={{ fontSize: '0.74rem' }}
+            >
+              <i className="bi bi-arrow-left me-1"></i>Vorherige Phase
+            </button>
+            <span className="small text-muted" style={{ fontSize: '0.72rem' }}>Phase {sopStepPhase} von 4</span>
+            <button
+              type="button"
+              className="btn btn-danger btn-sm rounded-pill px-3 py-1"
+              disabled={sopStepPhase === 4}
+              onClick={() => setSopStepPhase(Math.min(4, sopStepPhase + 1))}
+              style={{ fontSize: '0.74rem' }}
+            >
+              Nächste Phase<i className="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* TAB CONTENT 2: Cave & Risikomanagement (Seite 2 der SOP) */}
+      {activeTab === 'cave' && (
+        <div className="p-3 bg-light rounded-4 border mb-2">
+          <div className="d-flex align-items-center gap-2 mb-2.5">
+            <i className="bi bi-shield-exclamation text-danger fs-5"></i>
+            <h6 className="fw-bold mb-0 text-dark small">
+              Tipps, Tricks und Kniffe – Wo ist besondere Vorsicht geboten?! (Cave-Leitfaden)
+            </h6>
+          </div>
+
+          <div className="row g-2 mb-2">
+            <div className="col-md-6">
+              <div className="p-3 rounded-3 bg-white border border-danger h-100 shadow-2xs">
+                <div className="d-flex align-items-center gap-1.5 mb-1.5">
+                  <i className="bi bi-exclamation-octagon-fill text-danger fs-5"></i>
+                  <strong className="text-danger small">Cave 1: Luft im System &amp; Fingerischämie</strong>
+                </div>
+                <p className="small text-secondary mb-2" style={{ fontSize: '0.76rem', lineHeight: '1.4' }}>
+                  <strong>Luft im System führt unter Umständen durch thromboembolische Geschehen bis hin zum Verschluss von kleinen Arterien im Endstromgebiet und somit zu Durchblutungsstörungen der Finger!</strong>
+                </p>
+                <div className="p-2 rounded-2 bg-light border small text-muted" style={{ fontSize: '0.72rem' }}>
+                  <strong>Pflegemaßnahme:</strong> Stündliche Perfusionskontrolle der Hand (Fingerwärme, Hautkolorit, Rekapillarisierungszeit &lt; 2 s, Radialispuls). Bei Blässe oder Zyanose Spülung sofort stoppen und Dienstarzt alarmieren!
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-6">
+              <div className="p-3 rounded-3 bg-white border border-warning h-100 shadow-2xs">
+                <div className="d-flex align-items-center gap-1.5 mb-1.5">
+                  <i className="bi bi-water text-warning fs-5"></i>
+                  <strong className="text-dark small">Cave 2: Dämpfung der Druckkurve</strong>
+                </div>
+                <p className="small text-secondary mb-2" style={{ fontSize: '0.76rem', lineHeight: '1.4' }}>
+                  <strong>Die Messung wird durch Dämpfung der Druckkurve ungenau: Die Systole wird zu niedrig und die Diastole zu hoch angezeigt!</strong>
+                </p>
+                <div className="p-2 rounded-2 bg-light border small text-muted" style={{ fontSize: '0.72rem' }}>
+                  <strong>Konsequenz:</strong> Ein verengter Pulsdruck täuscht einen kardiogenen Schock vor oder verschleiert hypertensive Krisen. Fast-Flush-Test deckt Überdämpfung sofort auf!
+                </div>
               </div>
             </div>
           </div>
-        ))}
-      </div>
-
-      {/* Standard Zeroing Checklist */}
-      <div className="p-3 bg-light rounded-4 border">
-        <div className="fw-bold text-dark small text-uppercase mb-2 d-flex align-items-center gap-1.5">
-          <i className="bi bi-crosshair text-primary"></i>
-          <span>Checkliste Nullabgleich &amp; Druckbeutel:</span>
         </div>
-        <div className="row g-2 small text-secondary">
-          <div className="col-sm-6 d-flex align-items-center gap-2">
-            <i className="bi bi-check2-circle text-success"></i>
-            <span>Druckbeutel exakt auf <strong>300 mmHg</strong> aufpumpen</span>
+      )}
+
+      {/* TAB CONTENT 3: Reservoir-Entlüftung im Detail */}
+      {activeTab === 'reservoir' && (
+        <div className="p-3 bg-light rounded-4 border mb-2">
+          <h6 className="fw-bold mb-2 text-dark small">
+            <i className="bi bi-arrow-clockwise me-1 text-danger"></i>Combitrans® Reservoir-Führung &amp; Entlüftungstechnik
+          </h6>
+          <p className="small text-secondary mb-2" style={{ fontSize: '0.76rem' }}>
+            Das integrierte Reservoir dient der blutfreien Spülung und aseptischen Blutentnahme. Falsches Befüllen ist die häufigste Ursache für persistierende Mikroblasen:
+          </p>
+
+          <div className="row g-2 mb-2">
+            <div className="col-sm-4">
+              <div className="p-2.5 rounded-3 bg-white border h-100 text-center">
+                <span className="badge rounded-pill bg-danger text-white mb-1.5">Schritt A</span>
+                <strong className="d-block small text-dark mb-1">Drehen + leichter Zug</strong>
+                <p className="text-muted small mb-0" style={{ fontSize: '0.72rem' }}>
+                  Patientenhahn zur Atmosphäre schließen. Kolben unter kontinuierlichem Drehen langsam zurückziehen.
+                </p>
+              </div>
+            </div>
+            <div className="col-sm-4">
+              <div className="p-2.5 rounded-3 bg-white border h-100 text-center">
+                <span className="badge rounded-pill bg-warning text-dark mb-1.5">Schritt B</span>
+                <strong className="d-block small text-dark mb-1">Im Uhrzeigersinn</strong>
+                <p className="text-muted small mb-0" style={{ fontSize: '0.72rem' }}>
+                  Patientenhahn öffnen. Kolben im Uhrzeigersinn unter leichtem Vorschub zurückdrehen (Luftausstoß).
+                </p>
+              </div>
+            </div>
+            <div className="col-sm-4">
+              <div className="p-2.5 rounded-3 bg-white border h-100 text-center">
+                <span className="badge rounded-pill bg-success text-white mb-1.5">Schritt C</span>
+                <strong className="d-block small text-dark mb-1">Nochmaliges Spülen</strong>
+                <p className="text-muted small mb-0" style={{ fontSize: '0.72rem' }}>
+                  Nochmals durchspülen, um letzte Restbläschen aus Leitung und Reservoir zu eliminieren!
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="col-sm-6 d-flex align-items-center gap-2">
-            <i className="bi bi-check2-circle text-success"></i>
-            <span>Druckaufnehmer auf <strong>4. ICR / mittlere Axillarlinie</strong> (Herzhöhe)</span>
+        </div>
+      )}
+
+      {/* TAB CONTENT 4: Benötigte Materialien */}
+      {activeTab === 'materials' && (
+        <div className="p-3 bg-light rounded-4 border mb-2">
+          <h6 className="fw-bold mb-2 text-dark small">
+            <i className="bi bi-box-seam me-1 text-danger"></i>Benötigte Materialien gemäß Gold-Standard
+          </h6>
+          <div className="row g-2 small">
+            <div className="col-sm-6">
+              <div className="p-2 rounded-2 bg-white border d-flex align-items-center gap-2">
+                <i className="bi bi-check2-circle text-success fs-5"></i>
+                <span><strong>Infusionsstange / -ständer</strong> (stabil arretiert)</span>
+              </div>
+            </div>
+            <div className="col-sm-6">
+              <div className="p-2 rounded-2 bg-white border d-flex align-items-center gap-2">
+                <i className="bi bi-check2-circle text-success fs-5"></i>
+                <span><strong>500* oder 1000* ml NaCl 0,9%</strong> Beutel</span>
+              </div>
+            </div>
+            <div className="col-sm-6">
+              <div className="p-2 rounded-2 bg-white border d-flex align-items-center gap-2">
+                <i className="bi bi-check2-circle text-success fs-5"></i>
+                <span><strong>Größen-adaptierter* Druckbeutel</strong></span>
+              </div>
+            </div>
+            <div className="col-sm-6">
+              <div className="p-2 rounded-2 bg-white border d-flex align-items-center gap-2">
+                <i className="bi bi-check2-circle text-success fs-5"></i>
+                <span><strong>Combitrans® (Fa. B. Braun)</strong> Drucksystem</span>
+              </div>
+            </div>
           </div>
-          <div className="col-sm-6 d-flex align-items-center gap-2">
-            <i className="bi bi-check2-circle text-success"></i>
-            <span>Dreiwegehahn zur Atmosphäre öffnen &amp; am Monitor nullen</span>
-          </div>
-          <div className="col-sm-6 d-flex align-items-center gap-2">
-            <i className="bi bi-check2-circle text-success"></i>
-            <span>Kontinuierlicher Spülfluss ca. <strong>3 ml/h</strong> NaCl 0.9%</span>
-          </div>
+        </div>
+      )}
+
+      {/* 5. Footer Quick Reminder Pill */}
+      <div className="p-2.5 bg-light rounded-3 border d-flex align-items-center justify-content-between flex-wrap gap-2 small">
+        <div className="d-flex align-items-center gap-2">
+          <i className="bi bi-speedometer2 text-danger fs-5"></i>
+          <span><strong>Druckstufen:</strong> Initial max. 50 mmHg &bull; Betriebsdruck exakt 300 mmHg</span>
+        </div>
+        <div className="d-flex align-items-center gap-2">
+          <i className="bi bi-crosshair text-primary fs-5"></i>
+          <span><strong>Nivellierung:</strong> 4. ICR / mittlere Axillarlinie (phlebostatischer Punkt)</span>
         </div>
       </div>
     </div>
@@ -5288,10 +5630,10 @@ function QuickHubView({ standards, onSelectStandard, onLogout }) {
       gradient: 'linear-gradient(135deg, #431407 0%, #ea580c 100%)'
     },
     arterie: {
-      badgeText: 'HÄMODYNAMIK ITS',
+      badgeText: 'HÄMODYNAMIK & ANÄSTHESIE',
       badgeBg: '#fee2e2',
       badgeColor: '#dc2626',
-      displayTitle: '4. Arterielles Drucksystem',
+      displayTitle: '4. Arterielles Drucksystem (Combitrans®)',
       rightImg: 'assets/card-arterie.jpg',
       icon: 'bi-activity',
       cardBg: 'linear-gradient(135deg, #ffffff 0%, #fff1f2 55%, #fee2e2 100%)',
