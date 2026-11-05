@@ -244,6 +244,37 @@ root.QRParser = (function () {
       icon: 'bi-wind',
       image: 'assets/card-hfnc.jpg',
       graphicImage: 'assets/card-hfnc.jpg',
+      videos: [
+        {
+          id: '4sgTiXiEaoI',
+          url: 'https://www.youtube.com/watch?v=4sgTiXiEaoI',
+          embedUrl: 'https://www.youtube.com/embed/4sgTiXiEaoI',
+          tabTitle: 'Teil 1: Aufbau & Schlauch',
+          title: 'High-Flow (HFNC) | Teil 1: Geräteaufbau & Befeuchterkammer',
+          subtitle: 'Schritt-für-Schritt Vorbereitung des myAIRVO 2 / Optiflow-Systems & Schlauchheizung',
+          deviceBadge: 'Optiflow / HFNC • Aufbau'
+        },
+        {
+          id: 'Zt8k7JxuPc8',
+          url: 'https://www.youtube.com/watch?v=Zt8k7JxuPc8',
+          embedUrl: 'https://www.youtube.com/embed/Zt8k7JxuPc8',
+          tabTitle: 'Teil 2: Optiflow-Kanüle',
+          title: 'High-Flow (HFNC) | Teil 2: Optiflow-Nasenkanüle & Patienteneinstellung',
+          subtitle: 'Korrektes Anpassen der Nasenbrille (< 50 % Nasenloch-Okklusion), Fluss- und FiO₂-Titration',
+          deviceBadge: 'Optiflow / HFNC • Praxis'
+        }
+      ],
+      videoUrl: 'https://www.youtube.com/watch?v=4sgTiXiEaoI',
+      videoEmbedUrl: 'https://www.youtube.com/embed/4sgTiXiEaoI',
+      videoTitle: 'High-Flow-Therapie (HFNC / Optiflow) | Praxis-Schulungsvideo',
+      videoSubtitle: 'Schritt-für-Schritt Vorbereitung der Befeuchterkammer, Schlauchheizung & Nasenkanülen-Anpassung',
+      videoDeviceBadge: 'Optiflow / HFNC • Intensivpflege',
+      videoSteps: [
+        { title: 'Befeuchterkammer & Aqua dest.', desc: 'Selbstfüllende Kammer einsetzen & Sterilwasser anschließen', color: '#ea580c' },
+        { title: 'Beheizter Atemschlauch', desc: 'AirSpiral™ Atemschlauch mit integrierter Heizung verbinden', color: '#0284c7' },
+        { title: 'Optiflow™ Nasenkanüle', desc: 'Größe wählen (max. 50 % der Nares verschließen), spannungsfrei anpassen', color: '#16a34a' },
+        { title: 'Fluss- & FiO₂-Titration', desc: 'Fluss (30–60 L/min) und Ziel-SpO₂ einstellen, ROX-Index nach 2/6/12 h berechnen', color: '#7c3aed' }
+      ],
       leadText: 'Applikation von erwärmtem, vollbefeuchtetem Sauerstoff-Gasgemisch mit hohem Fluss (20–60 L/min) über spezielle Nasenkanülen zur Totraumauswaschung, Atementlastung und PEEP-Unterstützung.',
       instructions: 'Wählen Sie die Kanülengröße so, dass maximal 50% des Nasenlochquerschnitts ausgefüllt sind. Erheben Sie den ROX-Index serialisiert nach 2, 6 und 12 Stunden, um ein Therapieversagen rechtzeitig zu erkennen.',
       whyImportant: [
@@ -433,6 +464,17 @@ root.QRParser = (function () {
       icon: 'bi-diagram-3-fill',
       image: 'assets/card-evd.jpg',
       graphicImage: 'assets/card-evd.jpg',
+      videoUrl: 'https://youtube.com/shorts/32eHLvVZ4w0',
+      videoEmbedUrl: 'https://www.youtube.com/embed/32eHLvVZ4w0',
+      videoTitle: 'Externe Ventrikeldrainage (EVD) | Nullabgleich & ICP-Monitoring',
+      videoSubtitle: 'Schritt-für-Schritt Nivellierung auf Foramen Monroi (Tragus), Drainagehöhe & Spülungs-SOP',
+      videoDeviceBadge: 'VentrEX® EVD • Intensivpflege',
+      videoSteps: [
+        { title: 'Referenzpunkt Foramen Monroi', desc: 'Tragus / äußerer Gehörgang als Nullebene mit Laser-Nivellierer anvisieren', color: '#7c3aed' },
+        { title: 'Skaleneinstellung & Drainagehöhe', desc: 'Druckstufe in cmH₂O bzw. mmHg gemäß ärztlicher Anordnung arretieren', color: '#0284c7' },
+        { title: 'Tropfkammer & Dreiwegehahn', desc: 'Dreiwegehahn prüfen: Drainage regulär geöffnet oder zur ICP-Messung geschlossen', color: '#16a34a' },
+        { title: 'Liquormonitoring & Hygiene', desc: 'Abtropfmenge, Farbe dokumentieren & streng aseptischer Verbandswechsel', color: '#ea580c' }
+      ],
       leadText: 'Standard Operating Procedure (SOP) für das NeuroMedex® VentrEX®-System: Kontinuierliches intrakranielles Druckmonitoring (ICP) bei regulär GESCHLOSSENER Drainage. Exakte Tragus-Nivellierung (Foramen Monroi), Nullen ohne Diskonnektion, differenzierte Druckgrenzen (sediert vs. wach) und striktes Verbot des pflegerischen Spülens zum Kopf hin.',
       instructions: 'WICHTIG: Die EVD ist regulär GESCHLOSSEN zu halten! Bei geöffneter Drainage ist KEINE Hirndruckmessung möglich (Gefahr falsch niedriger Werte). Öffnen nur bei Überschreiten verordneter Druckgrenzen für max. 5–10 ml bzw. bis zum Sistieren. Bei JEDEM Positionswechsel des Patienten gelben Monitoring-Hahn (2) zwingend neu auf den Tragus ausrichten!',
       whyImportant: [

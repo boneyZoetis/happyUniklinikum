@@ -942,7 +942,7 @@ const TILE_ENHANCEMENTS = {
     tagIcon: 'bi-calculator',
     tagColor: '#ea580c',
     tagBorder: '#fb923c',
-    tags: ['High-Flow', 'ROX-Index', 'Totraum-Washout', 'FiO2 21-100%', 'Nasenbrille < 50%'],
+    tags: ['Schulungsvideo', 'High-Flow', 'ROX-Index', 'Totraum-Washout', 'FiO2 21-100%', 'Nasenbrille < 50%'],
     btnGradient: 'linear-gradient(90deg, #c2410c 0%, #ea580c 100%)',
     btnShadow: 'rgba(234, 88, 12, 0.28)'
   },
@@ -1024,7 +1024,7 @@ const TILE_ENHANCEMENTS = {
     tagIcon: 'bi-exclamation-octagon',
     tagColor: '#7c3aed',
     tagBorder: '#c084fc',
-    tags: ['VentrEX® System', 'Tragus = Foramen Monroi', 'Drainage regulär ZU', 'Max. 5–10 ml Ablass', 'Sediert: 15/20 mmHg', 'Wach: 20/25 mmHg', 'Spülen z. Kopf: NUR ARZT'],
+    tags: ['Schulungsvideo', 'VentrEX® System', 'Tragus = Foramen Monroi', 'Drainage regulär ZU', 'Max. 5–10 ml Ablass', 'Sediert: 15/20 mmHg', 'Wach: 20/25 mmHg', 'Spülen z. Kopf: NUR ARZT'],
     btnGradient: 'linear-gradient(90deg, #6d28d9 0%, #7c3aed 100%)',
     btnShadow: 'rgba(124, 58, 237, 0.28)'
   }
@@ -3791,13 +3791,13 @@ function StandardA4PrintSheet({ standard }) {
 
           {/* Media & Scannable QR Code Row */}
           <div className="row g-1.5 align-items-stretch">
-            <div className={['beatmung', 'befeuchtung-invasiv', 'arterie'].includes(standard.id) ? "col-12" : "col-7"}>
+            <div className="col-12">
               <div className="p-1 border rounded-3 bg-white h-100 d-flex flex-column align-items-center justify-content-center">
                 <img
                   src={standard.image}
                   alt={standard.topic}
                   className="w-100 rounded-2 border"
-                  style={{ maxHeight: ['beatmung', 'befeuchtung-invasiv', 'arterie'].includes(standard.id) ? '125px' : '105px', objectFit: 'contain' }}
+                  style={{ maxHeight: '125px', objectFit: 'contain' }}
                 />
                 <div className="text-muted mt-0.5 text-center font-monospace" style={{ fontSize: '0.60rem' }}>
                   Gerätekonfiguration &amp; Praxisaufbau ({standard.shortTitle})
@@ -3805,7 +3805,7 @@ function StandardA4PrintSheet({ standard }) {
               </div>
             </div>
 
-            {(!['beatmung', 'befeuchtung-invasiv', 'arterie'].includes(standard.id)) && (
+            {(!['beatmung', 'befeuchtung-invasiv', 'arterie', 'evd', 'hfnc'].includes(standard.id)) && (
               <div className="col-5">
                 <div className="p-1.5 border rounded-3 bg-light text-center h-100 d-flex flex-column align-items-center justify-content-center">
                   <div className="fw-bold text-dark small text-uppercase mb-0.5" style={{ fontSize: '0.62rem' }}>
@@ -4116,7 +4116,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
 
           {/* Minimal-Info & QR-Code Row */}
           <div className="row g-3 align-items-stretch mb-3">
-            <div className={['beatmung', 'befeuchtung-invasiv', 'arterie'].includes(standard.id) ? "col-12" : "col-lg-7 col-md-6"}>
+            <div className="col-12">
               <div
                 className="p-3.5 rounded-4 border h-100 d-flex flex-column justify-content-between shadow-2xs"
                 style={{
@@ -4289,8 +4289,8 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
               </div>
             </div>
 
-            {/* Right: Crisp Scannable Single QR Code (Not needed for Beatmung, Befeuchtung & Arterie) */}
-            {(!['beatmung', 'befeuchtung-invasiv', 'arterie'].includes(standard.id)) && (
+            {/* Right: Crisp Scannable Single QR Code (Hidden for all clinical standards) */}
+            {(!['beatmung', 'befeuchtung-invasiv', 'arterie', 'evd', 'hfnc'].includes(standard.id)) && (
               <div className="col-lg-5 col-md-6">
                 <div
                   className="p-3.5 rounded-4 border h-100 text-center d-flex flex-column align-items-center justify-content-between shadow-sm"
@@ -4322,8 +4322,8 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
             )}
           </div>
 
-          {/* Action Toolbar: Colorful & Mobile-Optimized (Hidden for Beatmung, Befeuchtung & Arterie) */}
-          {(!['beatmung', 'befeuchtung-invasiv', 'arterie'].includes(standard.id)) && (
+          {/* Action Toolbar: Colorful & Mobile-Optimized (Hidden for all clinical standards) */}
+          {(!['beatmung', 'befeuchtung-invasiv', 'arterie', 'evd', 'hfnc'].includes(standard.id)) && (
             <div className="mt-3 pt-3 border-top no-print w-100 ps-1 ps-sm-0" data-html2canvas-ignore="true">
               <div className="row g-2 px-1 px-sm-0">
                 <div className="col-6 col-sm-3">
@@ -4406,6 +4406,19 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
 // -------------------------------------------------------------
 function StandardDetailPage({ standard, onNavigate, showToast }) {
   const allStandards = Object.values(UMF_STANDARDS);
+  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+
+  useEffect(() => {
+    setActiveVideoIndex(0);
+  }, [standard.id]);
+
+  const hasMultipleVideos = Array.isArray(standard.videos) && standard.videos.length > 1;
+  const currentVideo = hasMultipleVideos ? (standard.videos[activeVideoIndex] || standard.videos[0]) : null;
+
+  const activeVideoUrl = (currentVideo && currentVideo.url) || standard.videoUrl;
+  const activeVideoEmbedUrl = (currentVideo && currentVideo.embedUrl) || standard.videoEmbedUrl || (standard.id === 'hfnc' ? 'https://www.youtube.com/embed/4sgTiXiEaoI' : '');
+  const activeVideoTitle = (currentVideo && currentVideo.title) || standard.videoTitle;
+  const activeVideoBadge = (currentVideo && currentVideo.deviceBadge) || standard.videoDeviceBadge || (standard.id === 'hfnc' ? 'Optiflow / HFNC • Intensivpflege' : '');
 
   const copyToClipboard = (text, label = 'Text') => {
     navigator.clipboard.writeText(text).then(() => {
@@ -4537,8 +4550,8 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
         onDownloadPdf={downloadPdf}
       />
 
-      {/* 2. PRAXIS-SCHULUNGSVIDEO (WENN STANDARD EIN VIDEO BESITZT, Z.B. ELISA 600, AIRCON ODER COMBITRANS) */}
-      {standard.videoUrl && (
+      {/* 2. PRAXIS-SCHULUNGSVIDEO (WENN STANDARD EIN VIDEO BESITZT, Z.B. ELISA 600, AIRCON, COMBITRANS, VENTREX ODER OPTIFLOW) */}
+      {(standard.videoUrl || hasMultipleVideos) && (
         <div
           className="card border shadow-sm rounded-4 p-3 ps-3.5 ps-sm-4 p-sm-4 pt-4 pt-sm-4 bg-white mb-4 no-print position-relative overflow-hidden"
           style={{ borderColor: 'rgba(220, 38, 38, 0.35)', boxShadow: '0 6px 24px rgba(220, 38, 38, 0.08)' }}
@@ -4554,6 +4567,38 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
             }}
           />
 
+          {/* Multiple Videos Segmented Selector Pill Bar */}
+          {hasMultipleVideos && (
+            <div className="d-flex align-items-center justify-content-between gap-2 mb-3 pb-2.5 border-bottom flex-wrap ps-1 ps-sm-0">
+              <div className="d-flex align-items-center gap-1.5">
+                <span className="badge rounded-pill bg-danger text-white px-2.5 py-1 fw-bold shadow-2xs" style={{ fontSize: '0.70rem' }}>
+                  <i className="bi bi-collection-play-fill me-1"></i>2 Schulungsvideos
+                </span>
+                <span className="small fw-bold text-dark" style={{ fontSize: '0.82rem' }}>
+                  High-Flow / Optiflow Videoleitfaden:
+                </span>
+              </div>
+              <div className="btn-group shadow-2xs rounded-pill p-0.5 bg-light border" role="group">
+                {standard.videos.map((vid, vIdx) => (
+                  <button
+                    key={vIdx}
+                    type="button"
+                    className={`btn btn-sm rounded-pill px-3 py-1 fw-bold d-inline-flex align-items-center gap-1.5 transition-all ${
+                      activeVideoIndex === vIdx
+                        ? 'btn-danger text-white shadow-xs'
+                        : 'btn-light text-dark border-0'
+                    }`}
+                    style={{ fontSize: '0.80rem' }}
+                    onClick={() => setActiveVideoIndex(vIdx)}
+                  >
+                    <i className={activeVideoIndex === vIdx ? "bi bi-play-circle-fill" : "bi bi-play"}></i>
+                    <span>{vid.tabTitle || `Video ${vIdx + 1}`}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3.5 pb-3.5 border-bottom pt-2 pt-sm-1 ps-1 ps-sm-0">
             <div className="d-flex align-items-center gap-3 ps-1 ps-sm-0">
               <div
@@ -4568,18 +4613,18 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                     <i className="bi bi-play-circle-fill me-1"></i>Praxis-Schulungsvideo
                   </span>
                   <span className="badge rounded-pill fw-bold text-uppercase px-2.5 py-1 shadow-2xs bg-primary text-white" style={{ fontSize: '0.70rem' }}>
-                    {standard.videoDeviceBadge || (standard.id === 'arterie' ? 'Combitrans® • Intensivpflege' : (standard.id === 'befeuchtung-invasiv' ? 'AIRcon Gen2 • Intensivpflege' : 'elisa 600 • Intensivpflege'))}
+                    {activeVideoBadge || (standard.id === 'hfnc' ? 'Optiflow / HFNC • Intensivpflege' : (standard.id === 'evd' ? 'VentrEX® EVD • Intensivpflege' : (standard.id === 'arterie' ? 'Combitrans® • Intensivpflege' : (standard.id === 'befeuchtung-invasiv' ? 'AIRcon Gen2 • Intensivpflege' : 'elisa 600 • Intensivpflege'))))}
                   </span>
                 </div>
                 <h4 className="fw-black mb-0 text-dark d-flex align-items-center gap-2" style={{ fontSize: '1.2rem', letterSpacing: '0.2px' }}>
-                  <span>{standard.videoTitle || (standard.id === 'arterie' ? 'Invasive arterielle Blutdruckmessung | Nullabgleich & Kurvenvalidierung' : (standard.id === 'befeuchtung-invasiv' ? 'AIRcon Atemgasbefeuchter | Geräteaufbau & Inbetriebnahme' : 'elisa 600 Beatmungsgerät: Geräteaufbau & Systemtest'))}</span>
+                  <span>{activeVideoTitle || (standard.id === 'hfnc' ? 'High-Flow (HFNC) | Geräteaufbau & Optiflow-Anwendung' : (standard.id === 'evd' ? 'Externe Ventrikeldrainage (EVD) | Nullabgleich & ICP-Monitoring' : (standard.id === 'arterie' ? 'Invasive arterielle Blutdruckmessung | Nullabgleich & Kurvenvalidierung' : (standard.id === 'befeuchtung-invasiv' ? 'AIRcon Atemgasbefeuchter | Geräteaufbau & Inbetriebnahme' : 'elisa 600 Beatmungsgerät: Geräteaufbau & Systemtest'))))}</span>
                 </h4>
               </div>
             </div>
 
             <div className="d-flex align-items-center gap-2 mt-2 mt-sm-0 mb-2 mb-sm-0 ps-1 ps-sm-0">
               <a
-                href={standard.videoUrl}
+                href={activeVideoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-sm rounded-pill px-3.5 py-2 fw-bold d-inline-flex align-items-center gap-2 shadow-2xs transition-all ms-1 ms-sm-0"
@@ -4587,7 +4632,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                   background: 'linear-gradient(135deg, #ffffff 0%, #fff1f2 100%)',
                   color: '#dc2626',
                   border: '1.5px solid #fca5a5',
-                  boxShadow: '0 2px 8px rgba(220, 38, 38, 0.08)',
+                  boxShadow: '0 2px 8px rgba(220, 38, 38, 0.08)' ,
                   fontSize: '0.84rem',
                   letterSpacing: '0.2px'
                 }}
@@ -4606,13 +4651,33 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                 style={{ aspectRatio: '16 / 9', width: '100%' }}
               >
                 <iframe
-                  src={standard.videoEmbedUrl || (standard.id === 'arterie' ? 'https://www.youtube.com/embed/Hyoeowu7SJU?rel=0' : (standard.id === 'befeuchtung-invasiv' ? 'https://www.youtube.com/embed/Xa3uZiq8d40?rel=0' : 'https://www.youtube.com/embed/b1lDSxzUgKM?rel=0'))}
-                  title={standard.videoTitle || (standard.id === 'arterie' ? 'Invasive arterielle Blutdruckmessung | Nullabgleich & Kurvenvalidierung' : (standard.id === 'befeuchtung-invasiv' ? 'AIRcon Atemgasbefeuchter | Geräteaufbau & Inbetriebnahme' : 'elisa 600 Beatmungsgerät | Geräteaufbau & Systemtest'))}
+                  key={activeVideoEmbedUrl}
+                  src={activeVideoEmbedUrl}
+                  title={activeVideoTitle || 'High-Flow-Therapie Schulungsvideo'}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                   style={{ width: '100%', height: '100%', border: 'none' }}
                 ></iframe>
               </div>
+
+              {/* Bottom Quick Switcher between the two videos */}
+              {hasMultipleVideos && (
+                <div className="mt-2.5 p-2 px-3 rounded-3 bg-light border d-flex align-items-center justify-content-between flex-wrap gap-2">
+                  <span className="small text-secondary" style={{ fontSize: '0.78rem' }}>
+                    <i className="bi bi-info-circle me-1 text-primary"></i>
+                    Aktuell ausgewählt: <strong>{activeVideoIndex === 0 ? 'Teil 1: Aufbau & Schlauchsystem' : 'Teil 2: Optiflow-Nasenkanüle & Einstellung'}</strong>
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-danger rounded-pill px-3 py-1 fw-bold d-inline-flex align-items-center gap-1 shadow-2xs"
+                    style={{ fontSize: '0.76rem' }}
+                    onClick={() => setActiveVideoIndex(activeVideoIndex === 0 ? 1 : 0)}
+                  >
+                    <span>{activeVideoIndex === 0 ? 'Zu Teil 2: Optiflow-Kanüle wechseln' : 'Zu Teil 1: Geräteaufbau wechseln'}</span>
+                    <i className="bi bi-arrow-right"></i>
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="col-12 col-lg-4">
@@ -4642,7 +4707,17 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
 
                 {/* Stylish Step Cards */}
                 <div className="d-flex flex-column gap-2 justify-content-center my-auto">
-                  {(standard.videoSteps || (standard.id === 'arterie' ? [
+                  {(standard.videoSteps || (standard.id === 'hfnc' ? [
+                    { title: 'Befeuchterkammer & Aqua dest.', desc: 'Selbstfüllende Kammer einsetzen & Sterilwasser anschließen', color: '#ea580c' },
+                    { title: 'Beheizter Atemschlauch', desc: 'AirSpiral™ Atemschlauch mit integrierter Heizung verbinden', color: '#0284c7' },
+                    { title: 'Optiflow™ Nasenkanüle', desc: 'Größe wählen (max. 50 % der Nares verschließen), spannungsfrei anpassen', color: '#16a34a' },
+                    { title: 'Fluss- & FiO₂-Titration', desc: 'Fluss (30–60 L/min) und Ziel-SpO₂ einstellen, ROX-Index nach 2/6/12 h berechnen', color: '#7c3aed' }
+                  ] : (standard.id === 'evd' ? [
+                    { title: 'Referenzpunkt Foramen Monroi', desc: 'Tragus / äußerer Gehörgang als Nullebene mit Laser-Nivellierer anvisieren', color: '#7c3aed' },
+                    { title: 'Skaleneinstellung & Drainagehöhe', desc: 'Druckstufe in cmH₂O bzw. mmHg gemäß ärztlicher Anordnung arretieren', color: '#0284c7' },
+                    { title: 'Tropfkammer & Dreiwegehahn', desc: 'Dreiwegehahn prüfen: Drainage regulär geöffnet oder zur ICP-Messung geschlossen', color: '#16a34a' },
+                    { title: 'Liquormonitoring & Hygiene', desc: 'Abtropfmenge, Farbe dokumentieren & streng aseptischer Verbandswechsel', color: '#ea580c' }
+                  ] : (standard.id === 'arterie' ? [
                     { title: 'Druckbeutel & Spülflasche', desc: 'NaCl 0,9 % blasenfrei entlüften, Manschette auf 300 mmHg aufpumpen', color: '#dc2626' },
                     { title: 'Druckaufnehmer entlüften', desc: 'Transducer & Dreiwegehähne im Uhrzeigersinn blasenfrei spülen', color: '#ea580c' },
                     { title: 'Phlebostatischer Nullpunkt', desc: 'Höhe 4. ICR / mittlerer Thoraxdurchmesser mit Laser/Wasserwaage nivellieren', color: '#0284c7' },
@@ -4657,7 +4732,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                     { title: 'Aufbau Doppelschlauchsystem', desc: 'Inspirations- & Exspirationsfilter montieren', color: '#2563eb' },
                     { title: 'HMEF & Prüfstopfen', desc: 'Patientennahen Filter & roten Stopfen aufstecken', color: '#16a34a' },
                     { title: 'Pre-Use Gerätecheck', desc: 'Systemtest bis 100 % („bestanden“) abschließen', color: '#7c3aed' }
-                  ]))).map((step, idx) => (
+                  ]))))).map((step, idx) => (
                     <div
                       key={idx}
                       className="p-2.5 px-3 rounded-3 bg-white border shadow-2xs d-flex align-items-center gap-2.5"
@@ -4683,7 +4758,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
 
                 <div className="text-center mt-3 pt-2 border-top text-muted small" style={{ fontSize: '0.70rem', borderColor: '#e2e8f0' }}>
                   <i className="bi bi-info-circle me-1 text-primary"></i>
-                  <span>{standard.id === 'arterie' ? 'Schritt-für-Schritt Vorbereitung & Nullabgleich vor Patientenkontakt' : (standard.id === 'befeuchtung-invasiv' ? 'Schritt-für-Schritt Vorbereitung vor Patientenanschluss' : 'Schritt-für-Schritt Aufbau vor jedem Patientenkontakt')}</span>
+                  <span>{standard.id === 'hfnc' ? 'Schritt-für-Schritt Aufbau & Optiflow-Anpassung vor Patientenkontakt' : (standard.id === 'evd' ? 'Schritt-für-Schritt Nivellierung & Liquormonitoring vor Patientenkontakt' : (standard.id === 'arterie' ? 'Schritt-für-Schritt Vorbereitung & Nullabgleich vor Patientenkontakt' : (standard.id === 'befeuchtung-invasiv' ? 'Schritt-für-Schritt Vorbereitung vor Patientenanschluss' : 'Schritt-für-Schritt Aufbau vor jedem Patientenkontakt')))}</span>
                 </div>
               </div>
             </div>
