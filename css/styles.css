@@ -546,7 +546,7 @@ body {
 
 /* =========================================================
    TOP BREADCRUMB & STANDARD SWITCHER BUTTONS (BEAUTIFIED)
-   Light / Minimal Mint - Non-dark design
+   Styled in U-Card Gradient Palette (#6366f1 -> #8b5cf6 -> #d946ef)
    ========================================================= */
 .btn-all-kacheln {
   position: relative;
@@ -555,19 +555,22 @@ body {
   gap: 0.65rem;
   padding: 0.45rem 1.25rem;
   min-height: 42px;
-  border-radius: 9999px;
-  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%) !important;
-  color: #065f46 !important;
-  font-weight: 750;
-  font-size: 0.84rem;
+  border-radius: 9999px !important;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 45%, #d946ef 100%) !important;
+  color: #ffffff !important;
+  font-weight: 750 !important;
+  font-size: 0.84rem !important;
   letter-spacing: 0.3px;
-  border: 1.5px solid rgba(16, 185, 129, 0.45) !important;
-  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.42), 0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
   text-decoration: none !important;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
   user-select: none;
   white-space: nowrap;
   overflow: hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  cursor: pointer;
 }
 
 .btn-all-kacheln::before {
@@ -575,20 +578,20 @@ body {
   position: absolute;
   top: 0;
   left: -100%;
-  width: 50%;
+  width: 60%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.15), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
   transform: skewX(-25deg);
   transition: left 0.65s ease;
   pointer-events: none;
 }
 
 .btn-all-kacheln:hover {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%) !important;
-  color: #047857 !important;
-  border-color: #10b981 !important;
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.22), inset 0 1px 0 #ffffff !important;
-  transform: translateY(-2px) scale(1.02);
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 45%, #c026d3 100%) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 6px 22px rgba(139, 92, 246, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+  transform: translateY(-2px) scale(1.025);
 }
 
 .btn-all-kacheln:hover::before {
@@ -597,49 +600,49 @@ body {
 
 .btn-all-kacheln:active {
   transform: translateY(0) scale(0.98);
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15) !important;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.35) !important;
 }
 
 .btn-all-kacheln .icon-badge {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: rgba(255, 255, 255, 0.25);
   color: #ffffff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.76rem;
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35);
+  font-size: 0.74rem;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
   transition: all 0.25s ease;
   flex-shrink: 0;
-  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .btn-all-kacheln:hover .icon-badge {
   transform: rotate(-10deg) scale(1.12);
-  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.5);
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .btn-all-kacheln .back-arrow {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  background: rgba(16, 185, 129, 0.12);
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   font-size: 0.72rem;
-  color: #059669;
+  color: #ffffff;
   margin-left: 2px;
   transition: transform 0.22s ease, background 0.22s ease;
 }
 
 .btn-all-kacheln:hover .back-arrow {
   transform: translateX(-3px);
-  color: #047857;
-  background: rgba(16, 185, 129, 0.22);
+  background: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
 }
 
 /* =========================================================
