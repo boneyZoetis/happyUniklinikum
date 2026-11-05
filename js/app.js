@@ -968,14 +968,16 @@ const TILE_ENHANCEMENTS = {
     ],
     imageSubtitle: '15-Schritte-Befüllung • Reservoir im Uhrzeigersinn entlüften • Cave: Fingerischämie',
     goals: [
-      { text: 'Blasenfreies Priming', icon: 'bi-droplet-half text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
-      { text: 'Cave Fingerischämie', icon: 'bi-exclamation-octagon-fill text-warning', bg: '#fff7ed', color: '#c2410c', border: '#fed7aa' },
-      { text: 'Exakte Hämodynamik', icon: 'bi-activity text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' }
+      { text: '🟢 MAP & Druck', icon: 'bi-activity text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
+      { text: '🔴 Hydrost. Höhe', icon: 'bi-arrow-down-up text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
+      { text: '🔵 Fast-Flush', icon: 'bi-speedometer2 text-primary', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' },
+      { text: '🟠 Luer-Lock dicht', icon: 'bi-wrench-adjustable text-warning', bg: '#fff7ed', color: '#c2410c', border: '#fed7aa' }
     ],
     actionSteps: [
-      { text: 'System auspacken und ALLE Konnektionsstellen vor Inbetriebnahme zwingend fest nachziehen!', bold: 'Konnektionen nachziehen:', icon: 'bi-wrench-adjustable', iconBg: '#dc2626' },
-      { text: 'Druckbeutel initial nur auf max. 50 mmHg aufpumpen (schonende blasenfreie Befüllung nach SOP Schritte 1–9)', bold: 'Befüllen bei 50 mmHg:', icon: 'bi-speedometer', iconBg: '#0284c7' },
-      { text: 'Reservoir unter Drehen füllen, im Uhrzeigersinn entlüften, nochmals spülen, Hähne querstellen & auf 300 mmHg bringen', bold: 'Reservoir & 300 mmHg:', icon: 'bi-arrow-clockwise', iconBg: '#16a34a' }
+      { text: 'Kontinuierliche Erfassung von systolischem, diastolischem und mittlerem arteriellem Druck (MAP).', bold: '🟢 Präzise Hämodynamik:', icon: 'bi-activity', iconBg: '#16a34a' },
+      { text: 'Druckaufnehmer exakt nivellieren (bereits 1 cm Höhenabweichung verursacht ca. 0,74 mmHg Fehler).', bold: '🔴 Hydrostatische Fehler:', icon: 'bi-arrow-down-up', iconBg: '#dc2626' },
+      { text: 'Kurvenqualität beurteilen und mittels Fast-Flush-Test dynamische Antwort des Systems sichern.', bold: '🔵 Dämpfung & Fast-Flush:', icon: 'bi-speedometer2', iconBg: '#0284c7' },
+      { text: 'Luer-Lock-Verbindungen sichern, Anschlüsse regelmäßig prüfen & Punktionsstelle überwachen.', bold: '🟠 Blutungskomplikationen:', icon: 'bi-shield-check', iconBg: '#ea580c' }
     ],
     tagLabel: 'SOP-Kriterien:',
     tagIcon: 'bi-crosshair',
@@ -3860,7 +3862,7 @@ function StandardA4PrintSheet({ standard }) {
             <div className="p-1.5 rounded border bg-light" style={{ fontSize: '0.68rem' }}>
               <strong className="text-success d-flex align-items-center gap-1 mb-0.5" style={{ fontSize: '0.70rem' }}>
                 <i className="bi bi-shield-check"></i>
-                <span>Warum ist das wichtig? (Patientensicherheit ITS):</span>
+                <span>{standard.id === 'arterie' ? 'WARUM IST DAS WICHTIG? (PATIENTENSICHERHEIT ITS)' : 'Warum ist das wichtig? (Patientensicherheit ITS):'}</span>
               </strong>
               <div className="row g-1">
                 {standard.whyImportant.map((item, idx) => {
@@ -4253,7 +4255,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                         <span className="rounded-circle p-1 d-inline-flex align-items-center justify-content-center text-white" style={{ width: '22px', height: '22px', backgroundColor: '#16a34a' }}>
                           <i className="bi bi-shield-check" style={{ fontSize: '0.75rem' }}></i>
                         </span>
-                        <span style={{ fontSize: '0.86rem' }}>Warum ist das wichtig? (Patientensicherheit ITS):</span>
+                        <span style={{ fontSize: '0.86rem' }}>{standard.id === 'arterie' ? 'WARUM IST DAS WICHTIG? (PATIENTENSICHERHEIT ITS)' : 'Warum ist das wichtig? (Patientensicherheit ITS):'}</span>
                       </div>
                       <div className="row g-2 small text-dark">
                         {standard.whyImportant.map((why, wi) => {

@@ -278,10 +278,10 @@ root.QRParser = (function () {
       leadText: 'Gold-Standard für das Combitrans® (Fa. B. Braun) Druckmesssystem gemäß Leitlinie: Standardisierter 15-Schritte-Befüllungsprozess (initial max. 50 mmHg -> final 300 mmHg), Reservoir-Entlüftung im Uhrzeigersinn, Phlebostatischer Nullabgleich und strikte Vermeidung von Luftembolien im peripheren Endstromgebiet.',
       instructions: 'WICHTIG: Drucksystem auspacken und VOR Befüllung ALLE Konnektionsstellen nachziehen! Befüllen Sie das System initial mit max. 50 mmHg Druckbeutel, um Blasenbildung zu verhindern. Erst nach vollständiger Entlüftung von Reservoir und Leitungen auf 300 mmHg aufpumpen und beide Nullpunkthähne querstellen!',
       whyImportant: [
-        'Schutz vor Fingerischämie & Thromboembolie: Luft im System führt zum thromboembolischen Verschluss kleiner Arterien im Endstromgebiet und Nekrosen der Finger.',
-        'Fehlerfreie Hämodynamik: Luftbläschen dämpfen das System physikalisch – die Systole wird falsch zu niedrig und die Diastole falsch zu hoch angezeigt!',
-        'Präzise Beat-to-Beat-Blutdruckmessung: Kontinuierliche Verlässlichkeit von MAP, Systole und Diastole bei hämodynamisch instabilen Patienten.',
-        'Blutungssicherheit: Konsequentes Nachziehen aller Konnektionsstellen verhindert lebensgefährliche Diskonnektionen unter 300 mmHg Systemdruck.'
+        '🟢 Präzise hämodynamische Überwachung\nKontinuierliche Erfassung von systolischem, diastolischem und mittlerem arteriellem Druck (MAP).',
+        '🔴 Hydrostatistische Messfehler vermeiden\nDruckaufnehmer auf korrekter Referenzhöhe positionieren. Bereits 1 cm Höhenabweichung verursacht ca. 0,74 mmHg Messfehler.',
+        '🔵 Über- und Unterdämpfung erkennen\nKurvenqualität beurteilen und bei Bedarf mittels Fast-Flush-Test die dynamische Antwort des Messsystems überprüfen.',
+        '🟠 Blutungskomplikationen vorbeugen\nLuer-Lock-Verbindungen sichern, Anschlüsse regelmäßig kontrollieren und Punktionsstelle auf Blutungen überwachen.'
       ],
       keyPoints: [
         'Benötigtes Material: Infusionsständer, 500/1000 ml NaCl 0,9%, größenadaptierter Druckbeutel, Combitrans® (Fa. B. Braun) Drucksystem.',
