@@ -4056,10 +4056,10 @@ function UniversalCardInteractiveCard({ isAtm = true, onSelectStandard }) {
         <div
           style={{
             position: 'absolute',
-            left: '70.5%',
-            top: '31.5%',
-            width: '21.6%',
-            height: '30.8%',
+            left: '70.6%',
+            top: '37.1%',
+            width: '21.5%',
+            height: '32.0%',
             pointerEvents: 'none',
             display: 'flex',
             alignItems: 'center',
@@ -4173,10 +4173,10 @@ function UniversalCardA4Native({ onSelectStandard }) {
         <div
           style={{
             position: 'absolute',
-            left: '70.5%',
-            top: '31.5%',
-            width: '21.6%',
-            height: '30.8%',
+            left: '70.6%',
+            top: '37.1%',
+            width: '21.5%',
+            height: '32.0%',
             pointerEvents: 'none',
             display: 'flex',
             alignItems: 'center',
@@ -4793,10 +4793,10 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                   <div
                     style={{
                       position: 'absolute',
-                      left: '70.5%',
-                      top: '31.5%',
-                      width: '21.6%',
-                      height: '30.8%',
+                      left: '70.6%',
+                      top: '37.1%',
+                      width: '21.5%',
+                      height: '32.0%',
                       pointerEvents: 'none',
                       display: 'flex',
                       alignItems: 'center',
