@@ -1624,16 +1624,26 @@ function ClinicalParametersTable({ parameters, accentColor }) {
       return { icon: 'bi-lungs-fill', color: '#0284c7', bg: '#e0f2fe', border: '#bae6fd' };
     if (l.includes('peep'))
       return { icon: 'bi-arrow-down-up', color: '#6366f1', bg: '#e0e7ff', border: '#c7d2fe' };
+    if (l.includes('desinfekt') || l.includes('hygiene') || l.includes('einwirkzeit'))
+      return { icon: 'bi-shield-fill-check', color: '#16a34a', bg: '#dcfce7', border: '#bbf7d0' };
+    if (l.includes('status') || l.includes('geschlossen') || l.includes('klemme'))
+      return { icon: 'bi-lock-fill', color: '#dc2626', bg: '#fee2e2', border: '#fecaca' };
+    if (l.includes('tragus') || l.includes('landmarke') || l.includes('nullpunkt'))
+      return { icon: 'bi-crosshair2', color: '#7c3aed', bg: '#f3e8ff', border: '#ddd6fe' };
+    if (l.includes('cpp'))
+      return { icon: 'bi-heart-pulse-fill', color: '#dc2626', bg: '#fee2e2', border: '#fecaca' };
     if (l.includes('druck') || l.includes('delta') || l.includes('driving') || l.includes('pmax'))
       return { icon: 'bi-speedometer2', color: '#ea580c', bg: '#ffedd5', border: '#fed7aa' };
     if (l.includes('spo2') || l.includes('fio2') || l.includes('sauerstoff'))
       return { icon: 'bi-heart-pulse-fill', color: '#16a34a', bg: '#dcfce7', border: '#bbf7d0' };
     if (l.includes('temp') || l.includes('grad') || l.includes('°c'))
       return { icon: 'bi-thermometer-half', color: '#e11d48', bg: '#ffe4e6', border: '#fecdd3' };
-    if (l.includes('feucht') || l.includes('mg/l') || l.includes('wasser'))
-      return { icon: 'bi-droplet-fill', color: '#0891b2', bg: '#cffafe', border: '#a5f3fc' };
+    if (l.includes('liquor') || l.includes('spül') || l.includes('ablass') || l.includes('feucht') || l.includes('mg/l') || l.includes('wasser'))
+      return { icon: 'bi-droplet-half', color: '#0891b2', bg: '#cffafe', border: '#a5f3fc' };
     if (l.includes('rox'))
       return { icon: 'bi-calculator-fill', color: '#d97706', bg: '#fef3c7', border: '#fde68a' };
+    if (l.includes('stündlich') || l.includes('bilanz') || l.includes('zeit'))
+      return { icon: 'bi-clock-history', color: '#0284c7', bg: '#e0f2fe', border: '#bae6fd' };
     if (l.includes('mad') || l.includes('blutdruck') || l.includes('mmhg'))
       return { icon: 'bi-activity', color: '#dc2626', bg: '#fee2e2', border: '#fecaca' };
     if (l.includes('icp') || l.includes('hirn') || l.includes('evd') || l.includes('höhe'))

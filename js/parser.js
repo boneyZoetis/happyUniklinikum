@@ -437,14 +437,20 @@ root.QRParser = (function () {
         'Kompetenzgrenze gewahrt: Niemals eigenmächtig aspirieren oder in Richtung Ventrikel spülen (NUR ARZT)'
       ],
       parameters: [
-        { label: 'Referenz-Nullpunkt', target: 'Tragus des Ohres', note: 'Gelber Hahn (2) auf Höhe Foramen Monroi; Re-Justierung bei JEDER Bewegung' },
-        { label: 'Drainage-Status', target: 'Regulär GESCHLOSSEN', note: 'ICP-Monitoring aktiv; bei offener EVD KEINE Hirndruckmessung möglich' },
-        { label: 'Ablassmenge bei Öffnung', target: 'Max. 5–10 ml / Sistieren', note: 'Nach Erreichen der Zielmenge Drainage sofort wieder verschließen' },
-        { label: 'Sediert: Supratentoriell', target: '15 mmHg (10 cm ü. Tragus)', note: 'Intubierte & sedierte Patienten; Ziel-ICP <= 15 mmHg' },
-        { label: 'Sediert: Infratentoriell', target: '20 mmHg (15 cm ü. Tragus)', note: 'Intubierte & sedierte Patienten; Ziel-ICP <= 20 mmHg' },
-        { label: 'Wach: Supratentoriell', target: '20 mmHg (15 cm ü. Tragus)', note: 'Kooperative/wache Patienten; Schutz vor Überdrainage bei Mobilisation' },
-        { label: 'Wach: Infratentoriell', target: '25 mmHg (20 cm ü. Tragus)', note: 'Kooperative/wache Patienten; Ziel-ICP <= 25 mmHg' },
-        { label: 'Abtropfbehälter-Grundhöhe', target: '+10 cm über Null-Linie', note: 'Standard-Rastposition an der Messskala [A]' }
+        { label: 'Physiologischer ICP (Normwert)', target: '5 – 15 mmHg', note: 'Normaler Ruhedruck im Liegen; pathologisch & interventionspflichtig bei ICP > 20 mmHg' },
+        { label: 'Zerebraler Perfusionsdruck (CPP)', target: '≥ 60 – 70 mmHg', note: 'Formel: CPP = MAP – ICP; kritische Minderperfusion & Ischämiegefahr bei CPP < 50 mmHg' },
+        { label: 'Referenz-Nullpunkt (Landmarke)', target: 'Tragus des Ohres', note: 'Gelber Hahn (2) auf Höhe Foramen Monroi; zwingende Re-Justierung bei JEDER Lageänderung' },
+        { label: 'Drainage-Status (Grundregel)', target: 'Regulär GESCHLOSSEN', note: 'ICP-Monitoring aktiv; bei offener EVD KEINE Hirndruckmessung möglich (Messfehler!)' },
+        { label: 'Ablassmenge bei ICP-Anstieg', target: 'Max. 5 – 10 ml / Sistieren', note: 'Intermittierendes Ablassen; nach spätestens 5–10 ml oder Sistieren sofort wieder schließen' },
+        { label: 'Sediert: Supratentoriell', target: '15 mmHg (+10 cm ü. Tragus)', note: 'Intubierte & sedierte Patienten; Ziel-ICP ≤ 15 mmHg, Abtropfkammer standardmäßig auf +10 cm' },
+        { label: 'Sediert: Infratentoriell', target: '20 mmHg (+15 cm ü. Tragus)', note: 'Intubierte & sedierte Patienten; Ziel-ICP ≤ 20 mmHg, Abtropfkammer auf +15 cm' },
+        { label: 'Wach: Supratentoriell', target: '20 mmHg (+15 cm ü. Tragus)', note: 'Kooperative/wache Patienten; höhere Schwelle schützt vor Überdrainage bei Eigenbewegung' },
+        { label: 'Wach: Infratentoriell', target: '25 mmHg (+20 cm ü. Tragus)', note: 'Kooperative/wache Patienten; Ziel-ICP ≤ 25 mmHg, Abtropfkammer auf +20 cm' },
+        { label: 'Standard-Abtropfhöhe', target: '+10 cm über Null-Linie', note: 'Standard-Rastposition der Messskala [A] (ca. 7,4 mmHg hydrostatischer Gegendruck)' },
+        { label: 'Nullabgleich-Position', target: '0 cm an der Messskala', note: 'Abtropfbehälter [B] temporär auf 0 cm hängen und am Monitor nullen (kein Sterilitätsbruch)' },
+        { label: 'Stündliche Liquordokumentation', target: 'ca. 10 – 20 ml/h (500 ml/d)', note: 'Stündliche Erfassung im PDMS; CAVE Überdrainage/Ventrikelkollaps bei unkontrolliertem Fluss' },
+        { label: 'Desinfektion Systemport', target: 'Mind. 30 Sekunden', note: 'Aseptische Einwirkzeit an Einlassstutzen (Hahn 1) vor jeder Spülung zur Tropfkammer' },
+        { label: 'Spülvolumen Obstruktion (Pflege)', target: 'Max. 5 – 10 ml NaCl 0,9 %', note: 'Ausschließlich "vom Kopf weg" zur Tropfkammer; Spülen zum Kopf & Aspiration STRENG NUR ARZT!' }
       ],
       troubleshooting: [
         {
