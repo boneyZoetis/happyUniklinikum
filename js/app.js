@@ -5070,7 +5070,7 @@ function UniversalCardInteractiveCard({ isAtm = true, onSelectStandard }) {
         {/* The Exact 12x8 cm Graphic - Master Ultra-HD 300 DPI Asset */}
         <img
           src="assets/universal-card-a4-hd.jpg?v=20261105-33"
-          alt="Intensivkompass Digital – Digitale Pocketcard für die Intensivpflege (12 × 8 cm)"
+          alt="Intensivkompass Digital – Digitale Pocketcard für die Intensivpflege"
           className="universal-card-img w-100 d-block"
           style={{ imageRendering: '-webkit-optimize-contrast', aspectRatio: '3508 / 2336' }}
         />
@@ -5338,7 +5338,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
       handlePrint(isAtm ? 'atm' : 'a4');
       return;
     }
-    showToast(isAtm ? 'Erstelle Pocketcard DIN A4 PDF (12 × 8 cm)...' : 'Erstelle DIN A4 Ultra-HD PDF...');
+    showToast(isAtm ? 'Erstelle Pocketcard DIN A4 PDF...' : 'Erstelle DIN A4 Ultra-HD PDF...');
 
     if (isAtm) {
       const prevDisplay = element.style.display;
@@ -5540,7 +5540,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
             onClick={() => setCardFormat('atm')}
           >
             <i className="bi bi-credit-card-2-front me-1"></i>
-            <span>Pocketcard (12 × 8 cm)</span>
+            <span>Pocketcard</span>
           </button>
           <button
             type="button"
@@ -5590,7 +5590,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           {effectiveFormat === 'atm' ? (
             <>
               <i className="bi bi-credit-card-2-front-fill text-primary"></i>
-              <span className="text-dark fw-bold">Intensivkompass Digital – Pocketcard (120 × 80 mm)</span>
+              <span className="text-dark fw-bold">Intensivkompass Digital – Pocketcard</span>
               <span className="text-muted d-none d-sm-inline">&bull; Doppelseitig laminiert &bull; Kitteltaschen-Standard &bull; Ultra-HD</span>
             </>
           ) : (
@@ -5736,14 +5736,14 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                     title="Pocketcard als DIN A4 PDF herunterladen"
                   >
                     <i className="bi bi-file-earmark-pdf-fill"></i>
-                    <span>PDF (12×8 cm)</span>
+                    <span>PDF</span>
                   </button>
                 </div>
               </div>
 
               <div className="small text-muted text-center mt-2.5 pt-1" style={{ fontSize: '0.74rem' }}>
                 <i className="bi bi-check2-circle text-success me-1"></i>
-                Pocketcard (12 × 8 cm) &bull; 100% scannbar &bull; Kitteltaschen-Standard
+                Pocketcard &bull; 100% scannbar &bull; Kitteltaschen-Standard
               </div>
             </div>
           </div>
@@ -5756,7 +5756,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           </div>
         )}
 
-        {/* Dedicated DIN A4 Sheet for Pocketcard (12 x 8 cm) Print & PDF Download (always present in DOM, hidden on screen) */}
+        {/* Dedicated DIN A4 Sheet for Pocketcard Print & PDF Download (always present in DOM, hidden on screen) */}
         <div id="universal-card-atm-a4-sheet" className="pocketcard-atm-a4-sheet">
           <div className="a4-atm-print-page">
             {/* Top Brand / Cutout Header */}
@@ -5767,7 +5767,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                     <i className="bi bi-scissors me-1"></i>Schnittmarke
                   </span>
                   <strong className="text-dark" style={{ fontSize: '0.85rem' }}>
-                    Intensivkompass Digital – Pocketcard (12 × 8 cm)
+                    Intensivkompass Digital – Pocketcard
                   </strong>
                 </div>
                 <span className="badge bg-light text-secondary border px-2 py-0.5 font-monospace" style={{ fontSize: '0.68rem' }}>
@@ -5777,13 +5777,13 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
               <div className="text-secondary small d-flex align-items-center justify-content-between" style={{ fontSize: '0.72rem' }}>
                 <span>
                   <i className="bi bi-info-circle text-primary me-1"></i>
-                  Entlang der gestrichelten Linie ausschneiden (120 × 80 mm) und laminieren. Passt exakt in jede Kitteltasche.
+                  Entlang der gestrichelten Linie ausschneiden und laminieren. Passt exakt in jede Kitteltasche.
                 </span>
                 <span className="fw-semibold text-primary">Stand: 2026</span>
               </div>
             </div>
 
-            {/* The Exact 12 x 8 cm Card Box (Centered, with Scissor Cut Marks) */}
+            {/* The Exact Card Box (Centered, with Scissor Cut Marks) */}
             <div className="pocketcard-atm-cutout-frame-wrapper position-relative">
               <div className="cut-corner cut-corner-tl">✂</div>
               <div className="cut-corner cut-corner-tr">✂</div>
@@ -5794,7 +5794,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                 <div className="position-relative w-100 h-100" style={{ lineHeight: 0 }}>
                   <img
                     src="assets/universal-card-a4-hd.jpg?v=20261105-33"
-                    alt="Intensivkompass Digital – Pocketcard 12 × 8 cm"
+                    alt="Intensivkompass Digital – Pocketcard"
                     className="w-100 h-100 d-block"
                     style={{ objectFit: 'cover' }}
                   />
@@ -5810,7 +5810,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                   Klinische Intensivpflege &amp; Gerätestandards &bull; Evidenzbasierte Leitfäden
                 </span>
                 <span className="font-monospace">
-                  120 mm × 80 mm &bull; DIN A4 Druckbogen
+                  DIN A4 Druckbogen &bull; 100% Originalgröße
                 </span>
               </div>
             </div>
