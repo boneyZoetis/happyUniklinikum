@@ -33,10 +33,10 @@ root.QRParser = (function () {
       leadText: 'Standardisierter Aufbau des Beatmungssystems, geräteeigener Pre-Use Check (Dichtigkeits- und Kalibrierungstest) und Gewährleistung der Notfallausrüstung vor Anschluss des Patienten auf der Intensivstation.',
       instructions: 'Führen Sie vor jeder Patientenbelegung oder nach jedem Schlauchsystemwechsel die vollständige Funktionsprüfung durch. Schließen Sie erst nach erfolgreichem Test („Bestanden / Pass“) an den Patienten an.',
       whyImportant: [
-        'Patientensicherheit garantieren (Ausschluss technischer Defekte und Ventilfehlfunktionen vor Beatmungsbeginn)',
-        'Leckagen & Druckabfall verhindern (Verlässliche Druck- und Volumenapplikation im Beatmungskreislauf)',
-        'Schlauch-Compliance & Widerstandskompensation (Präzise Volumengarantie ohne Kompressionsverlust)',
-        'Sofortige Notfallbereitschaft (Funktionsbereiter Beatmungsbeutel und Absaugung am Bettplatz)'
+        '🟢 Patientensicherheit erhöhen\nTechnische Defekte und Fehlfunktionen durch den Gerätecheck frühzeitig erkennen.',
+        '🔴 Leckagen und Druckverluste erkennen\nDichtigkeit prüfen, um eine zuverlässige Druck- und Volumenapplikation zu unterstützen.',
+        '🔵 Schlauch-Compliance und Widerstand berücksichtigen\nKompressionsverluste erfassen und geräteabhängig kompensieren, um die Beatmungsgenauigkeit zu verbessern.',
+        '🟠 Notfallbereitschaft sicherstellen\nBeatmungsbeutel, Sauerstoffversorgung und funktionsfähige Absaugung bereithalten.'
       ],
       keyPoints: [
         'Sichtprüfung & STK: Gehäuse, Display und Netzkabel prüfen; Gerät an Notstromsteckdose (roter Punkt) anschließen und Akkuladung (100 %) verifizieren.',

@@ -839,27 +839,29 @@ const TILE_ENHANCEMENTS = {
     title: '1. Vorbereitung & Funktionsprüfung Beatmungsgerät',
     lead: 'Fachgerechter Aufbau des Beatmungsschlauchsystems, Dichtigkeitsprüfung (Leckage < 100 ml/min) und präklinischer Gerätecheck vor Patientenkontakt.',
     image: 'assets/card-beatmung.jpg',
-    imageOverlay: 'Gerätecheck & Dichtigkeit',
+    imageOverlay: 'Gerätecheck & Patientensicherheit',
     quickBadges: [
-      { text: 'Leckagetest < 100ml', icon: 'bi-shield-check', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
+      { text: 'Gerätecheck & Dichtigkeit', icon: 'bi-shield-check', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
       { text: 'ZGV 3.0–4.5 bar', icon: 'bi-gauge', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' }
     ],
-    imageSubtitle: 'Aseptischer Aufbau des Doppelschlauchsystems & Dichtigkeitstest bei 30 mbar',
+    imageSubtitle: 'Aseptischer Aufbau, Pre-Use Gerätecheck & lückenlose Notfallbereitschaft',
     goals: [
-      { text: 'Dichtigkeit sichern', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
-      { text: 'Alarme prüfen', icon: 'bi-bell-fill text-warning', bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
-      { text: 'Notfallbeutel bereit', icon: 'bi-bag-plus-fill text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' }
+      { text: '🟢 Sicherheit', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
+      { text: '🔴 Dichtigkeit', icon: 'bi-x-octagon-fill text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
+      { text: '🔵 Compliance', icon: 'bi-activity text-primary', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' },
+      { text: '🟠 Notfall bereit', icon: 'bi-bag-plus-fill text-warning', bg: '#fff7ed', color: '#c2410c', border: '#fed7aa' }
     ],
     actionSteps: [
-      { text: 'Schlauchsystem knickfrei & mit Bakterienfiltern aseptisch montieren', bold: 'Aufbau Schlauchsystem:', icon: 'bi-lungs-fill', iconBg: '#0284c7' },
-      { text: 'Vollständigen Gerätecheck mit Dichtigkeits- & Kompliancetest bei 30 mbar durchführen', bold: 'Gerätecheck & Leckage:', icon: 'bi-check-circle-fill', iconBg: '#059669' },
-      { text: 'Pmax Alarm (10 mbar über Beatmungsdruck) & Apnoealarm konfigurieren', bold: 'Alarmgrenzen setzen:', icon: 'bi-bell-fill', iconBg: '#ea580c' }
+      { text: 'Technische Defekte und Fehlfunktionen durch den Gerätecheck frühzeitig erkennen.', bold: '🟢 Patientensicherheit erhöhen:', icon: 'bi-shield-check', iconBg: '#16a34a' },
+      { text: 'Dichtigkeit prüfen, um eine zuverlässige Druck- und Volumenapplikation zu unterstützen.', bold: '🔴 Leckagen & Druckverluste:', icon: 'bi-x-octagon-fill', iconBg: '#dc2626' },
+      { text: 'Kompressionsverluste erfassen und geräteabhängig kompensieren (Beatmungsgenauigkeit).', bold: '🔵 Schlauch-Compliance & Widerstand:', icon: 'bi-activity', iconBg: '#0284c7' },
+      { text: 'Beatmungsbeutel, Sauerstoffversorgung und funktionsfähige Absaugung bereithalten.', bold: '🟠 Notfallbereitschaft sicherstellen:', icon: 'bi-bag-plus-fill', iconBg: '#ea580c' }
     ],
-    tagLabel: 'Kernschritte:',
-    tagIcon: 'bi-check2-all',
+    tagLabel: 'Patientensicherheit:',
+    tagIcon: 'bi-shield-check',
     tagColor: '#0284c7',
     tagBorder: '#38bdf8',
-    tags: ['Schlauchsystem', 'Leckagetest < 100ml', 'Flow-Sensor', 'Pmax-Alarm', 'Notfallbeatmungsbeutel'],
+    tags: ['Patientensicherheit', 'Leckagetest', 'Schlauch-Compliance', 'Notfallbereitschaft', 'Gerätecheck'],
     btnGradient: 'linear-gradient(90deg, #0369a1 0%, #0284c7 100%)',
     btnShadow: 'rgba(2, 132, 199, 0.28)'
   },
@@ -1218,10 +1220,10 @@ function TilesOverview({ standards, onSelectStandard }) {
                     </div>
                   </div>
 
-                  {/* 3 Clinical Goals */}
+                  {/* Clinical Goals */}
                   <div className="row g-1.5 mb-2.5">
                     {enh.goals.map((goal, gi) => (
-                      <div key={gi} className="col-4">
+                      <div key={gi} className={enh.goals.length === 4 ? "col-3" : "col-4"}>
                         <div
                           className="text-center p-1.5 rounded-3 border h-100 d-flex flex-column align-items-center justify-content-center"
                           style={{
@@ -3856,12 +3858,29 @@ function StandardA4PrintSheet({ standard }) {
                 <span>Warum ist das wichtig? (Patientensicherheit ITS):</span>
               </strong>
               <div className="row g-1">
-                {standard.whyImportant.map((item, idx) => (
-                  <div key={idx} className="col-6 d-flex align-items-start gap-1">
-                    <i className="bi bi-check2 text-success flex-shrink-0 mt-0.5" style={{ fontSize: '0.68rem' }}></i>
-                    <span className="text-secondary" style={{ lineHeight: '1.2' }}>{item}</span>
-                  </div>
-                ))}
+                {standard.whyImportant.map((item, idx) => {
+                  const hasNl = typeof item === 'string' && item.includes('
+');
+                  const title = hasNl ? item.split('
+')[0] : item;
+                  const desc = hasNl ? item.split('
+').slice(1).join(' ') : null;
+                  return (
+                    <div key={idx} className="col-6 d-flex align-items-start gap-1">
+                      <i className="bi bi-check2 text-success flex-shrink-0 mt-0.5" style={{ fontSize: '0.68rem' }}></i>
+                      <div className="text-secondary" style={{ lineHeight: '1.2' }}>
+                        {desc ? (
+                          <>
+                            <strong className="text-dark d-block" style={{ fontSize: '0.68rem' }}>{title}</strong>
+                            <span style={{ fontSize: '0.64rem' }}>{desc}</span>
+                          </>
+                        ) : (
+                          <span>{item}</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -4225,21 +4244,34 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                             { icon: 'bi-droplet-half', color: '#0891b2', bg: '#cffafe', border: '#67e8f9' }
                           ];
                           const wStyle = whyIcons[wi % whyIcons.length];
+                          const hasNl = typeof why === 'string' && why.includes('
+');
+                          const title = hasNl ? why.split('
+')[0] : why;
+                          const desc = hasNl ? why.split('
+').slice(1).join(' ') : null;
                           return (
                             <div key={wi} className="col-12 col-sm-6">
                               <div
-                                className="p-2 rounded-2 border d-flex align-items-center gap-2 h-100 shadow-2xs"
+                                className="p-2 rounded-2 border d-flex align-items-start gap-2 h-100 shadow-2xs"
                                 style={{ backgroundColor: wStyle.bg, borderColor: wStyle.border }}
                               >
                                 <span
-                                  className="rounded-circle p-1 d-inline-flex align-items-center justify-content-center text-white flex-shrink-0"
+                                  className="rounded-circle p-1 d-inline-flex align-items-center justify-content-center text-white flex-shrink-0 mt-0.5"
                                   style={{ width: '22px', height: '22px', backgroundColor: wStyle.color, boxShadow: `0 2px 4px ${wStyle.color}45` }}
                                 >
                                   <i className={`bi ${wStyle.icon}`} style={{ fontSize: '0.7rem' }}></i>
                                 </span>
-                                <span style={{ fontSize: '0.82rem', lineHeight: '1.35', fontWeight: 600, color: '#1e293b' }}>
-                                  {why}
-                                </span>
+                                <div style={{ fontSize: '0.82rem', lineHeight: '1.35', color: '#1e293b' }}>
+                                  {desc ? (
+                                    <>
+                                      <div className="fw-bold text-dark mb-0.5" style={{ fontSize: '0.84rem' }}>{title}</div>
+                                      <div className="text-secondary small" style={{ fontSize: '0.78rem', lineHeight: '1.3' }}>{desc}</div>
+                                    </>
+                                  ) : (
+                                    <span style={{ fontWeight: 600 }}>{why}</span>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           );
