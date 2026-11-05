@@ -5044,7 +5044,7 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
 }
 
 // -------------------------------------------------------------
-// Component: UniversalCardInteractiveCard (12 × 8 cm Pocketcard)
+// Component: UniversalCardInteractiveCard (Pocketcard)
 // -------------------------------------------------------------
 function UniversalCardInteractiveCard({ isAtm = true, onSelectStandard }) {
   const baseOrigin = (typeof window !== 'undefined' && window.location && window.location.origin)
@@ -5067,9 +5067,9 @@ function UniversalCardInteractiveCard({ isAtm = true, onSelectStandard }) {
       }}
     >
       <div className="universal-card-inner position-relative w-100" style={{ lineHeight: 0 }}>
-        {/* The Exact 12x8 cm Graphic - Master Ultra-HD 300 DPI Asset */}
+        {/* Master Ultra-HD 300 DPI Asset */}
         <img
-          src="assets/universal-card-a4-hd.jpg?v=20261105-33"
+          src="assets/universal-card-a4-hd.jpg?v=20261106-01"
           alt="Intensivkompass Digital – Digitale Pocketcard für die Intensivpflege"
           className="universal-card-img w-100 d-block"
           style={{ imageRendering: '-webkit-optimize-contrast', aspectRatio: '3508 / 2336' }}
@@ -5152,7 +5152,7 @@ function UniversalCardA4Native({ onSelectStandard }) {
       <div className="position-relative w-100" style={{ lineHeight: 0 }}>
         {/* Same Pocketcard Design - Master Ultra-HD 300 DPI Asset */}
         <img
-          src="assets/universal-card-a4-hd.jpg?v=20261105-33"
+          src="assets/universal-card-a4-hd.jpg?v=20261106-01"
           alt="Intensivkompass Digital – DIN A4 Pocketcard Übersicht (Ultra-HD)"
           className="w-100 d-block"
           style={{
@@ -5252,11 +5252,11 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
   const handleShareCard = async () => {
     const shareFileName = isA4
       ? 'Intensivkompass-Digital-A4-Uebersicht.jpg'
-      : 'Intensivkompass-Digital-Pocketcard-12x8.jpg';
+      : 'Intensivkompass-Digital-Pocketcard.jpg';
     if (navigator.share) {
       try {
         try {
-          const response = await fetch('assets/universal-card-a4-hd.jpg');
+          const response = await fetch('assets/universal-card-a4-hd.jpg?v=20261106-01');
           const blob = await response.blob();
           const file = new File([blob], shareFileName, { type: 'image/jpeg' });
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -5366,7 +5366,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
       const opt = {
         margin: [0, 0, 0, 0],
-        filename: 'Intensivkompass_Pocketcard_12x8_DIN_A4.pdf',
+        filename: 'Intensivkompass_Pocketcard_DIN_A4.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: {
           scale: 2,
@@ -5793,7 +5793,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
               <div className="pocketcard-atm-cutout-frame">
                 <div className="position-relative w-100 h-100" style={{ lineHeight: 0 }}>
                   <img
-                    src="assets/universal-card-a4-hd.jpg?v=20261105-33"
+                    src="assets/universal-card-a4-hd.jpg?v=20261106-01"
                     alt="Intensivkompass Digital – Pocketcard"
                     className="w-100 h-100 d-block"
                     style={{ objectFit: 'cover' }}
