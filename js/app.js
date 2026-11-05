@@ -494,33 +494,18 @@ function App() {
       {/* Sticky Category Navbar with the 5 Procedures */}
       <nav className={`navbar navbar-expand-lg navbar-custom sticky-top py-1.5 px-2 px-sm-3 no-print ${shouldHideMobileHeaders ? 'quick-hub-mobile-hide' : ''}`}>
         <div className="container-fluid px-1 px-sm-2 d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2">
-          {/* Top Row on Mobile: Brand Title on Left + Logout on Right */}
-          <div className="d-flex align-items-center justify-content-between w-100 w-lg-auto">
-            <a
-              href="#/"
-              className="navbar-brand brand-btn-stylish d-flex align-items-center gap-2 me-2 py-0"
-              title="Zur Startübersicht der Klinischen Intensivstandards"
+          {/* Mobile Controls: Logout only (Intensivstandards button removed as requested) */}
+          <div className="d-flex d-lg-none align-items-center justify-content-end w-100">
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-danger rounded-pill px-2.5 py-0.5 d-inline-flex align-items-center gap-1 shadow-2xs"
+              style={{ minHeight: '30px', fontSize: '0.74rem' }}
+              onClick={handleLogout}
+              title="Abmelden"
             >
-              <span className="brand-pulse-badge">
-                <i className="bi bi-heart-pulse-fill"></i>
-              </span>
-              <span className="brand-title">Intensivstandards</span>
-              <span className="brand-live-dot" title="Aktiv &amp; QM-Geprüft 2026"></span>
-            </a>
-
-            {/* Mobile Controls: Logout only (Scan completely removed) */}
-            <div className="d-flex d-lg-none align-items-center gap-1.5 flex-shrink-0">
-              <button
-                type="button"
-                className="btn btn-sm btn-outline-danger rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1 shadow-2xs"
-                style={{ minHeight: '32px', fontSize: '0.74rem' }}
-                onClick={handleLogout}
-                title="Abmelden"
-              >
-                <i className="bi bi-box-arrow-right"></i>
-                <span>Logout</span>
-              </button>
-            </div>
+              <i className="bi bi-box-arrow-right"></i>
+              <span>Logout</span>
+            </button>
           </div>
 
           {/* Horizontally Scrollable Category Ribbon on Mobile, Inline Pills on Desktop */}
