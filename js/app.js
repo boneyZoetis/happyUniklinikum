@@ -4004,12 +4004,12 @@ function UniversalCardInteractiveCard({ isAtm = true, onSelectStandard }) {
       }}
     >
       <div className="universal-card-inner position-relative w-100" style={{ lineHeight: 0 }}>
-        {/* The Exact 12x8 cm Graphic uploaded by user */}
+        {/* The Exact 12x8 cm Graphic - Master Ultra-HD 300 DPI Asset */}
         <img
-          src="assets/universal-card-12x8.jpg"
+          src="assets/universal-card-a4-hd.jpg"
           alt="Intensivkompass Digital – Digitale Pocketcard für die Intensivpflege (12 × 8 cm)"
           className="universal-card-img w-100 d-block"
-          style={{ imageRendering: '-webkit-optimize-contrast', aspectRatio: '1024 / 682' }}
+          style={{ imageRendering: '-webkit-optimize-contrast', aspectRatio: '3508 / 2336' }}
         />
 
         {/* 1. Beatmung vorbereiten & Gerätecheck Hotspot */}
@@ -4093,9 +4093,7 @@ function UniversalCardInteractiveCard({ isAtm = true, onSelectStandard }) {
 }
 
 // -------------------------------------------------------------
-// Component: UniversalCardA4Native (DIN A4 Format with 5 Current Tiles)
-// -------------------------------------------------------------
-// Component: UniversalCardA4Native (DIN A4 Format with 2 Points, QR Code per Point & Device Pictures)
+// Component: UniversalCardA4Native (DIN A4 Format - Same Pocketcard with Ultra-HD Clarity)
 // -------------------------------------------------------------
 function UniversalCardA4Native({ onSelectStandard }) {
   const baseOrigin = (typeof window !== 'undefined' && window.location && window.location.origin)
@@ -4104,493 +4102,113 @@ function UniversalCardA4Native({ onSelectStandard }) {
   const normalizedBase = baseOrigin.endsWith('/') ? baseOrigin : `${baseOrigin}/`;
   const portalUrl = `${normalizedBase}#/quick-hub`;
 
-  const leftTiles = [
-    {
-      id: 'beatmung',
-      nr: '1',
-      title: 'Beatmungsgerät & Check',
-      shortTag: 'Dräger Evita V500',
-      icon: 'bi-lungs-fill',
-      color: '#0284c7',
-      bgGrad: 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 55%, #e0f2fe 100%)',
-      borderColor: '#bae6fd',
-      image: 'assets/device-beatmung.jpg',
-      point1: 'Dichtigkeitsprüfung: Pre-Use Check (< 100 ml/min Leckage) vor Patientenkontakt',
-      qr1: `${normalizedBase}#/beatmung`,
-      point2: 'ZGV & Notfallbereitschaft: O₂/Druckluft 3,0–4,5 bar & Beatmungsbeutel am Bett',
-      qr2: `${normalizedBase}#/beatmung`
-    },
-    {
-      id: 'befeuchtung-invasiv',
-      nr: '2',
-      title: 'Aktive Befeuchtung (Invasiv)',
-      shortTag: 'MR850 / 37 °C',
-      icon: 'bi-droplet-half',
-      color: '#16a34a',
-      bgGrad: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 55%, #dcfce7 100%)',
-      borderColor: '#bbf7d0',
-      image: 'assets/device-befeuchtung.jpg',
-      point1: 'Sollwerte: 37 °C & 100 % r.F. (44 mg/L H₂O) am patientennahen Y-Stück',
-      qr1: `${normalizedBase}#/befeuchtung-invasiv`,
-      point2: 'Gefälle & Kondensatschutz: Kammer unter Bettniveau & beheizter Schlauch',
-      qr2: `${normalizedBase}#/befeuchtung-invasiv`
-    },
-    {
-      id: 'hfnc',
-      nr: '3',
-      title: 'High-Flow-Therapie (HFNC)',
-      shortTag: 'Airvo 2 / 50 L/min',
-      icon: 'bi-wind',
-      color: '#ea580c',
-      bgGrad: 'linear-gradient(135deg, #ffffff 0%, #fff7ed 55%, #ffedd5 100%)',
-      borderColor: '#fed7aa',
-      image: 'assets/device-hfnc.jpg',
-      point1: 'Flussrate & Prongs: 20–60 L/min Flow; Prongs max. 50 % der Nares ausfüllen',
-      qr1: `${normalizedBase}#/hfnc`,
-      point2: 'ROX-Index: Ziel ≥ 4,88 (Kritischer Alarmwert < 3,85: sofort Arzt rufen!)',
-      qr2: `${normalizedBase}#/hfnc`
-    }
-  ];
-
-  const rightTiles = [
-    {
-      id: 'arterie',
-      nr: '4',
-      title: 'Arterielles Drucksystem',
-      shortTag: '300 mmHg / Transducer',
-      icon: 'bi-activity',
-      color: '#dc2626',
-      bgGrad: 'linear-gradient(135deg, #ffffff 0%, #fff1f2 55%, #fee2e2 100%)',
-      borderColor: '#fecaca',
-      image: 'assets/device-arterie.jpg',
-      point1: 'Nullpunkt & Druckbeutel: 4. ICR Herzhöhe nullen & Manschette auf 300 mmHg',
-      qr1: `${normalizedBase}#/arterie`,
-      point2: 'Fast-Flush-Dämpfungstest: 1,5–2 Nachschwingungen & dicrote Kerbe prüfen',
-      qr2: `${normalizedBase}#/arterie`
-    },
-    {
-      id: 'evd',
-      nr: '5',
-      title: 'Externe Ventrikeldrainage (EVD)',
-      shortTag: 'Laser Tragus / ICP',
-      icon: 'bi-diagram-3-fill',
-      color: '#7c3aed',
-      bgGrad: 'linear-gradient(135deg, #ffffff 0%, #faf5ff 55%, #ede9fe 100%)',
-      borderColor: '#ddd6fe',
-      image: 'assets/device-evd.jpg',
-      point1: 'Laser-Nivellierung: Nullpunkt exakt auf Tragus / Foramen Monroi ausrichten',
-      qr1: `${normalizedBase}#/evd`,
-      point2: 'KLEMPFLICHT & ICP: Vor jeder Umlagerung zudrehen; ICP-Ziel 5–15 mmHg',
-      qr2: `${normalizedBase}#/evd`
-    },
-    {
-      id: 'checklist',
-      nr: '6',
-      title: 'Schicht-Sicherheits-Checkliste',
-      shortTag: 'ITS Monitoring & STK',
-      icon: 'bi-clipboard2-check-fill',
-      color: '#0891b2',
-      bgGrad: 'linear-gradient(135deg, #ffffff 0%, #ecfeff 55%, #cffafe 100%)',
-      borderColor: '#a5f3fc',
-      image: 'assets/pocket-icu-monitor.jpg',
-      point1: 'Schichtübergabe-Check: Alarmgrenzen, Tubuslage, Druckbeutel & Notstromnetz',
-      qr1: `${normalizedBase}#/quick-hub`,
-      point2: 'Bettplatz-Sicherheit: Absauganlage (-0,6 bar) & Notfallequipment verifizieren',
-      qr2: `${normalizedBase}#/quick-hub`
-    }
-  ];
-
-  const renderCard = (tile) => (
-    <div
-      key={tile.id}
-      className="a4-procedure-tile rounded-3 border p-2 position-relative shadow-2xs d-flex justify-content-between align-items-stretch mb-2"
-      style={{
-        background: tile.bgGrad,
-        borderColor: tile.borderColor,
-        borderLeft: `5px solid ${tile.color}`,
-        cursor: 'pointer',
-        minHeight: '112px',
-        transition: 'all 0.18s ease'
-      }}
-      onClick={() => {
-        if (tile.id === 'checklist') {
-          onSelectStandard('quick-hub');
-        } else {
-          onSelectStandard(tile.id);
-        }
-      }}
-      title={`Klicken zum Öffnen: ${tile.title}`}
-    >
-      {/* Left Section: Number + Title + The 2 Points (each with its QR code) */}
-      <div className="d-flex flex-column justify-content-between pe-1.5 min-w-0 flex-grow-1">
-        {/* Title Bar */}
-        <div className="d-flex align-items-center gap-1.5 mb-1.5 min-w-0">
-          <span
-            className="badge rounded-circle text-white d-flex align-items-center justify-content-center flex-shrink-0 fw-black shadow-2xs"
-            style={{
-              width: '24px',
-              height: '24px',
-              backgroundColor: tile.color,
-              fontSize: '0.8rem'
-            }}
-          >
-            {tile.nr}
-          </span>
-          <h6 className="fw-black text-dark mb-0 text-truncate" style={{ fontSize: '0.90rem', letterSpacing: '-0.2px' }}>
-            {tile.title} <span style={{ color: tile.color }}>&gt;</span>
-          </h6>
-        </div>
-
-        {/* Point 1: Text + Dedicated QR Code */}
-        <div
-          className="d-flex align-items-center justify-content-between p-1 px-1.5 rounded-2 mb-1"
-          style={{ backgroundColor: 'rgba(255, 255, 255, 0.88)', border: `1px solid ${tile.color}30` }}
-        >
-          <div className="d-flex align-items-start gap-1.5 pe-1.5 min-w-0">
-            <i className="bi bi-check-circle-fill flex-shrink-0" style={{ color: tile.color, fontSize: '0.8rem', marginTop: '1px' }}></i>
-            <span className="text-secondary fw-semibold a4-point-text" style={{ fontSize: '0.72rem', lineHeight: '1.25' }}>
-              {tile.point1}
-            </span>
-          </div>
-          <div className="d-flex flex-column align-items-center flex-shrink-0 bg-white p-0.5 rounded border shadow-2xs">
-            <QrCodeCanvas
-              value={tile.qr1}
-              size={36}
-              color={tile.color}
-            />
-            <span style={{ fontSize: '0.48rem', fontWeight: 700, color: tile.color, lineHeight: 1 }}>P1</span>
-          </div>
-        </div>
-
-        {/* Point 2: Text + Dedicated QR Code */}
-        <div
-          className="d-flex align-items-center justify-content-between p-1 px-1.5 rounded-2"
-          style={{ backgroundColor: 'rgba(255, 255, 255, 0.88)', border: `1px solid ${tile.color}30` }}
-        >
-          <div className="d-flex align-items-start gap-1.5 pe-1.5 min-w-0">
-            <i className="bi bi-check-circle-fill flex-shrink-0" style={{ color: tile.color, fontSize: '0.8rem', marginTop: '1px' }}></i>
-            <span className="text-secondary fw-semibold a4-point-text" style={{ fontSize: '0.72rem', lineHeight: '1.25' }}>
-              {tile.point2}
-            </span>
-          </div>
-          <div className="d-flex flex-column align-items-center flex-shrink-0 bg-white p-0.5 rounded border shadow-2xs">
-            <QrCodeCanvas
-              value={tile.qr2}
-              size={36}
-              color={tile.color}
-            />
-            <span style={{ fontSize: '0.48rem', fontWeight: 700, color: tile.color, lineHeight: 1 }}>P2</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Right Section: Clinical Equipment Picture (Zero Persons) */}
-      <div className="a4-device-thumb-col d-flex flex-column align-items-center justify-content-center flex-shrink-0 ps-1.5 border-start">
-        <div
-          className="rounded-3 overflow-hidden border shadow-2xs w-100 h-100 position-relative"
-          style={{ minHeight: '84px', backgroundColor: '#e2e8f0' }}
-        >
-          <img
-            src={tile.image}
-            alt={tile.title}
-            className="w-100 h-100 d-block"
-            style={{ objectFit: 'cover', objectPosition: 'center' }}
-          />
-          <div
-            className="position-absolute bottom-0 start-0 end-0 py-0.5 text-center text-white fw-bold a4-thumb-tag"
-            style={{ background: 'rgba(0, 0, 0, 0.58)', fontSize: '0.52rem', letterSpacing: '0.2px' }}
-          >
-            {tile.shortTag}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div
-      className="a4-native-card mx-auto position-relative overflow-hidden"
+      className="universal-card-a4-hd-box position-relative w-100 mx-auto"
       id="universal-card-a4-sheet"
       style={{
+        maxWidth: '960px',
         background: '#ffffff',
-        border: '1.5px solid #cbd5e1',
         borderRadius: '16px',
-        boxShadow: '0 12px 32px rgba(0, 43, 71, 0.14)'
+        overflow: 'hidden',
+        boxShadow: '0 16px 40px -8px rgba(0, 39, 61, 0.22), 0 0 0 1px rgba(2, 132, 199, 0.15)'
       }}
     >
-      {/* Background Clinic Campus Picture (Soft architectural watermark) */}
-      <div
-        className="position-absolute bottom-0 start-0 end-0 pointer-events-none"
-        style={{
-          height: '240px',
-          zIndex: 0,
-          opacity: 0.12,
-          overflow: 'hidden'
-        }}
-      >
+      <div className="position-relative w-100" style={{ lineHeight: 0 }}>
+        {/* Same Pocketcard Design - Master Ultra-HD 300 DPI Asset */}
         <img
-          src="assets/clinic-campus-bg.jpg"
-          alt="Klinik-Campus"
-          className="w-100 h-100 d-block"
-          style={{ objectFit: 'cover', objectPosition: 'center 40%' }}
-        />
-        <div
-          className="position-absolute top-0 start-0 end-0 bottom-0"
+          src="assets/universal-card-a4-hd.jpg"
+          alt="Intensivkompass Digital – DIN A4 Pocketcard Übersicht (Ultra-HD)"
+          className="w-100 d-block"
           style={{
-            background: 'linear-gradient(to top, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.95) 75%, #ffffff 100%)'
+            imageRendering: '-webkit-optimize-contrast',
+            aspectRatio: '3508 / 2336',
+            width: '100%',
+            height: 'auto',
+            display: 'block'
           }}
         />
-      </div>
 
-      {/* 6-Color Spectrum Ribbon */}
-      <div
-        style={{
-          height: '5px',
-          width: '100%',
-          position: 'relative',
-          zIndex: 1,
-          background: 'linear-gradient(90deg, #dc2626 0%, #16a34a 20%, #ea580c 40%, #7c3aed 60%, #0284c7 80%, #facc15 100%)'
-        }}
-      />
+        {/* 1. Beatmung vorbereiten & Gerätecheck Hotspot */}
+        <div
+          className="universal-card-hotspot"
+          style={{ left: '1.5%', top: '26.2%', width: '61.0%', height: '10.8%', borderRadius: '50rem' }}
+          onClick={() => onSelectStandard('beatmung')}
+          title="1. Beatmung vorbereiten & Gerätecheck aufrufen"
+        />
 
-      {/* Header Bar */}
-      <div
-        className="px-3 px-md-4 py-2 d-flex flex-wrap align-items-center justify-content-between text-white gap-2 position-relative"
-        style={{
-          zIndex: 1,
-          background: 'linear-gradient(135deg, #001a2e 0%, #003354 45%, #0284c7 100%)',
-          borderBottom: '2px solid rgba(56, 189, 248, 0.45)'
-        }}
-      >
-        <div className="d-flex align-items-center gap-2.5">
-          <div
-            className="rounded p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0"
-            style={{
-              width: '36px',
-              height: '36px',
-              background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
-              boxShadow: '0 3px 10px rgba(56, 189, 248, 0.45)'
-            }}
-          >
-            <i className="bi bi-heart-pulse-fill fs-5"></i>
-          </div>
-          <div>
-            <div className="fw-black text-white text-uppercase" style={{ fontSize: '0.96rem', letterSpacing: '0.4px', lineHeight: 1.2 }}>
-              Klinische Intensivstandards &amp; Leitfäden
-            </div>
-            <div style={{ fontSize: '0.72rem', color: '#bae6fd', fontWeight: 500 }}>
-              Digitale Pflege-Pocketcard &bull; Evidenzbasierte Leitfäden &bull; DIN A4 Poster
-            </div>
-          </div>
+        {/* 2. Aktive Befeuchtung – invasive Beatmung Hotspot */}
+        <div
+          className="universal-card-hotspot"
+          style={{ left: '1.5%', top: '37.6%', width: '61.0%', height: '10.8%', borderRadius: '50rem' }}
+          onClick={() => onSelectStandard('befeuchtung-invasiv')}
+          title="2. Aktive Befeuchtung – invasive Beatmung aufrufen"
+        />
+
+        {/* 3. Aktive Befeuchtung – nasaler High-Flow Hotspot */}
+        <div
+          className="universal-card-hotspot"
+          style={{ left: '1.5%', top: '49.1%', width: '61.0%', height: '10.8%', borderRadius: '50rem' }}
+          onClick={() => onSelectStandard('hfnc')}
+          title="3. Aktive Befeuchtung – nasaler High-Flow aufrufen"
+        />
+
+        {/* 4. Arterielles Druckmesssystem Hotspot */}
+        <div
+          className="universal-card-hotspot"
+          style={{ left: '1.5%', top: '60.5%', width: '61.0%', height: '10.8%', borderRadius: '50rem' }}
+          onClick={() => onSelectStandard('arterie')}
+          title="4. Arterielles Druckmesssystem aufrufen"
+        />
+
+        {/* 5. Externe Ventrikeldrainage (EVD) Hotspot */}
+        <div
+          className="universal-card-hotspot"
+          style={{ left: '1.5%', top: '72.0%', width: '61.0%', height: '10.8%', borderRadius: '50rem' }}
+          onClick={() => onSelectStandard('evd')}
+          title="5. Externe Ventrikeldrainage (EVD) aufrufen"
+        />
+
+        {/* Real Crisp Functional Scannable QR Code Overlay - Centered on Graphic White Box */}
+        <div
+          style={{
+            position: 'absolute',
+            left: '70.5%',
+            top: '31.5%',
+            width: '21.6%',
+            height: '30.8%',
+            pointerEvents: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 4,
+            padding: '4px',
+            backgroundColor: '#ffffff',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            boxSizing: 'border-box'
+          }}
+        >
+          <QrCodeCanvas
+            value={portalUrl}
+            size={240}
+            color="#001833"
+            style={{ width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+          />
         </div>
 
-        <div className="d-flex align-items-center gap-1.5 ms-auto">
-          <span
-            className="badge rounded-pill fw-bold text-uppercase"
-            style={{
-              backgroundColor: 'rgba(56, 189, 248, 0.25)',
-              color: '#e0f2fe',
-              border: '1px solid rgba(56, 189, 248, 0.45)',
-              fontSize: '0.7rem',
-              padding: '4px 9px'
-            }}
-          >
-            <i className="bi bi-shield-check text-warning me-1"></i>QM-Geprüft 2026
-          </span>
-          <span
-            className="badge rounded-pill fw-bold text-uppercase"
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              color: '#ffffff',
-              border: '1px solid rgba(255, 255, 255, 0.35)',
-              fontSize: '0.7rem',
-              padding: '4px 9px'
-            }}
-          >
-            5 Intensivstandards + Checkliste
-          </span>
-        </div>
-      </div>
-
-      {/* Sub-Header: Yellow Sticky Note + Center Banner + 4 Checkmarks */}
-      <div
-        className="px-3 py-2 d-flex flex-wrap align-items-center justify-content-between position-relative gap-2"
-        style={{
-          zIndex: 1,
-          background: 'linear-gradient(90deg, #f0f9ff 0%, #ffffff 50%, #f0fdf4 100%)',
-          borderBottom: '1.5px solid #cbd5e1'
-        }}
-      >
-        {/* Left: Yellow sticky note */}
-        <div className="a4-yellow-note shadow-sm">
-          <div className="a4-note-pin"><i className="bi bi-pin-angle-fill text-danger"></i></div>
-          <div className="fw-bold text-dark" style={{ lineHeight: 1.25 }}>
-            Wissen<br/>
-            Sicherheit<br/>
-            Qualität<br/>
-            <span style={{ fontSize: '0.72rem', fontWeight: 600 }}>in der Pflege</span>
-          </div>
-        </div>
-
-        {/* Center: Title Banner */}
-        <div className="text-center flex-grow-1 px-2">
-          <h3 className="mb-0 fw-black text-uppercase" style={{ fontSize: 'clamp(1rem, 2.5vw, 1.32rem)', color: '#00273d', letterSpacing: '0.02em' }}>
-            Klinische Intensivstandards
-          </h3>
-          <div
-            className="text-uppercase fw-bold text-white d-inline-block px-3 py-0.5 rounded-pill shadow-sm mt-1"
-            style={{
-              background: 'linear-gradient(90deg, #dc2626 0%, #e11d48 50%, #b91c1c 100%)',
-              fontSize: '0.75rem',
-              letterSpacing: '0.04em'
-            }}
-          >
-            SOP – Schnellzugriff
-          </div>
-        </div>
-
-        {/* Right: 4 Checkmarks */}
-        <div className="text-start ps-2 d-none d-sm-block" style={{ fontSize: '0.72rem', lineHeight: 1.25 }}>
-          <div className="text-dark fw-bold"><i className="bi bi-check-lg text-primary me-1"></i> Aktuell</div>
-          <div className="text-dark fw-bold"><i className="bi bi-check-lg text-primary me-1"></i> Einfach</div>
-          <div className="text-dark fw-bold"><i className="bi bi-check-lg text-primary me-1"></i> Schnell</div>
-          <div className="text-dark fw-bold"><i className="bi bi-check-lg text-primary me-1"></i> Zuverlässig</div>
-        </div>
-      </div>
-
-      {/* Main 3-Column Body: Left 3 Cards | Center Phone Scanner | Right 3 Cards */}
-      <div className="p-2.5 p-md-3 position-relative" style={{ zIndex: 1 }}>
-        <div className="row g-2.5 align-items-center">
-          {/* Left Column (Standards 1, 2, 3) */}
-          <div className="col-12 col-md-5 col-lg-5 d-flex flex-column">
-            {leftTiles.map((t) => renderCard(t))}
-          </div>
-
-          {/* Center Column: Iconic Smartphone Mockup with Large QR Code */}
-          <div className="col-12 col-md-2 col-lg-2 d-flex flex-column justify-content-center my-2 my-md-0 px-md-1">
-            <div
-              className="a4-center-phone-mockup mx-auto p-2 rounded-4 shadow-sm border position-relative d-flex flex-column align-items-center text-center w-100"
-              style={{
-                background: 'linear-gradient(180deg, #f8fafc 0%, #ffffff 50%, #f0f9ff 100%)',
-                borderColor: '#93c5fd',
-                maxWidth: '220px'
-              }}
-            >
-              {/* Phone Speaker Notch */}
-              <div
-                className="rounded-pill mb-1.5"
-                style={{ width: '38px', height: '4px', backgroundColor: '#94a3b8' }}
-              />
-
-              {/* Center Phone Screen Header */}
-              <div className="mb-1.5">
-                <span
-                  className="badge rounded-pill fw-bold text-uppercase px-2 py-0.5 shadow-2xs"
-                  style={{ background: 'linear-gradient(135deg, #001f3f 0%, #0284c7 100%)', color: '#ffffff', fontSize: '0.58rem', letterSpacing: '0.3px' }}
-                >
-                  <i className="bi bi-qr-code-scan me-1 text-warning"></i>SCAN-PORTAL
-                </span>
-              </div>
-
-              {/* Large Central QR Code */}
-              <div
-                className="p-1.5 bg-white rounded-3 border shadow-sm mb-1.5 position-relative d-flex align-items-center justify-content-center"
-                style={{ borderColor: '#bae6fd', maxWidth: '100%' }}
-              >
-                <QrCodeCanvas
-                  value={portalUrl}
-                  size={105}
-                  color="#00273d"
-                  style={{ maxWidth: '100%', height: 'auto', aspectRatio: '1 / 1' }}
-                />
-              </div>
-
-              {/* Action Pill Button: HIER SCANNEN */}
-              <button
-                type="button"
-                className="btn btn-primary rounded-pill w-100 py-1 px-2 fw-black text-uppercase shadow-sm d-flex align-items-center justify-content-center gap-1 mb-1 border-0"
-                style={{
-                  background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
-                  fontSize: '0.74rem',
-                  letterSpacing: '0.3px'
-                }}
-                onClick={() => onSelectStandard('quick-hub')}
-              >
-                <i className="bi bi-camera-fill"></i>
-                <span>HIER SCANNEN</span>
-              </button>
-
-              <div className="fw-black text-dark" style={{ fontSize: '0.76rem', lineHeight: 1.2 }}>
-                Intensiv-Standards
-              </div>
-              <div className="text-secondary fw-semibold" style={{ fontSize: '0.62rem' }}>
-                Schnell &bull; Einfach &bull; Aktuell
-              </div>
-
-              <div className="mt-1 text-muted" style={{ fontSize: '0.58rem', lineHeight: 1.15 }}>
-                Kamera scannen für Simulatoren &amp; Checklisten
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column (Standards 4, 5, 6) */}
-          <div className="col-12 col-md-5 col-lg-5 d-flex flex-column">
-            {rightTiles.map((t) => renderCard(t))}
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Quality Pillars Ribbon */}
-      <div
-        className="px-3 py-1.5 d-flex flex-wrap align-items-center justify-content-center gap-2 position-relative"
-        style={{
-          zIndex: 1,
-          background: 'rgba(248, 250, 252, 0.92)',
-          borderTop: '1.5px solid #e2e8f0'
-        }}
-      >
-        <span className="badge rounded-pill bg-white text-secondary border px-2.5 py-1 shadow-2xs fw-bold" style={{ fontSize: '0.66rem' }}>
-          <i className="bi bi-check2-circle text-primary me-1"></i>Standardisiert
-        </span>
-        <span className="badge rounded-pill bg-white text-secondary border px-2.5 py-1 shadow-2xs fw-bold" style={{ fontSize: '0.66rem' }}>
-          <i className="bi bi-shield-check text-success me-1"></i>Patientensicherheit
-        </span>
-        <span className="badge rounded-pill bg-white text-secondary border px-2.5 py-1 shadow-2xs fw-bold" style={{ fontSize: '0.66rem' }}>
-          <i className="bi bi-people-fill text-warning me-1"></i>Qualität in der Pflege
-        </span>
-        <span className="badge rounded-pill bg-white text-secondary border px-2.5 py-1 shadow-2xs fw-bold" style={{ fontSize: '0.66rem' }}>
-          <i className="bi bi-lightbulb-fill text-warning me-1"></i>Wissensmanagement
-        </span>
-        <span className="badge rounded-pill bg-white text-secondary border px-2.5 py-1 shadow-2xs fw-bold" style={{ fontSize: '0.66rem' }}>
-          <i className="bi bi-gear-wide-connected text-primary me-1"></i>Aktuelle SOPs
-        </span>
-        <span className="badge rounded-pill bg-white text-secondary border px-2.5 py-1 shadow-2xs fw-bold" style={{ fontSize: '0.66rem' }}>
-          <i className="bi bi-book-fill text-danger me-1"></i>Immer verfügbar
-        </span>
-      </div>
-
-      {/* QM Footer Bar */}
-      <div
-        className="px-3 py-1.5 d-flex flex-wrap align-items-center justify-content-between text-muted position-relative"
-        style={{
-          zIndex: 1,
-          background: 'rgba(241, 245, 249, 0.95)',
-          borderTop: '1px solid #e2e8f0',
-          fontSize: '0.65rem'
-        }}
-      >
-        <div className="d-flex align-items-center gap-2">
-          <span><i className="bi bi-file-earmark-check-fill text-success me-1"></i>QM-Intensivdokumentation</span>
-          <span>&bull;</span>
-          <span>Evidenzbasierte Leitlinien &bull; Gültig 2026</span>
-        </div>
-        <div>
-          Gültig für alle operativen, internistischen &amp; interdisziplinären Intensivstationen (ITS)
-        </div>
+        {/* Right QR Portal & HIER SCANNEN Hotspot */}
+        <div
+          className="universal-card-hotspot"
+          style={{ left: '67.0%', top: '27.0%', width: '29.0%', height: '57.0%', borderRadius: '1.5rem' }}
+          onClick={() => onSelectStandard('quick-hub')}
+          title="Schnellzugriff auf digitale Pocketcards öffnen"
+        />
       </div>
     </div>
   );
 }
+
 
 // -------------------------------------------------------------
 // Component: UniversalCardView (U-Card Page)
@@ -4609,23 +4227,31 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const effectiveFormat = isMobile ? 'atm' : cardFormat;
+  const effectiveFormat = cardFormat;
   const list = Object.values(standards);
 
   const cardUrl = (typeof window !== 'undefined' && window.location)
     ? `${window.location.origin}${window.location.pathname}#/quick-hub`
     : 'https://intensivpflege-standards.web.app/#/quick-hub';
   const portalUrl = cardUrl;
-  const shareTitle = 'Intensivkompass Digital – Pocketcard für die Intensivpflege';
-  const shareText = `Intensivkompass Digital – Pocketcard für die Intensivpflege (Standards & SOPs direkt öffnen): ${cardUrl}`;
+  const isA4 = effectiveFormat === 'a4';
+  const shareTitle = isA4
+    ? 'Intensivkompass Digital – DIN A4 Übersicht für die Intensivpflege'
+    : 'Intensivkompass Digital – Pocketcard für die Intensivpflege';
+  const shareText = isA4
+    ? `Intensivkompass Digital – DIN A4 Gesamt-Übersicht für die Intensivpflege (Standards & SOPs direkt öffnen): ${cardUrl}`
+    : `Intensivkompass Digital – Pocketcard für die Intensivpflege (Standards & SOPs direkt öffnen): ${cardUrl}`;
 
   const handleShareCard = async () => {
+    const shareFileName = isA4
+      ? 'Intensivkompass-Digital-A4-Uebersicht.jpg'
+      : 'Intensivkompass-Digital-Pocketcard-12x8.jpg';
     if (navigator.share) {
       try {
         try {
-          const response = await fetch('assets/universal-card-12x8.jpg');
+          const response = await fetch('assets/universal-card-a4-hd.jpg');
           const blob = await response.blob();
-          const file = new File([blob], 'Intensivkompass-Digital-Pocketcard-12x8.jpg', { type: 'image/jpeg' });
+          const file = new File([blob], shareFileName, { type: 'image/jpeg' });
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
               title: shareTitle,
@@ -4656,7 +4282,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
   const handleCopyShareLink = () => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(cardUrl).then(() => {
-        showToast('Link zur Pocketcard in die Zwischenablage kopiert!');
+        showToast('Link zur Übersicht in die Zwischenablage kopiert!');
       });
     } else {
       showToast('Link: ' + cardUrl);
@@ -4705,7 +4331,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
       handlePrint(isAtm ? 'atm' : 'a4');
       return;
     }
-    showToast(isAtm ? 'Erstelle Pocketcard DIN A4 PDF (12 × 8 cm)...' : 'Erstelle DIN A4 PDF...');
+    showToast(isAtm ? 'Erstelle Pocketcard DIN A4 PDF (12 × 8 cm)...' : 'Erstelle DIN A4 Ultra-HD PDF...');
 
     if (isAtm) {
       const prevDisplay = element.style.display;
@@ -4765,14 +4391,16 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
       const prevHeight = element.style.height;
       const prevMargin = element.style.margin;
       const prevBackground = element.style.background;
+      const prevBoxShadow = element.style.boxShadow;
 
       element.style.display = 'block';
       element.style.position = 'relative';
       element.style.width = '1123px';
       element.style.maxWidth = '1123px';
-      element.style.height = '794px';
+      element.style.height = '748px';
       element.style.margin = '0 auto';
       element.style.background = '#ffffff';
+      element.style.boxShadow = 'none';
 
       const restoreStyles = () => {
         element.style.display = prevDisplay;
@@ -4782,11 +4410,12 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
         element.style.height = prevHeight;
         element.style.margin = prevMargin;
         element.style.background = prevBackground;
+        element.style.boxShadow = prevBoxShadow;
       };
 
       const opt = {
         margin: [0, 0, 0, 0],
-        filename: 'Klinische_Universal_A4_Uebersicht.pdf',
+        filename: 'Intensivkompass_Universal_A4_Uebersicht.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: {
           scale: 2,
@@ -4822,7 +4451,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           background: 'linear-gradient(135deg, #001a2e 0%, #003354 40%, #026ca8 75%, #0284c7 100%)',
           border: '1.5px solid rgba(56, 189, 248, 0.4)',
           boxShadow: '0 8px 24px -4px rgba(0, 31, 63, 0.3), 0 2px 8px rgba(56, 189, 248, 0.15)',
-          maxWidth: '640px'
+          maxWidth: effectiveFormat === 'a4' ? '960px' : '640px'
         }}
       >
         <div
@@ -4875,7 +4504,8 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                   padding: '3px 8.5px'
                 }}
               >
-                <i className="bi bi-credit-card-2-front text-info"></i>Pocketcard
+                <i className={`bi ${effectiveFormat === 'a4' ? 'bi-file-earmark-text text-warning' : 'bi-credit-card-2-front text-info'}`}></i>
+                {effectiveFormat === 'a4' ? 'DIN A4 Format' : 'Pocketcard'}
               </span>
             </div>
             <h4
@@ -4887,14 +4517,14 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                 textShadow: '0 2px 6px rgba(0, 26, 46, 0.35)'
               }}
             >
-              Intensivkompass Digital (Pocketcard)
+              {effectiveFormat === 'a4' ? 'Intensivkompass Digital (DIN A4)' : 'Intensivkompass Digital (Pocketcard)'}
             </h4>
           </div>
         </div>
       </div>
 
-      {/* Desktop Top Format Switcher & Actions */}
-      <div className="d-none d-lg-flex flex-row justify-content-between align-items-center mb-3 gap-2 no-print">
+      {/* Top Format Switcher & Actions (Visible on Mobile + Desktop) */}
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 no-print mx-auto" style={{ maxWidth: effectiveFormat === 'a4' ? '960px' : '640px' }}>
         <div className="btn-group shadow-sm rounded-pill p-1 bg-white border" role="group">
           <button
             type="button"
@@ -4916,7 +4546,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
           </button>
         </div>
 
-        <div className="d-flex align-items-center gap-1.5">
+        <div className="d-flex align-items-center gap-1.5 flex-wrap">
           <button
             className="btn btn-primary btn-sm rounded-pill px-3 py-1.5 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1"
             style={{ minHeight: '36px', fontSize: '0.78rem' }}
@@ -4944,20 +4574,20 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
         </div>
       </div>
 
-      {/* Format Specification Hint Badge (Desktop only) */}
-      <div className="text-center no-print mb-2 d-none d-lg-block">
+      {/* Format Specification Hint Badge */}
+      <div className="text-center no-print mb-2">
         <div className="badge rounded-pill bg-white text-secondary border shadow-2xs px-3 py-1.5 fw-medium d-inline-flex align-items-center gap-1.5">
           {effectiveFormat === 'atm' ? (
             <>
               <i className="bi bi-credit-card-2-front-fill text-primary"></i>
               <span className="text-dark fw-bold">Intensivkompass Digital – Pocketcard (120 × 80 mm)</span>
-              <span className="text-muted d-none d-sm-inline">&bull; Doppelseitig laminiert &bull; Kitteltaschen-Standard &bull; Praxisnahe Themen</span>
+              <span className="text-muted d-none d-sm-inline">&bull; Doppelseitig laminiert &bull; Kitteltaschen-Standard &bull; Ultra-HD</span>
             </>
           ) : (
             <>
               <i className="bi bi-file-earmark-pdf-fill text-danger"></i>
-              <span className="text-dark fw-bold">DIN A4 Gesamt-Übersicht (297 × 210 mm)</span>
-              <span className="text-muted d-none d-sm-inline">&bull; Evidenzbasierte Verfahrensanweisungen &bull; Stationsaushang</span>
+              <span className="text-dark fw-bold">Intensivkompass Digital – DIN A4 Format (Ultra-HD 300 DPI)</span>
+              <span className="text-muted d-none d-sm-inline">&bull; Selbe Pocketcard-Systematik &bull; Maximale Schärfe &bull; Stationsaushang</span>
             </>
           )}
         </div>
@@ -4966,8 +4596,75 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
       {/* Card Presentation */}
       <div className="d-flex flex-column align-items-center justify-content-center my-2 gap-3">
         {effectiveFormat === 'a4' ? (
-          <div className="w-100 p-1 p-sm-2 bg-white rounded-4 border shadow-sm" style={{ maxWidth: '940px' }} id="universal-card-a4-printable">
+          <div className="w-100 p-2 p-sm-3 bg-white rounded-4 border shadow-sm d-flex flex-column align-items-center u-card-pedestal" style={{ maxWidth: '980px' }} id="universal-card-a4-printable">
             <UniversalCardA4Native onSelectStandard={onSelectStandard} />
+
+            {/* Symmetrical Share & Action Buttons: WhatsApp, Teilen, Link, PDF */}
+            <div className="w-100 mt-3 pt-2.5 border-top no-print" data-html2canvas-ignore="true">
+              <div className="row g-2">
+                {/* WhatsApp Share Button */}
+                <div className="col-6 col-sm-3">
+                  <a
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-sm rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 text-white w-100 text-decoration-none"
+                    style={{ backgroundColor: '#25D366', borderColor: '#25D366', minHeight: '42px', fontSize: '0.82rem' }}
+                    title="DIN A4 Karte per WhatsApp teilen"
+                  >
+                    <i className="bi bi-whatsapp fs-6"></i>
+                    <span>WhatsApp</span>
+                  </a>
+                </div>
+
+                {/* Native Social Media / System Share */}
+                <div className="col-6 col-sm-3">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-primary rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100"
+                    style={{ backgroundColor: '#004767', borderColor: '#004767', minHeight: '42px', fontSize: '0.82rem' }}
+                    onClick={handleShareCard}
+                    title="Über Social Media oder andere Apps teilen"
+                  >
+                    <i className="bi bi-share-fill"></i>
+                    <span>Teilen</span>
+                  </button>
+                </div>
+
+                {/* Copy Link */}
+                <div className="col-6 col-sm-3">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-dark rounded-pill py-2 px-2 fw-semibold shadow-sm d-flex align-items-center justify-content-center gap-1.5 bg-white w-100"
+                    style={{ minHeight: '42px', fontSize: '0.82rem' }}
+                    onClick={handleCopyShareLink}
+                    title="Link in die Zwischenablage kopieren"
+                  >
+                    <i className="bi bi-link-45deg fs-5"></i>
+                    <span>Link kopieren</span>
+                  </button>
+                </div>
+
+                {/* PDF Download */}
+                <div className="col-6 col-sm-3">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-danger rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100"
+                    style={{ minHeight: '42px', fontSize: '0.82rem' }}
+                    onClick={() => downloadPdf('a4')}
+                    title="DIN A4 Karte als PDF herunterladen"
+                  >
+                    <i className="bi bi-file-earmark-pdf-fill"></i>
+                    <span>PDF (DIN A4)</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="small text-muted text-center mt-2.5 pt-1" style={{ fontSize: '0.74rem' }}>
+                <i className="bi bi-check2-circle text-success me-1"></i>
+                DIN A4 Gesamt-Übersicht &bull; Ultra-HD 300 DPI &bull; 100% scannbar &bull; Stationsaushang
+              </div>
+            </div>
           </div>
         ) : (
           <div className="w-100 p-2 p-sm-3.5 rounded-4 border shadow-sm d-flex flex-column align-items-center u-card-pedestal" style={{ maxWidth: '640px' }} id="universal-card-atm-printable">
@@ -5029,7 +4726,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                     title="Pocketcard als DIN A4 PDF herunterladen"
                   >
                     <i className="bi bi-file-earmark-pdf-fill"></i>
-                    <span>PDF</span>
+                    <span>PDF (12×8 cm)</span>
                   </button>
                 </div>
               </div>
@@ -5039,6 +4736,13 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                 Pocketcard (12 × 8 cm) &bull; 100% scannbar &bull; Kitteltaschen-Standard
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Hidden Fallback for A4 PDF Generation when Pocketcard is active */}
+        {effectiveFormat !== 'a4' && (
+          <div style={{ display: 'none' }} aria-hidden="true">
+            <UniversalCardA4Native onSelectStandard={onSelectStandard} />
           </div>
         )}
 
@@ -5079,7 +4783,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
               <div className="pocketcard-atm-cutout-frame">
                 <div className="position-relative w-100 h-100" style={{ lineHeight: 0 }}>
                   <img
-                    src="assets/universal-card-12x8.jpg"
+                    src="assets/universal-card-a4-hd.jpg"
                     alt="Intensivkompass Digital – Pocketcard 12 × 8 cm"
                     className="w-100 h-100 d-block"
                     style={{ objectFit: 'cover' }}
@@ -5181,6 +4885,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
     </div>
   );
 }
+
 
 // -------------------------------------------------------------
 // Component: QuickHubView (Target of Universal Card QR Code)

@@ -1602,6 +1602,23 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 /* =========================================================
    NATIVE A4 CLINICAL POCKETCARD (CRISP & UNZOOMED)
    ========================================================= */
+.universal-card-a4-hd-box {
+  width: 100%;
+  max-width: 960px;
+  aspect-ratio: 3508 / 2336;
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 16px 40px -8px rgba(0, 39, 61, 0.22), 0 0 0 1px rgba(2, 132, 199, 0.15);
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.universal-card-a4-hd-box:hover {
+  box-shadow: 0 20px 48px -10px rgba(0, 39, 61, 0.28), 0 0 0 1px rgba(2, 132, 199, 0.25);
+}
+
 .a4-native-card {
   width: 100%;
   max-width: 870px;
@@ -2698,15 +2715,17 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     overflow: hidden !important;
   }
 
+  body.printing-a4 .universal-card-a4-hd-box,
+  body.active-format-a4:not(.printing-atm) .universal-card-a4-hd-box,
   body.printing-a4 .a4-native-card,
   body.active-format-a4:not(.printing-atm) .a4-native-card {
     max-width: 281mm !important;
     width: 281mm !important;
-    height: 194mm !important;
-    max-height: 194mm !important;
+    height: 187mm !important;
+    max-height: 187mm !important;
     box-shadow: none !important;
-    border: 1.5px solid #004767 !important;
-    border-radius: 8px !important;
+    border: none !important;
+    border-radius: 4px !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     page-break-before: avoid !important;
@@ -2717,6 +2736,16 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     background: #ffffff !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
+  }
+
+  body.printing-a4 .universal-card-a4-hd-box img,
+  body.active-format-a4:not(.printing-atm) .universal-card-a4-hd-box img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
   }
 
   body.printing-a4 .a4-device-thumb-col,
