@@ -32,7 +32,8 @@ const MIME_TYPES = {
 
 const server = http.createServer((req, res) => {
   // Parse URL to strip query string
-  const reqUrl = new URL(req.url, `http://${req.headers.host}`);
+  const reqUrl = new URL(req.url, `http://${req.headers.host || 'localhost:3000'}`);
+  console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${reqUrl.pathname}`);
   let filePath = path.join(ROOT_DIR, decodeURIComponent(reqUrl.pathname));
 
   // Security check: prevent directory traversal
@@ -107,7 +108,7 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, '127.0.0.1', () => {
+server.listen(PORT, () => {
   const localUrl = `http://localhost:${PORT}`;
   console.log('\n======================================================');
   console.log('   Klinische Intensivstandards - Digitale Pocketcards ');
