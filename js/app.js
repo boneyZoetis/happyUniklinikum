@@ -583,7 +583,7 @@ function App() {
       </nav>
 
       {/* Main Container */}
-      <main className={(currentRoute === 'quick-hub' || currentRoute === 'universal-karte' || currentRoute === 'magic-card') ? "container flex-grow-1 d-flex flex-column justify-content-md-center px-2 px-sm-3 py-2 py-md-4" : "container px-2 px-sm-3 py-2.5 py-md-4"}>
+      <main className={(currentRoute === 'quick-hub' || currentRoute === 'universal-karte' || currentRoute === 'magic-card') ? "container flex-grow-1 d-flex flex-column justify-content-md-center px-3 px-sm-3.5 py-2 py-md-4" : "container px-3 px-sm-3.5 py-2.5 py-md-4"}>
         {/* VIEW: The 5 Main Tiles */}
         {currentRoute === 'home' && (
           <TilesOverview
@@ -842,6 +842,7 @@ const TILE_ENHANCEMENTS = {
     imageOverlay: 'ELISA 600 & Gerätecheck',
     quickBadges: [
       { text: 'ELISA 600 SOP', icon: 'bi-shield-check', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
+      { text: 'Schulungsvideo', icon: 'bi-youtube', bg: '#fee2e2', color: '#dc2626', border: '#fca5a5' },
       { text: 'ZGV 3.0–4.5 bar', icon: 'bi-gauge', bg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' }
     ],
     imageSubtitle: 'Aufbau Doppelschlauchsystem ELISA 600, Pre-Use Check & Notfallbereitschaft',
@@ -861,7 +862,7 @@ const TILE_ENHANCEMENTS = {
     tagIcon: 'bi-shield-check',
     tagColor: '#0284c7',
     tagBorder: '#38bdf8',
-    tags: ['Patientensicherheit', 'Leckagetest', 'Schlauch-Compliance', 'Notfallbereitschaft', 'Gerätecheck'],
+    tags: ['Schulungsvideo', 'Patientensicherheit', 'Leckagetest', 'Schlauch-Compliance', 'Gerätecheck'],
     btnGradient: 'linear-gradient(90deg, #0369a1 0%, #0284c7 100%)',
     btnShadow: 'rgba(2, 132, 199, 0.28)'
   },
@@ -901,7 +902,7 @@ const TILE_ENHANCEMENTS = {
     tagIcon: 'bi-thermometer-half',
     tagColor: '#16a34a',
     tagBorder: '#4ade80',
-    tags: ['MR850/Aircon', 'Aqua dest.', 'Kammer unter Patient', 'Heizdrähte +2°C', '44 mg/L Feuchte'],
+    tags: ['Schulungsvideo', 'AIRcon Gen2', 'Aqua dest.', 'Kammer unter Patient', 'Heizdrähte +2°C', '44 mg/L Feuchte'],
     btnGradient: 'linear-gradient(90deg, #15803d 0%, #16a34a 100%)',
     btnShadow: 'rgba(22, 163, 74, 0.28)'
   },
@@ -983,7 +984,7 @@ const TILE_ENHANCEMENTS = {
     tagIcon: 'bi-crosshair',
     tagColor: '#dc2626',
     tagBorder: '#f87171',
-    tags: ['Combitrans® B. Braun', '15-Schritte SOP', 'Initial max. 50 mmHg', 'Reservoir im Uhrzeigersinn', 'Enddruck 300 mmHg', 'Cave: Fingerischämie', 'Phlebostatischer Punkt'],
+    tags: ['Schulungsvideo', 'Combitrans® B. Braun', '15-Schritte SOP', 'Initial max. 50 mmHg', 'Reservoir im Uhrzeigersinn', 'Enddruck 300 mmHg', 'Cave: Fingerischämie', 'Phlebostatischer Punkt'],
     btnGradient: 'linear-gradient(90deg, #b91c1c 0%, #dc2626 100%)',
     btnShadow: 'rgba(220, 38, 38, 0.28)'
   },
@@ -1134,12 +1135,12 @@ function TilesOverview({ standards, onSelectStandard }) {
                   boxShadow: `0 10px 28px -4px ${enh.shadowColor}, 0 4px 10px -2px rgba(0,0,0,0.04)`
                 }}
               >
-                <div className="p-3 p-sm-4 d-flex flex-column h-100">
+                <div className="p-3 ps-3.5 ps-sm-4 p-sm-4 d-flex flex-column h-100">
                   {/* Header: Gradient Icon & Category Badge */}
-                  <div className="d-flex flex-wrap justify-content-between align-items-center mb-2.5 gap-2">
-                    <div className="d-flex align-items-center gap-2 min-w-0">
+                  <div className="d-flex flex-wrap justify-content-between align-items-center mb-2.5 gap-2 ps-1 ps-sm-0">
+                    <div className="d-flex align-items-center gap-2.5 min-w-0">
                       <div
-                        className="rounded-4 d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0"
+                        className="rounded-4 d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0 ms-1 ms-sm-0"
                         style={{
                           width: '44px',
                           height: '44px',
@@ -1168,12 +1169,12 @@ function TilesOverview({ standards, onSelectStandard }) {
                   </div>
 
                   {/* Title */}
-                  <h4 className="fw-bold mb-1.5" style={{ lineHeight: '1.3', fontSize: '1.14rem', color: enh.titleColor }}>
+                  <h4 className="fw-bold mb-1.5 ps-1 ps-sm-0" style={{ lineHeight: '1.3', fontSize: '1.14rem', color: enh.titleColor }}>
                     {enh.title}
                   </h4>
 
                   {/* Subtitle / Lead text */}
-                  <p className="text-secondary small mb-2.5" style={{ lineHeight: '1.45', fontSize: '0.84rem' }}>
+                  <p className="text-secondary small mb-2.5 ps-1 ps-sm-0" style={{ lineHeight: '1.45', fontSize: '0.84rem' }}>
                     {enh.lead}
                   </p>
 
@@ -1266,7 +1267,7 @@ function TilesOverview({ standards, onSelectStandard }) {
                   </div>
 
                   {/* Bottom Strip: Tags & Open Button */}
-                  <div className="pt-2 border-top d-flex flex-wrap justify-content-between align-items-center gap-2 mt-auto" style={{ borderColor: enh.borderColor }}>
+                  <div className="pt-2 border-top d-flex flex-wrap justify-content-between align-items-center gap-2 mt-auto ps-1 ps-sm-0" style={{ borderColor: enh.borderColor }}>
                     <div className="d-flex flex-wrap align-items-center gap-1">
                       <span className="small fw-bold text-secondary me-1" style={{ fontSize: '0.74rem' }}>
                         <i className={`bi ${enh.tagIcon} me-1`} style={{ color: enh.tagColor }}></i>
@@ -1613,108 +1614,10 @@ function ShiftChecklistSection({ checklist, standardTitle, accentColor, standard
 }
 
 // -------------------------------------------------------------
-// Component: Clinical Parameters Reference Table
+// Component: Clinical Parameters Reference Table (Removed as Requested)
 // -------------------------------------------------------------
-function ClinicalParametersTable({ parameters, accentColor }) {
-  if (!parameters || parameters.length === 0) return null;
-
-  const getParamStyle = (label, idx) => {
-    const l = (label || '').toLowerCase();
-    if (l.includes('vt') || l.includes('tidal') || l.includes('atemzug'))
-      return { icon: 'bi-lungs-fill', color: '#0284c7', bg: '#e0f2fe', border: '#bae6fd' };
-    if (l.includes('peep'))
-      return { icon: 'bi-arrow-down-up', color: '#6366f1', bg: '#e0e7ff', border: '#c7d2fe' };
-    if (l.includes('desinfekt') || l.includes('hygiene') || l.includes('einwirkzeit'))
-      return { icon: 'bi-shield-fill-check', color: '#16a34a', bg: '#dcfce7', border: '#bbf7d0' };
-    if (l.includes('status') || l.includes('geschlossen') || l.includes('klemme'))
-      return { icon: 'bi-lock-fill', color: '#dc2626', bg: '#fee2e2', border: '#fecaca' };
-    if (l.includes('tragus') || l.includes('landmarke') || l.includes('nullpunkt'))
-      return { icon: 'bi-crosshair2', color: '#7c3aed', bg: '#f3e8ff', border: '#ddd6fe' };
-    if (l.includes('cpp'))
-      return { icon: 'bi-heart-pulse-fill', color: '#dc2626', bg: '#fee2e2', border: '#fecaca' };
-    if (l.includes('druck') || l.includes('delta') || l.includes('driving') || l.includes('pmax'))
-      return { icon: 'bi-speedometer2', color: '#ea580c', bg: '#ffedd5', border: '#fed7aa' };
-    if (l.includes('spo2') || l.includes('fio2') || l.includes('sauerstoff'))
-      return { icon: 'bi-heart-pulse-fill', color: '#16a34a', bg: '#dcfce7', border: '#bbf7d0' };
-    if (l.includes('temp') || l.includes('grad') || l.includes('°c'))
-      return { icon: 'bi-thermometer-half', color: '#e11d48', bg: '#ffe4e6', border: '#fecdd3' };
-    if (l.includes('liquor') || l.includes('spül') || l.includes('ablass') || l.includes('feucht') || l.includes('mg/l') || l.includes('wasser'))
-      return { icon: 'bi-droplet-half', color: '#0891b2', bg: '#cffafe', border: '#a5f3fc' };
-    if (l.includes('rox'))
-      return { icon: 'bi-calculator-fill', color: '#d97706', bg: '#fef3c7', border: '#fde68a' };
-    if (l.includes('stündlich') || l.includes('bilanz') || l.includes('zeit'))
-      return { icon: 'bi-clock-history', color: '#0284c7', bg: '#e0f2fe', border: '#bae6fd' };
-    if (l.includes('mad') || l.includes('blutdruck') || l.includes('mmhg'))
-      return { icon: 'bi-activity', color: '#dc2626', bg: '#fee2e2', border: '#fecaca' };
-    if (l.includes('icp') || l.includes('hirn') || l.includes('evd') || l.includes('höhe'))
-      return { icon: 'bi-diagram-3-fill', color: '#7c3aed', bg: '#f3e8ff', border: '#ddd6fe' };
-    const fallbackPalette = [
-      { icon: 'bi-clipboard-pulse', color: '#0284c7', bg: '#e0f2fe', border: '#bae6fd' },
-      { icon: 'bi-shield-check', color: '#16a34a', bg: '#dcfce7', border: '#bbf7d0' },
-      { icon: 'bi-sliders', color: '#ea580c', bg: '#ffedd5', border: '#fed7aa' },
-      { icon: 'bi-activity', color: '#7c3aed', bg: '#f3e8ff', border: '#ddd6fe' }
-    ];
-    return fallbackPalette[idx % fallbackPalette.length];
-  };
-
-  return (
-    <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" style={{ borderColor: `${accentColor}35` }}>
-      <div className="d-flex align-items-center gap-2.5 mb-3 pb-2 border-bottom">
-        <div
-          className="rounded-3 p-1.5 d-flex align-items-center justify-content-center text-white flex-shrink-0"
-          style={{ width: '36px', height: '36px', backgroundColor: accentColor, boxShadow: `0 2px 8px ${accentColor}45` }}
-        >
-          <i className="bi bi-speedometer2 fs-5"></i>
-        </div>
-        <div>
-          <span className="badge rounded-pill fw-bold text-uppercase px-2.5 py-0.5 mb-0.5 d-inline-block shadow-2xs" style={{ backgroundColor: `${accentColor}18`, color: accentColor, fontSize: '0.68rem', border: `1px solid ${accentColor}35` }}>
-            Evidenzwerte
-          </span>
-          <h5 className="fw-bold mb-0 text-dark" style={{ fontSize: '1.05rem' }}>
-            Klinische Richt- &amp; Zielwerte
-          </h5>
-        </div>
-      </div>
-
-      <div className="table-responsive rounded-3 border overflow-hidden">
-        <table className="table table-hover align-middle mb-0 small">
-          <thead style={{ background: accentColor, color: '#ffffff' }}>
-            <tr>
-              <th scope="col" style={{ width: '22%', color: '#ffffff', padding: '10px 14px', fontSize: '0.82rem', letterSpacing: '0.4px' }} className="text-uppercase fw-bold">Parameter</th>
-              <th scope="col" style={{ width: '38%', color: '#ffffff', padding: '10px 14px', fontSize: '0.82rem', letterSpacing: '0.4px' }} className="text-uppercase fw-bold">Klinischer Richt- / Zielwert</th>
-              <th scope="col" style={{ width: '40%', color: '#ffffff', padding: '10px 14px', fontSize: '0.82rem', letterSpacing: '0.4px' }} className="text-uppercase fw-bold">Bedeutung &amp; Pflegepraxis</th>
-            </tr>
-          </thead>
-          <tbody>
-            {parameters.map((p, idx) => {
-              const pStyle = getParamStyle(p.label, idx);
-              return (
-                <tr key={idx} style={{ background: idx % 2 === 0 ? '#ffffff' : `${pStyle.color}05` }}>
-                  <td style={{ borderLeft: `4px solid ${pStyle.color || accentColor}`, padding: '12px 14px' }}>
-                    <div className="d-flex align-items-center gap-2">
-                      <span
-                        className="rounded-3 p-1.5 d-inline-flex align-items-center justify-content-center flex-shrink-0 text-white"
-                        style={{ width: '28px', height: '28px', backgroundColor: pStyle.color, boxShadow: `0 2px 4px ${pStyle.color}40` }}
-                      >
-                        <i className={`bi ${pStyle.icon}`} style={{ fontSize: '0.78rem' }}></i>
-                      </span>
-                      <strong className="text-dark d-block fw-bold" style={{ fontSize: '0.88rem' }}>{p.label}</strong>
-                    </div>
-                  </td>
-                  <td style={{ padding: '12px 14px', fontSize: '0.84rem', lineHeight: '1.45', color: '#1e293b' }}>
-                    {p.target || p.val}
-                  </td>
-                  <td className="text-secondary" style={{ padding: '12px 14px', fontSize: '0.82rem', lineHeight: '1.45' }}>
-                    {p.note || p.desc}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+function ClinicalParametersTable({ parameters, accentColor, standard }) {
+  return null;
 }
 
 // -------------------------------------------------------------
@@ -1843,11 +1746,11 @@ function VentilatorCircuitComponent({ standard }) {
   };
 
   return (
-    <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
+    <div className="card border shadow-sm rounded-4 p-3 ps-3.5 ps-sm-4 p-sm-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
       {/* Header */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-        <div className="d-flex align-items-center gap-2">
-          <span className="p-2 rounded-3 text-white d-inline-flex" style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)' }}>
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 ps-1 ps-sm-0">
+        <div className="d-flex align-items-center gap-2 ps-1 ps-sm-0">
+          <span className="p-2 rounded-3 text-white d-inline-flex ms-1 ms-sm-0" style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)' }}>
             <i className="bi bi-lungs-fill fs-5"></i>
           </span>
           <div>
@@ -2202,11 +2105,11 @@ function HumidifierComponent({ standard }) {
   const absHumidity = ventMode === 'invasive' ? 44 : 32;
 
   return (
-    <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
+    <div className="card border shadow-sm rounded-4 p-3 ps-3.5 ps-sm-4 p-sm-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
       {/* Header */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-        <div className="d-flex align-items-center gap-2">
-          <span className="p-2 rounded-3 text-white d-inline-flex" style={{ background: 'linear-gradient(135deg, #0891b2 0%, #0e7490 100%)' }}>
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 ps-1 ps-sm-0">
+        <div className="d-flex align-items-center gap-2 ps-1 ps-sm-0">
+          <span className="p-2 rounded-3 text-white d-inline-flex ms-1 ms-sm-0" style={{ background: 'linear-gradient(135deg, #0891b2 0%, #0e7490 100%)' }}>
             <i className="bi bi-droplet-half fs-5"></i>
           </span>
           <div>
@@ -2380,11 +2283,11 @@ function RoxIndexCalculatorComponent({ standard }) {
   const isCritical = rox < 3.85;
 
   return (
-    <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
+    <div className="card border shadow-sm rounded-4 p-3 ps-3.5 ps-sm-4 p-sm-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
       {/* Header */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-        <div className="d-flex align-items-center gap-2">
-          <span className="p-2 rounded-3 text-white d-inline-flex" style={{ background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)' }}>
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 ps-1 ps-sm-0">
+        <div className="d-flex align-items-center gap-2 ps-1 ps-sm-0">
+          <span className="p-2 rounded-3 text-white d-inline-flex ms-1 ms-sm-0" style={{ background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)' }}>
             <i className="bi bi-calculator-fill fs-5"></i>
           </span>
           <div>
@@ -2592,11 +2495,11 @@ function ArterialWaveformComponent({ standard }) {
   }[damping];
 
   return (
-    <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
+    <div className="card border shadow-sm rounded-4 p-3 ps-3.5 ps-sm-4 p-sm-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
       {/* 1. Header with System Badge */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 pb-2 border-bottom">
-        <div className="d-flex align-items-center gap-2.5">
-          <span className="p-2.5 rounded-3 text-white d-inline-flex shadow-sm" style={{ background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)' }}>
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 pb-2 border-bottom ps-1 ps-sm-0">
+        <div className="d-flex align-items-center gap-2.5 ps-1 ps-sm-0">
+          <span className="p-2.5 rounded-3 text-white d-inline-flex shadow-sm ms-1 ms-sm-0" style={{ background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)' }}>
             <i className="bi bi-activity fs-4"></i>
           </span>
           <div>
@@ -3156,11 +3059,11 @@ function EvdLevelingComponent({ standard }) {
   const currentTarget = targetThresholds[patientStatus][lesionSite];
 
   return (
-    <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
+    <div className="card border shadow-sm rounded-4 p-3 ps-3.5 ps-sm-4 p-sm-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
       {/* 1. Header with System Badge */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 pb-2 border-bottom">
-        <div className="d-flex align-items-center gap-2.5">
-          <span className="p-2.5 rounded-3 text-white d-inline-flex shadow-sm" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #581c87 100%)' }}>
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 pb-2 border-bottom ps-1 ps-sm-0">
+        <div className="d-flex align-items-center gap-2.5 ps-1 ps-sm-0">
+          <span className="p-2.5 rounded-3 text-white d-inline-flex shadow-sm ms-1 ms-sm-0" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #581c87 100%)' }}>
             <i className="bi bi-diagram-3-fill fs-4"></i>
           </span>
           <div>
@@ -3888,13 +3791,13 @@ function StandardA4PrintSheet({ standard }) {
 
           {/* Media & Scannable QR Code Row */}
           <div className="row g-1.5 align-items-stretch">
-            <div className="col-7">
+            <div className={['beatmung', 'befeuchtung-invasiv', 'arterie'].includes(standard.id) ? "col-12" : "col-7"}>
               <div className="p-1 border rounded-3 bg-white h-100 d-flex flex-column align-items-center justify-content-center">
                 <img
                   src={standard.image}
                   alt={standard.topic}
                   className="w-100 rounded-2 border"
-                  style={{ maxHeight: '105px', objectFit: 'contain' }}
+                  style={{ maxHeight: ['beatmung', 'befeuchtung-invasiv', 'arterie'].includes(standard.id) ? '125px' : '105px', objectFit: 'contain' }}
                 />
                 <div className="text-muted mt-0.5 text-center font-monospace" style={{ fontSize: '0.60rem' }}>
                   Gerätekonfiguration &amp; Praxisaufbau ({standard.shortTitle})
@@ -3902,25 +3805,27 @@ function StandardA4PrintSheet({ standard }) {
               </div>
             </div>
 
-            <div className="col-5">
-              <div className="p-1.5 border rounded-3 bg-light text-center h-100 d-flex flex-column align-items-center justify-content-center">
-                <div className="fw-bold text-dark small text-uppercase mb-0.5" style={{ fontSize: '0.62rem' }}>
-                  <i className="bi bi-qr-code text-primary me-1"></i>Direkt-Simulator
-                </div>
-                <div className="p-1 bg-white border rounded shadow-2xs d-inline-flex align-items-center justify-content-center" style={{ maxWidth: '100%' }}>
-                  <QrCodeCanvas
-                    value={websiteDirectUrl}
-                    size={80}
-                    color={standard.accentColor}
-                    className="mx-auto"
-                    style={{ maxWidth: '100%', height: 'auto', aspectRatio: '1 / 1' }}
-                  />
-                </div>
-                <div className="text-muted font-monospace mt-0.5" style={{ fontSize: '0.59rem', lineHeight: '1.15' }}>
-                  Mit Smartphone scannen &bull; Interaktive Ansicht &amp; Check
+            {(!['beatmung', 'befeuchtung-invasiv', 'arterie'].includes(standard.id)) && (
+              <div className="col-5">
+                <div className="p-1.5 border rounded-3 bg-light text-center h-100 d-flex flex-column align-items-center justify-content-center">
+                  <div className="fw-bold text-dark small text-uppercase mb-0.5" style={{ fontSize: '0.62rem' }}>
+                    <i className="bi bi-qr-code text-primary me-1"></i>Direkt-Simulator
+                  </div>
+                  <div className="p-1 bg-white border rounded shadow-2xs d-inline-flex align-items-center justify-content-center" style={{ maxWidth: '100%' }}>
+                    <QrCodeCanvas
+                      value={websiteDirectUrl}
+                      size={80}
+                      color={standard.accentColor}
+                      className="mx-auto"
+                      style={{ maxWidth: '100%', height: 'auto', aspectRatio: '1 / 1' }}
+                    />
+                  </div>
+                  <div className="text-muted font-monospace mt-0.5" style={{ fontSize: '0.59rem', lineHeight: '1.15' }}>
+                    Mit Smartphone scannen &bull; Interaktive Ansicht &amp; Check
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Phasen / Aufbau des Doppelschlauchsystems (ELISA 600) */}
@@ -4052,37 +3957,7 @@ function StandardA4PrintSheet({ standard }) {
             </div>
           </div>
 
-          {/* 2. Klinische Richt- & Zielwerte (Tabelle) */}
-          <div className="p-1.5 bg-white border rounded-3">
-            <div className="fw-bold text-dark small text-uppercase mb-1 d-flex align-items-center justify-content-between">
-              <span><i className="bi bi-speedometer2 text-primary me-1"></i>Klinische Richt- &amp; Zielwerte:</span>
-              <span className="badge bg-light text-primary border" style={{ fontSize: '0.60rem' }}>Grenzwerte &amp; Alarme</span>
-            </div>
-            <div className="table-responsive mb-0">
-              <table className="table table-sm table-bordered mb-0 small" style={{ fontSize: '0.66rem' }}>
-                <thead className="table-light">
-                  <tr>
-                    <th style={{ width: '22%', padding: '3px 6px' }}>Parameter</th>
-                    <th style={{ width: '38%', padding: '3px 6px' }}>Klinischer Richt- / Zielwert</th>
-                    <th style={{ width: '40%', padding: '3px 6px' }}>Bedeutung &amp; Pflegepraxis</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {standard.parameters && standard.parameters.map((p, idx) => (
-                    <tr key={idx}>
-                      <td className="fw-semibold text-dark" style={{ padding: '3px 6px', borderLeft: `3px solid ${standard.accentColor}` }}>{p.label}</td>
-                      <td style={{ padding: '3px 6px', fontSize: '0.64rem', lineHeight: '1.25', color: '#0f172a' }}>
-                        {p.target || p.val || 'Normbereich'}
-                      </td>
-                      <td className="text-secondary" style={{ padding: '3px 6px', fontSize: '0.64rem', lineHeight: '1.25' }}>{p.note || p.desc || 'Gemäß ärztlicher Verordnung'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* 3. Troubleshooting, Alarme & Notfallmaßnahmen */}
+          {/* 2. Troubleshooting, Alarme & Notfallmaßnahmen */}
           <div className="p-1.5 bg-white border rounded-3">
             <div className="fw-bold text-dark small text-uppercase mb-1 d-flex align-items-center gap-1" style={{ fontSize: '0.68rem' }}>
               <i className="bi bi-exclamation-triangle-fill text-danger"></i>
@@ -4108,7 +3983,7 @@ function StandardA4PrintSheet({ standard }) {
             </div>
           </div>
 
-          {/* 4. QM-Schichtkontrolle & Dokumentationsfeld (Sign-off) */}
+          {/* 3. QM-Schichtkontrolle & Dokumentationsfeld (Sign-off) */}
           <div className="p-1.5 rounded-3 border bg-light">
             <div className="fw-bold text-dark small text-uppercase mb-0.5" style={{ fontSize: '0.64rem' }}>
               <i className="bi bi-pen-fill text-secondary me-1"></i>QM-Dokumentation &amp; Schichtkontrolle (Handzeichen):
@@ -4163,9 +4038,9 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
       {/* Screen Pocketcard View */}
       <div className="pocketcard-printable-view pocketcard-screen-view shadow-md rounded-4 overflow-hidden border" id={`pocketcard-${standard.id}`} style={{ borderColor: `${standard.accentColor}40` }}>
         {/* Hospital Header Bar */}
-        <div className="pocketcard-print-header flex-wrap gap-2 p-3 p-sm-3.5" style={{ background: standard.bannerGradient || 'linear-gradient(135deg, #001a2e 0%, #0369a1 100%)' }}>
-          <div className="d-flex align-items-center gap-2 gap-sm-3 min-w-0">
-            <div className="rounded-3 p-2 shadow-sm d-flex align-items-center justify-content-center text-white flex-shrink-0" style={{ background: 'rgba(255, 255, 255, 0.22)', width: '40px', height: '40px', backdropFilter: 'blur(4px)' }}>
+        <div className="pocketcard-print-header flex-wrap gap-2 p-3 ps-3.5 ps-sm-3.5 p-sm-3.5" style={{ background: standard.bannerGradient || 'linear-gradient(135deg, #001a2e 0%, #0369a1 100%)' }}>
+          <div className="d-flex align-items-center gap-2.5 gap-sm-3 min-w-0 ps-1 ps-sm-0">
+            <div className="rounded-3 p-2 shadow-sm d-flex align-items-center justify-content-center text-white flex-shrink-0 ms-1 ms-sm-0" style={{ background: 'rgba(255, 255, 255, 0.22)', width: '42px', height: '42px', backdropFilter: 'blur(4px)' }}>
               <i className={`bi ${standard.icon || 'bi-heart-pulse-fill'} fs-5`}></i>
             </div>
             <div className="min-w-0">
@@ -4186,8 +4061,8 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
         </div>
 
         {/* Content Area */}
-        <div className="p-3 p-sm-4" style={{ background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)' }}>
-          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 pb-2 border-bottom gap-2">
+        <div className="p-3 ps-3.5 ps-sm-4 p-sm-4" style={{ background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)' }}>
+          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 pb-2 border-bottom gap-2 ps-1 ps-sm-0">
             <div>
               <span className="badge rounded-pill fw-bold text-uppercase px-2.5 py-1 mb-1 shadow-2xs d-inline-flex align-items-center gap-1" style={{ backgroundColor: `${standard.accentColor}18`, color: standard.accentColor, border: `1px solid ${standard.accentColor}38`, fontSize: '0.72rem' }}>
                 <i className="bi bi-shield-check"></i>Verfahrensanweisung &amp; Gerätestandard
@@ -4241,7 +4116,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
 
           {/* Minimal-Info & QR-Code Row */}
           <div className="row g-3 align-items-stretch mb-3">
-            <div className="col-lg-7 col-md-6">
+            <div className={['beatmung', 'befeuchtung-invasiv', 'arterie'].includes(standard.id) ? "col-12" : "col-lg-7 col-md-6"}>
               <div
                 className="p-3.5 rounded-4 border h-100 d-flex flex-column justify-content-between shadow-2xs"
                 style={{
@@ -4414,86 +4289,90 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
               </div>
             </div>
 
-            {/* Right: Crisp Scannable Single QR Code */}
-            <div className="col-lg-5 col-md-6">
-              <div
-                className="p-3.5 rounded-4 border h-100 text-center d-flex flex-column align-items-center justify-content-center shadow-sm"
-                style={{
-                  background: `linear-gradient(135deg, #ffffff 0%, ${standard.accentColor}08 50%, ${standard.accentColor}15 100%)`,
-                  borderColor: `${standard.accentColor}40`
-                }}
-              >
-                <div className="small fw-bold text-uppercase mb-2 d-inline-flex align-items-center gap-1.5 px-3 py-1 rounded-pill bg-white shadow-2xs border" style={{ color: standard.accentColor, borderColor: `${standard.accentColor}35` }}>
-                  <i className="bi bi-qr-code"></i>
-                  <span>Pocketcard scannen</span>
-                </div>
+            {/* Right: Crisp Scannable Single QR Code (Not needed for Beatmung, Befeuchtung & Arterie) */}
+            {(!['beatmung', 'befeuchtung-invasiv', 'arterie'].includes(standard.id)) && (
+              <div className="col-lg-5 col-md-6">
+                <div
+                  className="p-3.5 rounded-4 border h-100 text-center d-flex flex-column align-items-center justify-content-between shadow-sm"
+                  style={{
+                    background: `linear-gradient(135deg, #ffffff 0%, ${standard.accentColor}08 50%, ${standard.accentColor}15 100%)`,
+                    borderColor: `${standard.accentColor}40`
+                  }}
+                >
+                  <div className="small fw-bold text-uppercase mb-2 d-inline-flex align-items-center gap-1.5 px-3 py-1 rounded-pill bg-white shadow-2xs border" style={{ color: standard.accentColor, borderColor: `${standard.accentColor}35` }}>
+                    <i className="bi bi-qr-code"></i>
+                    <span>Pocketcard scannen</span>
+                  </div>
 
-                <div className="p-2.5 bg-white rounded-3 border shadow-sm my-1 d-inline-flex align-items-center justify-content-center" style={{ borderColor: `${standard.accentColor}35`, maxWidth: '100%' }}>
-                  <QrCodeCanvas
-                    value={websiteDirectUrl}
-                    size={130}
-                    color={standard.accentColor}
-                    className={`pocket-qr-${standard.id}`}
-                    style={{ maxWidth: '100%', height: 'auto', aspectRatio: '1 / 1' }}
-                  />
-                </div>
+                  <div className="p-2.5 bg-white rounded-3 border shadow-sm my-1 d-inline-flex align-items-center justify-content-center" style={{ borderColor: `${standard.accentColor}35`, maxWidth: '100%' }}>
+                    <QrCodeCanvas
+                      value={websiteDirectUrl}
+                      size={130}
+                      color={standard.accentColor}
+                      className={`pocket-qr-${standard.id}`}
+                      style={{ maxWidth: '100%', height: 'auto', aspectRatio: '1 / 1' }}
+                    />
+                  </div>
 
-                <div className="small text-muted font-monospace mt-1.5" style={{ fontSize: '0.72rem' }}>
-                  <i className="bi bi-camera me-1"></i>Smartphone-Kamera auf QR-Code richten
+                  <div className="small text-muted font-monospace mt-1.5" style={{ fontSize: '0.72rem' }}>
+                    <span><i className="bi bi-camera me-1"></i>Smartphone-Kamera auf QR-Code richten</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Action Toolbar: Colorful & Mobile-Optimized (Hidden for Beatmung, Befeuchtung & Arterie) */}
+          {(!['beatmung', 'befeuchtung-invasiv', 'arterie'].includes(standard.id)) && (
+            <div className="mt-3 pt-3 border-top no-print w-100 ps-1 ps-sm-0" data-html2canvas-ignore="true">
+              <div className="row g-2 px-1 px-sm-0">
+                <div className="col-6 col-sm-3">
+                  <button
+                    className="btn btn-sm text-white rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100"
+                    style={{ backgroundColor: standard.accentColor, borderColor: standard.accentColor, minHeight: '42px', fontSize: '0.82rem' }}
+                    onClick={() => onDownloadPdf(standard)}
+                    title="Pocketcard als PDF-Datei speichern"
+                  >
+                    <i className="bi bi-file-earmark-arrow-down-fill"></i>
+                    <span>PDF</span>
+                  </button>
+                </div>
+                <div className="col-6 col-sm-3">
+                  <button
+                    className="btn btn-sm btn-dark rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100"
+                    style={{ minHeight: '42px', fontSize: '0.82rem', backgroundColor: '#0f172a' }}
+                    onClick={() => window.print()}
+                    title="Drucken / Als PDF drucken"
+                  >
+                    <i className="bi bi-printer-fill"></i>
+                    <span>Drucken</span>
+                  </button>
+                </div>
+                <div className="col-6 col-sm-3">
+                  <button
+                    className="btn btn-sm rounded-pill py-2 px-2 fw-semibold shadow-sm d-flex align-items-center justify-content-center gap-1.5 bg-white w-100"
+                    style={{ minHeight: '42px', fontSize: '0.82rem', borderColor: standard.accentColor, color: standard.accentColor }}
+                    onClick={() => onDownloadQr(standard)}
+                    title="QR-Code als Bilddatei speichern"
+                  >
+                    <i className="bi bi-qr-code"></i>
+                    <span>QR-Bild</span>
+                  </button>
+                </div>
+                <div className="col-6 col-sm-3">
+                  <button
+                    className="btn btn-sm btn-outline-secondary rounded-pill py-2 px-2 fw-semibold shadow-sm d-flex align-items-center justify-content-center gap-1.5 bg-white w-100"
+                    style={{ minHeight: '42px', fontSize: '0.82rem' }}
+                    onClick={() => onCopy(websiteDirectUrl, 'Link')}
+                    title="Link kopieren"
+                  >
+                    <i className="bi bi-link-45deg fs-6 text-primary"></i>
+                    <span>Link kopieren</span>
+                  </button>
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Action Toolbar: Colorful & Mobile-Optimized */}
-          <div className="mt-3 pt-3 border-top no-print w-100" data-html2canvas-ignore="true">
-            <div className="row g-2">
-              <div className="col-6 col-sm-3">
-                <button
-                  className="btn btn-sm text-white rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100"
-                  style={{ backgroundColor: standard.accentColor, borderColor: standard.accentColor, minHeight: '42px', fontSize: '0.82rem' }}
-                  onClick={() => onDownloadPdf(standard)}
-                  title="Pocketcard als PDF-Datei speichern"
-                >
-                  <i className="bi bi-file-earmark-arrow-down-fill"></i>
-                  <span>PDF speichern</span>
-                </button>
-              </div>
-              <div className="col-6 col-sm-3">
-                <button
-                  className="btn btn-sm btn-dark rounded-pill py-2 px-2 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1.5 w-100"
-                  style={{ minHeight: '42px', fontSize: '0.82rem', backgroundColor: '#0f172a' }}
-                  onClick={() => window.print()}
-                  title="Drucken / Als PDF drucken"
-                >
-                  <i className="bi bi-printer-fill"></i>
-                  <span>Drucken</span>
-                </button>
-              </div>
-              <div className="col-6 col-sm-3">
-                <button
-                  className="btn btn-sm rounded-pill py-2 px-2 fw-semibold shadow-sm d-flex align-items-center justify-content-center gap-1.5 bg-white w-100"
-                  style={{ minHeight: '42px', fontSize: '0.82rem', borderColor: standard.accentColor, color: standard.accentColor }}
-                  onClick={() => onDownloadQr(standard)}
-                  title="QR-Code als Bilddatei speichern"
-                >
-                  <i className="bi bi-qr-code"></i>
-                  <span>QR-Bild</span>
-                </button>
-              </div>
-              <div className="col-6 col-sm-3">
-                <button
-                  className="btn btn-sm btn-outline-secondary rounded-pill py-2 px-2 fw-semibold shadow-sm d-flex align-items-center justify-content-center gap-1.5 bg-white w-100"
-                  style={{ minHeight: '42px', fontSize: '0.82rem' }}
-                  onClick={() => onCopy(websiteDirectUrl, 'Link')}
-                  title="Link kopieren"
-                >
-                  <i className="bi bi-link-45deg fs-6 text-primary"></i>
-                  <span>Link kopieren</span>
-                </button>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -4658,7 +4537,161 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
         onDownloadPdf={downloadPdf}
       />
 
-      {/* 2. STANDARD-SPECIFIC INTERACTIVE DIAGNOSTIC / SIMULATOR TOOL */}
+      {/* 2. PRAXIS-SCHULUNGSVIDEO (WENN STANDARD EIN VIDEO BESITZT, Z.B. ELISA 600, AIRCON ODER COMBITRANS) */}
+      {standard.videoUrl && (
+        <div
+          className="card border shadow-sm rounded-4 p-3 ps-3.5 ps-sm-4 p-sm-4 pt-4 pt-sm-4 bg-white mb-4 no-print position-relative overflow-hidden"
+          style={{ borderColor: 'rgba(220, 38, 38, 0.35)', boxShadow: '0 6px 24px rgba(220, 38, 38, 0.08)' }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '4px',
+              background: 'linear-gradient(90deg, #dc2626 0%, #ef4444 35%, #0284c7 100%)'
+            }}
+          />
+
+          <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3.5 pb-3.5 border-bottom pt-2 pt-sm-1 ps-1 ps-sm-0">
+            <div className="d-flex align-items-center gap-3 ps-1 ps-sm-0">
+              <div
+                className="rounded-3 p-2 d-flex align-items-center justify-content-center text-white flex-shrink-0 shadow-sm ms-1 ms-sm-0"
+                style={{ width: '42px', height: '42px', background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)', boxShadow: '0 4px 12px rgba(220, 38, 38, 0.35)' }}
+              >
+                <i className="bi bi-youtube fs-4"></i>
+              </div>
+              <div>
+                <div className="d-flex align-items-center gap-2 flex-wrap mb-1 pt-1.5 pt-sm-0">
+                  <span className="badge rounded-pill fw-bold text-uppercase px-2.5 py-1 shadow-2xs" style={{ backgroundColor: '#fee2e2', color: '#dc2626', fontSize: '0.70rem', border: '1px solid #fecaca' }}>
+                    <i className="bi bi-play-circle-fill me-1"></i>Praxis-Schulungsvideo
+                  </span>
+                  <span className="badge rounded-pill fw-bold text-uppercase px-2.5 py-1 shadow-2xs bg-primary text-white" style={{ fontSize: '0.70rem' }}>
+                    {standard.videoDeviceBadge || (standard.id === 'arterie' ? 'Combitrans® • Intensivpflege' : (standard.id === 'befeuchtung-invasiv' ? 'AIRcon Gen2 • Intensivpflege' : 'elisa 600 • Intensivpflege'))}
+                  </span>
+                </div>
+                <h4 className="fw-black mb-0 text-dark d-flex align-items-center gap-2" style={{ fontSize: '1.2rem', letterSpacing: '0.2px' }}>
+                  <span>{standard.videoTitle || (standard.id === 'arterie' ? 'Invasive arterielle Blutdruckmessung | Nullabgleich & Kurvenvalidierung' : (standard.id === 'befeuchtung-invasiv' ? 'AIRcon Atemgasbefeuchter | Geräteaufbau & Inbetriebnahme' : 'elisa 600 Beatmungsgerät: Geräteaufbau & Systemtest'))}</span>
+                </h4>
+              </div>
+            </div>
+
+            <div className="d-flex align-items-center gap-2 mt-2 mt-sm-0 mb-2 mb-sm-0 ps-1 ps-sm-0">
+              <a
+                href={standard.videoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-sm rounded-pill px-3.5 py-2 fw-bold d-inline-flex align-items-center gap-2 shadow-2xs transition-all ms-1 ms-sm-0"
+                style={{
+                  background: 'linear-gradient(135deg, #ffffff 0%, #fff1f2 100%)',
+                  color: '#dc2626',
+                  border: '1.5px solid #fca5a5',
+                  boxShadow: '0 2px 8px rgba(220, 38, 38, 0.08)',
+                  fontSize: '0.84rem',
+                  letterSpacing: '0.2px'
+                }}
+              >
+                <i className="bi bi-youtube fs-6 text-danger"></i>
+                <span className="text-danger fw-bold">In YouTube öffnen</span>
+                <i className="bi bi-box-arrow-up-right small text-danger opacity-75 ms-0.5" style={{ fontSize: '0.70rem' }}></i>
+              </a>
+            </div>
+          </div>
+
+          <div className="row g-3 align-items-stretch">
+            <div className="col-12 col-lg-8">
+              <div
+                className="rounded-3 overflow-hidden shadow-sm border bg-black position-relative"
+                style={{ aspectRatio: '16 / 9', width: '100%' }}
+              >
+                <iframe
+                  src={standard.videoEmbedUrl || (standard.id === 'arterie' ? 'https://www.youtube.com/embed/Hyoeowu7SJU?rel=0' : (standard.id === 'befeuchtung-invasiv' ? 'https://www.youtube.com/embed/Xa3uZiq8d40?rel=0' : 'https://www.youtube.com/embed/b1lDSxzUgKM?rel=0'))}
+                  title={standard.videoTitle || (standard.id === 'arterie' ? 'Invasive arterielle Blutdruckmessung | Nullabgleich & Kurvenvalidierung' : (standard.id === 'befeuchtung-invasiv' ? 'AIRcon Atemgasbefeuchter | Geräteaufbau & Inbetriebnahme' : 'elisa 600 Beatmungsgerät | Geräteaufbau & Systemtest'))}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  style={{ width: '100%', height: '100%', border: 'none' }}
+                ></iframe>
+              </div>
+            </div>
+
+            <div className="col-12 col-lg-4">
+              <div
+                className="p-3.5 p-sm-4 rounded-4 border h-100 d-flex flex-column justify-content-center shadow-sm"
+                style={{
+                  background: 'linear-gradient(160deg, #f0f9ff 0%, #ffffff 50%, #f1f5f9 100%)',
+                  borderColor: '#bfdbfe',
+                  boxShadow: '0 4px 20px rgba(37, 99, 235, 0.06)'
+                }}
+              >
+                {/* Centered Stylish Header */}
+                <div className="text-center mb-3">
+                  <div className="d-inline-flex align-items-center gap-1.5 px-3 py-1 rounded-pill bg-white border shadow-2xs mb-2" style={{ borderColor: '#bfdbfe' }}>
+                    <i className="bi bi-play-circle-fill text-danger fs-6"></i>
+                    <span className="fw-bold text-uppercase" style={{ fontSize: '0.72rem', letterSpacing: '0.5px', color: '#0369a1' }}>
+                      Video-Leitfaden
+                    </span>
+                  </div>
+                  <h5 className="fw-black text-dark mb-0.5" style={{ fontSize: '1.05rem', letterSpacing: '-0.2px' }}>
+                    Schulungsschritte im Video
+                  </h5>
+                  <div className="text-secondary small" style={{ fontSize: '0.74rem' }}>
+                    4 Kernschritte im Video-Ablauf
+                  </div>
+                </div>
+
+                {/* Stylish Step Cards */}
+                <div className="d-flex flex-column gap-2 justify-content-center my-auto">
+                  {(standard.videoSteps || (standard.id === 'arterie' ? [
+                    { title: 'Druckbeutel & Spülflasche', desc: 'NaCl 0,9 % blasenfrei entlüften, Manschette auf 300 mmHg aufpumpen', color: '#dc2626' },
+                    { title: 'Druckaufnehmer entlüften', desc: 'Transducer & Dreiwegehähne im Uhrzeigersinn blasenfrei spülen', color: '#ea580c' },
+                    { title: 'Phlebostatischer Nullpunkt', desc: 'Höhe 4. ICR / mittlerer Thoraxdurchmesser mit Laser/Wasserwaage nivellieren', color: '#0284c7' },
+                    { title: 'Nullabgleich & Fast-Flush', desc: 'Dreiwegehahn öffnen, Nullabgleich am Monitor & Rechtecktest (Dämpfung)', color: '#16a34a' }
+                  ] : (standard.id === 'befeuchtung-invasiv' ? [
+                    { title: 'Befeuchterkammer & Wasserzufuhr', desc: 'Kammer einschieben, Sterilwasser-Infusion anschließen', color: '#0891b2' },
+                    { title: 'Beheiztes Schlauchsystem', desc: 'Inspirations- & Exspirations-Heizdrähte anstecken', color: '#0284c7' },
+                    { title: 'Temperaturfühler & Sonden', desc: 'Kammersensor & patientennahen Fühler korrekt platzieren', color: '#16a34a' },
+                    { title: 'Inbetriebnahme & Invasiv-Modus', desc: 'Gerät einschalten, Modus „Invasiv (37°C)“ vorwärmen', color: '#7c3aed' }
+                  ] : [
+                    { title: 'ZGV-Anschluss (O₂ & Druckluft)', desc: 'Zentralgasversorgung & Stromanschluss prüfen', color: '#0284c7' },
+                    { title: 'Aufbau Doppelschlauchsystem', desc: 'Inspirations- & Exspirationsfilter montieren', color: '#2563eb' },
+                    { title: 'HMEF & Prüfstopfen', desc: 'Patientennahen Filter & roten Stopfen aufstecken', color: '#16a34a' },
+                    { title: 'Pre-Use Gerätecheck', desc: 'Systemtest bis 100 % („bestanden“) abschließen', color: '#7c3aed' }
+                  ]))).map((step, idx) => (
+                    <div
+                      key={idx}
+                      className="p-2.5 px-3 rounded-3 bg-white border shadow-2xs d-flex align-items-center gap-2.5"
+                      style={{ borderLeft: `4px solid ${step.color}`, borderColor: '#e2e8f0' }}
+                    >
+                      <span
+                        className="rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0 fw-bold shadow-2xs"
+                        style={{ width: '26px', height: '26px', backgroundColor: step.color, fontSize: '0.76rem' }}
+                      >
+                        {idx + 1}
+                      </span>
+                      <div className="min-w-0">
+                        <div className="fw-bold text-dark text-truncate" style={{ fontSize: '0.83rem', lineHeight: '1.25' }}>
+                          {step.title}
+                        </div>
+                        <div className="text-secondary small text-truncate" style={{ fontSize: '0.74rem', lineHeight: '1.2' }}>
+                          {step.desc}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="text-center mt-3 pt-2 border-top text-muted small" style={{ fontSize: '0.70rem', borderColor: '#e2e8f0' }}>
+                  <i className="bi bi-info-circle me-1 text-primary"></i>
+                  <span>{standard.id === 'arterie' ? 'Schritt-für-Schritt Vorbereitung & Nullabgleich vor Patientenkontakt' : (standard.id === 'befeuchtung-invasiv' ? 'Schritt-für-Schritt Vorbereitung vor Patientenanschluss' : 'Schritt-für-Schritt Aufbau vor jedem Patientenkontakt')}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. STANDARD-SPECIFIC INTERACTIVE DIAGNOSTIC / SIMULATOR TOOL */}
       <div className="no-print">
         {standard.id === 'beatmung' && (
           <VentilatorCircuitComponent standard={standard} />
@@ -4691,15 +4724,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
         />
       </div>
 
-      {/* 4. CLINICAL REFERENCE PARAMETERS */}
-      <div className="no-print">
-        <ClinicalParametersTable
-          parameters={standard.parameters}
-          accentColor={standard.accentColor}
-        />
-      </div>
-
-      {/* 5. TROUBLESHOOTING & ALARM GUIDE */}
+      {/* 4. TROUBLESHOOTING & ALARM GUIDE */}
       <div className="no-print">
         <TroubleshootingSection
           troubleshooting={standard.troubleshooting}
@@ -4707,7 +4732,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
         />
       </div>
 
-      {/* 6. STRUCTURED HANDLUNGSSCHRITTE / FACHGERECHTER AUFBAU DES DOPPELSCHLAUCHSYSTEMS – ELISA 600 */}
+      {/* 5. STRUCTURED HANDLUNGSSCHRITTE / FACHGERECHTER AUFBAU DES DOPPELSCHLAUCHSYSTEMS – ELISA 600 */}
       <div className="card border shadow-sm rounded-4 p-3 p-sm-4 bg-white mb-4 no-print" style={{ borderColor: `${standard.accentColor}35` }}>
         <div className="d-flex align-items-center gap-2.5 mb-3 pb-2 border-bottom">
           <div

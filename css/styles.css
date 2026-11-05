@@ -2930,18 +2930,82 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     display: none !important;
   }
 
+  /* Main container breathing room on mobile */
+  main.container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Horizontal scrolling navigation ribbon in navbar */
+  .nav-standards-scroll {
+    padding-left: 0.65rem !important;
+    padding-right: 0.65rem !important;
+  }
+
+  /* Overview Tiles: comfortable breathing room from colored left border */
+  .standard-tile {
+    border-left-width: 6px !important;
+    border-radius: 1.25rem !important;
+  }
+
+  .standard-tile > div {
+    padding-left: 1.35rem !important;
+    padding-right: 1.15rem !important;
+  }
+
+  .standard-tile .rounded-4.d-flex.align-items-center.justify-content-center {
+    margin-left: 0.25rem !important;
+  }
+
+  /* Pocketcard screen view */
   .pocketcard-screen-view {
     border-radius: 1.25rem !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07) !important;
   }
 
+  /* Pocketcard Header & Main Icon across all 5 tiles */
   .pocketcard-screen-view .pocketcard-print-header {
-    padding: 0.85rem 1rem !important;
+    padding: 0.95rem 1.15rem 0.95rem 1.35rem !important;
+  }
+
+  .pocketcard-screen-view .pocketcard-print-header .rounded-3 {
+    margin-left: 0.25rem !important;
+  }
+
+  /* Pocketcard content area */
+  .pocketcard-screen-view > div:nth-child(2) {
+    padding-left: 1.25rem !important;
+    padding-right: 1.15rem !important;
+  }
+
+  /* Section cards across all tiles (Simulators, Schulungsvideo, Checklists) */
+  .card {
+    padding-left: 1.25rem !important;
+    padding-right: 1.15rem !important;
+  }
+
+  .card .d-flex.align-items-center > span.p-2,
+  .card .d-flex.align-items-center > span.p-2.5,
+  .card .d-flex.align-items-center > div.rounded-3 {
+    margin-left: 0.25rem !important;
+  }
+
+  /* Tab button groups and button rows inside cards */
+  .card .btn-group,
+  .card .d-flex.flex-wrap.gap-2 {
+    margin-left: 0.15rem !important;
+  }
+
+  /* Action buttons inside tiles */
+  .btn-all-kacheln,
+  .btn-kachel-open {
+    margin-left: 0.15rem !important;
   }
 
   .keypoint-item {
-    padding: 0.65rem 0.75rem !important;
+    padding: 0.75rem 0.85rem 0.75rem 1.15rem !important;
     border-radius: 0.75rem !important;
+    margin-left: 0.15rem !important;
   }
 
   .clinical-picture-card img {
@@ -3064,4 +3128,79 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 .login-submit-btn:active {
   transform: scale(0.98);
 }
+
+/* ========================================================
+   Clinical Parameters Guideline Table (Elisa 600 & Standards)
+   Matches Official Clinical Guidelines
+   ======================================================== */
+.clinical-guideline-table-container {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1.5px solid #cbd5e1;
+  background-color: #ffffff;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+
+.clinical-guideline-table {
+  width: 100%;
+  margin-bottom: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #ffffff;
+}
+
+.clinical-guideline-table thead,
+.clinical-guideline-table thead tr {
+  background-color: #2563eb !important;
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%) !important;
+}
+
+.clinical-guideline-table thead th,
+.clinical-guideline-table th.guideline-th {
+  background-color: #2563eb !important;
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%) !important;
+  color: #ffffff !important;
+  padding: 14px 18px !important;
+  font-size: 0.85rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.6px !important;
+  text-transform: uppercase !important;
+  border: none !important;
+  box-shadow: none !important;
+  vertical-align: middle !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.clinical-guideline-table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  transition: background-color 0.15s ease;
+}
+
+.clinical-guideline-table tbody tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.clinical-guideline-table tbody tr:hover {
+  background-color: #eff6ff;
+}
+
+.clinical-guideline-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.clinical-guideline-table tbody td {
+  padding: 14px 18px !important;
+  font-size: 0.86rem !important;
+  line-height: 1.5 !important;
+  vertical-align: middle !important;
+  border: none !important;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: none !important;
+}
+
+.clinical-guideline-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
 

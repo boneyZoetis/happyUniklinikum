@@ -30,6 +30,17 @@ root.QRParser = (function () {
       icon: 'bi-lungs-fill',
       image: 'assets/card-beatmung.jpg',
       graphicImage: 'assets/card-beatmung.jpg',
+      videoUrl: 'https://www.youtube.com/watch?v=b1lDSxzUgKM',
+      videoEmbedUrl: 'https://www.youtube.com/embed/b1lDSxzUgKM',
+      videoTitle: 'elisa 600 Beatmungsgerät | Geräteaufbau & Systemtest einfach erklärt',
+      videoSubtitle: 'Schritt-für-Schritt Aufbau des Doppelschlauchsystems & Pre-Use Systemtest vor Patientenkontakt',
+      videoDeviceBadge: 'elisa 600 • Intensivpflege',
+      videoSteps: [
+        { title: 'ZGV-Anschluss (O₂ & Druckluft)', desc: 'Zentralgasversorgung & Stromanschluss prüfen', color: '#0284c7' },
+        { title: 'Aufbau Doppelschlauchsystem', desc: 'Inspirations- & Exspirationsfilter montieren', color: '#2563eb' },
+        { title: 'HMEF & Prüfstopfen', desc: 'Patientennahen Filter & roten Stopfen aufstecken', color: '#16a34a' },
+        { title: 'Pre-Use Gerätecheck', desc: 'Systemtest bis 100 % („bestanden“) abschließen', color: '#7c3aed' }
+      ],
       leadText: 'Standardisierter Aufbau des Beatmungssystems, geräteeigener Pre-Use Check (Dichtigkeits- und Kalibrierungstest) und Gewährleistung der Notfallausrüstung vor Anschluss des Patienten auf der Intensivstation.',
       instructions: 'Führen Sie vor jeder Patientenbelegung oder nach jedem Schlauchsystemwechsel die vollständige Funktionsprüfung durch. Schließen Sie erst nach erfolgreichem Test („Bestanden / Pass“) an den Patienten an.',
       whyImportant: [
@@ -146,6 +157,17 @@ root.QRParser = (function () {
       icon: 'bi-droplet-half',
       image: 'assets/card-befeuchtung.jpg',
       graphicImage: 'assets/card-befeuchtung.jpg',
+      videoUrl: 'https://www.youtube.com/watch?v=Xa3uZiq8d40',
+      videoEmbedUrl: 'https://www.youtube.com/embed/Xa3uZiq8d40',
+      videoTitle: 'AIRcon Atemgasbefeuchter | Geräteaufbau & Inbetriebnahme',
+      videoSubtitle: 'Schritt-für-Schritt Vorbereitung der Befeuchterkammer, Schlauchheizung & Temperaturkontrolle',
+      videoDeviceBadge: 'AIRcon Gen2 • Intensivpflege',
+      videoSteps: [
+        { title: 'Befeuchterkammer & Wasserzufuhr', desc: 'Kammer einschieben, Sterilwasser-Infusion anschließen', color: '#0891b2' },
+        { title: 'Beheiztes Schlauchsystem', desc: 'Inspirations- & Exspirations-Heizdrähte anstecken', color: '#0284c7' },
+        { title: 'Temperaturfühler & Sonden', desc: 'Kammersensor & patientennahen Fühler korrekt platzieren', color: '#16a34a' },
+        { title: 'Inbetriebnahme & Invasiv-Modus', desc: 'Gerät einschalten, Modus „Invasiv (37°C)“ vorwärmen', color: '#7c3aed' }
+      ],
       leadText: 'Physiologische Atemgaskonditionierung bei intubierten und tracheotomierten Patienten: Gewährleistung von 37°C und 44 mg/L Feuchtigkeit, Verhinderung von Schleimhautschäden, Tubusokklusion und Kondenswasser-Aspiration.',
       instructions: 'Positionieren Sie den Befeuchter immer unterhalb des Patientenniveaus. Verwenden Sie beheizte Schläuche und überwachen Sie Temperaturfühler sowie Wasserfüllstand kontinuierlich.',
       whyImportant: [
@@ -299,6 +321,17 @@ root.QRParser = (function () {
       icon: 'bi-activity',
       image: 'assets/card-arterie.jpg',
       graphicImage: 'assets/card-arterie.jpg',
+      videoUrl: 'https://www.youtube.com/watch?v=Hyoeowu7SJU',
+      videoEmbedUrl: 'https://www.youtube.com/embed/Hyoeowu7SJU',
+      videoTitle: 'Invasive arterielle Blutdruckmessung | Nullabgleich & Kurvenvalidierung',
+      videoSubtitle: 'Schritt-für-Schritt Vorbereitung des Druckmesssystems, 300 mmHg Druckbeutel, Phlebostatischer Nullpunkt & Fast-Flush-Test',
+      videoDeviceBadge: 'Combitrans® • Intensivpflege',
+      videoSteps: [
+        { title: 'Druckbeutel & Spülflasche', desc: 'NaCl 0,9 % blasenfrei entlüften, Manschette auf 300 mmHg aufpumpen', color: '#dc2626' },
+        { title: 'Druckaufnehmer entlüften', desc: 'Transducer & Dreiwegehähne im Uhrzeigersinn blasenfrei spülen', color: '#ea580c' },
+        { title: 'Phlebostatischer Nullpunkt', desc: 'Höhe 4. ICR / mittlerer Thoraxdurchmesser mit Laser/Wasserwaage nivellieren', color: '#0284c7' },
+        { title: 'Nullabgleich & Fast-Flush', desc: 'Dreiwegehahn öffnen, Nullabgleich am Monitor & Rechtecktest (Dämpfung)', color: '#16a34a' }
+      ],
       leadText: 'Gold-Standard für das Combitrans® (Fa. B. Braun) Druckmesssystem gemäß Leitlinie: Standardisierter 15-Schritte-Befüllungsprozess (initial max. 50 mmHg -> final 300 mmHg), Reservoir-Entlüftung im Uhrzeigersinn, Phlebostatischer Nullabgleich und strikte Vermeidung von Luftembolien im peripheren Endstromgebiet.',
       instructions: 'WICHTIG: Drucksystem auspacken und VOR Befüllung ALLE Konnektionsstellen nachziehen! Befüllen Sie das System initial mit max. 50 mmHg Druckbeutel, um Blasenbildung zu verhindern. Erst nach vollständiger Entlüftung von Reservoir und Leitungen auf 300 mmHg aufpumpen und beide Nullpunkthähne querstellen!',
       whyImportant: [
