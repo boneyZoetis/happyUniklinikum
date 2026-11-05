@@ -996,30 +996,30 @@ const TILE_ENHANCEMENTS = {
     badgeBorder: '#e9d5ff',
     badgeText: 'Neurochirurgie & ITS',
     titleColor: '#581c87',
-    title: '5. Externe Ventrikeldrainage (EVD)',
-    lead: 'Kontinuierliche Liquordrainage & ICP-Hirndrucküberwachung. Exakte Nivellierung auf Tragus (Foramen Monroi) und strikte Klemmpflicht bei Bewegung.',
+    title: '5. SOP Externe Ventrikeldrainage (EVD)',
+    lead: 'SOP VentrEX®: Kontinuierliches ICP-Monitoring bei regulär GESCHLOSSENER Drainage. Exakte Tragus-Nivellierung (Foramen Monroi) & intermittierendes Ablassen (max. 5–10 ml).',
     image: 'assets/card-evd.jpg',
-    imageOverlay: 'Tragus-Laser & ICP-Welle',
+    imageOverlay: 'VentrEX® & Tragus-Nivellierung',
     quickBadges: [
-      { text: 'Tragus / Foramen Monroi', icon: 'bi-crosshair2', bg: '#f3e8ff', color: '#581c87', border: '#e9d5ff' },
-      { text: 'Zwingend abklemmen!', icon: 'bi-exclamation-triangle-fill', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' }
+      { text: 'Tragus = Foramen Monroi', icon: 'bi-crosshair2', bg: '#f3e8ff', color: '#581c87', border: '#e9d5ff' },
+      { text: 'Drainage regulär GESCHLOSSEN', icon: 'bi-lock-fill', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' }
     ],
-    imageSubtitle: 'Nivellierung mit Laser auf Foramen Monroi & Tropfkammer-Niveau nach Anordnung',
+    imageSubtitle: 'Gelber Hahn (2) auf Tragus-Höhe • Nullen ohne Diskonnektion • Nur Arzt spült zum Kopf',
     goals: [
-      { text: 'Hirndruck senken', icon: 'bi-arrow-down-circle-fill text-primary', bg: '#f3e8ff', color: '#581c87', border: '#e9d5ff' },
+      { text: 'Fehlerfreie ICP-Messung', icon: 'bi-activity text-primary', bg: '#f3e8ff', color: '#581c87', border: '#e9d5ff' },
       { text: 'Überdrainage verhindern', icon: 'bi-shield-slash-fill text-danger', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
-      { text: 'Ventrikulitis verhüten', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' }
+      { text: 'Ventrikulitisschutz', icon: 'bi-shield-check text-success', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' }
     ],
     actionSteps: [
-      { text: 'Nullpunkt des EVD-Systems mit Laserwaage exakt auf den Tragus (Foramen Monroi) ausrichten', bold: 'Laser-Nivellierung Tragus:', icon: 'bi-crosshair2', iconBg: '#7c3aed' },
-      { text: 'Tropfkammerhöhe nach ärztlicher Anordnung (z.B. +10 bis +15 cmH2O) fixieren', bold: 'Tropfkammerhöhe:', icon: 'bi-rulers', iconBg: '#0284c7' },
-      { text: 'Vor jeder Umlagerung, Mobilisation oder Kopfteilverstellung ZWINGEND abklemmen!', bold: 'ZWINGEND ABKLEMMEN:', icon: 'bi-shield-exclamation', iconBg: '#dc2626' }
+      { text: 'Gelben Monitoring-Hahn (2) mit Laserpointer exakt auf den Tragus (äußerer Gehörgang) ausrichten – bei jeder Lagerung re-nivellieren!', bold: 'Laser-Nivellierung Tragus:', icon: 'bi-crosshair2', iconBg: '#7c3aed' },
+      { text: 'Drainage ist regulär GESCHLOSSEN (Hahn 3)! Öffnen nur gezielt bei ICP-Überschreitung für max. 5–10 ml (bei offener EVD keine ICP-Messung!).', bold: 'Regulär GESCHLOSSEN:', icon: 'bi-lock-fill', iconBg: '#dc2626' },
+      { text: 'Nullen ohne Diskonnektion über 0-cm-Skala; Spülen zum Kopf & Aspiration ist STRENG NUR ARZT gestattet!', bold: 'Nullen & Arzt-Kompetenz:', icon: 'bi-shield-exclamation', iconBg: '#0284c7' }
     ],
-    tagLabel: 'Kernschritte:',
+    tagLabel: 'SOP-Kriterien:',
     tagIcon: 'bi-exclamation-octagon',
     tagColor: '#7c3aed',
     tagBorder: '#c084fc',
-    tags: ['Foramen Monroi', 'Tropfkammer cmH2O', 'Klemmpflicht bei Bewegung', 'P1>P2>P3 ICP-Welle', 'Liquorpulsation'],
+    tags: ['VentrEX® System', 'Tragus = Foramen Monroi', 'Drainage regulär ZU', 'Max. 5–10 ml Ablass', 'Sediert: 15/20 mmHg', 'Wach: 20/25 mmHg', 'Spülen z. Kopf: NUR ARZT'],
     btnGradient: 'linear-gradient(90deg, #6d28d9 0%, #7c3aed 100%)',
     btnShadow: 'rgba(124, 58, 237, 0.28)'
   }
@@ -2747,198 +2747,633 @@ function ArterialWaveformComponent({ standard }) {
 
 // =============================================================
 // INTERACTIVE CLINICAL COMPONENT 5: Externe Ventrikeldrainage (EVD)
+// SOP VentrEX® System: Regulär geschlossenes ICP-Monitoring,
+// Tragus-Nivellierung, Nullen ohne Diskonnektion & Druckgrenzen
 // =============================================================
 function EvdLevelingComponent({ standard }) {
-  const [chamberHeight, setChamberHeight] = useState(12); // cmH2O
-  const [icpCurve, setIcpCurve] = useState('normal'); // 'normal' (P1 > P2 > P3) | 'high_icp' (P2 > P1)
-  const [isClamped, setIsClamped] = useState(false);
+  // Drainage State: 'closed' (SOP-Standard / ICP-Messung) vs. 'open' (Intermittierendes Ablassen)
+  const [drainageMode, setDrainageMode] = useState('closed'); // 'closed' | 'open'
 
-  const isOverdrainage = chamberHeight < 0;
-  const isHighDrainage = chamberHeight >= 10 && chamberHeight <= 15;
-  const isHypodrainage = chamberHeight > 18;
+  // Safety Movement Interlock: Clamped before moving patient / bed
+  const [isMovementSafe, setIsMovementSafe] = useState(false);
+
+  // Patient Status & Lesion Selection for SOP Druckgrenzen Matrix
+  const [patientStatus, setPatientStatus] = useState('sedated'); // 'sedated' | 'awake'
+  const [lesionSite, setLesionSite] = useState('supratentorial'); // 'supratentorial' | 'infratentorial'
+
+  // Waveform Compliance
+  const [icpCurve, setIcpCurve] = useState('normal'); // 'normal' (P1 > P2 > P3) | 'high_icp' (P2 > P1)
+
+  // Intermittent Drain Volume Simulator (0 to 15 ml, target 5-10 ml)
+  const [drainVolume, setDrainVolume] = useState(6);
+
+  // Interactive 4-Step Zeroing Stepper (1 to 4)
+  const [zeroStep, setZeroStep] = useState(1);
+
+  // Active Tab for Deep SOP Knowledge
+  const [activeTab, setActiveTab] = useState('matrix'); // 'matrix' | 'zeroing' | 'valves' | 'competence'
+
+  // SOP Target Matrix based on official procedural guideline
+  const targetThresholds = {
+    sedated: {
+      supratentorial: {
+        icp: 15,
+        chamberCm: 10,
+        label: 'Sediert / Intubiert – Supratentoriell',
+        note: 'Ziel-ICP <= 15 mmHg. Abtropfkammer standardmäßig 10 cm über Tragus-Null-Linie einhängen.'
+      },
+      infratentorial: {
+        icp: 20,
+        chamberCm: 15,
+        label: 'Sediert / Intubiert – Infratentoriell',
+        note: 'Ziel-ICP <= 20 mmHg. Abtropfkammer 15 cm über Tragus-Null-Linie einhängen.'
+      }
+    },
+    awake: {
+      supratentorial: {
+        icp: 20,
+        chamberCm: 15,
+        label: 'Wach / Kooperativ – Supratentoriell',
+        note: 'Ziel-ICP <= 20 mmHg. Abtropfkammer 15 cm über Tragus. Höhere Stufe schützt vor Überdrainage bei Eigenbewegung!'
+      },
+      infratentorial: {
+        icp: 25,
+        chamberCm: 20,
+        label: 'Wach / Kooperativ – Infratentoriell',
+        note: 'Ziel-ICP <= 25 mmHg. Abtropfkammer 20 cm über Tragus. Engmaschige klinische Überwachung!'
+      }
+    }
+  };
+
+  const currentTarget = targetThresholds[patientStatus][lesionSite];
 
   return (
     <div className="card border shadow-sm rounded-4 p-3.5 p-md-4 bg-white mb-4" style={{ borderColor: `${standard.accentColor}35` }}>
-      {/* Header */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-        <div className="d-flex align-items-center gap-2">
-          <span className="p-2 rounded-3 text-white d-inline-flex" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #581c87 100%)' }}>
-            <i className="bi bi-diagram-3-fill fs-5"></i>
+      {/* 1. Header with System Badge */}
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 pb-2 border-bottom">
+        <div className="d-flex align-items-center gap-2.5">
+          <span className="p-2.5 rounded-3 text-white d-inline-flex shadow-sm" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #581c87 100%)' }}>
+            <i className="bi bi-diagram-3-fill fs-4"></i>
           </span>
           <div>
-            <h5 className="fw-bold mb-0 text-dark">
-              EVD Laser-Nivellierung &amp; Hirndruck (ICP) Monitor
-            </h5>
-            <div className="text-secondary small" style={{ fontSize: '0.76rem' }}>
-              Tragus-Nivellierung (Foramen Monroi), Tropfkammerhöhe &amp; Sicherheits-Klemmpflicht
+            <div className="d-flex align-items-center gap-2">
+              <h5 className="fw-black mb-0 text-dark">
+                VentrEX® EVD-Simulator &amp; ICP-Leitfaden
+              </h5>
+              <span className="badge rounded-pill fw-bold text-uppercase" style={{ backgroundColor: 'rgba(124, 58, 237, 0.12)', color: '#7c3aed', fontSize: '0.66rem', border: '1px solid rgba(124, 58, 237, 0.3)' }}>
+                SOP-Standard
+              </span>
+            </div>
+            <div className="text-secondary small" style={{ fontSize: '0.78rem' }}>
+              Tragus-Nivellierung (Foramen Monroi) &bull; Regulär geschlossenes System &bull; Nullen ohne Diskonnektion
             </div>
           </div>
         </div>
 
-        {/* Safety Clamping Interlock Button */}
+        {/* Safety Movement Clamping Button */}
         <button
           type="button"
-          className={`btn btn-sm rounded-pill px-3 py-1.5 fw-bold shadow-sm d-flex align-items-center gap-1.5 ${isClamped ? 'btn-success text-white' : 'btn-danger text-white'}`}
-          style={{ minHeight: '36px', fontSize: '0.8rem' }}
-          onClick={() => setIsClamped(!isClamped)}
+          className={`btn btn-sm rounded-pill px-3 py-1.5 fw-bold shadow-sm d-flex align-items-center gap-2 ${isMovementSafe ? 'btn-success text-white' : 'btn-outline-danger'}`}
+          style={{ minHeight: '36px', fontSize: '0.78rem' }}
+          onClick={() => setIsMovementSafe(!isMovementSafe)}
         >
-          <i className={`bi ${isClamped ? 'bi-lock-fill' : 'bi-unlock-fill'}`}></i>
-          <span>{isClamped ? 'EVD ABGEKLEMMT (Sicher für Bewegung)' : 'EVD GEÖFFNET (Drainage läuft)'}</span>
+          <i className={`bi ${isMovementSafe ? 'bi-shield-fill-check' : 'bi-exclamation-triangle-fill'}`}></i>
+          <span>{isMovementSafe ? 'Verriegelt für Bewegung' : 'Klemmpflicht vor Bewegung prüfen!'}</span>
         </button>
       </div>
 
-      {/* Critical Clamping Reminder Alert */}
-      <div className={`p-3 rounded-4 mb-3 border d-flex align-items-start gap-2.5 ${isClamped ? 'bg-success bg-opacity-10 border-success' : 'bg-danger bg-opacity-10 border-danger'}`}>
-        <i className={`bi ${isClamped ? 'bi-shield-check text-success' : 'bi-exclamation-octagon-fill text-danger'} fs-4 flex-shrink-0 mt-0.5`}></i>
+      {/* 2. Critical Clamping Safety Interlock Alert */}
+      <div className={`p-3 rounded-4 mb-3 border d-flex align-items-start gap-2.5 ${isMovementSafe ? 'bg-success bg-opacity-10 border-success' : 'bg-danger bg-opacity-10 border-danger'}`}>
+        <i className={`bi ${isMovementSafe ? 'bi-shield-check text-success' : 'bi-exclamation-octagon-fill text-danger'} fs-4 flex-shrink-0 mt-0.5`}></i>
         <div>
-          <strong className={`d-block small ${isClamped ? 'text-success' : 'text-danger'}`}>
-            {isClamped ? 'DRAINAGE SICHER ABGEKLEMMT' : 'STRIKTE KLEMPPFLICHT VOR PATIENTENBEWEGUNG!'}
+          <strong className={`d-block small ${isMovementSafe ? 'text-success' : 'text-danger'}`}>
+            {isMovementSafe ? 'SICHER: DRAINAGE VOR PATIENTENBEWEGUNG GESCHLOSSEN' : 'STRIKTE VERRIEGELUNGSPFLICHT VOR JEDER BEWEGUNG!'}
           </strong>
-          <span className="small text-secondary" style={{ fontSize: '0.78rem', lineHeight: '1.35' }}>
-            Vor jeder Umlagerung, Mobilisation, Verstellung des Kopfteils und vor Patiententransport zwingend <strong>Dreiwegehahn zur Drainage schließen (abklemmen)</strong>! Nach Positionsänderung neu auf den Tragus lasern und erst nach korrekter Höhe wieder öffnen!
+          <span className="small text-secondary" style={{ fontSize: '0.78rem', lineHeight: '1.4' }}>
+            Vor jeder Bett- oder Kopfteilverstellung, Umlagerung, Mobilisation, endotrachealem Absaugen oder Transport zwingend <strong>Drainage schließen</strong> (Schutz vor tödlichem Brückenvenenabriss / akutem Subduralhämatom durch Unterdruck)! Nach Abschluss der Bewegung: Gelben Hahn (2) mittels Laserwaage zwingend neu auf den <strong>Tragus des Ohres</strong> ausrichten!
           </span>
         </div>
       </div>
 
-      {/* Drip Chamber Height & Leveling Visualizer */}
-      <div className="row g-3 mb-3">
-        <div className="col-md-6">
-          <div className="p-3 bg-light rounded-4 border h-100">
-            <div className="d-flex justify-content-between align-items-center mb-2">
-              <span className="small fw-bold text-dark">Tropfkammer-Höhe (cmH2O über Tragus):</span>
-              <span className={`badge rounded-pill fs-6 px-3 py-1 ${isOverdrainage ? 'bg-danger' : (isHighDrainage ? 'bg-success' : 'bg-warning text-dark')}`}>
-                {chamberHeight > 0 ? `+${chamberHeight}` : chamberHeight} cmH2O
-              </span>
-            </div>
+      {/* 3. Core Operational Mode: Closed ICP-Monitoring vs. Open Intermittent Drainage */}
+      <div className="card rounded-4 p-3 mb-3 border" style={{ backgroundColor: drainageMode === 'closed' ? '#faf5ff' : '#fff7ed', borderColor: drainageMode === 'closed' ? '#ddd6fe' : '#fed7aa' }}>
+        <div className="d-flex flex-wrap justify-content-between align-items-center mb-2.5 gap-2">
+          <div>
+            <span className="text-uppercase fw-bold small text-muted" style={{ fontSize: '0.68rem', letterSpacing: '0.5px' }}>
+              Aktueller Betriebszustand (VentrEX® Hahn 3)
+            </span>
+            <h6 className="fw-black mb-0 text-dark">
+              {drainageMode === 'closed' ? 'Drainage GESCHLOSSEN (SOP-Normalbetrieb)' : 'Drainage GEÖFFNET (Intermittierende Entlastung)'}
+            </h6>
+          </div>
 
-            <input
-              type="range"
-              className="form-range my-2"
-              min="-5"
-              max="25"
-              step="1"
-              value={chamberHeight}
-              onChange={(e) => setChamberHeight(Number(e.target.value))}
-            />
-
-            <div className="d-flex justify-content-between text-muted mb-2" style={{ fontSize: '0.68rem' }}>
-              <span>-5 (Kollapsgefahr!)</span>
-              <span>0 (Tragus)</span>
-              <span>+10 bis +15 (Standard)</span>
-              <span>+25</span>
-            </div>
-
-            {isOverdrainage && (
-              <div className="alert alert-danger py-2 px-3 rounded-3 mb-0 small">
-                <i className="bi bi-exclamation-triangle-fill me-1"></i>
-                <strong>LEBENSGEFAHR: Akute Überdrainage!</strong> Ventrikelkollaps und Einreißen von Brückenvenen (akutes Subduralhämatom) drohen!
-              </div>
-            )}
-
-            {isHighDrainage && (
-              <div className="alert alert-success py-2 px-3 rounded-3 mb-0 small text-success">
-                <i className="bi bi-check-circle-fill me-1"></i>
-                <strong>Optimaler Zielbereich:</strong> Kontinuierliche Drainage bei physiologischem Hirndruck.
-              </div>
-            )}
-
-            {isHypodrainage && (
-              <div className="alert alert-warning py-2 px-3 rounded-3 mb-0 small text-dark">
-                <i className="bi bi-info-circle-fill me-1"></i>
-                <strong>Hohe Druckstufe:</strong> Verminderte Liquordrainage. Hirndruck (ICP) engmaschig überwachen!
-              </div>
-            )}
+          <div className="btn-group btn-group-sm p-1 rounded-pill bg-white border shadow-2xs" role="group">
+            <button
+              type="button"
+              className={`btn btn-sm rounded-pill px-3 py-1 fw-bold ${drainageMode === 'closed' ? 'btn-primary text-white shadow-xs' : 'btn-light text-secondary'}`}
+              style={{ fontSize: '0.76rem', backgroundColor: drainageMode === 'closed' ? '#7c3aed' : 'transparent', borderColor: 'transparent' }}
+              onClick={() => setDrainageMode('closed')}
+            >
+              <i className="bi bi-lock-fill me-1"></i>Regulär GESCHLOSSEN
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm rounded-pill px-3 py-1 fw-bold ${drainageMode === 'open' ? 'btn-warning text-dark shadow-xs' : 'btn-light text-secondary'}`}
+              style={{ fontSize: '0.76rem' }}
+              onClick={() => setDrainageMode('open')}
+            >
+              <i className="bi bi-unlock-fill me-1"></i>GEÖFFNET (Entlastung)
+            </button>
           </div>
         </div>
 
-        {/* ICP Waveform & Compliance Section */}
-        <div className="col-md-6">
-          <div className="rounded-4 p-3 text-white h-100 d-flex flex-column justify-content-between" style={{ backgroundColor: '#09131f', border: '1.5px solid #1e293b' }}>
-            <div>
-              <div className="d-flex justify-content-between align-items-center mb-1">
-                <span className="badge rounded-pill px-2.5 py-1 text-uppercase fw-bold" style={{ backgroundColor: 'rgba(124, 58, 237, 0.25)', color: '#c084fc', border: '1px solid rgba(124, 58, 237, 0.4)', fontSize: '0.68rem' }}>
-                  <i className="bi bi-activity me-1"></i>ICP Wellenform-Analyse
-                </span>
+        {drainageMode === 'closed' ? (
+          /* CLOSED STATE: Continuous ICP Monitoring Active */
+          <div className="row g-3 align-items-center">
+            <div className="col-lg-6">
+              <div className="p-3 bg-white rounded-3 border">
+                <div className="d-flex align-items-center justify-content-between mb-1.5">
+                  <span className="badge rounded-pill px-2.5 py-1 text-uppercase fw-bold" style={{ backgroundColor: 'rgba(22, 163, 74, 0.12)', color: '#16a34a', border: '1px solid rgba(22, 163, 74, 0.25)', fontSize: '0.68rem' }}>
+                    <i className="bi bi-check2-circle me-1"></i>ICP-Monitoring aktiv
+                  </span>
+                  <span className="small text-muted" style={{ fontSize: '0.72rem' }}>Druckwandlerhahn (3) auf Messung</span>
+                </div>
+                <p className="small text-secondary mb-2" style={{ fontSize: '0.78rem', lineHeight: '1.4' }}>
+                  Die Drainage ist nach SOP <strong>regulär geschlossen</strong>. Der reale Hirndruck wird kontinuierlich über den Transducer erfasst. Öffnen erfolgt nur bei Überschreiten des Ziel-ICP.
+                </p>
+                <div className="d-flex align-items-center justify-content-between p-2 rounded-2 bg-light border small">
+                  <span>Aktueller Hirndruck: <strong className="text-primary fs-6">12 mmHg</strong></span>
+                  <span className="text-success fw-bold"><i className="bi bi-shield-check me-1"></i>Im Zielbereich</span>
+                </div>
+              </div>
+            </div>
 
-                <div className="btn-group btn-group-sm" role="group">
-                  <button
-                    type="button"
-                    className={`btn btn-xs rounded-pill px-2 py-0.5 ${icpCurve === 'normal' ? 'btn-success' : 'btn-outline-secondary'}`}
-                    style={{ fontSize: '0.68rem' }}
-                    onClick={() => setIcpCurve('normal')}
-                  >
-                    Normal (P1&gt;P2&gt;P3)
-                  </button>
-                  <button
-                    type="button"
-                    className={`btn btn-xs rounded-pill px-2 py-0.5 ms-1 ${icpCurve === 'high_icp' ? 'btn-danger' : 'btn-outline-secondary'}`}
-                    style={{ fontSize: '0.68rem' }}
-                    onClick={() => setIcpCurve('high_icp')}
-                  >
-                    Erhöhter ICP (P2&gt;P1)
-                  </button>
+            {/* Live Waveform Box */}
+            <div className="col-lg-6">
+              <div className="rounded-3 p-3 text-white" style={{ backgroundColor: '#09131f', border: '1.5px solid #1e293b' }}>
+                <div className="d-flex justify-content-between align-items-center mb-1">
+                  <span className="badge rounded-pill px-2 py-0.5" style={{ backgroundColor: 'rgba(124, 58, 237, 0.25)', color: '#c084fc', fontSize: '0.68rem' }}>
+                    <i className="bi bi-activity me-1"></i>ICP Wellenform
+                  </span>
+                  <div className="btn-group btn-group-sm" role="group">
+                    <button
+                      type="button"
+                      className={`btn btn-xs rounded-pill px-2 py-0.5 ${icpCurve === 'normal' ? 'btn-success text-white' : 'btn-outline-secondary'}`}
+                      style={{ fontSize: '0.68rem' }}
+                      onClick={() => setIcpCurve('normal')}
+                    >
+                      P1 &gt; P2 &gt; P3 (Normal)
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn btn-xs rounded-pill px-2 py-0.5 ms-1 ${icpCurve === 'high_icp' ? 'btn-danger text-white' : 'btn-outline-secondary'}`}
+                      style={{ fontSize: '0.68rem' }}
+                      onClick={() => setIcpCurve('high_icp')}
+                    >
+                      P2 &gt; P1 (Erhöht)
+                    </button>
+                  </div>
+                </div>
+
+                <svg viewBox="0 0 320 80" className="w-100 my-1" style={{ maxHeight: '80px', display: 'block' }}>
+                  {icpCurve === 'normal' ? (
+                    <g>
+                      <path
+                        d="M 10 65 L 30 65 L 45 15 L 60 32 L 75 48 L 90 65 L 120 65 L 135 15 L 150 32 L 165 48 L 180 65 L 210 65 L 225 15 L 240 32 L 255 48 L 270 65 L 310 65"
+                        fill="none"
+                        stroke="#4ade80"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                      />
+                      <text x="40" y="12" fill="#4ade80" fontSize="9" fontWeight="bold">P1</text>
+                      <text x="60" y="28" fill="#86efac" fontSize="8">P2</text>
+                      <text x="75" y="44" fill="#86efac" fontSize="8">P3</text>
+                    </g>
+                  ) : (
+                    <g>
+                      <path
+                        d="M 10 65 L 30 65 L 45 35 L 60 12 L 75 38 L 90 65 L 120 65 L 135 35 L 150 12 L 165 38 L 180 65 L 210 65 L 225 35 L 240 12 L 255 38 L 270 65 L 310 65"
+                        fill="none"
+                        stroke="#ef4444"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                      />
+                      <text x="36" y="32" fill="#fca5a5" fontSize="8">P1</text>
+                      <text x="56" y="10" fill="#ef4444" fontSize="10" fontWeight="bold">P2 &gt; P1!</text>
+                      <text x="75" y="36" fill="#fca5a5" fontSize="8">P3</text>
+                    </g>
+                  )}
+                </svg>
+
+                <div className="pt-1 text-muted" style={{ fontSize: '0.72rem' }}>
+                  {icpCurve === 'normal' ? (
+                    <span className="text-success"><i className="bi bi-check-circle me-1"></i>Normale Hirn-Compliance (P1 Percussion &gt; P2 Tidal &gt; P3 Dicrotic)</span>
+                  ) : (
+                    <span className="text-danger fw-bold"><i className="bi bi-exclamation-triangle-fill me-1"></i>Compliance erschöpft! P2 Rundung weist auf akute Hirndruckkrise hin.</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* OPEN STATE: Critical Warning + Intermittent Drainage Counter */
+          <div className="p-3 bg-white rounded-3 border border-warning">
+            <div className="alert alert-warning py-2.5 px-3 rounded-3 mb-3 d-flex align-items-center gap-2">
+              <i className="bi bi-exclamation-octagon-fill text-danger fs-4 flex-shrink-0"></i>
+              <div>
+                <strong className="text-danger d-block">ACHTUNG: Bei geöffneter EVD ist KEINE ICP-Messung möglich!</strong>
+                <span className="small text-dark" style={{ fontSize: '0.76rem', lineHeight: '1.35' }}>
+                  Der Transducer misst bei offener Drainage nur den hydrostatischen Tropfkammergegendruck. Gefahr falsch niedriger Werte! Nach Entlastung sofort wieder schließen.
+                </span>
+              </div>
+            </div>
+
+            <div className="row g-3 align-items-center">
+              <div className="col-md-7">
+                <div className="d-flex justify-content-between align-items-center mb-1.5">
+                  <span className="small fw-bold text-dark">Abgelassene Liquormenge im Intervall:</span>
+                  <span className={`badge rounded-pill fs-6 px-3 py-1 ${drainVolume > 10 ? 'bg-danger text-white' : 'bg-primary text-white'}`}>
+                    {drainVolume} ml
+                  </span>
+                </div>
+
+                <input
+                  type="range"
+                  className="form-range my-1"
+                  min="0"
+                  max="15"
+                  step="1"
+                  value={drainVolume}
+                  onChange={(e) => setDrainVolume(Number(e.target.value))}
+                />
+
+                <div className="d-flex justify-content-between text-muted small" style={{ fontSize: '0.7rem' }}>
+                  <span>0 ml (Start)</span>
+                  <span className="text-success fw-bold">5–10 ml (SOP-Zielbereich)</span>
+                  <span className="text-danger fw-bold">&gt;10 ml (Überdrainagegefahr!)</span>
                 </div>
               </div>
 
-              {/* SVG ICP Waveform */}
-              <svg viewBox="0 0 320 95" className="w-100 my-1" style={{ maxHeight: '95px', display: 'block' }}>
-                {icpCurve === 'normal' ? (
-                  /* Normal compliance: P1 > P2 > P3 */
-                  <g>
-                    <path
-                      d="M 10 75 L 30 75 L 45 20 L 60 40 L 75 55 L 90 75 L 120 75 L 135 20 L 150 40 L 165 55 L 180 75 L 210 75 L 225 20 L 240 40 L 255 55 L 270 75 L 310 75"
-                      fill="none"
-                      stroke="#4ade80"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                    />
-                    <text x="40" y="16" fill="#4ade80" fontSize="9" fontWeight="bold">P1</text>
-                    <text x="60" y="36" fill="#86efac" fontSize="8">P2</text>
-                    <text x="75" y="52" fill="#86efac" fontSize="8">P3</text>
-                  </g>
-                ) : (
-                  /* High ICP / Poor compliance: P2 >= P1 (Rounding) */
-                  <g>
-                    <path
-                      d="M 10 75 L 30 75 L 45 40 L 60 18 L 75 45 L 90 75 L 120 75 L 135 40 L 150 18 L 165 45 L 180 75 L 210 75 L 225 40 L 240 18 L 255 45 L 270 75 L 310 75"
-                      fill="none"
-                      stroke="#ef4444"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                    />
-                    <text x="36" y="36" fill="#fca5a5" fontSize="8">P1</text>
-                    <text x="56" y="14" fill="#ef4444" fontSize="10" fontWeight="bold">P2 &gt; P1!</text>
-                    <text x="75" y="42" fill="#fca5a5" fontSize="8">P3</text>
-                  </g>
-                )}
-              </svg>
+              <div className="col-md-5 d-flex flex-column gap-1.5">
+                <button
+                  type="button"
+                  className="btn btn-danger btn-sm rounded-pill fw-bold py-2 shadow-xs d-flex align-items-center justify-content-center gap-1.5"
+                  onClick={() => setDrainageMode('closed')}
+                >
+                  <i className="bi bi-lock-fill"></i>
+                  <span>Entlastung beenden &amp; EVD SCHLIESSEN</span>
+                </button>
+                <span className="text-center text-muted" style={{ fontSize: '0.7rem' }}>
+                  SOP: Nach max. 5–10 ml bzw. Sistieren sofort wieder schließen!
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 4. Tab Navigation for Deep SOP Knowledge */}
+      <div className="d-flex flex-wrap gap-1.5 mb-3 p-1 rounded-3 bg-light border">
+        <button
+          type="button"
+          className={`btn btn-sm rounded-2 flex-grow-1 fw-bold ${activeTab === 'matrix' ? 'btn-white bg-white text-primary shadow-xs' : 'text-secondary'}`}
+          style={{ fontSize: '0.74rem' }}
+          onClick={() => setActiveTab('matrix')}
+        >
+          <i className="bi bi-table me-1"></i>1. Druckgrenzen-Matrix
+        </button>
+        <button
+          type="button"
+          className={`btn btn-sm rounded-2 flex-grow-1 fw-bold ${activeTab === 'zeroing' ? 'btn-white bg-white text-primary shadow-xs' : 'text-secondary'}`}
+          style={{ fontSize: '0.74rem' }}
+          onClick={() => setActiveTab('zeroing')}
+        >
+          <i className="bi bi-sliders me-1"></i>2. Nullen ohne Diskonnektion
+        </button>
+        <button
+          type="button"
+          className={`btn btn-sm rounded-2 flex-grow-1 fw-bold ${activeTab === 'valves' ? 'btn-white bg-white text-primary shadow-xs' : 'text-secondary'}`}
+          style={{ fontSize: '0.74rem' }}
+          onClick={() => setActiveTab('valves')}
+        >
+          <i className="bi bi-diagram-2 me-1"></i>3. Hahnschema (1–4)
+        </button>
+        <button
+          type="button"
+          className={`btn btn-sm rounded-2 flex-grow-1 fw-bold ${activeTab === 'competence' ? 'btn-white bg-white text-primary shadow-xs' : 'text-secondary'}`}
+          style={{ fontSize: '0.74rem' }}
+          onClick={() => setActiveTab('competence')}
+        >
+          <i className="bi bi-shield-shaded me-1"></i>4. Kompetenzgrenzen
+        </button>
+      </div>
+
+      {/* TAB CONTENT 1: Offizielle SOP-Druckgrenzen Matrix */}
+      {activeTab === 'matrix' && (
+        <div className="p-3 bg-light rounded-4 border mb-2">
+          <div className="d-flex justify-content-between align-items-center mb-2.5">
+            <h6 className="fw-bold mb-0 text-dark small">
+              <i className="bi bi-crosshair me-1 text-primary"></i>Offizielle Druckgrenzen &amp; Tropfkammer-Niveaus
+            </h6>
+            <span className="badge rounded-pill bg-white text-dark border small" style={{ fontSize: '0.68rem' }}>
+              Referenz = Tragus des Ohres
+            </span>
+          </div>
+
+          {/* Selectors */}
+          <div className="row g-2 mb-3">
+            <div className="col-sm-6">
+              <label className="form-label small fw-bold text-muted mb-1" style={{ fontSize: '0.72rem' }}>Patientenzustand:</label>
+              <div className="btn-group w-100" role="group">
+                <button
+                  type="button"
+                  className={`btn btn-sm ${patientStatus === 'sedated' ? 'btn-primary text-white fw-bold' : 'btn-outline-secondary bg-white'}`}
+                  style={{ fontSize: '0.74rem' }}
+                  onClick={() => setPatientStatus('sedated')}
+                >
+                  Intubiert &amp; Sediert
+                </button>
+                <button
+                  type="button"
+                  className={`btn btn-sm ${patientStatus === 'awake' ? 'btn-primary text-white fw-bold' : 'btn-outline-secondary bg-white'}`}
+                  style={{ fontSize: '0.74rem' }}
+                  onClick={() => setPatientStatus('awake')}
+                >
+                  Wach &amp; Kooperativ
+                </button>
+              </div>
             </div>
 
-            <div className="pt-2 border-top border-secondary border-opacity-25 small" style={{ fontSize: '0.74rem' }}>
-              {icpCurve === 'normal' ? (
-                <span className="text-success"><i className="bi bi-check-circle me-1"></i>Normale Hirn-Compliance: P1 (Percussion) &gt; P2 (Tidal) &gt; P3 (Dicrotic)</span>
-              ) : (
-                <span className="text-danger"><i className="bi bi-exclamation-triangle-fill me-1"></i>Erhöhter Hirndruck: P2 &gt; P1 (Tidal wave rounding = Hirn-Compliance erschöpft!)</span>
-              )}
+            <div className="col-sm-6">
+              <label className="form-label small fw-bold text-muted mb-1" style={{ fontSize: '0.72rem' }}>Läsionslokalisation:</label>
+              <div className="btn-group w-100" role="group">
+                <button
+                  type="button"
+                  className={`btn btn-sm ${lesionSite === 'supratentorial' ? 'btn-primary text-white fw-bold' : 'btn-outline-secondary bg-white'}`}
+                  style={{ fontSize: '0.74rem' }}
+                  onClick={() => setLesionSite('supratentorial')}
+                >
+                  Supratentoriell
+                </button>
+                <button
+                  type="button"
+                  className={`btn btn-sm ${lesionSite === 'infratentorial' ? 'btn-primary text-white fw-bold' : 'btn-outline-secondary bg-white'}`}
+                  style={{ fontSize: '0.74rem' }}
+                  onClick={() => setLesionSite('infratentorial')}
+                >
+                  Infratentoriell
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Result Card */}
+          <div className="card rounded-3 p-3 bg-white border border-primary shadow-2xs mb-2">
+            <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+              <span className="fw-bold text-primary small">{currentTarget.label}</span>
+              <div className="d-flex gap-2">
+                <span className="badge rounded-pill bg-danger text-white px-2.5 py-1">
+                  Ziel-ICP: &le; {currentTarget.icp} mmHg
+                </span>
+                <span className="badge rounded-pill bg-primary text-white px-2.5 py-1">
+                  Abtropfkammer: +{currentTarget.chamberCm} cm ü. Tragus
+                </span>
+              </div>
+            </div>
+            <p className="small text-secondary mb-0" style={{ fontSize: '0.76rem', lineHeight: '1.35' }}>
+              {currentTarget.note}
+            </p>
+          </div>
+
+          <div className="small text-muted" style={{ fontSize: '0.72rem', lineHeight: '1.3' }}>
+            <i className="bi bi-info-circle me-1 text-primary"></i>
+            <strong>SOP-Begründung für wache Patienten:</strong> Wache Patienten tolerieren physiologisch höhere Druckwerte bei Lagewechseln. Die höhere Einstellung schützt vor unkontrollierter Überdrainage bei selbstständiger Mobilisation oder Hustenstößen.
+          </div>
+        </div>
+      )}
+
+      {/* TAB CONTENT 2: Nullen ohne Diskonnektion (4 SOP-Schritte) */}
+      {activeTab === 'zeroing' && (
+        <div className="p-3 bg-light rounded-4 border mb-2">
+          <div className="d-flex justify-content-between align-items-center mb-2.5">
+            <h6 className="fw-bold mb-0 text-dark small">
+              <i className="bi bi-sliders me-1 text-primary"></i>Nullpunktabgleich ohne Diskonnektion (VentrEX®)
+            </h6>
+            <span className="badge rounded-pill bg-success bg-opacity-10 text-success border border-success small" style={{ fontSize: '0.68rem' }}>
+              100% Steril &bull; Kein Infektionsrisiko
+            </span>
+          </div>
+
+          {/* Step Indicator Tabs */}
+          <div className="d-flex gap-1.5 mb-3">
+            {[1, 2, 3, 4].map((step) => (
+              <button
+                key={step}
+                type="button"
+                className={`btn btn-sm rounded-pill flex-grow-1 fw-bold ${zeroStep === step ? 'btn-primary text-white shadow-xs' : 'btn-outline-secondary bg-white text-muted'}`}
+                style={{ fontSize: '0.72rem', padding: '4px 8px' }}
+                onClick={() => setZeroStep(step)}
+              >
+                Schritt {step}
+              </button>
+            ))}
+          </div>
+
+          {/* Active Step Content */}
+          <div className="card rounded-3 p-3 bg-white border shadow-2xs mb-2">
+            {zeroStep === 1 && (
+              <div>
+                <span className="badge rounded-pill bg-danger text-white mb-1.5 small">Schritt 1 von 4</span>
+                <h6 className="fw-black text-dark mb-1">Gelben Monitoring-Hahn (2) zum Patienten schließen</h6>
+                <p className="small text-secondary mb-2" style={{ fontSize: '0.78rem', lineHeight: '1.4' }}>
+                  Der gelbe Dreiwegehahn (2) direkt proximal der Druckmesseinheit [E] wird in Richtung des Patienten gedreht (Pfeil / geschlossener Schenkel zum Kopf). Dadurch ist der Patient während der Kalibrierung sicher vom System entkoppelt.
+                </p>
+                <div className="p-2 rounded-2 bg-light border small text-muted">
+                  <i className="bi bi-shield-check text-success me-1"></i>Zweck: Druckwandler wird isoliert, kein Druckstoß zum Patienten möglich.
+                </div>
+              </div>
+            )}
+
+            {zeroStep === 2 && (
+              <div>
+                <span className="badge rounded-pill bg-primary text-white mb-1.5 small">Schritt 2 von 4</span>
+                <h6 className="fw-black text-dark mb-1">Druckwandlerhahn (3) zur Abtropfkammer öffnen</h6>
+                <p className="small text-secondary mb-2" style={{ fontSize: '0.78rem', lineHeight: '1.4' }}>
+                  Der Dreiwegehahn (3) am Druckaufnehmer wird so gestellt, dass der Transducer [E] in offener Flüssigkeitsverbindung mit dem Zuleitungsschlauch der Abtropfkammer [B] steht.
+                </p>
+                <div className="p-2 rounded-2 bg-light border small text-muted">
+                  <i className="bi bi-info-circle text-primary me-1"></i>Zweck: Die Flüssigkeitssäule der Tropfkammer wird als hydrostatischer Null-Referenzpfad genutzt.
+                </div>
+              </div>
+            )}
+
+            {zeroStep === 3 && (
+              <div>
+                <span className="badge rounded-pill bg-success text-white mb-1.5 small">Schritt 3 von 4</span>
+                <h6 className="fw-black text-dark mb-1">Abtropfbehälter [B] auf 0 cm hängen &amp; Monitor nullen</h6>
+                <p className="small text-secondary mb-2" style={{ fontSize: '0.78rem', lineHeight: '1.4' }}>
+                  Abtropfbehälter [B] an der Aufhängevorrichtung [A] vorübergehend exakt auf die <strong>0-cm-Linie der Messskala</strong> absenken (befindet sich auf Höhe des Tragus). Am Intensivmonitor die Taste <strong>„Zero / Nullabgleich“</strong> drücken, bis 0 mmHg bestätigt wird.
+                </p>
+                <div className="p-2 rounded-2 bg-success bg-opacity-10 border border-success small text-success">
+                  <i className="bi bi-check-circle-fill me-1"></i>Monitor ist nun exakt kalibriert – vollkommen steril ohne jede Diskonnektion!
+                </div>
+              </div>
+            )}
+
+            {zeroStep === 4 && (
+              <div>
+                <span className="badge rounded-pill bg-purple text-white mb-1.5 small" style={{ backgroundColor: '#7c3aed' }}>Schritt 4 von 4</span>
+                <h6 className="fw-black text-dark mb-1">Abtropfkammer re-justieren &amp; Gelben Hahn (2) öffnen</h6>
+                <p className="small text-secondary mb-2" style={{ fontSize: '0.78rem', lineHeight: '1.4' }}>
+                  Abtropfbehälter [B] wieder auf die ärztlich verordnete Höhe (Standard: <strong>+10 cm</strong> über Tragus) arretieren. Druckwandlerhahn (3) auf geschlossene Drainage / ICP-Messung stellen. Gelben Monitoring-Hahn (2) wieder zum Patienten öffnen.
+                </p>
+                <div className="p-2 rounded-2 bg-light border small text-muted">
+                  <i className="bi bi-activity text-primary me-1"></i>ICP-Monitoring läuft wieder regulär mit pulssynchroner Wellenform.
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="d-flex justify-content-between align-items-center">
+            <button
+              type="button"
+              className="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1"
+              disabled={zeroStep === 1}
+              onClick={() => setZeroStep(Math.max(1, zeroStep - 1))}
+              style={{ fontSize: '0.74rem' }}
+            >
+              <i className="bi bi-arrow-left me-1"></i>Zurück
+            </button>
+            <span className="small text-muted" style={{ fontSize: '0.72rem' }}>Schritt {zeroStep} von 4</span>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm rounded-pill px-3 py-1"
+              disabled={zeroStep === 4}
+              onClick={() => setZeroStep(Math.min(4, zeroStep + 1))}
+              style={{ fontSize: '0.74rem' }}
+            >
+              Weiter<i className="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* TAB CONTENT 3: Hahnschema (1–4) & Systemkomponenten */}
+      {activeTab === 'valves' && (
+        <div className="p-3 bg-light rounded-4 border mb-2">
+          <h6 className="fw-bold mb-2.5 text-dark small">
+            <i className="bi bi-diagram-2 me-1 text-primary"></i>VentrEX® Hahnschema &amp; Systemkomponenten
+          </h6>
+
+          <div className="row g-2 mb-2">
+            <div className="col-sm-6">
+              <div className="p-2.5 rounded-3 bg-white border h-100">
+                <span className="badge rounded-pill bg-secondary text-white mb-1" style={{ fontSize: '0.66rem' }}>Hahn (1)</span>
+                <strong className="d-block small text-dark">Systemport (Spülanschluss)</strong>
+                <p className="text-muted mb-0" style={{ fontSize: '0.72rem', lineHeight: '1.3' }}>
+                  Liegt vor der Druckmesseinheit. Nur zum Spülen <em>vom Kopf weg</em> zur Abtropfkammer (Einlass &ge; 30 s desinfizieren).
+                </p>
+              </div>
+            </div>
+
+            <div className="col-sm-6">
+              <div className="p-2.5 rounded-3 bg-white border h-100" style={{ borderColor: '#7c3aed' }}>
+                <span className="badge rounded-pill text-white mb-1" style={{ backgroundColor: '#7c3aed', fontSize: '0.66rem' }}>Hahn (2) – GELB</span>
+                <strong className="d-block small text-dark">Monitoring-3-Wege-Hahn</strong>
+                <p className="text-muted mb-0" style={{ fontSize: '0.72rem', lineHeight: '1.3' }}>
+                  Direkt vor Transducer [E]. Bildet den <strong>Nullpunkt</strong> auf Höhe <strong>Tragus = Foramen Monroi</strong>. Bei jeder Lagerung re-nivellieren!
+                </p>
+              </div>
+            </div>
+
+            <div className="col-sm-6">
+              <div className="p-2.5 rounded-3 bg-white border h-100">
+                <span className="badge rounded-pill bg-primary text-white mb-1" style={{ fontSize: '0.66rem' }}>Hahn (3)</span>
+                <strong className="d-block small text-dark">Druckwandlerhahn</strong>
+                <p className="text-muted mb-0" style={{ fontSize: '0.72rem', lineHeight: '1.3' }}>
+                  Schaltet zwischen <em>ICP-Messung</em> (Drainage geschlossen) und <em>intermittierender Entlastung</em> (Drainage offen) um.
+                </p>
+              </div>
+            </div>
+
+            <div className="col-sm-6">
+              <div className="p-2.5 rounded-3 bg-white border h-100">
+                <span className="badge rounded-pill bg-success text-white mb-1" style={{ fontSize: '0.66rem' }}>Hahn (4) &amp; Clip [C]</span>
+                <strong className="d-block small text-dark">Kammerentleerung &amp; Beutel</strong>
+                <p className="text-muted mb-0" style={{ fontSize: '0.72rem', lineHeight: '1.3' }}>
+                  Hahn (4) leert Tropfkammer [B] stündlich in Ablaufbeutel [D] (nur bei Hahn 3 zu!). Klemme [C] ist Einweg-Clip (nur bei Beutelwechsel!).
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-2 rounded-2 bg-white border small text-muted" style={{ fontSize: '0.72rem' }}>
+            <strong>Komponenten:</strong> [A] Aufhängevorrichtung mit Skala &bull; [B] Abtropfbehälter mit Filter &bull; [C] Klemme &bull; [D] Ablaufbeutel &bull; [E] Integrierter VentrEX® Transducer
+          </div>
+        </div>
+      )}
+
+      {/* TAB CONTENT 4: Kompetenzgrenzen (Pflege vs. Arzt) */}
+      {activeTab === 'competence' && (
+        <div className="p-3 bg-light rounded-4 border mb-2">
+          <h6 className="fw-bold mb-2.5 text-dark small">
+            <i className="bi bi-shield-shaded me-1 text-primary"></i>SOP-Kompetenzgrenzen &amp; Patientensicherheit
+          </h6>
+
+          <div className="row g-2">
+            <div className="col-md-6">
+              <div className="p-3 rounded-3 bg-white border border-success h-100">
+                <div className="d-flex align-items-center gap-1.5 mb-2">
+                  <i className="bi bi-check-circle-fill text-success fs-5"></i>
+                  <strong className="text-success small">Aufgaben der Intensivpflege</strong>
+                </div>
+                <ul className="mb-0 ps-3 small text-secondary" style={{ fontSize: '0.74rem', lineHeight: '1.4' }}>
+                  <li>Exakte Tragus-Nivellierung des gelben Hahns (2) am Bettstativ</li>
+                  <li>Re-Nivellierung nach JEDEM Positionswechsel des Patienten</li>
+                  <li>Nullen ohne Diskonnektion über die 0-cm-Skala</li>
+                  <li>Zwingendes Verriegeln vor Betten-/Kopfteilverstellung</li>
+                  <li>Intermittierendes Ablassen bei ICP &gt; Grenze (max. 5–10 ml)</li>
+                  <li>Stündliche PDMS-Dokumentation &amp; Kammerentleerung</li>
+                  <li>Spülen ausschließlich <em>vom Kopf weg</em> zur Tropfkammer via Hahn (1)</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="col-md-6">
+              <div className="p-3 rounded-3 bg-white border border-danger h-100">
+                <div className="d-flex align-items-center gap-1.5 mb-2">
+                  <i className="bi bi-slash-circle-fill text-danger fs-5"></i>
+                  <strong className="text-danger small">STRENGSTENS NUR ARZT</strong>
+                </div>
+                <ul className="mb-0 ps-3 small text-secondary" style={{ fontSize: '0.74rem', lineHeight: '1.4' }}>
+                  <li className="text-danger fw-bold">Spülen in Richtung Ventrikel (zum Kopf hin) ist PFLEGENDEN STRIKT UNTERSAGT!</li>
+                  <li className="text-danger fw-bold">Aspirieren am EVD-System / Katheter ist PFLEGENDEN STRIKT UNTERSAGT!</li>
+                  <li>Anordnung kontinuierlicher Drainage (nur im begründeten Ausnahmefall)</li>
+                  <li>Festlegung und Änderung individueller ICP-Zielgrenzen</li>
+                  <li>Sterile Liquorpunktion zur mikrobiologischen Diagnostik</li>
+                  <li>Entscheidung über Katheterwechsel bei Okklusion</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Reference Laser Point info */}
+      {/* 5. Footer Quick Reminder Pill */}
       <div className="p-2.5 bg-light rounded-3 border d-flex align-items-center justify-content-between flex-wrap gap-2 small">
         <div className="d-flex align-items-center gap-2">
           <i className="bi bi-crosshair2 text-primary fs-5"></i>
-          <span><strong>Referenzpunkt:</strong> Tragus der Ohrmuschel = Foramen Monroi (Laserwaage)</span>
+          <span><strong>Landmarke:</strong> Tragus des Ohres = Foramen Monroi (Laserwaage am gelben Hahn 2)</span>
         </div>
         <div className="d-flex align-items-center gap-2">
-          <i className="bi bi-activity text-success fs-5"></i>
-          <span><strong>Pulsation:</strong> Liquorspiegel muss atem- &amp; pulssynchron oszillieren</span>
+          <i className="bi bi-lock-fill text-danger fs-5"></i>
+          <span><strong>Regel:</strong> Drainage regulär GESCHLOSSEN &bull; Intermittierend max. 5–10 ml</span>
         </div>
       </div>
     </div>
   );
 }
+
 
 
 // -------------------------------------------------------------

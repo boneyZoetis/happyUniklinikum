@@ -330,7 +330,7 @@ root.QRParser = (function () {
     evd: {
       id: 'evd',
       topic: 'Externe Ventrikeldrainage (EVD)',
-      title: 'Externe Ventrikeldrainage (EVD) – Aufbau, Foramen-Monroi-Nivellierung & Sicherheit',
+      title: 'SOP Externe Ventrikeldrainage (EVD) – VentrEX®-System, ICP-Monitoring & Druckgrenzen',
       shortTitle: 'EVD (Ventrikeldrainage)',
       navTitle: 'EVD Drainage',
       category: 'Neurochirurgische Intensivpflege',
@@ -341,69 +341,102 @@ root.QRParser = (function () {
       icon: 'bi-diagram-3-fill',
       image: 'assets/card-evd.jpg',
       graphicImage: 'assets/card-evd.jpg',
-      leadText: 'Gezielte therapeutische Entlastung des Liquordrucks und kontinuierliches intrakranielles Druckmonitoring (ICP): Lasergestützte Nivellierung auf das Foramen Monroi (Tragus), hydrostatische Tropfkammerjustierung und strikte Aseptik.',
-      instructions: 'Richten Sie den Nullpunkt exakt auf den Tragus des Ohres aus. Klemmen Sie die Drainage VOR JEDER Kopfteilverstellung, Umlagerung oder Transport zwingend ab, um eine tödliche Überdrainage zu verhindern!',
+      leadText: 'Standard Operating Procedure (SOP) für das NeuroMedex® VentrEX®-System: Kontinuierliches intrakranielles Druckmonitoring (ICP) bei regulär GESCHLOSSENER Drainage. Exakte Tragus-Nivellierung (Foramen Monroi), Nullen ohne Diskonnektion, differenzierte Druckgrenzen (sediert vs. wach) und striktes Verbot des pflegerischen Spülens zum Kopf hin.',
+      instructions: 'WICHTIG: Die EVD ist regulär GESCHLOSSEN zu halten! Bei geöffneter Drainage ist KEINE Hirndruckmessung möglich (Gefahr falsch niedriger Werte). Öffnen nur bei Überschreiten verordneter Druckgrenzen für max. 5–10 ml bzw. bis zum Sistieren. Bei JEDEM Positionswechsel des Patienten gelben Monitoring-Hahn (2) zwingend neu auf den Tragus ausrichten!',
       whyImportant: [
-        'Hirndrucksenkung & Einklemmungsschutz (Kontrollierte Drainage von Liquor cerebrospinalis bei erhöhtem ICP)',
-        'Über- und Unterdrainage verhindern (Präzise Höheneinstellung der Tropfkammer in cmH2O / mmHg)',
-        'ZNS-Infektionsschutz (Streng geschlossenes, steriles System zur Prävention von Ventrikulitis und Meningitis)',
-        'Früherkennung von Nachblutungen (Kontinuierliche stündliche Dokumentation von Liquormenge, Farbe und Klarheit)'
+        'Exakte ICP-Messung: Bei offener Drainage ist keine Hirndruckmessung möglich – Gefahr von Fehlmessungen und unbemerktem Hirnödem.',
+        'Überdrainageschutz: Unkontrollierter Liquorabfluss führt zu Ventrikelkollaps und tödlichem Brückenvenenabriss (akutes Subduralhämatom).',
+        'Nullen ohne Kontamination: Das VentrEX®-System erlaubt Nullen über die 0-cm-Skala ohne Diskonnektion oder Sterilitätsbruch.',
+        'Strikte Patientensicherheit: Spülen in Richtung Ventrikel sowie Aspiration an der EVD sind ausnahmslos Ärzten vorbehalten!'
       ],
       keyPoints: [
-        'Referenzpunkt Foramen Monroi: Das Foramen interventriculare entspricht am liegenden Patienten dem Tragus des Ohres (äußerer Gehörgang). Hier liegt die Nullmarke der Messskala.',
-        'Nivellierung mittels Laser/Wasserwaage: Skala des EVD-Systems am Stativ exakt horizontal auf Höhe des Tragus ausrichten; bei jeder Lageveränderung des Kopfes nachjustieren.',
-        'Tropfkammer-Niveau: Drip-Chamber auf den ärztlich verordneten Druckwert (meist +10 bis +15 cmH2O oberhalb des Nullpunkts) arretieren.',
-        'LEBENSWICHTIGE SICHERHEITSREGEL: Vor JEDER Kopfteilverstellung, Umlagerung, Mobilisation, Absaugen oder Transport MUSS die EVD abgeklemmt werden (Schutz vor Unterdruck und Brückenvenenabriss!).',
-        'Pulsationskontrolle: Der Liquorspiegel in der Zuleitung muss atem- und pulsabhängig leicht schwanken („Pulsieren“); Fehlen weist auf Abknickung, Diskonnektion oder Lumenverschluss hin.',
-        'Stündliche Liquordokumentation: Menge (ml/h) und Aspekt (normal klar, bernsteinfarben, blutig, trüb) protokollieren; bei plötzlicher Verfärbung oder Flussstopp sofort ärztlichen Dienst informieren.'
+        'Drainage regulär GESCHLOSSEN: Drainagehahn (3) steht auf Messung. Öffnen nur gezielt bei Überschreiten des Ziel-ICP zur Entlastung von max. 5–10 ml.',
+        'Referenzpunkt Tragus = Foramen Monroi: Der gelbe Monitoring-3-Wege-Hahn (2) direkt proximal der Messeinheit [E] wird exakt horizontal auf Höhe des Tragus (äußerer Gehörgang) nivelliert.',
+        'Re-Nivellierungspflicht: Bei JEDER Kopfteilverstellung, Umlagerung, Mobilisation oder Bettentransport zwingend vorab schließen und danach am Tragus neu ausrichten.',
+        'Druckgrenzen sediert/intubiert: Supratentoriell 15 mmHg (Tropfkammer +10 cm über Tragus) | Infratentoriell 20 mmHg (+15 cm über Tragus).',
+        'Druckgrenzen wach/kooperativ: Supratentoriell 20 mmHg (+15 cm über Tragus) | Infratentoriell 25 mmHg (+20 cm über Tragus) – Schutz vor Überdrainage bei Eigenbewegung.',
+        'Nullen ohne Diskonnektion: 1. Gelben Hahn (2) zum Kopf sperren, 2. Hahn (3) zur Tropfkammer öffnen, 3. Kammer [B] auf 0 cm hängen und Monitor nullen, 4. Kammer wieder auf Anordnungshöhe (+10 cm) hängen.',
+        'Obstruktion & Kompetenzgrenzen: Pflegerisches Spülen ausschließlich "vom Kopf weg" zur Tropfkammer via Hahn (1). Spülen "zum Kopf hin" & Aspirieren sind STRENGSTENS NUR ARZT erlaubt!',
+        'Stündliche Bilanzierung: Tropfkammerinhalt stündlich im PDMS dokumentieren und bei geschlossenem Druckwandlerhahn (3) über Hahn (4) in den Beutel entleeren.'
       ],
       clinicalFocus: [
         {
-          phase: '1. Vorbereitung und fachgerechter Aufbau des EVD-Systems',
-          icon: 'bi-shield-shaded',
-          detail: 'Fixierung des sterilen EVD-Gestells am Stativ, Montage des graduierten Tropfkammer-Zylinders (cmH2O- und mmHg-Skala) und Anschluss des sterilen Drainagebeutels mit Bakterienfilter.'
+          phase: '1. Systemaufbau & Tragus-Nivellierung (VentrEX®)',
+          icon: 'bi-crosshair2',
+          detail: 'Montage der Aufhängevorrichtung [A] am Bettstativ. Gelben Monitoring-3-Wege-Hahn (2) direkt proximal der Druckmesseinheit [E] mit Laserpointer exakt auf Höhe des Tragus (Foramen Monroi) ausrichten. Tropfkammer [B] standardmäßig auf +10 cm Skalenmarke einhängen.'
         },
         {
-          phase: '2. Lasergestützte Nivellierung auf das Foramen Monroi',
-          icon: 'bi-crosshair',
-          detail: 'Ausrichtung des integrierten Laserpointers auf den Tragus des Patientenohrs (äußerer Gehörgang). Horizontale Feinjustierung der Nullpunktmarkierung der Messskala.'
-        },
-        {
-          phase: '3. Einstellung der Entlastungshöhe & ICP-Monitoring',
+          phase: '2. Nullen des ICP-Druckwandlers ohne Diskonnektion',
           icon: 'bi-sliders2',
-          detail: 'Justieren der Tropfkammer auf das ärztlich verordnete Druckniveau (z. B. +12 cmH2O). Freigabe des Liquordurchflusses über die Dreiwegehähne.'
+          detail: 'Steriles 4-Schritte-Verfahren: 1. Gelben Hahn (2) zum Patienten hin absperren. 2. Druckwandlerhahn (3) zur Abtropfkammer öffnen. 3. Abtropfbehälter [B] auf 0 cm der Messskala hängen und Monitor-Nullabgleich drücken. 4. Behälter wieder auf Sollhöhe (+10 cm) arretieren und Hahn (2) zum Patienten öffnen.'
         },
         {
-          phase: '4. Sicherheits- & Umlagerungsprotokoll',
+          phase: '3. ICP-Monitoring & Handhabung der Druckgrenzen',
+          icon: 'bi-activity',
+          detail: 'EVD ist regulär GESCHLOSSEN (Hahn 3 auf Messung). Bei Erreichen der Druckgrenze (Sediert: 15 mmHg supratentoriell / 20 mmHg infratentoriell; Wach: 20 mmHg supratentoriell / 25 mmHg infratentoriell) Drainage öffnen. Wichtig: Bei offener EVD keine ICP-Messung! Nach 5–10 ml bzw. Sistieren sofort wieder schließen.'
+        },
+        {
+          phase: '4. Sicherheitsregeln bei Mobilisation & Umlagerung',
           icon: 'bi-exclamation-triangle-fill',
-          detail: 'Strikte Einhaltung der Klemmpflicht vor jeder Betten- oder Lageänderung. Sicherung des Katheters am Kopf gegen versehentlichen Zug, sterile Verbandskontrolle.'
+          detail: 'Vor JEDER Bettenverstellung, Kopfteiländerung, Lagerung, endotrachealem Absaugen oder Transport EVD zwingend verriegeln! Nach Abschluss der Lageveränderung Nullpunkt am Tragus mittels Laserwaage kontrollieren und re-justieren.'
         },
         {
-          phase: '5. Funktions- & Liquorkontrolle',
+          phase: '5. Stündliche Dokumentation & Kammerentleerung',
           icon: 'bi-clipboard2-data-fill',
-          detail: 'Überprüfung des atem- und pulssynchronen Mitschwingens der Liquorsäule. Stündliche Mengen- und Farbbewertung im PDMS/Kurve zur Früherkennung von Nachblutungen.'
+          detail: 'Stündliche Ablesung von Liquormenge (ml) und Farbe/Transparenz im PDMS. Entleerung des Abtropfbehälters [B] in den Ablaufbeutel: Zuvor Druckwandlerhahn (3) auf Messung schließen. Hahn (4) öffnen, Liquor ablaufen lassen, fest verschließen. Klemme [C] nur bei Beutelwechsel nutzen (irreversibel!).'
+        },
+        {
+          phase: '6. Obstruktionsmanagement & Klare Kompetenzgrenzen',
+          icon: 'bi-shield-shaded',
+          detail: 'Bei Verstopfung: Systemport-Hahn (1) zum Patienten absperren, Port mit Desinfektionsmittel einsprühen (Einwirkzeit >= 30 s), steril mit 5-10 ml NaCl 0.9% in die Tropfkammer spülen (Menge verwerfen!). ACHTUNG: Spülen zum Kopf hin und Aspiration an der EVD sind STRENG NUR DEM ARZT vorbehalten!'
         }
       ],
       checklist: [
-        'EVD-Halterung fest am Bettstativ montiert (keine Wackelgefahr)',
-        'Nullpunkt der Skala mit Laserpointer/Wasserwaage exakt auf Tragus ausgerichtet',
-        'Tropfkammer-Höhe exakt nach ärztlicher Verordnung (z. B. +12 cmH₂O) fixiert',
-        'Atem- und pulssynchrones Pulsieren des Liquorspiegels im Schlauch verifiziert',
-        'Abklemm-Regel: EVD vor JEDER Lageveränderung oder Patiententransport geschlossen',
-        'Kopfverband an Eintrittsstelle trocken, steril und fest fixiert',
-        'Stündliche Dokumentation: Liquormenge (ml) und Farbe (klar/blutig/trüb)',
-        'Drainagebeutel rechtzeitig unter aseptischen Kautelen entleert/gewechselt'
+        'VentrEX®-Halterung fest und senkrecht am Bettstativ arretiert',
+        'Gelber Monitoring-Hahn (2) mit Laserpointer exakt auf Höhe des Tragus (äußerer Gehörgang) ausgerichtet',
+        'Nullpunktabgleich ohne Diskonnektion über 0-cm-Skala erfolgreich durchgeführt',
+        'Druckgrenzen nach Verordnung eingestellt (Sediert: 15/20 mmHg | Wach: 20/25 mmHg)',
+        'Drainage regulär GESCHLOSSEN (Hahn 3 auf Messung – ICP-Monitoring aktiv)',
+        'Klemmpflicht: EVD vor jeder Bettenbewegung, Umlagerung und Absaugen sicher gesperrt',
+        'Stündliche Dokumentation: Liquormenge (ml/h) und Aspekt (klar/bernsteinfarben/blutig/trüb) erfasst',
+        'Kompetenzgrenze gewahrt: Niemals eigenmächtig aspirieren oder in Richtung Ventrikel spülen (NUR ARZT)'
       ],
       parameters: [
-        { label: 'Referenz-Nullpunkt', target: 'Tragus des Ohres', note: 'Entspricht anatomisch dem Foramen Monroi' },
-        { label: 'Tropfkammer-Niveau', target: '+10 bis +15 cmH₂O (ärztl.)', note: 'Hydrostatischer Gegendruck gegen Überdrainage' },
-        { label: 'ICP-Normbereich', target: '< 15 mmHg (Erwachsene)', note: 'Ab 20–22 mmHg behandlungsbedürftiger Hirndruck' },
-        { label: 'ICP-Wellenform', target: 'P1 > P2 > P3', note: 'P2 > P1 weist auf erschöpfte intrakranielle Compliance hin' }
+        { label: 'Referenz-Nullpunkt', target: 'Tragus des Ohres', note: 'Gelber Hahn (2) auf Höhe Foramen Monroi; Re-Justierung bei JEDER Bewegung' },
+        { label: 'Drainage-Status', target: 'Regulär GESCHLOSSEN', note: 'ICP-Monitoring aktiv; bei offener EVD KEINE Hirndruckmessung möglich' },
+        { label: 'Ablassmenge bei Öffnung', target: 'Max. 5–10 ml / Sistieren', note: 'Nach Erreichen der Zielmenge Drainage sofort wieder verschließen' },
+        { label: 'Sediert: Supratentoriell', target: '15 mmHg (10 cm ü. Tragus)', note: 'Intubierte & sedierte Patienten; Ziel-ICP <= 15 mmHg' },
+        { label: 'Sediert: Infratentoriell', target: '20 mmHg (15 cm ü. Tragus)', note: 'Intubierte & sedierte Patienten; Ziel-ICP <= 20 mmHg' },
+        { label: 'Wach: Supratentoriell', target: '20 mmHg (15 cm ü. Tragus)', note: 'Kooperative/wache Patienten; Schutz vor Überdrainage bei Mobilisation' },
+        { label: 'Wach: Infratentoriell', target: '25 mmHg (20 cm ü. Tragus)', note: 'Kooperative/wache Patienten; Ziel-ICP <= 25 mmHg' },
+        { label: 'Abtropfbehälter-Grundhöhe', target: '+10 cm über Null-Linie', note: 'Standard-Rastposition an der Messskala [A]' }
       ],
       troubleshooting: [
-        { problem: 'Plötzlicher Abflussstopp / kein Liquorfluss', cause: 'Drainage abgeklemmt, Schlauch abgeknickt, Koagel/Gewebepfropf im Katheter oder Hirndruck unter Entlastungsniveau.', action: 'Knicke ausschließen, Klemmen prüfen, Pulsieren kontrollieren. Niemals eigenmächtig aspirieren/spülen! Sofort Neurochirurgen informieren.' },
-        { problem: 'Liquor wird zunehmend blutig oder trüb', cause: 'Rezidivblutung, sekundäre Hämorrhagie oder aufsteigende Ventrikulitis/Meningitis.', action: 'Sofort ärztlichen Dienst alarmieren, Liquorprobe zur mikrobiologischen Diagnostik asservieren, CCT veranlassen.' },
-        { problem: 'Ungewollt hohe Drainagemenge („Überdrainage“)', cause: 'Patient hat sich aufgesetzt ohne vorheriges Schließen der EVD, Tropfkammer zu tief.', action: 'EVD sofort schließen! Neu auf Tragus nivellieren, neurologischen Status (Pupillen/GCS) erheben, Arzt hinzuziehen (Gefahr des Subduralhämatoms).' }
+        {
+          problem: 'Kein Liquorabfluss trotz hohem ICP',
+          cause: 'Knickstelle im Ableitungsschlauch, Zuleitungsfilter/Rückschlagventil feucht geworden oder Koagel/Fibrin im Katheter.',
+          action: '[PFLEGE] Gesamtes Schlauchsystem dekonnektionsfrei auf Knicke und Durchgängigkeit prüfen. Verband kontrollieren. Systemport (1) zum Kopf schließen, Port desinfizieren (>= 30 s) und steril mit NaCl 0.9% ZUR TROPFKAMMER ("vom Kopf weg") spülen. [NUR ARZT] Spülen in Richtung Ventrikel oder Aspiration darf ausschließlich durch den Arzt erfolgen!'
+        },
+        {
+          problem: 'Keine ICP-Pulsation / flache Nulllinie am Monitor',
+          cause: 'Hahn (3) fälschlicherweise auf Drainage statt Messung gestellt, Messkabel lose oder Luftblase im Transducer.',
+          action: '[PFLEGE] Hahnstellung prüfen: Hahn (3) muss zur Abtropfkammer geschlossen sein, damit der Druckwandler [E] den Patientendruck misst. Kabelverbindungen zum Monitor und Nullpunkt (Tragus) überprüfen. Bei Diskonnektion oder Defekt sofort ärztlichen Dienst verständigen.'
+        },
+        {
+          problem: 'Anhaltender ICP-Anstieg über die Zielgrenze',
+          cause: 'Hirnödem, Liquorzirkulationsstörung, Nachblutung oder Verlegung des Ventrikelkatheters.',
+          action: '[PFLEGE] Neurologischen Status sofort prüfen (Pupillenreaktion, GCS/RASS). Ausschließen von Husten, Pressen oder Kopfknickung. Drainage nach Verordnung gezielt öffnen, bis max. 5–10 ml abgelaufen sind oder Fluss sistiert – dann sofort wieder schließen! Bleibt ICP > Grenze: Unverzüglich Dienstarzt alarmieren (Notfall-CCT erwägen).'
+        },
+        {
+          problem: 'Liquor zunehmend blutig, trüb oder sedimentiert',
+          cause: 'Akute Nachblutung, sekundäre Hämorrhagie oder aufsteigende Katheterinfektion (Ventrikulitis/Meningitis).',
+          action: '[PFLEGE] Ärztlichen Dienst sofort hinzuziehen. Liquorfarbe und -aspekt präzise im PDMS dokumentieren. [NUR ARZT / NACH ANORDNUNG] Sterile Liquorprobenentnahme unter aseptischen Bedingungen zur Mikrobiologie (Zellzahl, Eiweiß, Kultur). Niemals Beutelinhalt für Proben nutzen!'
+        },
+        {
+          problem: 'Überdrainage / unkontrollierter massiver Liquorfluss',
+          cause: 'Drainage unbeabsichtigt offen gelassen, Mobilisation ohne Abklemmen oder Tropfkammer zu tief fixiert.',
+          action: '[PFLEGE] EVD SOFORT VOLLSTÄNDIG SCHLIESSEN! Patient flach lagern. Vitalzeichen, Pupillen und Vigilanz prüfen. Sofort Arzt kontaktieren (Gefahr des Ventrikelkollapses und Subduralhämatoms). Nullpunkt und Tropfkammerhöhe neu überprüfen.'
+        }
       ],
       interactiveType: 'evd-leveling'
     }
@@ -487,7 +520,7 @@ root.QRParser = (function () {
       return ICU_STANDARDS.arterie;
     }
     // 5. Externe Ventrikeldrainage (EVD)
-    if (lower.includes('evd') || lower.includes('ventrikel') || lower.includes('ventrikeldrainage') || lower.includes('hirndruck') || lower.includes('icp') || lower.includes('foramen monroi') || lower.includes('tragus') || lower.includes('monroi')) {
+    if (lower.includes('evd') || lower.includes('ventrex') || lower.includes('ventrikel') || lower.includes('ventrikeldrainage') || lower.includes('hirndruck') || lower.includes('icp') || lower.includes('foramen monroi') || lower.includes('tragus') || lower.includes('monroi')) {
       return ICU_STANDARDS.evd;
     }
 
