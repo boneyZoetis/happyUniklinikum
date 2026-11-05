@@ -1826,7 +1826,7 @@ function VentilatorCircuitComponent({ standard }) {
     }, 900);
 
     setTimeout(() => {
-      setCheckResults({ step: 3, text: 'O2-Zelle (21% / 100%) & Flowsensor-Abgleich...' });
+      setCheckResults({ step: 3, text: 'Bei ca. 94 %: Rote Verschlusskappe entfernen & wieder aufsetzen (Flow- & Compliance-Test)...' });
     }, 1800);
 
     setTimeout(() => {
@@ -3954,14 +3954,31 @@ function StandardA4PrintSheet({ standard }) {
               <span>Wichtigste Handlungsschritte (Minimal-Info):</span>
             </div>
             <div className="d-flex flex-column gap-0.5">
-              {standard.keyPoints && standard.keyPoints.slice(0, 6).map((pt, i) => (
-                <div key={i} className="p-0.5 px-1.5 rounded bg-white border small d-flex align-items-start gap-1" style={{ fontSize: '0.67rem' }}>
-                  <span className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0 mt-0.5" style={{ width: '15px', height: '15px', backgroundColor: standard.accentColor, fontSize: '0.58rem' }}>
-                    {i + 1}
-                  </span>
-                  <span style={{ lineHeight: '1.2' }}>{pt}</span>
-                </div>
-              ))}
+              {standard.keyPoints && standard.keyPoints.slice(0, 6).map((pt, i) => {
+                const hasNl = typeof pt === 'string' && pt.includes('
+');
+                const title = hasNl ? pt.split('
+')[0] : null;
+                const desc = hasNl ? pt.split('
+').slice(1).join(' ') : pt;
+                return (
+                  <div key={i} className="p-0.5 px-1.5 rounded bg-white border small d-flex align-items-start gap-1" style={{ fontSize: '0.67rem' }}>
+                    <span className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0 mt-0.5" style={{ width: '15px', height: '15px', backgroundColor: standard.accentColor, fontSize: '0.58rem' }}>
+                      {i + 1}
+                    </span>
+                    <div style={{ lineHeight: '1.2' }}>
+                      {title ? (
+                        <>
+                          <strong className="text-dark d-block" style={{ fontSize: '0.68rem' }}>{title}</strong>
+                          <span className="text-secondary" style={{ fontSize: '0.64rem' }}>{desc}</span>
+                        </>
+                      ) : (
+                        <span>{pt}</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -4334,9 +4351,24 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                                 <i className={`bi ${sStyle.icon} me-1`}></i>Schritt {i + 1}
                               </span>
                             </div>
-                            <span style={{ lineHeight: '1.4', fontWeight: 500 }} className="text-dark d-block">
-                              {pt}
-                            </span>
+                            {typeof pt === 'string' && pt.includes('
+') ? (
+                              <div>
+                                <strong className="d-block text-dark fw-bold mb-1" style={{ fontSize: '0.88rem' }}>
+                                  {pt.split('
+')[0]}
+                                </strong>
+                                <span className="text-secondary d-block" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
+                                  {pt.split('
+').slice(1).join('
+')}
+                                </span>
+                              </div>
+                            ) : (
+                              <span style={{ lineHeight: '1.4', fontWeight: 500 }} className="text-dark d-block">
+                                {pt}
+                              </span>
+                            )}
                           </div>
                         </div>
                       );

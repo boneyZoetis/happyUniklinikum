@@ -39,45 +39,43 @@ root.QRParser = (function () {
         '🟠 Notfallbereitschaft sicherstellen\nBeatmungsbeutel, Sauerstoffversorgung und funktionsfähige Absaugung bereithalten.'
       ],
       keyPoints: [
-        'Sichtprüfung & STK: Gehäuse, Display und Netzkabel prüfen; Gerät an Notstromsteckdose (roter Punkt) anschließen und Akkuladung (100 %) verifizieren.',
-        'Zentrale Gasversorgung (ZGV): Schläuche für O₂ (weiß) und Druckluft (schwarz-weiß) sicher einklinken; Betriebsdruck 3,0 bis 4,5 bar kontrollieren.',
-        'Aufbau Beatmungskreislauf: Doppelschlauchsystem, Exspirationsventil, keimarmer Inspirationsfilter, patientennaher Flowsensor und Y-Stück faltenfrei montieren.',
-        'Geräteeigener Pre-Use-Check: Y-Stück mit Prüfkonus luftdicht verschließen; Selbsttest starten (Dichtigkeits-, Kalibrier- und Ventiltest).',
-        'Alarmgrenzen patientenspezifisch setzen: Pmax (Druckbegrenzung ca. 10 mbar über Ppeak), MV-Alarm (Minutenvolumen hoch/tief), Atemfrequenz und Apnoezeit (max. 15–20 s).',
-        'Notfallequipment am Bettplatz: Manueller Beatmungsbeutel (mit Reservoir & PEEP-Ventil), passende Maske und funktionierende Absauganlage einsatzbereit bereithalten.'
+        '🔵 SCHRITT 1 – Sichtprüfung & Stromversorgung\nGehäuse, Display, Netzkabel und STK-Status prüfen. Netz-/Notstromversorgung und Akkustatus kontrollieren.',
+        '🟢 SCHRITT 2 – Gasversorgung\nO₂- und Druckluftanschlüsse sicher verbinden. Versorgungsdruck gemäß Herstellervorgaben kontrollieren.',
+        '🟠 SCHRITT 3 – Beatmungssystem aufbauen\nDoppelschlauchsystem mit vormontiertem Y-Stück und Exspirationsfilter korrekt anschließen. HMEF mit Gänsegurgel verbinden und deren patientenseitigen Anschluss mit roter Verschlusskappe verschließen. Alle Verbindungen auf festen Sitz und Knickfreiheit prüfen.',
+        '🔴 SCHRITT 4 – Gerätecheck durchführen\nSelbsttest mit verschlossenem patientenseitigem Anschluss starten. Bei Displayaufforderung (ca. 94 %) rote Verschlusskappe entfernen und bei erneuter Aufforderung wieder aufsetzen. Test bis 100 % durchführen und Ergebnis „bestanden“ kontrollieren.',
+        '🟣 SCHRITT 5 – Alarmgrenzen einstellen\nDruck-, Minutenvolumen-, Atemfrequenz- und Apnoealarme patienten- und situationsgerecht einstellen. Alarmbereitschaft sicherstellen.',
+        '🔵 SCHRITT 6 – Notfallequipment prüfen\nNotfallequipment am Bettplatz: Manuellen Beatmungsbeutel (mit Reservoir und ggf. PEEP-Ventil), passende Maske, O₂-Versorgung und funktionsfähige Absaugung einsatzbereit bereithalten.'
       ],
       clinicalFocus: [
         {
-          phase: '1. Fachgerechter Aufbau des Beatmungssystems',
-          icon: 'bi-tools',
-          detail: 'Montage des keimarmen Schlauchsystems (Inspirations- & Exspirationsschenkel), Einsetzen des Exspirationsventils mit Membran, patientennahe Konnektion des Flowsensors und der Atemgasfilter.'
+          phase: '1. Sichtprüfung & Strom-/Gasversorgung (Schritte 1–2)',
+          icon: 'bi-plug-fill',
+          detail: 'Sichtprüfung von Gehäuse, Display, Netzkabel und STK-Plakette. Notstromsteckdose (roter Punkt) und Akkustatus kontrollieren. O₂- und Druckluftanschlüsse sicher arretieren und Versorgungsdruck prüfen.'
         },
         {
-          phase: '2. Durchführung des Gerätechecks (Selbsttest)',
-          icon: 'bi-check-all',
-          detail: 'Starten des geräteeigenen Prüfprogramms bei verschlossenem Y-Stück. Messung von Schlauch-Compliance, Strömungswiderstand und Dichtigkeit. Freigabe nur bei Testurteil „Bestanden“.'
+          phase: '2. Aseptischer Systemaufbau & Verschlusskappe (Schritt 3)',
+          icon: 'bi-lungs-fill',
+          detail: 'Doppelschlauchsystem mit vormontiertem Y-Stück und Exspirationsfilter anschließen. HMEF mit Gänsegurgel verbinden und patientenseitigen Konus mit roter Verschlusskappe luftdicht verschließen.'
         },
         {
-          phase: '3. Beatmungsparameter & Alarmgrenzen',
-          icon: 'bi-sliders',
-          detail: 'Vorwahl des ärztlich verordneten Beatmungsmodus (z. B. BIPAP/PCV oder VCV), Einstellen von PEEP, Tidalvolumen / P-Insp, FiO₂ und enge Justierung aller kritischen Alarmgrenzen.'
+          phase: '3. Gerätecheck & Kappen-Manöver bei ca. 94% (Schritt 4)',
+          icon: 'bi-check-circle-fill',
+          detail: 'Selbsttest mit verschlossenem System starten. Bei Displayaufforderung (ca. 94 %) rote Verschlusskappe kurz entfernen und bei Aufforderung wieder aufsetzen. Bis 100 % durchlaufen und „bestanden“ verifizieren.'
         },
         {
-          phase: '4. Notfallbereitschaft & Dokumentation',
+          phase: '4. Alarmgrenzen & Notfallequipment (Schritte 5–6)',
           icon: 'bi-shield-fill-check',
-          detail: 'Funktionsprüfung des Beatmungsbeutels und der Bettplatz-Absaugung. Dokumentation von Prüfzeitpunkt, Schlauchwechseldatum und Gerätestatus in der Patientenkurve / im PDMS.'
+          detail: 'Pmax, MV-, Frequenz- und Apnoealarme patienten- und situationsgerecht einstellen. Manuellen Beatmungsbeutel (mit Reservoir/PEEP), passende Maske, O₂-Versorgung und funktionierende Absauganlage bereithalten.'
         }
       ],
       checklist: [
-        'Sichtprüfung: Gerät sauber, unbeschädigt, STK-Plakette gültig',
-        'Strom- & Notstromnetz: Grünes Ladesymbol leuchtet, Akku bei 100 %',
-        'Zentrale Gasversorgung: O₂ und Druckluft (3,0–4,5 bar) arretiert',
-        'Exspirationsventil: Membran intakt und fest eingerastet',
-        'Schlauchsystem: Knick- und dehnungsfrei am Gerät montiert',
-        'Filter & Flowsensor: Filter geräteseitig, Flowsensor patientennah montiert',
-        'Selbsttest / Dichtigkeitstest: Bei verschlossenem Y-Stück erfolgreich durchlaufen („Pass“)',
-        'Notfallmaterial: Beatmungsbeutel + Maske + O₂-Schlauch am Bettplatz',
-        'Absaugung: Vakuum erzeugt min. -0,6 bar, Absaugkatheter griffbereit'
+        'Schritt 1: Gehäuse, Display, Netzkabel, STK-Status und Notstrom-/Akkubetrieb geprüft',
+        'Schritt 2: O₂- und Druckluftanschlüsse sicher verbunden, Versorgungsdruck normgerecht',
+        'Schritt 3: Doppelschlauchsystem & Exspirationsfilter montiert, HMEF mit Gänsegurgel & roter Kappe verschlossen',
+        'Schritt 4: Selbsttest gestartet, bei ca. 94 % Kappe entfernt/wieder aufgesetzt, Ergebnis „bestanden“ (100 %)',
+        'Schritt 5: Druck-, Minutenvolumen-, Atemfrequenz- und Apnoealarme patientengerecht eingestellt',
+        'Schritt 6: Notfallbeatmungsbeutel (mit Reservoir/PEEP) & Maske am Bettplatz griffbereit',
+        'Absaugung: Bettplatz-Absauganlage funktionsfähig mit passenden Kathetern einsatzbereit'
       ],
       parameters: [
         { label: 'ZGV-Eingangsdruck', target: '3,0 – 4,5 bar', note: 'Zentrale O₂- & Druckluft-Versorgung' },
