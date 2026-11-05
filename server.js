@@ -52,55 +52,65 @@ const server = http.createServer((req, res) => {
   }
 
   // Check if target is a directory, serve index.html
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+    filePath = path.join(filePath, 'index.html');
+  }
+
   fs.stat(filePath, (err, stats) => {
-    if (!err && stats.isDirectory()) {
-      filePath = path.join(filePath, 'index.html');
+    if (err) {
+      // Fallback to index.html for SPA hash routing
+      const fallbackPath = path.join(ROOT_DIR, 'index.html');
+      fs.readFile(fallbackPath, (fbErr, fbData) => {
+        if (fbErr) {
+          res.writeHead(404, { 'Content-Type': 'text/plain' });
+          res.end('404 Not Found');
+        } else {
+          res.writeHead(200, {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-cache',
+            'Content-Length': fbData.length,
+            'Access-Control-Allow-Origin': '*'
+          });
+          res.end(fbData);
+        }
+      });
+      return;
+    }
+
+    const ext = path.extname(filePath).toLowerCase();
+    const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+
+    // Support HTTP Range requests for video streaming (smooth scrubbing)
+    const range = req.headers.range;
+    if (range && (ext === '.mp4' || ext === '.webm')) {
+      const parts = range.replace(/bytes=/, '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : stats.size - 1;
+      const chunksize = (end - start) + 1;
+      const fileStream = fs.createReadStream(filePath, { start, end });
+      res.writeHead(206, {
+        'Content-Range': `bytes ${start}-${end}/${stats.size}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunksize,
+        'Content-Type': contentType,
+        'Cache-Control': 'no-cache',
+        'Access-Control-Allow-Origin': '*'
+      });
+      fileStream.pipe(res);
+      return;
     }
 
     fs.readFile(filePath, (readErr, data) => {
       if (readErr) {
-        // If file not found, fall back to index.html for SPA hash routing
-        const fallbackPath = path.join(ROOT_DIR, 'index.html');
-        fs.readFile(fallbackPath, (fallbackErr, fallbackData) => {
-          if (fallbackErr) {
-            res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end('404 Not Found');
-          } else {
-            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-            res.end(fallbackData);
-          }
-        });
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('500 Internal Server Error');
         return;
       }
-
-      const ext = path.extname(filePath).toLowerCase();
-      const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-
-      // Support HTTP Range requests for video streaming (smooth scrubbing)
-      const range = req.headers.range;
-      if (range && (ext === '.mp4' || ext === '.webm')) {
-        const parts = range.replace(/bytes=/, '').split('-');
-        const start = parseInt(parts[0], 10);
-        const end = parts[1] ? parseInt(parts[1], 10) : stats.size - 1;
-        const chunksize = (end - start) + 1;
-        const fileStream = fs.createReadStream(filePath, { start, end });
-        res.writeHead(206, {
-          'Content-Range': `bytes ${start}-${end}/${stats.size}`,
-          'Accept-Ranges': 'bytes',
-          'Content-Length': chunksize,
-          'Content-Type': contentType,
-          'Cache-Control': 'no-cache',
-          'Access-Control-Allow-Origin': '*'
-        });
-        fileStream.pipe(res);
-        return;
-      }
-
       res.writeHead(200, {
         'Content-Type': contentType,
         'Cache-Control': 'no-cache',
         'Accept-Ranges': 'bytes',
-        'Content-Length': stats.size,
+        'Content-Length': data.length,
         'Access-Control-Allow-Origin': '*'
       });
       res.end(data);
