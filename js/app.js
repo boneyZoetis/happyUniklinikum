@@ -3859,12 +3859,9 @@ function StandardA4PrintSheet({ standard }) {
               </strong>
               <div className="row g-1">
                 {standard.whyImportant.map((item, idx) => {
-                  const hasNl = typeof item === 'string' && item.includes('
-');
-                  const title = hasNl ? item.split('
-')[0] : item;
-                  const desc = hasNl ? item.split('
-').slice(1).join(' ') : null;
+                  const hasNl = typeof item === 'string' && item.includes(String.fromCharCode(10));
+                  const title = hasNl ? item.split(String.fromCharCode(10))[0] : item;
+                  const desc = hasNl ? item.split(String.fromCharCode(10)).slice(1).join(' ') : null;
                   return (
                     <div key={idx} className="col-6 d-flex align-items-start gap-1">
                       <i className="bi bi-check2 text-success flex-shrink-0 mt-0.5" style={{ fontSize: '0.68rem' }}></i>
@@ -3955,12 +3952,9 @@ function StandardA4PrintSheet({ standard }) {
             </div>
             <div className="d-flex flex-column gap-0.5">
               {standard.keyPoints && standard.keyPoints.slice(0, 6).map((pt, i) => {
-                const hasNl = typeof pt === 'string' && pt.includes('
-');
-                const title = hasNl ? pt.split('
-')[0] : null;
-                const desc = hasNl ? pt.split('
-').slice(1).join(' ') : pt;
+                const hasNl = typeof pt === 'string' && pt.includes(String.fromCharCode(10));
+                const title = hasNl ? pt.split(String.fromCharCode(10))[0] : null;
+                const desc = hasNl ? pt.split(String.fromCharCode(10)).slice(1).join(' ') : pt;
                 return (
                   <div key={i} className="p-0.5 px-1.5 rounded bg-white border small d-flex align-items-start gap-1" style={{ fontSize: '0.67rem' }}>
                     <span className="badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0 mt-0.5" style={{ width: '15px', height: '15px', backgroundColor: standard.accentColor, fontSize: '0.58rem' }}>
@@ -4261,12 +4255,9 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                             { icon: 'bi-droplet-half', color: '#0891b2', bg: '#cffafe', border: '#67e8f9' }
                           ];
                           const wStyle = whyIcons[wi % whyIcons.length];
-                          const hasNl = typeof why === 'string' && why.includes('
-');
-                          const title = hasNl ? why.split('
-')[0] : why;
-                          const desc = hasNl ? why.split('
-').slice(1).join(' ') : null;
+                          const hasNl = typeof why === 'string' && why.includes(String.fromCharCode(10));
+                          const title = hasNl ? why.split(String.fromCharCode(10))[0] : why;
+                          const desc = hasNl ? why.split(String.fromCharCode(10)).slice(1).join(' ') : null;
                           return (
                             <div key={wi} className="col-12 col-sm-6">
                               <div
@@ -4351,17 +4342,13 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                                 <i className={`bi ${sStyle.icon} me-1`}></i>Schritt {i + 1}
                               </span>
                             </div>
-                            {typeof pt === 'string' && pt.includes('
-') ? (
+                            {typeof pt === 'string' && pt.includes(String.fromCharCode(10)) ? (
                               <div>
                                 <strong className="d-block text-dark fw-bold mb-1" style={{ fontSize: '0.88rem' }}>
-                                  {pt.split('
-')[0]}
+                                  {pt.split(String.fromCharCode(10))[0]}
                                 </strong>
                                 <span className="text-secondary d-block" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
-                                  {pt.split('
-').slice(1).join('
-')}
+                                  {pt.split(String.fromCharCode(10)).slice(1).join(' ')}
                                 </span>
                               </div>
                             ) : (
