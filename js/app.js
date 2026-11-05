@@ -5570,6 +5570,17 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
             <i className="bi bi-file-earmark-pdf"></i>
             <span>PDF</span>
           </button>
+          <button
+            type="button"
+            className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-1.5 btn-sm d-flex align-items-center justify-content-center gap-1"
+            style={{ minHeight: '36px', fontSize: '0.78rem', cursor: 'not-allowed', opacity: 0.55 }}
+            disabled
+            aria-disabled="true"
+            title="Hub ist deaktiviert"
+          >
+            <i className="bi bi-box-arrow-up-right"></i>
+            <span>Hub</span>
+          </button>
         </div>
       </div>
 
