@@ -95,10 +95,34 @@ root.QRParser = (function () {
         'Absaugung: Bettplatz-Absauganlage funktionsfähig mit passenden Kathetern einsatzbereit'
       ],
       parameters: [
-        { label: 'ZGV-Eingangsdruck', target: '3,0 – 4,5 bar', note: 'Zentrale O₂- & Druckluft-Versorgung' },
-        { label: 'Dichtigkeitsgrenze', target: '< 100 ml/min', note: 'Maximal zulässige Leckage bei 30 mbar' },
-        { label: 'Pmax Alarmgrenze', target: '10 mbar über Ppeak', note: 'Schutz vor Barotrauma / Volutrauma' },
-        { label: 'Apnoe-Alarmzeit', target: '15 – 20 Sekunden', note: 'Sicherheits-Backup bei Spontanatmung' }
+        {
+          label: 'ZGV-Eingangsdruck',
+          target: 'O₂- und AIR-Versorgung müssen innerhalb des für die konkrete Geräteausführung freigegebenen Eingangsdruckbereichs liegen; Systemtest ohne Versorgungsfehler.',
+          val: 'O₂- und AIR-Versorgung müssen innerhalb des für die konkrete Geräteausführung freigegebenen Eingangsdruckbereichs liegen; Systemtest ohne Versorgungsfehler.',
+          note: 'Anschlüsse, Schläuche und Anzeige für Zentralgasversorgung prüfen. Kein verbindlicher bar-Grenzwert ohne die zugehörige elisa-Gebrauchsanweisung/Softwareversion. [1]',
+          desc: 'Anschlüsse, Schläuche und Anzeige für Zentralgasversorgung prüfen. Kein verbindlicher bar-Grenzwert ohne die zugehörige elisa-Gebrauchsanweisung/Softwareversion. [1]'
+        },
+        {
+          label: 'Dichtigkeitsgrenze',
+          target: 'Geräte- und Schlauchsystemtest: „bestanden“. Der zulässige Leckagewert wird geräte-/testabhängig beurteilt.',
+          val: 'Geräte- und Schlauchsystemtest: „bestanden“. Der zulässige Leckagewert wird geräte-/testabhängig beurteilt.',
+          note: 'Schlauchsystem vor dem Test korrekt verschließen, Exspirationsventil/Membran/Filter und Steckverbindungen prüfen. Bei nicht bestandenem Test kein Einsatz am Patienten. [1]',
+          desc: 'Schlauchsystem vor dem Test korrekt verschließen, Exspirationsventil/Membran/Filter und Steckverbindungen prüfen. Bei nicht bestandenem Test kein Einsatz am Patienten. [1]'
+        },
+        {
+          label: 'Pmax-Alarmgrenze',
+          target: 'Patienten- und modusabhängig; eine einheitliche sichere Zahl in mbar existiert nicht. Spitzendruckgrenze oberhalb des erwarteten Bedarfs und gemäß Therapieziel festlegen.',
+          val: 'Patienten- und modusabhängig; eine einheitliche sichere Zahl in mbar existiert nicht. Spitzendruckgrenze oberhalb des erwarteten Bedarfs und gemäß Therapieziel festlegen.',
+          note: 'Bei elisa kann Pmax in bestimmten Modi ein regelnder Begrenzungsparameter sein, nicht nur ein Alarm. Druck, Plateau/Driving Pressure und Kurven gemeinsam beurteilen. [1]',
+          desc: 'Bei elisa kann Pmax in bestimmten Modi ein regelnder Begrenzungsparameter sein, nicht nur ein Alarm. Druck, Plateau/Driving Pressure und Kurven gemeinsam beurteilen. [1]'
+        },
+        {
+          label: 'Apnoe-Alarmzeit',
+          target: 'An den Beatmungsmodus, die Spontanatmung und das klinische Risiko anpassen; keine universelle Sekundenvorgabe.',
+          val: 'An den Beatmungsmodus, die Spontanatmung und das klinische Risiko anpassen; keine universelle Sekundenvorgabe.',
+          note: 'Apnoe-Überwachung und gegebenenfalls Backup-Beatmung auf korrekte Aktivierung prüfen. Alarmgrenzen nicht routinemäßig deaktivieren; Patientensituation beachten. [1]',
+          desc: 'Apnoe-Überwachung und gegebenenfalls Backup-Beatmung auf korrekte Aktivierung prüfen. Alarmgrenzen nicht routinemäßig deaktivieren; Patientensituation beachten. [1]'
+        }
       ],
       troubleshooting: [
         { problem: 'Gerätetest meldet „Leckage im System“', cause: 'Y-Stück nicht dicht verschlossen, Wasserfalle undicht, Exspirationsventil nicht fest eingerastet.', action: 'Prüfstopfen fest aufdrücken, alle Schraub- & Steckverbindungen nachziehen, Dichtungsringe prüfen und Test wiederholen.' },

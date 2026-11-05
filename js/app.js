@@ -1676,13 +1676,13 @@ function ClinicalParametersTable({ parameters, accentColor }) {
         </div>
       </div>
 
-      <div className="table-responsive">
+      <div className="table-responsive rounded-3 border overflow-hidden">
         <table className="table table-hover align-middle mb-0 small">
-          <thead style={{ background: `linear-gradient(135deg, ${accentColor}12 0%, #ffffff 100%)` }}>
+          <thead style={{ background: accentColor, color: '#ffffff' }}>
             <tr>
-              <th scope="col" style={{ width: '30%', color: accentColor }}>Parameter</th>
-              <th scope="col" style={{ width: '25%', color: accentColor }}>Klinischer Zielwert</th>
-              <th scope="col" style={{ width: '45%', color: accentColor }}>Bedeutung &amp; Pflegepraxis</th>
+              <th scope="col" style={{ width: '22%', color: '#ffffff', padding: '10px 14px', fontSize: '0.82rem', letterSpacing: '0.4px' }} className="text-uppercase fw-bold">Parameter</th>
+              <th scope="col" style={{ width: '38%', color: '#ffffff', padding: '10px 14px', fontSize: '0.82rem', letterSpacing: '0.4px' }} className="text-uppercase fw-bold">Klinischer Richt- / Zielwert</th>
+              <th scope="col" style={{ width: '40%', color: '#ffffff', padding: '10px 14px', fontSize: '0.82rem', letterSpacing: '0.4px' }} className="text-uppercase fw-bold">Bedeutung &amp; Pflegepraxis</th>
             </tr>
           </thead>
           <tbody>
@@ -1690,7 +1690,7 @@ function ClinicalParametersTable({ parameters, accentColor }) {
               const pStyle = getParamStyle(p.label, idx);
               return (
                 <tr key={idx} style={{ background: idx % 2 === 0 ? '#ffffff' : `${pStyle.color}05` }}>
-                  <td>
+                  <td style={{ borderLeft: `4px solid ${pStyle.color || accentColor}`, padding: '12px 14px' }}>
                     <div className="d-flex align-items-center gap-2">
                       <span
                         className="rounded-3 p-1.5 d-inline-flex align-items-center justify-content-center flex-shrink-0 text-white"
@@ -1698,27 +1698,14 @@ function ClinicalParametersTable({ parameters, accentColor }) {
                       >
                         <i className={`bi ${pStyle.icon}`} style={{ fontSize: '0.78rem' }}></i>
                       </span>
-                      <div>
-                        <strong className="text-dark d-block" style={{ fontSize: '0.86rem' }}>{p.label}</strong>
-                        <span className="text-muted" style={{ fontSize: '0.72rem' }}>{p.desc}</span>
-                      </div>
+                      <strong className="text-dark d-block fw-bold" style={{ fontSize: '0.88rem' }}>{p.label}</strong>
                     </div>
                   </td>
-                  <td>
-                    <span
-                      className="badge rounded-pill px-2.5 py-1.5 fw-bold shadow-2xs"
-                      style={{
-                        backgroundColor: pStyle.bg,
-                        color: pStyle.color,
-                        border: `1.5px solid ${pStyle.border}`,
-                        fontSize: '0.82rem'
-                      }}
-                    >
-                      {p.val}
-                    </span>
+                  <td style={{ padding: '12px 14px', fontSize: '0.84rem', lineHeight: '1.45', color: '#1e293b' }}>
+                    {p.target || p.val}
                   </td>
-                  <td className="text-secondary" style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
-                    {p.desc}
+                  <td className="text-secondary" style={{ padding: '12px 14px', fontSize: '0.82rem', lineHeight: '1.45' }}>
+                    {p.note || p.desc}
                   </td>
                 </tr>
               );
@@ -4065,31 +4052,29 @@ function StandardA4PrintSheet({ standard }) {
             </div>
           </div>
 
-          {/* 2. Klinische Richt- & Grenzwerte (Tabelle) */}
+          {/* 2. Klinische Richt- & Zielwerte (Tabelle) */}
           <div className="p-1.5 bg-white border rounded-3">
             <div className="fw-bold text-dark small text-uppercase mb-1 d-flex align-items-center justify-content-between">
-              <span><i className="bi bi-speedometer2 text-primary me-1"></i>Klinische Richt- &amp; Grenzwerte:</span>
+              <span><i className="bi bi-speedometer2 text-primary me-1"></i>Klinische Richt- &amp; Zielwerte:</span>
               <span className="badge bg-light text-primary border" style={{ fontSize: '0.60rem' }}>Grenzwerte &amp; Alarme</span>
             </div>
             <div className="table-responsive mb-0">
               <table className="table table-sm table-bordered mb-0 small" style={{ fontSize: '0.66rem' }}>
                 <thead className="table-light">
                   <tr>
-                    <th style={{ width: '32%', padding: '2px 5px' }}>Messgröße / Parameter</th>
-                    <th style={{ width: '28%', padding: '2px 5px' }}>Ziel- / Normwert</th>
-                    <th style={{ width: '40%', padding: '2px 5px' }}>Klinische Relevanz / Toleranz</th>
+                    <th style={{ width: '22%', padding: '3px 6px' }}>Parameter</th>
+                    <th style={{ width: '38%', padding: '3px 6px' }}>Klinischer Richt- / Zielwert</th>
+                    <th style={{ width: '40%', padding: '3px 6px' }}>Bedeutung &amp; Pflegepraxis</th>
                   </tr>
                 </thead>
                 <tbody>
                   {standard.parameters && standard.parameters.map((p, idx) => (
                     <tr key={idx}>
-                      <td className="fw-semibold text-dark" style={{ padding: '2px 5px' }}>{p.label}</td>
-                      <td style={{ padding: '2px 5px' }}>
-                        <span className="badge rounded-pill text-white fw-bold" style={{ backgroundColor: standard.accentColor, fontSize: '0.65rem' }}>
-                          {p.target || p.val || 'Normbereich'}
-                        </span>
+                      <td className="fw-semibold text-dark" style={{ padding: '3px 6px', borderLeft: `3px solid ${standard.accentColor}` }}>{p.label}</td>
+                      <td style={{ padding: '3px 6px', fontSize: '0.64rem', lineHeight: '1.25', color: '#0f172a' }}>
+                        {p.target || p.val || 'Normbereich'}
                       </td>
-                      <td className="text-secondary" style={{ padding: '2px 5px' }}>{p.note || 'Gemäß ärztlicher Verordnung'}</td>
+                      <td className="text-secondary" style={{ padding: '3px 6px', fontSize: '0.64rem', lineHeight: '1.25' }}>{p.note || p.desc || 'Gemäß ärztlicher Verordnung'}</td>
                     </tr>
                   ))}
                 </tbody>
