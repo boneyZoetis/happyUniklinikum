@@ -4052,34 +4052,6 @@ function UniversalCardInteractiveCard({ isAtm = true, onSelectStandard }) {
           title="5. Externe Ventrikeldrainage (EVD) aufrufen"
         />
 
-        {/* Real Crisp Functional Scannable QR Code Overlay - Exactly Centered on the Graphic White Box */}
-        <div
-          style={{
-            position: 'absolute',
-            left: '70.6%',
-            top: '37.1%',
-            width: '21.5%',
-            height: '32.0%',
-            pointerEvents: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 4,
-            padding: '3px',
-            backgroundColor: '#ffffff',
-            borderRadius: '6px',
-            overflow: 'hidden',
-            boxSizing: 'border-box'
-          }}
-        >
-          <QrCodeCanvas
-            value={portalUrl}
-            size={180}
-            color="#001833"
-            style={{ width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
-          />
-        </div>
-
         {/* Right QR Portal & HIER SCANNEN Hotspot */}
         <div
           className="universal-card-hotspot"
@@ -4168,34 +4140,6 @@ function UniversalCardA4Native({ onSelectStandard }) {
           onClick={() => onSelectStandard('evd')}
           title="5. Externe Ventrikeldrainage (EVD) aufrufen"
         />
-
-        {/* Real Crisp Functional Scannable QR Code Overlay - Centered on Graphic White Box */}
-        <div
-          style={{
-            position: 'absolute',
-            left: '70.6%',
-            top: '37.1%',
-            width: '21.5%',
-            height: '32.0%',
-            pointerEvents: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 4,
-            padding: '4px',
-            backgroundColor: '#ffffff',
-            borderRadius: '8px',
-            overflow: 'hidden',
-            boxSizing: 'border-box'
-          }}
-        >
-          <QrCodeCanvas
-            value={portalUrl}
-            size={240}
-            color="#001833"
-            style={{ width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
-          />
-        </div>
 
         {/* Right QR Portal & HIER SCANNEN Hotspot */}
         <div
@@ -4788,34 +4732,6 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
                     className="w-100 h-100 d-block"
                     style={{ objectFit: 'cover' }}
                   />
-
-                  {/* Scannable Crisp QR Code Overlay - Exactly Centered on the Graphic White Box */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      left: '70.6%',
-                      top: '37.1%',
-                      width: '21.5%',
-                      height: '32.0%',
-                      pointerEvents: 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      zIndex: 4,
-                      padding: '3px',
-                      backgroundColor: '#ffffff',
-                      borderRadius: '6px',
-                      overflow: 'hidden',
-                      boxSizing: 'border-box'
-                    }}
-                  >
-                    <QrCodeCanvas
-                      value={portalUrl}
-                      size={180}
-                      color="#001833"
-                      style={{ width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
-                    />
-                  </div>
                 </div>
               </div>
             </div>
