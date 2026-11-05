@@ -5570,14 +5570,6 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
             <i className="bi bi-file-earmark-pdf"></i>
             <span>PDF</span>
           </button>
-          <button
-            className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-1.5 shadow-sm btn-sm d-flex align-items-center justify-content-center gap-1"
-            style={{ minHeight: '36px', fontSize: '0.78rem' }}
-            onClick={() => onSelectStandard('quick-hub')}
-          >
-            <i className="bi bi-box-arrow-up-right"></i>
-            <span>Hub</span>
-          </button>
         </div>
       </div>
 
