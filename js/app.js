@@ -5045,7 +5045,7 @@ function UniversalCardInteractiveCard({ isAtm = true, onSelectStandard }) {
       <div className="universal-card-inner position-relative w-100" style={{ lineHeight: 0 }}>
         {/* The Exact 12x8 cm Graphic - Master Ultra-HD 300 DPI Asset */}
         <img
-          src="assets/universal-card-a4-hd.jpg"
+          src="assets/universal-card-a4-hd.jpg?v=20261105-33"
           alt="Intensivkompass Digital – Digitale Pocketcard für die Intensivpflege (12 × 8 cm)"
           className="universal-card-img w-100 d-block"
           style={{ imageRendering: '-webkit-optimize-contrast', aspectRatio: '3508 / 2336' }}
@@ -5128,7 +5128,7 @@ function UniversalCardA4Native({ onSelectStandard }) {
       <div className="position-relative w-100" style={{ lineHeight: 0 }}>
         {/* Same Pocketcard Design - Master Ultra-HD 300 DPI Asset */}
         <img
-          src="assets/universal-card-a4-hd.jpg"
+          src="assets/universal-card-a4-hd.jpg?v=20261105-33"
           alt="Intensivkompass Digital – DIN A4 Pocketcard Übersicht (Ultra-HD)"
           className="w-100 d-block"
           style={{
@@ -5766,7 +5766,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
               <div className="pocketcard-atm-cutout-frame">
                 <div className="position-relative w-100 h-100" style={{ lineHeight: 0 }}>
                   <img
-                    src="assets/universal-card-a4-hd.jpg"
+                    src="assets/universal-card-a4-hd.jpg?v=20261105-33"
                     alt="Intensivkompass Digital – Pocketcard 12 × 8 cm"
                     className="w-100 h-100 d-block"
                     style={{ objectFit: 'cover' }}
