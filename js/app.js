@@ -493,7 +493,7 @@ function App() {
 
       {/* Sticky Category Navbar with the 5 Procedures */}
       <nav className={`navbar navbar-expand-lg navbar-custom sticky-top py-1.5 px-2 px-sm-3 no-print ${shouldHideMobileHeaders ? 'quick-hub-mobile-hide' : ''}`}>
-        <div className="container-fluid px-1 px-sm-2 d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2">
+        <div className="container-fluid px-1 px-sm-2 d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center justify-content-lg-end gap-2">
           {/* Mobile Controls: Logout only (Intensivstandards button removed as requested) */}
           <div className="d-flex d-lg-none align-items-center justify-content-end w-100">
             <button
@@ -508,8 +508,8 @@ function App() {
             </button>
           </div>
 
-          {/* Horizontally Scrollable Category Ribbon on Mobile, Inline Pills on Desktop */}
-          <div className="nav-standards-scroll w-100 w-lg-auto">
+          {/* Horizontally Scrollable Category Ribbon on Mobile, Inline Pills on Desktop (Aligned to Right Side) */}
+          <div className="nav-standards-scroll w-100 w-lg-auto ms-lg-auto d-flex justify-content-start justify-content-lg-end">
             <a
               href="#/beatmung"
               className={`nav-standard-link beatmung ${currentRoute === 'beatmung' ? 'active' : ''}`}
@@ -552,7 +552,7 @@ function App() {
           </div>
 
           {/* Desktop Controls: Logout only (Scan completely removed) */}
-          <div className="d-none d-lg-flex align-items-center gap-2 ms-auto flex-shrink-0">
+          <div className="d-none d-lg-flex align-items-center gap-2 flex-shrink-0">
             <button
               type="button"
               className="btn btn-sm btn-outline-danger rounded-pill px-3 py-1.5 d-inline-flex align-items-center gap-1.5 fw-semibold shadow-2xs"
