@@ -32,6 +32,7 @@ root.QRParser = (function () {
       graphicImage: 'assets/card-beatmung.jpg',
       videoUrl: 'https://www.youtube.com/watch?v=b1lDSxzUgKM',
       videoEmbedUrl: 'https://www.youtube.com/embed/b1lDSxzUgKM',
+      videoFile: 'assets/videos/beatmung-elisa600.mp4',
       videoTitle: 'elisa 600 Beatmungsgerät | Geräteaufbau & Systemtest einfach erklärt',
       videoSubtitle: 'Schritt-für-Schritt Aufbau des Doppelschlauchsystems & Pre-Use Systemtest vor Patientenkontakt',
       videoDeviceBadge: 'elisa 600 • Intensivpflege',

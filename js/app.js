@@ -4402,6 +4402,7 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
 
   const activeVideoUrl = (currentVideo && currentVideo.url) || standard.videoUrl;
   const activeVideoEmbedUrl = (currentVideo && currentVideo.embedUrl) || standard.videoEmbedUrl || (standard.id === 'hfnc' ? 'https://www.youtube.com/embed/4sgTiXiEaoI' : '');
+  const activeVideoFile = (currentVideo && currentVideo.file) || standard.videoFile || null;
   const activeVideoTitle = (currentVideo && currentVideo.title) || standard.videoTitle;
   const activeVideoBadge = (currentVideo && currentVideo.deviceBadge) || standard.videoDeviceBadge || (standard.id === 'hfnc' ? 'Optiflow / HFNC • Intensivpflege' : '');
 
@@ -4588,14 +4589,28 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
             <div className="d-flex align-items-center gap-3 ps-1 ps-sm-0">
               <div
                 className="rounded-3 p-2 d-flex align-items-center justify-content-center text-white flex-shrink-0 shadow-sm ms-1 ms-sm-0"
-                style={{ width: '42px', height: '42px', background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)', boxShadow: '0 4px 12px rgba(220, 38, 38, 0.35)' }}
+                style={{
+                  width: '42px',
+                  height: '42px',
+                  background: activeVideoFile ? 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)' : 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
+                  boxShadow: activeVideoFile ? '0 4px 12px rgba(2, 132, 199, 0.35)' : '0 4px 12px rgba(220, 38, 38, 0.35)'
+                }}
               >
-                <i className="bi bi-youtube fs-4"></i>
+                <i className={`bi ${activeVideoFile ? 'bi-play-circle-fill' : 'bi-youtube'} fs-4`}></i>
               </div>
               <div>
                 <div className="d-flex align-items-center gap-2 flex-wrap mb-1 pt-1.5 pt-sm-0">
-                  <span className="badge rounded-pill fw-bold text-uppercase px-2.5 py-1 shadow-2xs" style={{ backgroundColor: '#fee2e2', color: '#dc2626', fontSize: '0.70rem', border: '1px solid #fecaca' }}>
-                    <i className="bi bi-play-circle-fill me-1"></i>Praxis-Schulungsvideo
+                  <span
+                    className="badge rounded-pill fw-bold text-uppercase px-2.5 py-1 shadow-2xs"
+                    style={{
+                      backgroundColor: activeVideoFile ? '#e0f2fe' : '#fee2e2',
+                      color: activeVideoFile ? '#0369a1' : '#dc2626',
+                      fontSize: '0.70rem',
+                      border: activeVideoFile ? '1px solid #bae6fd' : '1px solid #fecaca'
+                    }}
+                  >
+                    <i className="bi bi-play-circle-fill me-1"></i>
+                    {activeVideoFile ? 'Praxis-Lehrvideo' : 'Praxis-Schulungsvideo'}
                   </span>
                   <span className="badge rounded-pill fw-bold text-uppercase px-2.5 py-1 shadow-2xs bg-primary text-white" style={{ fontSize: '0.70rem' }}>
                     {activeVideoBadge || (standard.id === 'hfnc' ? 'Optiflow / HFNC • Intensivpflege' : (standard.id === 'evd' ? 'VentrEX® EVD • Intensivpflege' : (standard.id === 'arterie' ? 'Combitrans® • Intensivpflege' : (standard.id === 'befeuchtung-invasiv' ? 'AIRcon Gen2 • Intensivpflege' : 'elisa 600 • Intensivpflege'))))}
@@ -4608,24 +4623,30 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
             </div>
 
             <div className="d-flex align-items-center gap-2 mt-2 mt-sm-0 mb-2 mb-sm-0 ps-1 ps-sm-0">
-              <a
-                href={activeVideoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-sm rounded-pill px-3.5 py-2 fw-bold d-inline-flex align-items-center gap-2 shadow-2xs transition-all ms-1 ms-sm-0"
-                style={{
-                  background: 'linear-gradient(135deg, #ffffff 0%, #fff1f2 100%)',
-                  color: '#dc2626',
-                  border: '1.5px solid #fca5a5',
-                  boxShadow: '0 2px 8px rgba(220, 38, 38, 0.08)' ,
-                  fontSize: '0.84rem',
-                  letterSpacing: '0.2px'
-                }}
-              >
-                <i className="bi bi-youtube fs-6 text-danger"></i>
-                <span className="text-danger fw-bold">In YouTube öffnen</span>
-                <i className="bi bi-box-arrow-up-right small text-danger opacity-75 ms-0.5" style={{ fontSize: '0.70rem' }}></i>
-              </a>
+              {activeVideoFile ? (
+                <span className="badge rounded-pill px-3 py-1.5 fw-bold text-secondary bg-light border d-inline-flex align-items-center gap-1.5 shadow-2xs" style={{ fontSize: '0.78rem' }}>
+                  <i className="bi bi-shield-check text-success"></i> Direkter HD-Stream
+                </span>
+              ) : (
+                <a
+                  href={activeVideoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-sm rounded-pill px-3.5 py-2 fw-bold d-inline-flex align-items-center gap-2 shadow-2xs transition-all ms-1 ms-sm-0"
+                  style={{
+                    background: 'linear-gradient(135deg, #ffffff 0%, #fff1f2 100%)',
+                    color: '#dc2626',
+                    border: '1.5px solid #fca5a5',
+                    boxShadow: '0 2px 8px rgba(220, 38, 38, 0.08)' ,
+                    fontSize: '0.84rem',
+                    letterSpacing: '0.2px'
+                  }}
+                >
+                  <i className="bi bi-youtube fs-6 text-danger"></i>
+                  <span className="text-danger fw-bold">In YouTube öffnen</span>
+                  <i className="bi bi-box-arrow-up-right small text-danger opacity-75 ms-0.5" style={{ fontSize: '0.70rem' }}></i>
+                </a>
+              )}
             </div>
           </div>
 
@@ -4635,14 +4656,27 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
                 className="rounded-3 overflow-hidden shadow-sm border bg-black position-relative"
                 style={{ aspectRatio: '16 / 9', width: '100%' }}
               >
-                <iframe
-                  key={activeVideoEmbedUrl}
-                  src={activeVideoEmbedUrl}
-                  title={activeVideoTitle || 'High-Flow-Therapie Schulungsvideo'}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  style={{ width: '100%', height: '100%', border: 'none' }}
-                ></iframe>
+                {activeVideoFile ? (
+                  <video
+                    key={activeVideoFile}
+                    controls
+                    playsInline
+                    preload="metadata"
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#000000', display: 'block' }}
+                  >
+                    <source src={activeVideoFile} type="video/mp4" />
+                    Ihr Browser unterstützt das Video leider nicht.
+                  </video>
+                ) : (
+                  <iframe
+                    key={activeVideoEmbedUrl}
+                    src={activeVideoEmbedUrl}
+                    title={activeVideoTitle || 'High-Flow-Therapie Schulungsvideo'}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    style={{ width: '100%', height: '100%', border: 'none' }}
+                  ></iframe>
+                )}
               </div>
 
               {/* Bottom Quick Switcher between the two videos */}

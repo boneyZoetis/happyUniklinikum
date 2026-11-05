@@ -25,7 +25,9 @@ const MIME_TYPES = {
   '.pdf': 'application/pdf',
   '.woff': 'font/woff',
   '.woff2': 'font/woff2',
-  '.ttf': 'font/ttf'
+  '.ttf': 'font/ttf',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm'
 };
 
 const server = http.createServer((req, res) => {
@@ -73,9 +75,31 @@ const server = http.createServer((req, res) => {
       const ext = path.extname(filePath).toLowerCase();
       const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
+      // Support HTTP Range requests for video streaming (smooth scrubbing)
+      const range = req.headers.range;
+      if (range && (ext === '.mp4' || ext === '.webm')) {
+        const parts = range.replace(/bytes=/, '').split('-');
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : stats.size - 1;
+        const chunksize = (end - start) + 1;
+        const fileStream = fs.createReadStream(filePath, { start, end });
+        res.writeHead(206, {
+          'Content-Range': `bytes ${start}-${end}/${stats.size}`,
+          'Accept-Ranges': 'bytes',
+          'Content-Length': chunksize,
+          'Content-Type': contentType,
+          'Cache-Control': 'no-cache',
+          'Access-Control-Allow-Origin': '*'
+        });
+        fileStream.pipe(res);
+        return;
+      }
+
       res.writeHead(200, {
         'Content-Type': contentType,
         'Cache-Control': 'no-cache',
+        'Accept-Ranges': 'bytes',
+        'Content-Length': stats.size,
         'Access-Control-Allow-Origin': '*'
       });
       res.end(data);
