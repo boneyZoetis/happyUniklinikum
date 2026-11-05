@@ -3961,7 +3961,7 @@ function StandardA4PrintSheet({ standard }) {
           <div className="p-1.5 bg-light rounded-3 border">
             <div className="fw-bold text-dark small text-uppercase mb-1 d-flex align-items-center gap-1" style={{ fontSize: '0.68rem' }}>
               <i className="bi bi-list-check text-primary"></i>
-              <span>Wichtigste Handlungsschritte (Minimal-Info):</span>
+              <span>{standard.id === 'arterie' || standard.id === 'beatmung' ? 'WICHTIGSTE HANDLUNGSSCHRITTE (MINIMAL-INFO)' : 'Wichtigste Handlungsschritte (Minimal-Info):'}</span>
             </div>
             <div className="d-flex flex-column gap-0.5">
               {standard.keyPoints && standard.keyPoints.slice(0, 6).map((pt, i) => {
@@ -3987,6 +3987,12 @@ function StandardA4PrintSheet({ standard }) {
                 );
               })}
             </div>
+            {standard.id === 'arterie' && standard.goldenRule && (
+              <div className="mt-1 p-1 px-1.5 rounded border small d-flex align-items-center gap-1.5" style={{ background: '#fffbeb', borderColor: '#fde68a', fontSize: '0.63rem' }}>
+                <i className="bi bi-exclamation-triangle-fill text-danger flex-shrink-0"></i>
+                <span className="text-dark"><strong>GOLDENE REGEL:</strong> {standard.goldenRule}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -4303,7 +4309,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
 
                   <div className="fw-bold text-dark small text-uppercase mb-2 d-flex align-items-center gap-1.5">
                     <i className="bi bi-list-check" style={{ color: standard.accentColor, fontSize: '1.05rem' }}></i>
-                    <span>Wichtigste Handlungsschritte (Minimal-Info):</span>
+                    <span>{standard.id === 'arterie' || standard.id === 'beatmung' ? 'WICHTIGSTE HANDLUNGSSCHRITTE (MINIMAL-INFO)' : 'Wichtigste Handlungsschritte (Minimal-Info):'}</span>
                   </div>
                   <div className="d-flex flex-column gap-2 mb-2">
                     {standard.keyPoints && standard.keyPoints.map((pt, i) => {
@@ -4374,6 +4380,36 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                       );
                     })}
                   </div>
+                  {standard.id === 'arterie' && standard.goldenRule && (
+                    <div
+                      className="p-3 rounded-3 border shadow-2xs mt-2.5"
+                      style={{
+                        background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 45%, #ffedd5 100%)',
+                        borderColor: '#f59e0b',
+                        borderLeft: '5px solid #dc2626'
+                      }}
+                    >
+                      <div className="d-flex align-items-center justify-content-between mb-1.5 flex-wrap gap-2">
+                        <div className="d-flex align-items-center gap-2">
+                          <span
+                            className="rounded-circle d-inline-flex align-items-center justify-content-center text-white flex-shrink-0"
+                            style={{ width: '24px', height: '24px', backgroundColor: '#dc2626', boxShadow: '0 2px 4px rgba(220, 38, 38, 0.4)' }}
+                          >
+                            <i className="bi bi-exclamation-triangle-fill" style={{ fontSize: '0.75rem' }}></i>
+                          </span>
+                          <strong className="text-dark text-uppercase fw-bold" style={{ fontSize: '0.88rem', letterSpacing: '0.4px' }}>
+                            ⚠️ GOLDENE REGEL
+                          </strong>
+                        </div>
+                        <span className="badge bg-warning text-dark fw-bold px-2 py-0.5 rounded-pill shadow-2xs" style={{ fontSize: '0.64rem' }}>
+                          STRIKT EINHALTEN
+                        </span>
+                      </div>
+                      <div className="text-dark fw-medium small ps-0.5" style={{ fontSize: '0.84rem', lineHeight: '1.45', color: '#1e293b' }}>
+                        {standard.goldenRule}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-2.5 border-top small text-muted d-flex align-items-center justify-content-between" style={{ fontSize: '0.72rem', borderColor: `${standard.accentColor}25` }}>
@@ -4774,6 +4810,38 @@ function StandardDetailPage({ standard, onNavigate, showToast }) {
             </div>
             <p className="mb-0 text-dark fw-medium small ps-1" style={{ fontSize: '0.86rem', lineHeight: '1.45', color: '#1e293b' }}>
               Vor Patientenanschluss Geräte- und Dichtigkeitstest erfolgreich abschließen. Beatmungsbeutel mit Reservoir, ggf. PEEP-Ventil, passender Maske, O₂-Versorgung und funktionsfähige Absaugung bereithalten.
+            </p>
+          </div>
+        )}
+
+        {/* GOLDENE REGEL Highlight Box (Arterie) */}
+        {standard.id === 'arterie' && standard.goldenRule && (
+          <div
+            className="p-3 p-sm-3.5 rounded-3 border shadow-sm position-relative overflow-hidden mt-3"
+            style={{
+              background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 45%, #ffedd5 100%)',
+              borderColor: '#f59e0b',
+              borderLeft: '6px solid #dc2626'
+            }}
+          >
+            <div className="d-flex align-items-center justify-content-between mb-1.5 flex-wrap gap-2">
+              <div className="d-flex align-items-center gap-2">
+                <span
+                  className="rounded-circle d-inline-flex align-items-center justify-content-center text-white flex-shrink-0"
+                  style={{ width: '28px', height: '28px', backgroundColor: '#dc2626', boxShadow: '0 2px 6px rgba(220, 38, 38, 0.4)' }}
+                >
+                  <i className="bi bi-exclamation-triangle-fill" style={{ fontSize: '0.85rem' }}></i>
+                </span>
+                <strong className="text-dark text-uppercase fw-bold" style={{ fontSize: '0.94rem', letterSpacing: '0.5px' }}>
+                  ⚠️ GOLDENE REGEL
+                </strong>
+              </div>
+              <span className="badge bg-warning text-dark fw-bold px-2.5 py-1 rounded-pill shadow-2xs" style={{ fontSize: '0.68rem' }}>
+                STRIKT EINHALTEN
+              </span>
+            </div>
+            <p className="mb-0 text-dark fw-medium small ps-1" style={{ fontSize: '0.86rem', lineHeight: '1.45', color: '#1e293b' }}>
+              {standard.goldenRule}
             </p>
           </div>
         )}

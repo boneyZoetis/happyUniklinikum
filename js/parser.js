@@ -284,15 +284,14 @@ root.QRParser = (function () {
         '🟠 Blutungskomplikationen vorbeugen\nLuer-Lock-Verbindungen sichern, Anschlüsse regelmäßig kontrollieren und Punktionsstelle auf Blutungen überwachen.'
       ],
       keyPoints: [
-        'Benötigtes Material: Infusionsständer, 500/1000 ml NaCl 0,9%, größenadaptierter Druckbeutel, Combitrans® (Fa. B. Braun) Drucksystem.',
-        'Konnektionen sichern: System aus Verpackung entnehmen und zwingend alle Konnektionsstellen fest nachziehen.',
-        'Initialer Befülldruck (max. 50 mmHg): Nach Konnektion und Flüssigkeitsspiegel in Tropfkammer den Druckbeutel auf maximal 50 mmHg aufpumpen (schonendes, blasenfreies Priming).',
-        'Optional 3. Druckleitung: Falls vorhanden, Zuleitung zur 3. optionalen Druckmessung sofort spülen und Klemme schließen.',
-        'Transducer & Nullpunkthähne: Transducer in Halteplatte einhängen, Nullpunkthahn zur Atmosphäre öffnen und beide Druckmesssysteme vorsichtig spülen, bis NaCl austritt.',
-        'Reservoir-Entlüftung: Reservoir unter Drehen und gleichzeitig leichtem Zug am Kolben füllen; Patientenhahn öffnen und durch Zurückdrehen mit leichtem Druck im Uhrzeigersinn vollständig entlüften.',
-        'Nochmaliges Spülen & 300 mmHg: Zwingend nochmals spülen, um letzte Restluft zu entfernen; beide Nullpunkthähne quer stellen und Druckbeutel auf 300 mmHg bringen.',
-        'Cave Fingerperfusion & Dämpfung: Stündliche Kontrolle der Fingerdurchblutung (Farbe, Puls, Rekapillarisierungszeit < 2s); Fast-Flush-Test zur Dämpfungskontrolle (1,5–2 Oszillationen).'
+        '🔵 SCHRITT 1 – Vorbereitung & Drucksystem\nNaCl 0,9 % (500 oder 1000 ml) mit Druckbeutel vorbereiten. Combitrans-Druckmesssystem auspacken, Verbindungen kontrollieren und Rollenklemmen schließen.',
+        '🟢 SCHRITT 2 – System blasenfrei befüllen\nDruckmesssystem gemäß Befüllungsstandard vollständig und aseptisch entlüften. Transducer, Dreiwegehähne, Druckleitungen und Reservoir blasenfrei befüllen. Anschließend Druckbeutel auf 300 mmHg aufpumpen.',
+        '🟠 SCHRITT 3 – Referenzhöhe einstellen\nTransducer auf Höhe des rechten Herzvorhofs (phlebostatische Achse: 4. ICR, mittlere Axillarlinie) positionieren. Nach Lageänderungen erneut nivellieren.',
+        '🔴 SCHRITT 4 – Nullabgleich durchführen\nDreiwegehahn zum Patienten schließen und zur Atmosphäre öffnen. Nullabgleich am Monitor durchführen. Anschließend zur Atmosphäre schließen, zum Patienten öffnen und Druckkurve kontrollieren.',
+        '🟣 SCHRITT 5 – Fast-Flush-Test\nSpülfunktion kurz betätigen und loslassen. Rechtecksignal und Nachschwingungen beurteilen (typisch ca. 1–2). Druckkurve auf Über- oder Unterdämpfung prüfen.',
+        '🔵 SCHRITT 6 – Gefäß- & Perfusionskontrolle\nPunktionsstelle auf Blutung, Hämatom und Infektionszeichen kontrollieren. Distale Durchblutung (Puls, Hautfarbe, Temperatur, Rekapillarisierung) regelmäßig prüfen und dokumentieren.'
       ],
+      goldenRule: 'Luftblasen vermeiden, Transducer korrekt nivellieren und nullen. Druckkurve und Anschlüsse regelmäßig kontrollieren. Bei auffälligen Messwerten Patientenzustand und Messsystem überprüfen.',
       clinicalFocus: [
         {
           phase: '1. Vorbereitung & Konnektionskontrolle (Combitrans®)',
