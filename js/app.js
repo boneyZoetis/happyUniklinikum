@@ -2825,7 +2825,7 @@ function EvdLevelingComponent({ standard }) {
               </span>
             </div>
             <div className="text-secondary small" style={{ fontSize: '0.78rem' }}>
-              Tragus-Nivellierung (Foramen Monroi) &bull; Regulär geschlossenes System &bull; Nullen ohne Diskonnektion
+              Tragus-Nivellierung (Foramen Monroi) • Regulär geschlossenes System • Nullen ohne Diskonnektion
             </div>
           </div>
         </div>
@@ -3133,7 +3133,7 @@ function EvdLevelingComponent({ standard }) {
               <span className="fw-bold text-primary small">{currentTarget.label}</span>
               <div className="d-flex gap-2">
                 <span className="badge rounded-pill bg-danger text-white px-2.5 py-1">
-                  Ziel-ICP: &le; {currentTarget.icp} mmHg
+                  Ziel-ICP: ≤ {currentTarget.icp} mmHg
                 </span>
                 <span className="badge rounded-pill bg-primary text-white px-2.5 py-1">
                   Abtropfkammer: +{currentTarget.chamberCm} cm ü. Tragus
@@ -3160,7 +3160,7 @@ function EvdLevelingComponent({ standard }) {
               <i className="bi bi-sliders me-1 text-primary"></i>Nullpunktabgleich ohne Diskonnektion (VentrEX®)
             </h6>
             <span className="badge rounded-pill bg-success bg-opacity-10 text-success border border-success small" style={{ fontSize: '0.68rem' }}>
-              100% Steril &bull; Kein Infektionsrisiko
+              100% Steril • Kein Infektionsrisiko
             </span>
           </div>
 
@@ -3271,7 +3271,7 @@ function EvdLevelingComponent({ standard }) {
                 <span className="badge rounded-pill bg-secondary text-white mb-1" style={{ fontSize: '0.66rem' }}>Hahn (1)</span>
                 <strong className="d-block small text-dark">Systemport (Spülanschluss)</strong>
                 <p className="text-muted mb-0" style={{ fontSize: '0.72rem', lineHeight: '1.3' }}>
-                  Liegt vor der Druckmesseinheit. Nur zum Spülen <em>vom Kopf weg</em> zur Abtropfkammer (Einlass &ge; 30 s desinfizieren).
+                  Liegt vor der Druckmesseinheit. Nur zum Spülen <em>vom Kopf weg</em> zur Abtropfkammer (Einlass ≥ 30 s desinfizieren).
                 </p>
               </div>
             </div>
@@ -3308,7 +3308,7 @@ function EvdLevelingComponent({ standard }) {
           </div>
 
           <div className="p-2 rounded-2 bg-white border small text-muted" style={{ fontSize: '0.72rem' }}>
-            <strong>Komponenten:</strong> [A] Aufhängevorrichtung mit Skala &bull; [B] Abtropfbehälter mit Filter &bull; [C] Klemme &bull; [D] Ablaufbeutel &bull; [E] Integrierter VentrEX® Transducer
+            <strong>Komponenten:</strong> [A] Aufhängevorrichtung mit Skala • [B] Abtropfbehälter mit Filter • [C] Klemme • [D] Ablaufbeutel • [E] Integrierter VentrEX® Transducer
           </div>
         </div>
       )}
@@ -3367,7 +3367,7 @@ function EvdLevelingComponent({ standard }) {
         </div>
         <div className="d-flex align-items-center gap-2">
           <i className="bi bi-lock-fill text-danger fs-5"></i>
-          <span><strong>Regel:</strong> Drainage regulär GESCHLOSSEN &bull; Intermittierend max. 5–10 ml</span>
+          <span><strong>Regel:</strong> Drainage regulär GESCHLOSSEN • Intermittierend max. 5–10 ml</span>
         </div>
       </div>
     </div>
