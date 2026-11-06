@@ -1211,17 +1211,18 @@ function TilesOverview({ standards, onSelectStandard }) {
                   {/* Clinical Goals */}
                   <div className="row g-1.5 mb-2.5">
                     {enh.goals.map((goal, gi) => (
-                      <div key={gi} className={enh.goals.length === 4 ? "col-3" : "col-4"}>
+                      <div key={gi} className={enh.goals.length === 4 ? "col-6 col-sm-3" : "col-6 col-sm-4"}>
                         <div
                           className="text-center p-1.5 rounded-3 border h-100 d-flex flex-column align-items-center justify-content-center"
                           style={{
                             backgroundColor: goal.bg,
                             borderColor: goal.border,
-                            color: goal.color
+                            color: goal.color,
+                            minHeight: '52px'
                           }}
                         >
                           <i className={`bi ${goal.icon} mb-1`} style={{ fontSize: '1.05rem' }}></i>
-                          <span className="fw-semibold text-truncate w-100" style={{ fontSize: '0.7rem' }}>
+                          <span className="fw-semibold text-center w-100 px-1" style={{ fontSize: '0.72rem', lineHeight: '1.25', wordBreak: 'break-word' }}>
                             {goal.text}
                           </span>
                         </div>
@@ -1235,7 +1236,7 @@ function TilesOverview({ standards, onSelectStandard }) {
                       <div
                         key={si}
                         className="d-flex align-items-start gap-2 p-2 rounded-2 bg-white border small shadow-2xs"
-                        style={{ fontSize: '0.82rem', lineHeight: '1.35', borderColor: enh.borderColor }}
+                        style={{ fontSize: '0.82rem', lineHeight: '1.35', borderColor: enh.borderColor, wordBreak: 'break-word' }}
                       >
                         <span
                           className="rounded-circle d-inline-flex align-items-center justify-content-center text-white flex-shrink-0 mt-0.5"
@@ -1271,7 +1272,7 @@ function TilesOverview({ standards, onSelectStandard }) {
 
                     <button
                       type="button"
-                      className="btn-kachel-open ms-auto"
+                      className="btn-kachel-open ms-auto w-100 w-sm-auto justify-content-center text-center mt-2 mt-sm-0"
                       style={{
                         backgroundColor: '#ffffff',
                         color: enh.tagColor,
@@ -1749,28 +1750,28 @@ function VentilatorCircuitComponent({ standard }) {
         </div>
 
         {/* Tab Switcher */}
-        <div className="btn-group btn-group-sm rounded-pill p-1 bg-light border shadow-2xs" role="group">
+        <div className="d-flex flex-wrap gap-1 p-1 bg-light border rounded-pill shadow-2xs w-100 w-sm-auto justify-content-center" role="group">
           <button
             type="button"
-            className={`btn rounded-pill px-3 py-1 fw-semibold ${activeTab === 'curves' ? 'btn-primary text-white shadow-xs' : 'btn-light border-0'}`}
+            className={`btn rounded-pill px-2.5 px-sm-3 py-1.5 fw-semibold flex-grow-1 flex-sm-grow-0 ${activeTab === 'curves' ? 'btn-primary text-white shadow-xs' : 'btn-light border-0'}`}
             onClick={() => setActiveTab('curves')}
-            style={{ fontSize: '0.78rem' }}
+            style={{ fontSize: '0.78rem', minHeight: '34px' }}
           >
             <i className="bi bi-activity me-1"></i>Beatmungskurven
           </button>
           <button
             type="button"
-            className={`btn rounded-pill px-3 py-1 fw-semibold ${activeTab === 'circuit' ? 'btn-primary text-white shadow-xs' : 'btn-light border-0'}`}
+            className={`btn rounded-pill px-2.5 px-sm-3 py-1.5 fw-semibold flex-grow-1 flex-sm-grow-0 ${activeTab === 'circuit' ? 'btn-primary text-white shadow-xs' : 'btn-light border-0'}`}
             onClick={() => setActiveTab('circuit')}
-            style={{ fontSize: '0.78rem' }}
+            style={{ fontSize: '0.78rem', minHeight: '34px' }}
           >
             <i className="bi bi-diagram-3 me-1"></i>Schlauchsystem
           </button>
           <button
             type="button"
-            className={`btn rounded-pill px-3 py-1 fw-semibold ${activeTab === 'check' ? 'btn-primary text-white shadow-xs' : 'btn-light border-0'}`}
+            className={`btn rounded-pill px-2.5 px-sm-3 py-1.5 fw-semibold flex-grow-1 flex-sm-grow-0 ${activeTab === 'check' ? 'btn-primary text-white shadow-xs' : 'btn-light border-0'}`}
             onClick={() => setActiveTab('check')}
-            style={{ fontSize: '0.78rem' }}
+            style={{ fontSize: '0.78rem', minHeight: '34px' }}
           >
             <i className="bi bi-shield-check me-1"></i>Gerätecheck
           </button>
@@ -1848,19 +1849,19 @@ function VentilatorCircuitComponent({ standard }) {
 
             {/* Readout Bar */}
             <div className="row g-2 pt-2 border-top border-secondary border-opacity-25 text-center">
-              <div className="col-3">
+              <div className="col-6 col-sm-3">
                 <span className="text-secondary small d-block" style={{ fontSize: '0.68rem' }}>Ppeak</span>
                 <strong className="text-info fs-6">{pPeak} <small className="text-white-50" style={{ fontSize: '0.65rem' }}>mbar</small></strong>
               </div>
-              <div className="col-3">
+              <div className="col-6 col-sm-3">
                 <span className="text-secondary small d-block" style={{ fontSize: '0.68rem' }}>Pplat</span>
                 <strong className="text-light fs-6">{pPlat} <small className="text-white-50" style={{ fontSize: '0.65rem' }}>mbar</small></strong>
               </div>
-              <div className="col-3">
+              <div className="col-6 col-sm-3">
                 <span className="text-secondary small d-block" style={{ fontSize: '0.68rem' }}>Driving Press. (&Delta;P)</span>
                 <strong className={`fs-6 ${drivingPressure <= 14 ? 'text-success' : 'text-danger'}`}>{drivingPressure} <small className="text-white-50" style={{ fontSize: '0.65rem' }}>mbar</small></strong>
               </div>
-              <div className="col-3">
+              <div className="col-6 col-sm-3">
                 <span className="text-secondary small d-block" style={{ fontSize: '0.68rem' }}>PEEP</span>
                 <strong className="text-primary fs-6">{peep} <small className="text-white-50" style={{ fontSize: '0.65rem' }}>mbar</small></strong>
               </div>
@@ -2018,25 +2019,25 @@ function VentilatorCircuitComponent({ standard }) {
                 <span>Gerätecheck erfolgreich BESTANDEN • System einsatzbereit</span>
               </div>
               <div className="row g-2 small text-secondary">
-                <div className="col-sm-6 col-lg-3">
+                <div className="col-6 col-lg-3">
                   <div className="p-2 bg-light rounded-2 border">
                     <span className="d-block text-muted" style={{ fontSize: '0.7rem' }}>Leckage (30 mbar)</span>
                     <strong className="text-success">{checkResults.leakRate}</strong> <span className="text-muted">(&lt; 100 ml)</span>
                   </div>
                 </div>
-                <div className="col-sm-6 col-lg-3">
+                <div className="col-6 col-lg-3">
                   <div className="p-2 bg-light rounded-2 border">
                     <span className="d-block text-muted" style={{ fontSize: '0.7rem' }}>Schlauch-Compliance</span>
                     <strong className="text-dark">{checkResults.compliance}</strong>
                   </div>
                 </div>
-                <div className="col-sm-6 col-lg-3">
+                <div className="col-6 col-lg-3">
                   <div className="p-2 bg-light rounded-2 border">
                     <span className="d-block text-muted" style={{ fontSize: '0.7rem' }}>O2-Sensorkalibrierung</span>
                     <strong className="text-success">{checkResults.o2Cell}</strong>
                   </div>
                 </div>
-                <div className="col-sm-6 col-lg-3">
+                <div className="col-6 col-lg-3">
                   <div className="p-2 bg-light rounded-2 border">
                     <span className="d-block text-muted" style={{ fontSize: '0.7rem' }}>Sicherheitsalarme</span>
                     <strong className="text-dark">{checkResults.alarms}</strong>
@@ -2108,20 +2109,20 @@ function HumidifierComponent({ standard }) {
         </div>
 
         {/* Mode selector */}
-        <div className="btn-group btn-group-sm rounded-pill p-1 bg-light border" role="group">
+        <div className="d-flex flex-wrap gap-1 p-1 bg-light border rounded-pill w-100 w-sm-auto justify-content-center" role="group">
           <button
             type="button"
-            className={`btn rounded-pill px-3 py-1 fw-bold ${ventMode === 'invasive' ? 'btn-info text-white shadow-xs' : 'btn-light border-0'}`}
+            className={`btn rounded-pill px-3 py-1.5 fw-bold flex-grow-1 flex-sm-grow-0 ${ventMode === 'invasive' ? 'btn-info text-white shadow-xs' : 'btn-light border-0'}`}
             onClick={() => setVentMode('invasive')}
-            style={{ fontSize: '0.78rem' }}
+            style={{ fontSize: '0.78rem', minHeight: '34px' }}
           >
             Invasiv (37°C / 44 mg/L)
           </button>
           <button
             type="button"
-            className={`btn rounded-pill px-3 py-1 fw-bold ${ventMode === 'niv' ? 'btn-info text-white shadow-xs' : 'btn-light border-0'}`}
+            className={`btn rounded-pill px-3 py-1.5 fw-bold flex-grow-1 flex-sm-grow-0 ${ventMode === 'niv' ? 'btn-info text-white shadow-xs' : 'btn-light border-0'}`}
             onClick={() => setVentMode('niv')}
-            style={{ fontSize: '0.78rem' }}
+            style={{ fontSize: '0.78rem', minHeight: '34px' }}
           >
             NIV / Maske (31°C)
           </button>
@@ -2307,7 +2308,16 @@ function RoxIndexCalculatorComponent({ standard }) {
           {roxFormatted}
         </div>
 
-        <div className="d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill fw-bold shadow-2xs mb-2" style={{ backgroundColor: '#ffffff', color: isSuccess ? '#166534' : (isWarning ? '#92400e' : '#b91c1c') }}>
+        <div
+          className="d-inline-flex flex-wrap align-items-center justify-content-center gap-1.5 px-3 py-1.5 rounded-pill fw-bold shadow-2xs mb-2 text-center"
+          style={{
+            backgroundColor: '#ffffff',
+            color: isSuccess ? '#166534' : (isWarning ? '#92400e' : '#b91c1c'),
+            maxWidth: '100%',
+            fontSize: 'clamp(0.72rem, 3.2vw, 0.88rem)',
+            wordBreak: 'break-word'
+          }}
+        >
           <i className={`bi ${isSuccess ? 'bi-check-circle-fill text-success' : (isWarning ? 'bi-exclamation-triangle-fill text-warning' : 'bi-x-circle-fill text-danger')}`}></i>
           <span>
             {isSuccess && 'ERFOLG WAHRSCHEINLICH (Score ≥ 4.88)'}
@@ -2640,27 +2650,27 @@ function ArterialWaveformComponent({ standard }) {
             <span>Kurvenzustand simulieren:</span>
           </div>
 
-          <div className="btn-group btn-group-sm" role="group">
+          <div className="d-flex flex-wrap gap-1.5 w-100 w-sm-auto justify-content-center justify-content-sm-end" role="group">
             <button
               type="button"
-              className={`btn btn-xs rounded-pill px-2.5 py-1 ${damping === 'optimal' ? 'btn-success text-white fw-bold' : 'btn-outline-secondary text-white'}`}
-              style={{ fontSize: '0.72rem' }}
+              className={`btn btn-xs rounded-pill px-2.5 py-1.5 flex-grow-1 flex-sm-grow-0 ${damping === 'optimal' ? 'btn-success text-white fw-bold' : 'btn-outline-secondary text-white'}`}
+              style={{ fontSize: '0.72rem', minHeight: '32px' }}
               onClick={() => setDamping('optimal')}
             >
               <i className="bi bi-check-circle me-1"></i>Optimal (1,5–2 Schwingungen)
             </button>
             <button
               type="button"
-              className={`btn btn-xs rounded-pill px-2.5 py-1 ms-1 ${damping === 'overdamped' ? 'btn-warning text-dark fw-bold' : 'btn-outline-secondary text-white'}`}
-              style={{ fontSize: '0.72rem' }}
+              className={`btn btn-xs rounded-pill px-2.5 py-1.5 flex-grow-1 flex-sm-grow-0 ${damping === 'overdamped' ? 'btn-warning text-dark fw-bold' : 'btn-outline-secondary text-white'}`}
+              style={{ fontSize: '0.72rem', minHeight: '32px' }}
               onClick={() => setDamping('overdamped')}
             >
               <i className="bi bi-water me-1"></i>Überdämpft (Luftblase!)
             </button>
             <button
               type="button"
-              className={`btn btn-xs rounded-pill px-2.5 py-1 ms-1 ${damping === 'underdamped' ? 'btn-danger text-white fw-bold' : 'btn-outline-secondary text-white'}`}
-              style={{ fontSize: '0.72rem' }}
+              className={`btn btn-xs rounded-pill px-2.5 py-1.5 flex-grow-1 flex-sm-grow-0 ${damping === 'underdamped' ? 'btn-danger text-white fw-bold' : 'btn-outline-secondary text-white'}`}
+              style={{ fontSize: '0.72rem', minHeight: '32px' }}
               onClick={() => setDamping('underdamped')}
             >
               <i className="bi bi-soundwave me-1"></i>Unterdämpft (Ringing)
@@ -3103,19 +3113,19 @@ function EvdLevelingComponent({ standard }) {
             </h6>
           </div>
 
-          <div className="btn-group btn-group-sm p-1 rounded-pill bg-white border shadow-2xs" role="group">
+          <div className="d-flex flex-wrap gap-1 p-1 rounded-pill bg-white border shadow-2xs w-100 w-sm-auto justify-content-center" role="group">
             <button
               type="button"
-              className={`btn btn-sm rounded-pill px-3 py-1 fw-bold ${drainageMode === 'closed' ? 'btn-primary text-white shadow-xs' : 'btn-light text-secondary'}`}
-              style={{ fontSize: '0.76rem', backgroundColor: drainageMode === 'closed' ? '#7c3aed' : 'transparent', borderColor: 'transparent' }}
+              className={`btn btn-sm rounded-pill px-3 py-1.5 fw-bold flex-grow-1 flex-sm-grow-0 ${drainageMode === 'closed' ? 'btn-primary text-white shadow-xs' : 'btn-light text-secondary'}`}
+              style={{ fontSize: '0.76rem', minHeight: '34px', backgroundColor: drainageMode === 'closed' ? '#7c3aed' : 'transparent', borderColor: 'transparent' }}
               onClick={() => setDrainageMode('closed')}
             >
               <i className="bi bi-lock-fill me-1"></i>Regulär GESCHLOSSEN
             </button>
             <button
               type="button"
-              className={`btn btn-sm rounded-pill px-3 py-1 fw-bold ${drainageMode === 'open' ? 'btn-warning text-dark shadow-xs' : 'btn-light text-secondary'}`}
-              style={{ fontSize: '0.76rem' }}
+              className={`btn btn-sm rounded-pill px-3 py-1.5 fw-bold flex-grow-1 flex-sm-grow-0 ${drainageMode === 'open' ? 'btn-warning text-dark shadow-xs' : 'btn-light text-secondary'}`}
+              style={{ fontSize: '0.76rem', minHeight: '34px' }}
               onClick={() => setDrainageMode('open')}
             >
               <i className="bi bi-unlock-fill me-1"></i>GEÖFFNET (Entlastung)
@@ -3147,23 +3157,23 @@ function EvdLevelingComponent({ standard }) {
             {/* Live Waveform Box */}
             <div className="col-lg-6">
               <div className="rounded-3 p-3 text-white" style={{ backgroundColor: '#09131f', border: '1.5px solid #1e293b' }}>
-                <div className="d-flex justify-content-between align-items-center mb-1">
+                <div className="d-flex flex-wrap justify-content-between align-items-center mb-1 gap-1">
                   <span className="badge rounded-pill px-2 py-0.5" style={{ backgroundColor: 'rgba(124, 58, 237, 0.25)', color: '#c084fc', fontSize: '0.68rem' }}>
                     <i className="bi bi-activity me-1"></i>ICP Wellenform
                   </span>
-                  <div className="btn-group btn-group-sm" role="group">
+                  <div className="d-flex flex-wrap gap-1" role="group">
                     <button
                       type="button"
-                      className={`btn btn-xs rounded-pill px-2 py-0.5 ${icpCurve === 'normal' ? 'btn-success text-white' : 'btn-outline-secondary'}`}
-                      style={{ fontSize: '0.68rem' }}
+                      className={`btn btn-xs rounded-pill px-2.5 py-1 ${icpCurve === 'normal' ? 'btn-success text-white' : 'btn-outline-secondary'}`}
+                      style={{ fontSize: '0.68rem', minHeight: '28px' }}
                       onClick={() => setIcpCurve('normal')}
                     >
                       P1 &gt; P2 &gt; P3 (Normal)
                     </button>
                     <button
                       type="button"
-                      className={`btn btn-xs rounded-pill px-2 py-0.5 ms-1 ${icpCurve === 'high_icp' ? 'btn-danger text-white' : 'btn-outline-secondary'}`}
-                      style={{ fontSize: '0.68rem' }}
+                      className={`btn btn-xs rounded-pill px-2.5 py-1 ${icpCurve === 'high_icp' ? 'btn-danger text-white' : 'btn-outline-secondary'}`}
+                      style={{ fontSize: '0.68rem', minHeight: '28px' }}
                       onClick={() => setIcpCurve('high_icp')}
                     >
                       P2 &gt; P1 (Erhöht)
@@ -6062,27 +6072,30 @@ function QuickHubView({ standards, onSelectStandard, onLogout }) {
                 <div
                   className="position-absolute top-0 start-0 bottom-0"
                   style={{
-                    width: '60%',
-                    background: `linear-gradient(90deg, ${theme.cardBgSolid} 0%, ${theme.cardBgSolid}e6 30%, transparent 100%)`
+                    width: '78%',
+                    background: `linear-gradient(90deg, ${theme.cardBgSolid} 0%, ${theme.cardBgSolid}f5 45%, ${theme.cardBgSolid}90 75%, transparent 100%)`
                   }}
                 />
               </div>
 
               {/* Left Side: Icon + Title + Category Pill */}
-              <div className="d-flex align-items-center gap-3 min-w-0 position-relative pe-2" style={{ zIndex: 2, maxWidth: '78%' }}>
+              <div
+                className="d-flex align-items-center gap-2.5 gap-sm-3 min-w-0 position-relative pe-2 flex-grow-1"
+                style={{ zIndex: 2, maxWidth: 'calc(100% - 40px)' }}
+              >
                 <div
                   className="quick-hub-icon-box rounded-3 d-flex align-items-center justify-content-center text-white flex-shrink-0 shadow-sm"
                   style={{
-                    width: '52px',
-                    height: '52px',
+                    width: '48px',
+                    height: '48px',
                     background: theme.gradient,
                     boxShadow: `0 4px 14px ${theme.badgeColor}55`
                   }}
                 >
-                  <i className={`bi ${theme.icon} fs-3`}></i>
+                  <i className={`bi ${theme.icon} fs-4`}></i>
                 </div>
 
-                <div className="min-w-0">
+                <div className="min-w-0 pe-1">
                   <span
                     className="badge rounded-pill fw-bold text-uppercase mb-1 d-inline-block shadow-2xs"
                     style={{
@@ -6090,13 +6103,22 @@ function QuickHubView({ standards, onSelectStandard, onLogout }) {
                       color: theme.badgeColor,
                       fontSize: '0.64rem',
                       letterSpacing: '0.4px',
-                      padding: '3.5px 9px',
+                      padding: '3px 8px',
                       border: `1px solid ${theme.cardBorder}`
                     }}
                   >
                     {theme.badgeText}
                   </span>
-                  <h5 className="fw-black text-dark mb-0 text-truncate" style={{ fontSize: 'clamp(0.96rem, 2.7vw, 1.2rem)', letterSpacing: '-0.2px' }}>
+                  <h5
+                    className="fw-black text-dark mb-0 quick-hub-card-title"
+                    style={{
+                      fontSize: 'clamp(0.88rem, 3.4vw, 1.15rem)',
+                      letterSpacing: '-0.2px',
+                      lineHeight: 1.25,
+                      wordBreak: 'break-word',
+                      hyphens: 'auto'
+                    }}
+                  >
                     {theme.displayTitle}
                   </h5>
                 </div>
@@ -6106,8 +6128,8 @@ function QuickHubView({ standards, onSelectStandard, onLogout }) {
               <div
                 className="quick-hub-arrow-btn rounded-circle d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0 position-relative"
                 style={{
-                  width: '36px',
-                  height: '36px',
+                  width: '34px',
+                  height: '34px',
                   backgroundColor: theme.badgeColor,
                   zIndex: 2,
                   boxShadow: `0 3px 10px ${theme.badgeColor}66`

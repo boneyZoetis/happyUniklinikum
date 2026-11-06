@@ -34,6 +34,12 @@
   --card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
 }
 
+html,
+body {
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   background-color: var(--body-bg);
@@ -2248,7 +2254,7 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
 @media (max-width: 576px) {
   .quick-hub-label-card {
     min-height: 80px !important;
-    padding: 0.7rem 0.85rem !important;
+    padding: 0.72rem 0.85rem !important;
     border-radius: 16px !important;
     width: 100% !important;
   }
@@ -2258,9 +2264,22 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     height: 44px !important;
   }
 
+  .quick-hub-card-title {
+    font-size: clamp(0.90rem, 3.4vw, 1.05rem) !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+
   .quick-hub-arrow-btn {
-    width: 30px !important;
-    height: 30px !important;
+    width: 32px !important;
+    height: 32px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .btn-kachel-open {
+    width: 100% !important;
+    justify-content: center !important;
   }
 
   .quick-hub-top-header {
