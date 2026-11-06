@@ -3697,7 +3697,7 @@ function exportStandardA4Pdf(std, showToast) {
 function StandardA4PrintSheet({ standard }) {
   const baseOrigin = (typeof window !== 'undefined' && window.location && window.location.origin && !window.location.origin.includes('localhost'))
     ? `${window.location.origin}${window.location.pathname}`
-    : 'https://intensivpflege-standards.web.app/';
+    : 'https://umf-nursing-standards.web.app/';
   const normalizedBase = baseOrigin.endsWith('/') ? baseOrigin : `${baseOrigin}/`;
   const websiteDirectUrl = `${normalizedBase}#/${standard.id}`;
 
@@ -4023,7 +4023,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
 
   const websiteDirectUrl = (typeof window !== 'undefined' && window.location && window.location.origin)
     ? `${window.location.origin}${window.location.pathname}#/${standard.id}`
-    : `https://intensivpflege-standards.web.app/#/${standard.id}`;
+    : `https://umf-nursing-standards.web.app/#/${standard.id}`;
 
   return (
     <div className="mb-4">
@@ -5059,7 +5059,7 @@ function AllQrCodesView({ standards, onSelectStandard, showToast }) {
 function UniversalCardInteractiveCard({ isAtm = true, onSelectStandard }) {
   const baseOrigin = (typeof window !== 'undefined' && window.location && window.location.origin)
     ? `${window.location.origin}${window.location.pathname}`
-    : 'https://intensivpflege-standards.web.app/';
+    : 'https://umf-nursing-standards.web.app/';
   const normalizedBase = baseOrigin.endsWith('/') ? baseOrigin : `${baseOrigin}/`;
   const portalUrl = `${normalizedBase}#/quick-hub`;
 
@@ -5143,7 +5143,7 @@ function UniversalCardInteractiveCard({ isAtm = true, onSelectStandard }) {
 function UniversalCardA4Native({ onSelectStandard }) {
   const baseOrigin = (typeof window !== 'undefined' && window.location && window.location.origin)
     ? `${window.location.origin}${window.location.pathname}`
-    : 'https://intensivpflege-standards.web.app/';
+    : 'https://umf-nursing-standards.web.app/';
   const normalizedBase = baseOrigin.endsWith('/') ? baseOrigin : `${baseOrigin}/`;
   const portalUrl = `${normalizedBase}#/quick-hub`;
 
@@ -5249,7 +5249,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 
   const cardUrl = (typeof window !== 'undefined' && window.location)
     ? `${window.location.origin}${window.location.pathname}#/quick-hub`
-    : 'https://intensivpflege-standards.web.app/#/quick-hub';
+    : 'https://umf-nursing-standards.web.app/#/quick-hub';
   const portalUrl = cardUrl;
   const isA4 = effectiveFormat === 'a4';
   const shareTitle = isA4
@@ -5523,13 +5523,18 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
               </span>
               <span
                 className="badge rounded-pill fw-bold text-uppercase d-inline-flex align-items-center gap-1 shadow-2xs"
+                role="button"
+                tabIndex={0}
+                onClick={() => setCardFormat(f => f === 'atm' ? 'a4' : 'atm')}
+                title="Format umschalten: Pocketcard / DIN A4"
                 style={{
                   backgroundColor: 'rgba(56, 189, 248, 0.22)',
                   color: '#e0f2fe',
                   border: '1px solid rgba(56, 189, 248, 0.42)',
                   fontSize: '0.67rem',
                   letterSpacing: '0.3px',
-                  padding: '3px 8.5px'
+                  padding: '3px 8.5px',
+                  cursor: 'pointer'
                 }}
               >
                 <i className={`bi ${effectiveFormat === 'a4' ? 'bi-file-earmark-text text-warning' : 'bi-credit-card-2-front text-info'}`}></i>
@@ -5548,80 +5553,6 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
               {effectiveFormat === 'a4' ? 'Intensivkompass Digital (DIN A4)' : 'Intensivkompass Digital (Pocketcard)'}
             </h4>
           </div>
-        </div>
-      </div>
-
-      {/* Top Format Switcher & Actions (Desktop only - hidden on mobile view) */}
-      <div className="d-none d-md-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 no-print mx-auto" style={{ maxWidth: effectiveFormat === 'a4' ? '960px' : '640px' }}>
-        <div className="btn-group shadow-sm rounded-pill p-1 bg-white border" role="group">
-          <button
-            type="button"
-            className={`btn btn-sm ${cardFormat === 'atm' ? 'btn-primary text-white shadow-sm fw-bold' : 'btn-light border-0 text-secondary'}`}
-            style={{ fontSize: '0.78rem', minHeight: '36px', padding: '0.3rem 0.85rem' }}
-            onClick={() => setCardFormat('atm')}
-          >
-            <i className="bi bi-credit-card-2-front me-1"></i>
-            <span>Pocketcard</span>
-          </button>
-          <button
-            type="button"
-            className={`btn btn-sm ${cardFormat === 'a4' ? 'btn-primary text-white shadow-sm fw-bold' : 'btn-light border-0 text-secondary'}`}
-            style={{ fontSize: '0.78rem', minHeight: '36px', padding: '0.3rem 0.85rem' }}
-            onClick={() => setCardFormat('a4')}
-          >
-            <i className="bi bi-file-earmark-text me-1"></i>
-            <span>DIN A4</span>
-          </button>
-        </div>
-
-        <div className="d-flex align-items-center gap-1.5 flex-wrap">
-          <button
-            className="btn btn-primary btn-sm rounded-pill px-3 py-1.5 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1"
-            style={{ minHeight: '36px', fontSize: '0.78rem' }}
-            onClick={() => handlePrint(cardFormat)}
-          >
-            <i className="bi bi-printer-fill"></i>
-            <span>Drucken</span>
-          </button>
-          <button
-            className="btn btn-outline-secondary rounded-pill px-3 py-1.5 shadow-sm btn-sm fw-semibold d-flex align-items-center justify-content-center gap-1 bg-white"
-            style={{ minHeight: '36px', fontSize: '0.78rem' }}
-            onClick={() => downloadPdf('atm')}
-            title="3× Pocketcard auf DIN A4 herunterladen"
-          >
-            <i className="bi bi-file-earmark-pdf"></i>
-            <span>PDF</span>
-          </button>
-          <button
-            type="button"
-            className="btn btn-warning text-dark fw-bold rounded-pill px-3 py-1.5 btn-sm d-flex align-items-center justify-content-center gap-1"
-            style={{ minHeight: '36px', fontSize: '0.78rem', cursor: 'not-allowed', opacity: 0.55 }}
-            disabled
-            aria-disabled="true"
-            title="Hub ist deaktiviert"
-          >
-            <i className="bi bi-box-arrow-up-right"></i>
-            <span>Hub</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Format Specification Hint Badge (Desktop only - hidden on mobile view) */}
-      <div className="text-center no-print mb-2 d-none d-md-block">
-        <div className="badge rounded-pill bg-white text-secondary border shadow-2xs px-3 py-1.5 fw-medium d-inline-flex align-items-center gap-1.5">
-          {effectiveFormat === 'atm' ? (
-            <>
-              <i className="bi bi-credit-card-2-front-fill text-primary"></i>
-              <span className="text-dark fw-bold">Intensivkompass Digital – Pocketcard</span>
-              <span className="text-muted d-none d-sm-inline">&bull; Doppelseitig laminiert &bull; Kitteltaschen-Standard &bull; Ultra-HD</span>
-            </>
-          ) : (
-            <>
-              <i className="bi bi-file-earmark-pdf-fill text-danger"></i>
-              <span className="text-dark fw-bold">Intensivkompass Digital – DIN A4 Format (Ultra-HD 300 DPI)</span>
-              <span className="text-muted d-none d-sm-inline">&bull; Selbe Pocketcard-Systematik &bull; Maximale Schärfe &bull; Stationsaushang</span>
-            </>
-          )}
         </div>
       </div>
 
