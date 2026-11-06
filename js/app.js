@@ -101,9 +101,9 @@ function LoginPage({ onLogin, targetRoute }) {
     setError('');
 
     const cleanUser = (username || '').trim().toLowerCase();
-    const cleanPass = (password || '').trim();
+    const cleanPass = (password || '').trim().toLowerCase();
 
-    if (cleanUser === 'happy' && cleanPass === '2208') {
+    if (cleanUser === 'happy' && cleanPass === 'happy') {
       onLogin();
     } else {
       setError('Benutzername oder Passwort ist falsch. Bitte überprüfen Sie Ihre Eingaben.');
