@@ -2368,13 +2368,16 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   break-after: page !important;
 }
 
-/* Dedicated DIN A4 Pocketcard Print & PDF Styles (120 x 80 mm on DIN A4) */
+/* Dedicated DIN A4 Pocketcard Print & PDF Styles (3x Pocketcards on a single DIN A4 sheet) */
 .pocketcard-atm-a4-sheet {
   display: none;
   width: 794px;
   max-width: 794px;
+  height: 1118px;
+  max-height: 1118px;
   margin: 0 auto;
   background-color: #ffffff;
+  overflow: hidden;
 }
 
 .a4-atm-print-page {
@@ -2383,36 +2386,31 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   height: 1118px;
   max-height: 1118px;
   background-color: #ffffff;
-  border: 1.5px solid #004767;
-  border-radius: 8px;
+  border: none;
   margin: 0 auto;
-  padding: 30px 40px;
+  padding: 12px 0;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
   position: relative;
   color: #0f172a;
+  overflow: hidden;
 }
 
 .a4-atm-cutout-header {
-  width: 100%;
-  max-width: 580px;
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 12px 16px;
-  box-sizing: border-box;
+  display: none !important;
 }
 
 .pocketcard-atm-cutout-frame-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: auto 0;
+  margin: 0 auto;
   position: relative;
-  padding: 16px;
+  padding: 8px 12px;
+  box-sizing: border-box;
 }
 
 .pocketcard-atm-cutout-frame {
@@ -2424,7 +2422,7 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   box-sizing: border-box;
   background: #ffffff;
   position: relative;
-  box-shadow: 0 4px 16px rgba(0, 43, 71, 0.1);
+  box-shadow: none;
 }
 
 .cut-corner {
@@ -2798,14 +2796,17 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    justify-content: center !important;
+    justify-content: space-evenly !important;
     width: 100% !important;
+    height: 275mm !important;
+    max-height: 275mm !important;
     margin: 0 auto !important;
     padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
     page-break-inside: avoid !important;
     page-break-after: avoid !important;
+    overflow: hidden !important;
   }
 
   body.printing-atm .a4-atm-print-page,
@@ -2815,29 +2816,26 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     height: 275mm !important;
     max-height: 275mm !important;
     margin: 0 auto !important;
-    padding: 15mm 10mm !important;
-    border: 1.5px solid #004767 !important;
-    border-radius: 8px !important;
+    padding: 4mm 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
     box-shadow: none !important;
     box-sizing: border-box !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important;
+    justify-content: space-evenly !important;
     align-items: center !important;
     background: #ffffff !important;
+    overflow: hidden !important;
   }
 
   body.printing-atm .a4-atm-cutout-header,
-  body.active-format-atm:not(.printing-a4) .a4-atm-cutout-header {
-    width: 100% !important;
-    max-width: 160mm !important;
-    background: #f8fafc !important;
-    border: 1px solid #cbd5e1 !important;
-    border-radius: 6px !important;
-    padding: 3mm 5mm !important;
-    box-sizing: border-box !important;
+  body.active-format-atm:not(.printing-a4) .a4-atm-cutout-header,
+  body.printing-atm .a4-atm-cutout-footer,
+  body.active-format-atm:not(.printing-a4) .a4-atm-cutout-footer {
+    display: none !important;
   }
 
   body.printing-atm .pocketcard-atm-cutout-frame-wrapper,
@@ -2845,14 +2843,23 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    margin: auto 0 !important;
+    margin: 0 auto !important;
     position: relative !important;
-    padding: 4mm !important;
+    padding: 2mm 0 !important;
+    box-sizing: border-box !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   body.printing-atm .pocketcard-atm-cutout-frame,
   body.active-format-atm:not(.printing-a4) .pocketcard-atm-cutout-frame {
     width: 120mm !important;
+    height: 80mm !important;
+    border: 1.5px dashed #004767 !important;
+    border-radius: 4mm !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
     min-width: 120mm !important;
     max-width: 120mm !important;
     height: 80mm !important;
