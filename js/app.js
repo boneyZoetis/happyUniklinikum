@@ -5530,8 +5530,8 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
         </div>
       </div>
 
-      {/* Top Format Switcher & Actions (Visible on Mobile + Desktop) */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 no-print mx-auto" style={{ maxWidth: effectiveFormat === 'a4' ? '960px' : '640px' }}>
+      {/* Top Format Switcher & Actions (Desktop only - hidden on mobile view) */}
+      <div className="d-none d-md-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 no-print mx-auto" style={{ maxWidth: effectiveFormat === 'a4' ? '960px' : '640px' }}>
         <div className="btn-group shadow-sm rounded-pill p-1 bg-white border" role="group">
           <button
             type="button"
@@ -5584,8 +5584,8 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
         </div>
       </div>
 
-      {/* Format Specification Hint Badge */}
-      <div className="text-center no-print mb-2">
+      {/* Format Specification Hint Badge (Desktop only - hidden on mobile view) */}
+      <div className="text-center no-print mb-2 d-none d-md-block">
         <div className="badge rounded-pill bg-white text-secondary border shadow-2xs px-3 py-1.5 fw-medium d-inline-flex align-items-center gap-1.5">
           {effectiveFormat === 'atm' ? (
             <>
