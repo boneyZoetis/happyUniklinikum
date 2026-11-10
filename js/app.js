@@ -75,186 +75,15 @@ function QrCodeCanvas({ value, size = 160, color = '#0f172a', className = '', id
 }
 
 // -------------------------------------------------------------
-// Component: Login Page
-// -------------------------------------------------------------
-function LoginPage({ onLogin, targetRoute }) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-
-  const targetStandardName = useMemo(() => {
-    if (!targetRoute || targetRoute === 'home') return null;
-    if (targetRoute === 'beatmung') return '1. Beatmungsgerät & Gerätecheck';
-    if (targetRoute === 'befeuchtung-invasiv') return '2. Aktive Befeuchtung (Invasiv)';
-    if (targetRoute === 'hfnc') return '3. High-Flow-Therapie (HFNC)';
-    if (targetRoute === 'arterie') return '4. Invasives Druckmesssystem (Arterie)';
-    if (targetRoute === 'evd') return '5. Externe Ventrikeldrainage (EVD)';
-    if (targetRoute === 'quick-hub') return 'Schnellzugriff Hub';
-    if (targetRoute === 'qrcodes') return 'Alle Pocketcards';
-    if (targetRoute === 'universal-karte' || targetRoute === 'magic-card') return 'U-Card';
-    return targetRoute;
-  }, [targetRoute]);
-
-  const handleSubmit = (e) => {
-    if (e) e.preventDefault();
-    setError('');
-
-    const cleanUser = (username || '').trim().toLowerCase();
-    const cleanPass = (password || '').trim().toLowerCase();
-
-    if (cleanUser === 'happy' && cleanPass === 'happy') {
-      onLogin();
-    } else {
-      setError('Benutzername oder Passwort ist falsch. Bitte überprüfen Sie Ihre Eingaben.');
-    }
-  };
-
-  return (
-    <div className="login-screen-wrapper">
-      <div className="login-card">
-        <div className="text-center mb-3.5">
-          <div className="login-logo-circle mx-auto mb-2.5 shadow-md">
-            <i className="bi bi-heart-pulse-fill" style={{ fontSize: '1.75rem', color: '#ffffff' }}></i>
-          </div>
-
-          <span className="badge rounded-pill px-3 py-1 text-uppercase fw-bold mb-2 shadow-2xs" style={{ background: 'rgba(2, 132, 199, 0.1)', color: '#0284c7', border: '1px solid rgba(2, 132, 199, 0.22)', fontSize: '0.72rem', letterSpacing: '0.4px' }}>
-            <i className="bi bi-shield-lock-fill me-1"></i> QM-Intensivportal
-          </span>
-
-          <h2 className="login-title fw-black mb-1">
-            Klinische Pflegestandards
-          </h2>
-
-          <p className="login-subtitle mb-0">
-            Digitale Pocketcards &bull; Intensivpflege &amp; Leitfäden
-          </p>
-        </div>
-
-        {targetStandardName && (
-          <div className="alert alert-primary py-2 px-3 rounded-3 mb-3 small d-flex align-items-center gap-2 border-0 shadow-2xs" style={{ background: 'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%)', color: '#0369a1' }}>
-            <i className="bi bi-box-arrow-in-right fs-5 flex-shrink-0 text-primary"></i>
-            <div>
-              <div className="text-secondary" style={{ fontSize: '0.72rem' }}>Direktzugriff angefordert für:</div>
-              <strong className="fw-bold">{targetStandardName}</strong>
-            </div>
-          </div>
-        )}
-
-        {error && (
-          <div className="alert alert-danger py-2 px-3 rounded-3 mb-3 small d-flex align-items-center gap-2 border-0 shadow-2xs">
-            <i className="bi bi-exclamation-triangle-fill fs-5 flex-shrink-0"></i>
-            <span>{error}</span>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} noValidate>
-          <div className="mb-2.5">
-            <label className="form-label small fw-bold text-dark mb-1" htmlFor="login-username">
-              Benutzername
-            </label>
-            <div className="input-group">
-              <span className="input-group-text bg-white border-end-0 text-secondary">
-                <i className="bi bi-person-fill"></i>
-              </span>
-              <input
-                id="login-username"
-                type="text"
-                autoComplete="username"
-                className="form-control border-start-0 ps-1"
-                placeholder="Benutzername eingeben"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                autoFocus
-                required
-              />
-            </div>
-          </div>
-
-          <div className="mb-3">
-            <label className="form-label small fw-bold text-dark mb-1" htmlFor="login-password">
-              Passwort
-            </label>
-            <div className="input-group">
-              <span className="input-group-text bg-white border-end-0 text-secondary">
-                <i className="bi bi-key-fill"></i>
-              </span>
-              <input
-                id="login-password"
-                type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
-                className="form-control border-start-0 border-end-0 px-1"
-                placeholder="Passwort eingeben"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <button
-                type="button"
-                className="input-group-text bg-white border-start-0 text-secondary"
-                onClick={() => setShowPassword(!showPassword)}
-                tabIndex="-1"
-                title={showPassword ? 'Passwort verbergen' : 'Passwort anzeigen'}
-              >
-                <i className={`bi ${showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'}`}></i>
-              </button>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            className="btn btn-primary w-100 rounded-pill py-2.5 fw-bold shadow-md d-flex align-items-center justify-content-center gap-2 text-white"
-            style={{ minHeight: '44px', fontSize: '0.92rem', background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', border: 'none' }}
-          >
-            <span>Anmelden</span>
-            <i className="bi bi-arrow-right"></i>
-          </button>
-        </form>
-
-        <div className="text-center mt-3 pt-2.5 border-top border-light">
-          <small className="text-muted" style={{ fontSize: '0.74rem' }}>
-            Geschütztes QM-System &bull; Klinische Evidenz
-          </small>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-// -------------------------------------------------------------
 // Component: App (Root Router & Shell with Main Top Header)
 // -------------------------------------------------------------
 function App() {
   const [currentRoute, setCurrentRoute] = useState('home');
   const [toast, setToast] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    try {
-      return localStorage.getItem('umf_auth_session') === 'true';
-    } catch (e) {
-      return false;
-    }
-  });
 
   const showToast = (message) => {
     setToast(message);
     setTimeout(() => setToast(null), 3000);
-  };
-
-  const handleLogin = () => {
-    try {
-      localStorage.setItem('umf_auth_session', 'true');
-    } catch (e) {}
-    setIsAuthenticated(true);
-    showToast('Erfolgreich angemeldet!');
-  };
-
-  const handleLogout = () => {
-    try {
-      localStorage.removeItem('umf_auth_session');
-    } catch (e) {}
-    setIsAuthenticated(false);
-    showToast('Erfolgreich abgemeldet.');
   };
 
   // Sync hash routing & dynamic document.title
@@ -360,22 +189,6 @@ function App() {
   const isStandardRoute = ['beatmung', 'befeuchtung-invasiv', 'hfnc', 'arterie', 'evd'].includes(currentRoute);
   const isMobileIsolatedRoute = isStandardRoute || currentRoute === 'universal-karte' || currentRoute === 'magic-card';
   const shouldHideMobileHeaders = isMobileIsolatedRoute || currentRoute === 'quick-hub';
-
-  if (!isAuthenticated) {
-    return (
-      <>
-        <LoginPage onLogin={handleLogin} targetRoute={currentRoute} />
-        {toast && (
-          <div className="copy-feedback-toast no-print" data-html2canvas-ignore="true">
-            <div className="alert alert-dark shadow-lg d-flex align-items-center gap-2 mb-0 py-2 px-3 border-0">
-              <i className="bi bi-info-circle-fill text-primary fs-5"></i>
-              <span>{toast}</span>
-            </div>
-          </div>
-        )}
-      </>
-    );
-  }
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -494,20 +307,6 @@ function App() {
       {/* Sticky Category Navbar with the 5 Procedures */}
       <nav className={`navbar navbar-expand-lg navbar-custom sticky-top py-1.5 px-2 px-sm-3 no-print ${shouldHideMobileHeaders ? 'quick-hub-mobile-hide' : ''}`}>
         <div className="container-fluid px-1 px-sm-2 d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center justify-content-lg-end gap-2">
-          {/* Mobile Controls: Logout only (Intensivstandards button removed as requested) */}
-          <div className="d-flex d-lg-none align-items-center justify-content-end w-100">
-            <button
-              type="button"
-              className="btn btn-sm btn-outline-danger rounded-pill px-2.5 py-0.5 d-inline-flex align-items-center gap-1 shadow-2xs"
-              style={{ minHeight: '30px', fontSize: '0.74rem' }}
-              onClick={handleLogout}
-              title="Abmelden"
-            >
-              <i className="bi bi-box-arrow-right"></i>
-              <span>Logout</span>
-            </button>
-          </div>
-
           {/* Horizontally Scrollable Category Ribbon on Mobile, Inline Pills on Desktop (Aligned to Right Side) */}
           <div className="nav-standards-scroll w-100 w-lg-auto ms-lg-auto d-flex justify-content-start justify-content-lg-end">
             <a
@@ -549,20 +348,6 @@ function App() {
               <i className="bi bi-diagram-3-fill"></i>
               <span>5. EVD</span>
             </a>
-          </div>
-
-          {/* Desktop Controls: Logout only (Scan completely removed) */}
-          <div className="d-none d-lg-flex align-items-center gap-2 flex-shrink-0">
-            <button
-              type="button"
-              className="btn btn-sm btn-outline-danger rounded-pill px-3 py-1.5 d-inline-flex align-items-center gap-1.5 fw-semibold shadow-2xs"
-              style={{ minHeight: '36px', fontSize: '0.8rem' }}
-              onClick={handleLogout}
-              title="Vom QM-Portal abmelden"
-            >
-              <i className="bi bi-box-arrow-right"></i>
-              <span>Abmelden</span>
-            </button>
           </div>
         </div>
       </nav>
@@ -645,12 +430,11 @@ function App() {
           <QuickHubView
             standards={UMF_STANDARDS}
             onSelectStandard={(id) => navigateTo(id)}
-            onLogout={handleLogout}
           />
         )}
       </main>
 
-      {/* WhatsApp-Style Translucent Floating Mobile Navigation Dock: 1. Home, 2. U-Card, 3. Logout */}
+      {/* WhatsApp-Style Translucent Floating Mobile Navigation Dock: 1. Home, 2. U-Card */}
       <footer className="mobile-transparent-footer d-flex d-md-none no-print" aria-label="Mobile Navigation">
         <div className="mobile-transparent-footer-inner">
           <button
@@ -675,18 +459,6 @@ function App() {
               <i className="bi bi-credit-card-2-front-fill"></i>
             </span>
             <span className="mobile-footer-btn-text">U-Card</span>
-          </button>
-
-          <button
-            type="button"
-            className="mobile-footer-btn logout-btn"
-            onClick={handleLogout}
-            title="Abmelden"
-          >
-            <span className="mobile-footer-btn-icon">
-              <i className="bi bi-box-arrow-right"></i>
-            </span>
-            <span className="mobile-footer-btn-text">Logout</span>
           </button>
         </div>
       </footer>
@@ -768,18 +540,6 @@ function App() {
                   </div>
                   <div className="small text-white-50" style={{ fontSize: '0.75rem' }}>
                     Gültige klinische Standards 2026
-                  </div>
-                  <div className="mt-2 pt-2 border-top border-secondary border-opacity-25 d-flex justify-content-between align-items-center text-white-50" style={{ fontSize: '0.72rem' }}>
-                    <span>Angemeldet als <strong>happy</strong></span>
-                    <button
-                      type="button"
-                      onClick={handleLogout}
-                      className="btn btn-sm btn-outline-danger py-0.5 px-2 rounded-pill fw-semibold text-white border-danger"
-                      style={{ fontSize: '0.7rem' }}
-                      title="Abmelden"
-                    >
-                      <i className="bi bi-box-arrow-right me-1"></i>Logout
-                    </button>
                   </div>
                 </div>
               </div>
@@ -5789,7 +5549,7 @@ function UniversalCardView({ standards, onSelectStandard, showToast }) {
 // -------------------------------------------------------------
 // Component: QuickHubView (Target of Universal Card QR Code)
 // -------------------------------------------------------------
-function QuickHubView({ standards, onSelectStandard, onLogout }) {
+function QuickHubView({ standards, onSelectStandard }) {
   const orderedIds = ['beatmung', 'befeuchtung-invasiv', 'hfnc', 'arterie', 'evd'];
   const list = orderedIds
     .map((id) => standards[id])
