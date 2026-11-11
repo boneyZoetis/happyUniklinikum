@@ -583,7 +583,7 @@ const TILE_ENHANCEMENTS = {
     titleColor: '#0369a1',
     title: '1. Vorbereitung & Funktionsprüfung Beatmungsgerät (ELISA 600)',
     lead: 'Fachgerechter Aufbau des Doppelschlauchsystems (ELISA 600), Dichtigkeitsprüfung (Leckage < 100 ml/min) und präklinischer Gerätecheck vor Patientenkontakt.',
-    image: 'assets/card-beatmung.jpg',
+    image: 'assets/card-beatmung.jpg?v=20261111',
     imageOverlay: 'ELISA 600 & Gerätecheck',
     quickBadges: [
       { text: 'ELISA 600 SOP', icon: 'bi-shield-check', bg: '#dcfce7', color: '#166534', border: '#bbf7d0' },
@@ -5561,7 +5561,7 @@ function QuickHubView({ standards, onSelectStandard }) {
       badgeBg: '#e0f2fe',
       badgeColor: '#0284c7',
       displayTitle: '1. Beatmungsgerät & Gerätecheck',
-      rightImg: 'assets/card-beatmung.jpg',
+      rightImg: 'assets/card-beatmung.jpg?v=20261111',
       icon: 'bi-lungs-fill',
       cardBg: 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 55%, #e0f2fe 100%)',
       cardBgSolid: '#f0f9ff',
