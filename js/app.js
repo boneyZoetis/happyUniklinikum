@@ -626,7 +626,7 @@ const TILE_ENHANCEMENTS = {
     titleColor: '#15803d',
     title: '2. Aktive Atemgasbefeuchtung bei invasiver Beatmung',
     lead: 'Physiologische Konditionierung des Atemgases (37°C, 44 mg/L H₂O), Schutz des Flimmerepithels und gezielte Vermeidung von gefährlichem Schlauchkondensat.',
-    image: 'assets/card-befeuchtung.jpg',
+    image: 'assets/card-befeuchtung.jpg?v=20261111',
     imageOverlay: '37°C / 44 mg/L H2O',
     quickBadges: [
       { text: '37°C am Y-Stück', icon: 'bi-thermometer-high', bg: '#dcfce7', color: '#15803d', border: '#bbf7d0' },
@@ -5574,7 +5574,7 @@ function QuickHubView({ standards, onSelectStandard }) {
       badgeBg: '#dcfce7',
       badgeColor: '#16a34a',
       displayTitle: '2. Aktive Befeuchtung (Invasiv)',
-      rightImg: 'assets/card-befeuchtung.jpg',
+      rightImg: 'assets/card-befeuchtung.jpg?v=20261111',
       icon: 'bi-droplet-half',
       cardBg: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 55%, #dcfce7 100%)',
       cardBgSolid: '#f0fdf4',
