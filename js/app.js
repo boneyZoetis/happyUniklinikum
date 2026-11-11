@@ -3857,7 +3857,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                     src={standard.image}
                     alt={standard.topic}
                     className="img-fluid rounded-3 shadow-xs"
-                    style={{ width: '100%', height: 'auto', maxHeight: 'none', objectFit: 'contain', display: 'block' }}
+                    style={{ maxHeight: '380px', maxWidth: '100%', width: 'auto', height: 'auto', objectFit: 'contain', display: 'block', margin: '0 auto' }}
                   />
                   <div className="position-absolute bottom-0 end-0 m-2 m-sm-3 no-print">
                     <span className="badge text-white rounded-pill px-2.5 py-1 shadow-sm" style={{ backgroundColor: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(4px)', fontSize: '0.72rem' }}>

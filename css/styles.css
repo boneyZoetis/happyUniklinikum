@@ -322,11 +322,13 @@ body {
 
 .clinical-picture-card img,
 .clinical-picture-img {
-  width: 100% !important;
+  max-width: 100% !important;
+  max-height: 380px !important;
+  width: auto !important;
   height: auto !important;
-  max-height: none !important;
   object-fit: contain !important;
   display: block !important;
+  margin: 0 auto !important;
   background-color: #ffffff;
 }
 
@@ -3040,10 +3042,12 @@ button, a.btn, .btn, .quick-hub-label-card, .nav-standard-link, .standard-tile, 
   }
 
   .clinical-picture-card img {
-    max-height: none !important;
-    object-fit: contain !important;
-    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 280px !important;
+    width: auto !important;
     height: auto !important;
+    object-fit: contain !important;
+    margin: 0 auto !important;
   }
 }
 
