@@ -3848,7 +3848,7 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                 </div>
 
                 <div
-                  className="p-2 text-center bg-white d-flex align-items-center justify-content-center position-relative"
+                  className="p-1 p-sm-2 text-center bg-white d-flex align-items-center justify-content-center position-relative"
                   style={{ cursor: 'pointer' }}
                   onClick={() => setPreviewImage({ src: standard.image, title: standard.topic, subtitle: standard.leadText })}
                   title="Klicken für Vollbildansicht"
@@ -3857,11 +3857,11 @@ function BeautifiedPocketcard({ standard, onCopy, onDownloadQr, onDownloadPdf })
                     src={standard.image}
                     alt={standard.topic}
                     className="img-fluid rounded-3 shadow-xs"
-                    style={{ maxHeight: '380px', width: '100%', objectFit: 'cover' }}
+                    style={{ width: '100%', height: 'auto', maxHeight: 'none', objectFit: 'contain', display: 'block' }}
                   />
-                  <div className="position-absolute bottom-0 end-0 m-3 no-print">
-                    <span className="badge text-white rounded-pill px-3 py-1.5 shadow-sm" style={{ backgroundColor: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(4px)', fontSize: '0.75rem' }}>
-                      <i className="bi bi-arrows-fullscreen me-1.5"></i>Vollbild
+                  <div className="position-absolute bottom-0 end-0 m-2 m-sm-3 no-print">
+                    <span className="badge text-white rounded-pill px-2.5 py-1 shadow-sm" style={{ backgroundColor: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(4px)', fontSize: '0.72rem' }}>
+                      <i className="bi bi-arrows-fullscreen me-1"></i>Vollbild
                     </span>
                   </div>
                 </div>
