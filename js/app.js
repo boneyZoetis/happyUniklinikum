@@ -748,7 +748,7 @@ const TILE_ENHANCEMENTS = {
     titleColor: '#581c87',
     title: '5. SOP Externe Ventrikeldrainage (EVD)',
     lead: 'SOP VentrEX®: Kontinuierliches ICP-Monitoring bei regulär GESCHLOSSENER Drainage. Exakte Tragus-Nivellierung (Foramen Monroi) & intermittierendes Ablassen (max. 5–10 ml).',
-    image: 'assets/card-evd.jpg',
+    image: 'assets/card-evd.jpg?v=20261111',
     imageOverlay: 'VentrEX® & Tragus-Nivellierung',
     quickBadges: [
       { text: 'Tragus = Foramen Monroi', icon: 'bi-crosshair2', bg: '#f3e8ff', color: '#581c87', border: '#e9d5ff' },
@@ -5613,7 +5613,7 @@ function QuickHubView({ standards, onSelectStandard }) {
       badgeBg: '#f3e8ff',
       badgeColor: '#7c3aed',
       displayTitle: '5. Externe Ventrikeldrainage (EVD)',
-      rightImg: 'assets/card-evd.jpg',
+      rightImg: 'assets/card-evd.jpg?v=20261111',
       icon: 'bi-diagram-3-fill',
       cardBg: 'linear-gradient(135deg, #ffffff 0%, #faf5ff 55%, #f3e8ff 100%)',
       cardBgSolid: '#faf5ff',
