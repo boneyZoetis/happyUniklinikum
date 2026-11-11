@@ -666,7 +666,7 @@ const TILE_ENHANCEMENTS = {
     titleColor: '#c2410c',
     title: '3. Aktive Befeuchtung bei High-Flow-Therapie (HFNC)',
     lead: 'Hohe Flussraten (20–60 L/min) zur Auswaschung des Totraums und PEEP-Generierung. Kontinuierliche Risikoüberwachung mit dem ROX-Index.',
-    image: 'assets/card-hfnc.jpg',
+    image: 'assets/card-hfnc.jpg?v=20261111',
     imageOverlay: 'ROX-Index & 20–60 L/min',
     quickBadges: [
       { text: 'Flow 20–60 L/min', icon: 'bi-wind', bg: '#ffedd5', color: '#c2410c', border: '#fed7aa' },
@@ -5587,7 +5587,7 @@ function QuickHubView({ standards, onSelectStandard }) {
       badgeBg: '#ffedd5',
       badgeColor: '#ea580c',
       displayTitle: '3. High-Flow (HFNC) & ROX',
-      rightImg: 'assets/card-hfnc.jpg',
+      rightImg: 'assets/card-hfnc.jpg?v=20261111',
       icon: 'bi-wind',
       cardBg: 'linear-gradient(135deg, #ffffff 0%, #fff7ed 55%, #ffedd5 100%)',
       cardBgSolid: '#fff7ed',

@@ -244,8 +244,8 @@ root.QRParser = (function () {
       badgeBorder: '#fb923c',
       bannerGradient: 'linear-gradient(135deg, #431407 0%, #ea580c 100%)',
       icon: 'bi-wind',
-      image: 'assets/card-hfnc.jpg',
-      graphicImage: 'assets/card-hfnc.jpg',
+      image: 'assets/card-hfnc.jpg?v=20261111',
+      graphicImage: 'assets/card-hfnc.jpg?v=20261111',
       videos: [
         {
           id: '4sgTiXiEaoI',
