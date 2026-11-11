@@ -706,7 +706,7 @@ const TILE_ENHANCEMENTS = {
     titleColor: '#991b1b',
     title: '4. SOP Invasives Druckmesssystem (Combitrans®)',
     lead: 'Combitrans® (B. Braun) Gold-Standard: 15-Schritte-Befüllung (50 -> 300 mmHg), Reservoir-Entlüftung im Uhrzeigersinn, phlebostatischer Nullabgleich & Cave: Fingerischämie.',
-    image: 'assets/card-arterie.jpg',
+    image: 'assets/card-arterie.jpg?v=20261111',
     imageOverlay: 'Combitrans® & 15-Schritte SOP',
     quickBadges: [
       { text: 'Combitrans® B. Braun', icon: 'bi-shield-check', bg: '#fee2e2', color: '#991b1b', border: '#fecdd3' },
@@ -5600,7 +5600,7 @@ function QuickHubView({ standards, onSelectStandard }) {
       badgeBg: '#fee2e2',
       badgeColor: '#dc2626',
       displayTitle: '4. Arterielles Drucksystem (Combitrans®)',
-      rightImg: 'assets/card-arterie.jpg',
+      rightImg: 'assets/card-arterie.jpg?v=20261111',
       icon: 'bi-activity',
       cardBg: 'linear-gradient(135deg, #ffffff 0%, #fff1f2 55%, #fee2e2 100%)',
       cardBgSolid: '#fff1f2',
